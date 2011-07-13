@@ -1,0 +1,124 @@
+#-----------------------------------------------------------------------------------
+#
+# An example script for running one of the 3 Special Traking Neutrino Beam 
+# simulations in G4NuMI using a Geant4 generated proton beam. -L.Loiacono
+#
+
+#
+#I don't know what this does. But it was in the previous example macro.
+#
+/control/suppressAbortion 2
+
+#
+#Set the Debug Level for debugging messages.
+#0 = debug off. Default is 0.
+#
+/LBNE/run/DebugLevel 0 
+
+#
+#Tell G4NuMI that you want to run the Neutrino beam simulation, default is false
+#
+/LBNE/run/Simulation Target Tracking
+#/LBNE/run/Simulation Horn 1 Tracking
+#/LBNE/run/Simulation Horn 2 Tracking
+
+#
+#Kill tracking, true/false, default is true
+#Set the energy at which to kill the particle
+#default is 0.05 GeV. Note: This cut is specific for MINOS
+#
+/LBNE/run/KillTracking true
+/LBNE/run/KillTrackingThreshold 0.001 GeV
+
+#
+#Use importance weighting, default is true
+#
+/LBNE/run/useNImpWeight true
+
+#
+#Whether or not to create output ntuple with data_t
+#default is false
+/LBNE/output/CreateOutput true
+
+
+#
+#Directory and filename (with out the .root) to write output ntuple
+#
+/LBNE/output/OutputNtpFileName ./g4lbne_testing_tracking_2000
+
+
+
+#########################################3
+##Visualization
+##
+## create empty scene
+###
+##/vis/open DAWNFILE
+##/vis/open VRML2FILE
+##
+#/vis/open HepRepXML
+#/vis/scene/create scene-0.heprep.zip
+##
+##/vis/open HepRepFile 600
+##/vis/scene/create G4Data0.heprep
+##
+##
+#/vis/scene/add/trajectories
+#/vis/sceneHandler/attach
+##
+## for drawing the tracks
+## (if too many tracks cause core dump => storeTrajectory 0)
+#/tracking/storeTrajectory 1
+##
+##/vis/modeling/trajectories/create/drawByCharge
+##/vis/modeling/trajectories/drawByCharge-0/set 1 blue
+##/vis/modeling/trajectories/drawByCharge-0/set -1 red
+##/vis/modeling/trajectories/drawByCharge-0/set 0 white
+##
+#/vis/scene/endOfEventAction accumulate
+##/control/verbose 2
+##/run/verbose 2
+##
+##
+##################################################
+
+
+#
+#Update the geometry. ALWAYS do this HERE, never before this point. 
+#The geometery is constructed BEFORE
+#the macro is read. Need to reconstruct the geometry after reading in the macro.
+#
+/LBNE/det/update
+
+
+#
+# Allows the beginning seed to be set manually. This allows 
+# rerunning simulations with the exact same initial conditions 
+# to check for possible errors.
+#
+/LBNE/rndm/setRndmSeed 2
+
+#
+# Allows the RunID, which is included in the
+# output file name(s), to be set at runtime.
+#
+/LBNE/run/setRunID 20
+
+
+#
+# If NOT using an external hadron file then this establishes how 
+# many particles(protons) to use during the simulation. To be consistent 
+# with past neutrino ntuples each run uses 500000 protons
+#
+/LBNE/run/NEvents 10000
+
+/run/beamOn 
+
+
+
+#
+#NOTE: To debug problems grep for "PROBLEM" in the output of the simulation
+# "PROBLEM" statements are printed when there is a problem.
+#
+
+

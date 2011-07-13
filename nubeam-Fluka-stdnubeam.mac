@@ -1,0 +1,177 @@
+#-----------------------------------------------------------------------------------
+#
+# An example script for running the Standard Neutrino Beam simulation in G4NuMI
+# using an external Fluka target hadron production file as input. -L.Loiacono
+#
+
+#
+#I don't know what this does. But it was in the previous example macro.
+#
+/control/suppressAbortion 2
+
+#
+#Set the Debug Level for debugging messages.
+#0 = debug off. Default is 0.
+#
+/LBNE/run/DebugLevel 0 
+
+#
+#MUST SET THE SIMULATION. This is to ensure that
+#you know what simulation you want to run. Possible simulations
+#are in NumiDataInput. If you enter a simulation name that isn't
+#currently implemented nothing will run and it will print the
+#possible Simulations to the screen. MUST Call LBNE/det/update below.
+#
+/LBNE/run/Simulation Standard Neutrino Beam
+
+
+#
+#Kill tracking, true/false, default is true
+#Set the energy at which to kill the particle
+#default is 0.05 GeV.
+#
+#/LBNE/run/KillTracking true
+#/LBNE/run/KillTrackingThreshold 0.05 GeV
+
+#
+#Use importance weighting, default is true
+#
+/LBNE/run/useNImpWeight true
+
+
+#
+#Read in fluka hadrons file, true/false, default is false
+#Set the fluka hadrons file path and name and the name of the tree
+#in the fluka file
+#
+/LBNE/run/useFlukaInput true
+/LBNE/run/InputNtpFileName /minerva/data/users/loiacono/LBNE/fluka05/fluka05_1.root
+/LBNE/run/InputNtpTreeName h1
+
+#	
+#For Fluka05 files run for the NUMI target
+#there is a shift of the "z" variable by -35cm
+#must shift it to 0+TargetZ0 in NumiPrimaryGeneratorAction
+#when setting up the particle beam so need to apply an
+#extra +35cm shift to get it first to 0cm
+#IF YOU NEED THIS (i.e. if you are running with one 
+#of these type of fluka files as input) YOU MUST SET
+#/LBNE/run/AddExtraFlukaNumiTargetZShift 35 cm 
+#default is 0 cm
+#
+/LBNE/run/AddExtraFlukaNumiTargetZShift 0 cm 
+
+#
+#If using external hadron file for input don't need to 
+#and probably don't want to construct the target, default is true
+#
+/LBNE/det/constructTarget false
+
+
+
+#
+#Whether or not to create output ntuple with data_t
+#default is false
+/LBNE/output/CreateOutput true
+
+
+#
+#Directory and filename (with out the .root) to write output ntuple
+#the code will append the runID (see below) to the end of the file name
+#
+/LBNE/output/OutputNtpFileName ./g4lbne-fluka_testing
+
+
+
+
+
+#########################################
+##Visualization
+##
+## you need to choose what visualization package
+## you are using.
+## For an example just uncomment one of the #
+## to use HepRepXML. See the HepRep web site for installation
+## when using visualizaton set NEevents option to low number like 10
+## 
+##
+## create empty scene
+##
+##/vis/open DAWNFILE
+##/vis/open VRML2FILE
+##
+#/vis/open HepRepXML
+#/vis/scene/create scene-0.heprep.zip
+##
+##/vis/open HepRepFile 600
+##/vis/scene/create G4Data0.heprep
+##
+##
+#/vis/scene/add/trajectories
+#/vis/sceneHandler/attach
+##
+## for drawing the tracks
+## (if too many tracks cause core dump => storeTrajectory 0)
+#/tracking/storeTrajectory 1
+##
+##/vis/modeling/trajectories/create/drawByCharge
+##/vis/modeling/trajectories/drawByCharge-0/set 1 blue
+##/vis/modeling/trajectories/drawByCharge-0/set -1 red
+##/vis/modeling/trajectories/drawByCharge-0/set 0 white
+##
+#/vis/scene/endOfEventAction accumulate
+##/control/verbose 2
+##/run/verbose 2
+##
+##
+#################################################
+
+
+#
+#Update the geometry. ALWAYS do this HERE, never before this point. 
+#The geometery is constructed BEFORE
+#the macro is read. Need to reconstruct the geometry after reading in the macro.
+#
+/LBNE/det/update
+
+
+#
+# Allows the beginning seed to be set manually. This allows 
+# rerunning simulations with the exact same initial conditions 
+# to check for possible errors.
+#
+/LBNE/rndm/setRndmSeed 1
+
+#
+# Allows the RunID, which is included in the
+# output file name(s), to be set at runtime.
+#
+/LBNE/run/setRunID 1
+
+#
+# If NOT using an external hadron file then this establishes how 
+# many particles(protons) to use during the simulation. To be consistent 
+# with past neutrino ntuples each run uses 500000 or 100000 protons
+# IF using an external hadron file then, you can set this to be -1
+# to run over all of the entries in the external ntuple.
+# If, for testing purposes you only want to run over some of the entries
+# in the external ntuple then set this to be any number. At the end of
+# the job the number of protons that this corresponds to will be printed
+# to the screen
+#
+/LBNE/run/NEvents 20
+
+#
+#always need this; says start running
+#
+/run/beamOn
+
+
+
+
+#
+#NOTE: To debug problems grep for "PROBLEM" in the output of the simulation
+# "PROBLEM" statements are printed when there is a problem.
+#
+
+

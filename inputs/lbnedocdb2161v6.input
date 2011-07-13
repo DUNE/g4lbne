@@ -1,0 +1,267 @@
+C***********************************************************************
+C
+C  Byron's May 24, 2010 geometry for LBNE,  docdb 161
+C  With abosrober geometry from A. Makahorv in June 2010
+C
+C  Mocked up for Gnumi by A. Marino, July 2010
+C
+C  Upstream horn 1 face is at 0.,0.,0.
+C***********************************************************************
+List
+
+pCutGamma    999999.
+pCutElectron 999999.
+pCutPiZero   999999.
+pCutKaon     0.1
+pCutNonKaon  0.1
+C pCutKaon     0.5
+C pCutNonKaon  0.5
+
+C Beam         1 
+C=======================================================================
+C
+C=======================================================================
+C
+C BeamOnTarget = FALSE -> beam starts in front of baffle
+C
+ BeamOnTarget TRUE
+ BeamX0      0.0 
+ BeamY0      0.0
+c target face is at -5 cm, so start particles at -10 cm
+ BeamZ0      -0.1
+ BeamSigx    0.0015
+ BeamSigy    0.0015
+ BeamMaxx    5.0E-3
+ BeamMaxy    5.0E-3
+ BeamDx      0.0
+ BeamDy      0.0
+ BeamSigdx   17.0E-6
+ BeamSigdy   17.0E-6
+ BeamMaxdx   130E-6
+ BeamMaxdy   130E-6
+ BeamP       120.93
+
+NTKINEOPTION OFF
+CC Ntuple ID 1 for non-merged files ID 3 for merged file
+NTKINEID    1 ! Ntuple number used in the file for the particle list 
+NTKINEDX 0 ! If you want to add any additional shifts to the particles
+NTKINEDY 0 ! in x,y,z, add them here
+NTKINEDZ 0.0 ! Defaults are all zeros
+
+
+BlockNblock 15
+C======================================================================= 
+C Target area shielding 
+BlockX0        1=  0.0	    0.0      -1.61      1.61
+BlockY0        1=  2.10     -2.10     0.        0.
+BlockZ0        1=  -8.3     -8.3      -8.3      -8.3
+BlockDxdz      1=  0.0      0.0       0.0       0.0
+BlockDydz      1=  0.0      0.0       0.0       0.0
+BlockLength    1=  30.5     30.5      30.5     30.5
+BlockHdx       1=  2.61     2.61      1.0       1.0
+BlockHdy       1=  1.0      1.0       1.1       1.1
+BlockGeantmat  1=  10       10        10        10
+
+C 
+C Absorber Al core and steel
+C X0,Y0,Z0 is the upstream face
+C From A. Makarov, June 10, 2010
+C AL core is 60"x60"x96"
+C Steel covers an area of  228"x228"x274"
+C upstream Al mask is not included
+BlockX0        5= 0.0     0.0     1.829    -1.829      0.0     0.0  
+BlockY0        5= 0.0     0.0     0.0      0.0      1.828    -1.829
+BlockZ0        5= 273.06  275.50  272.22   272.22   272.22  272.22
+BlockDxdz      5= 0.0     0.0     0.0      0.0      0.0     0.0     
+BlockDydz      5= 0.0     0.0     0.0      0.0      0.0     0.0  
+BlockLength    5= 2.44   3.65     6.96     6.96     6.96    6.96
+BlockHdx       5= .762   .762    1.067     1.067      2.90    2.90 
+BlockHdy       5= .762   .762   .762      .762      1.067    1.067 
+BlockGeantmat  5= 9       10      10       10       10       10 
+
+C
+C  Concrete sides and back
+C
+C  60" thick at downstream end, 72" on the top and bottom,
+C  47" on the passage side,  60" on the morgue side of the tunnel
+BlockX0        11= .165    .165    .165      3.658   -3.4925  
+BlockY0        11= 0.0     3.81     -3.82    0.       0.
+BlockZ0        11= 279.16  272.22   272.22   272.22  272.22
+BlockDxdz      11= 0.0     0.0      0.0      0.0     0.0     
+BlockDydz      11= 0.0     0.0      0.0      0.0     0.0  
+BlockLength    11= 1.524    6.96    6.96     6.96    6.96
+BlockHdx       11= 4.255    4.255   4.255    .762    .579
+BlockHdy       11= 4.724   .914     .914     2.895   2.895 
+BlockGeantmat  11= 17      17       17       17       17 
+
+DecayPipe          1    
+C=======================================================================
+DecayPipeZ0	  22.20
+DecayPipeRadius    2.00
+DecayPipeLength    250.0
+DecayPipeFWinThick 0.0001
+DecayPipeEWinThick 0.0001 
+DecayPipeWallThick 0.0127
+DecayPipeA         55.85
+DecayPipeZ         26.0
+DecayPipeGEANTmat  10
+DecayPipeFWinmat   9
+DecayPipeEWinmat   10
+C fill the decay pipe with air
+c air = 15, vac=16, he= 24
+DecayPipeFillGEANTmat 15
+
+DumpNDump 0
+C=======================================================================
+C Absorbed defined by Blocks
+
+FluxArea       1
+C=======================================================================
+FluxAreaX0near 0.0
+FluxAreaY0near 0.0
+FluxAreaZ0near 613.8
+FluxAreaRnear  1.0
+FluxAreaX0far  0.0
+FluxAreaY0far  0.0
+FluxAreaZ0far  1297.0E3
+FluxAreaRfar   1.0
+
+C These 3 lines were added 2/22/2011 -Laura  
+NPhorns 2
+PhornNParts 3 3
+PhornNphorn 6
+C=======================================================================
+C Horn 1   r=sqrt( (A-z) / B)+C for B!=0,   for B=0, r=C
+C  just to be annoying, A,B, and C are in cm, while ROC, thickness
+C  and  X,Y,Z are in m
+C=======================================================================
+PhornZ1         1=   0.00000     0.999999    1.000  
+PhornZ2         1=   0.999999   1.0000000    3.200   
+
+PhornNeckZ1     1=   -999.0      0.999999   -999.0
+PhornNeckZ2     1=   -999.0      1.000000   -999.0
+
+PhornNpoint     1=        5        1          10         
+C PhornAin        1=    0.0000     0.0000      -91.54   
+PhornAin        1=    0.0000     0.0000      -90.8333   
+C PhornBin        1=    0.0000     0.0000       2.115
+PhornBin        1=    0.0000     0.0000       2.2916667
+PhornCin        1=    2.0000     2.0000       0.000    
+C PhornAout       1=    0.0000     0.0000      -91.54    
+PhornAout       1=    0.0000     0.0000      -90.8333   
+C PhornBout       1=    0.0000     0.0000       2.115    
+PhornBout       1=    0.0000     0.0000       2.2916667
+PhornCout       1=    2.300      2.3000       .2000    
+
+PhornROCin      1=    0.2800     0.2800       0.2800    
+PhornROCout     1=    0.3000     0.3000       0.3000    
+
+PhornThickFront 1=    0.0040     0.0000       0.0000    
+PhornThickEnd   1=    0.0000     0.0000       0.0040    
+
+PhornX0         1=    0.0000     0.0000       0.0000    
+PhornY0         1=    0.0000     0.0000       0.0000    
+PhornZ0         1=    0.0000     0.0000       0.0000    
+PhornDXDZ       1=    0.0000     0.0000       0.0000    
+PhornDYDZ       1=    0.0000     0.0000       0.0000    
+PhornCurrent    1=    0.3000     0.3000       0.3000    
+PhornGEANTmat   1=        20         20          20    
+
+
+C=======================================================================
+C Horn 2
+C=======================================================================
+PhornZ1         4=   0.00000   0.97617   1.04803
+PhornZ2         4=   0.97617   1.04803   3.00000
+
+PhornNeckZ1     4=   -999.0    1.048029  -999.0
+PhornNeckZ2     4=   -999.0    1.04803   -999.0
+
+PhornNpoint     4=        10         1        10
+PhornAin        4=  100.0000    0.0000 -100.0000
+PhornBin        4=    0.1351    0.0000    0.2723
+PhornCin        4=   -0.3000    3.9000   -0.3000
+PhornAout       4=  100.0000    0.0000 -100.0000
+PhornBout       4=    0.1351    0.0000    0.2723
+PhornCout       4=    0.0000    4.4000    0.0000
+
+PhornROCin      4=    0.3700    0.3700    0.3700
+C PhornROCout     4=    0.3787    0.3787    0.3787
+PhornROCout     4=    0.3954    0.3954    0.3954
+
+PhornThickFront 4=    0.0030    0.0000    0.0000
+PhornThickEnd   4=    0.0000    0.0000    0.0030
+
+PhornX0         4=    0.0000    0.0000    0.0000
+PhornY0         4=    0.0000    0.0000    0.0000
+PhornZ0         4=    6.6000    6.6000    6.6000
+PhornDXDZ       4=    0.0000    0.0000    0.0000
+PhornDYDZ       4=    0.0000    0.0000    0.0000
+PhornCurrent    4=    0.3000    0.3000    0.3000
+PhornGEANTmat   4=        20        20        20
+
+
+Rock        1
+C=======================================================================
+RockRadius  10.0
+RockHalfLen 1200.0
+RockDensity 0.0
+RockRadLen  0.0
+
+ShieldNshield  1
+C   shield region includes the steel around the decay pipe 
+C======================================================================= 
+ShieldX0       1= 0.0   
+ShieldY0       1= 0.0    
+ShieldZ0       1= 22.2   
+ShieldDxdz     1= 0.0    
+ShieldDydz     1= 0.0    
+ShieldLength   1= 250.0  
+ShieldRout     1= 5.51 
+ShieldRin      1= 2.0127 
+ShieldGEANTmat 1= 17  
+C  17=concrete 10 = iron
+
+
+TargetNtarget  6
+c===========================
+TargetShape    'TUBE'
+TargetX0       1=  0.0       0.        0.        0.        0.0       0.0
+TargetY0       1=  0.0       0.        0.        0.        0.0       0.0
+TargetZ0       1=  -.05     -0.05     -0.05     -0.05     -0.05     -0.05
+TargetDxdz     1=  0.0       0.        0.        0.        0.        0.0
+TargetDydz     1=  0.0       0.        0.        0.        0.        0.0
+TargetLength   1=  0.966     0.980     0.980     0.980     0.980     0.980
+TargetRadius   1=  0.00765   0.00795   0.00965   0.00995   0.01215   0.01245
+TargetA        1= 12.01     55.85     16.0      55.85     16.0      55.85
+TargetZ        1=  6.0      26.0       8.0      26.0       8.0      26.0
+TargetDensity  1=  1.8       7.92      1.0       7.92      1.0       7.92
+TargetRL       1= 24.0       1.757    36.08      1.757    36.08      1.757
+TargetGEANTmat 1= 18        10        25        10        25        10
+C   10=iron,  25=water, 18=grahpite, 15=air
+C  not that the densities that are set here only applied for the first 
+C  material, for any subsequent materials, the default densities and 
+C  radiation legnths for that GEANTmaterial code are applied.
+C There is an "Exit Volume" placed around the target in NumiTarget.cc - L. Loiacono
+
+
+
+TargetArea          1
+C=======================================================================
+TargetAreaZ0       -8.8
+TargetAreaLength    31.00
+TargetAreaHeight    7.0 
+TargetAreaWidth     7.0
+C   fill target area with air
+c air = 15, vac=16, he= 24
+TargetAreaGEANTmat  15
+
+Tunnel         1
+C=======================================================================
+TunnelZ0       22.2
+TunnelRadius   6.25
+TunnelLength   275.0
+TunnelA        0.0 
+TunnelZ        0.0
+c  fill tunnel with air 
+TunnelGEANTmat  15

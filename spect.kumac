@@ -1,0 +1,22 @@
+************************************************************************
+macro spect id=[1] np=[2] nutype=[3] det=[4]
+*
+* id - histogram id
+* np - number of protons generated
+* nutype - neutrino type
+* det - near or far detector
+*
+
+if [det].eq.'n' then
+
+n/pro [id] 10.nenergyn _
+(ntype=[nutype])*nwtnear*xseccc.f77(ntype,nenergyn)/[np]/3.14159*nimpwt
+
+else
+
+n/pro [id] 10.nenergyf _
+(ntype=[nutype])*nwtfar*xseccc.f77(ntype,nenergyf)/[np]/3.14159*nimpwt
+
+endif
+
+return

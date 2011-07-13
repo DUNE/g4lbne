@@ -1,0 +1,6 @@
+* exec readnumiout [1]
+* creates ntuple from [1].txt (ascii output from g4numi), 
+* that can be used with spect.kumac to plot nu spectrum
+
+n/cre 10 nt 7 ! ! ntype nenergy nenergyn nwtnear nenergyf nwtfar nimpwt
+n/read 10 [1].txt

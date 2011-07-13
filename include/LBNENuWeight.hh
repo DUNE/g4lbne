@@ -1,4 +1,4 @@
-// $Id: LBNENuWeight.hh,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: LBNENuWeight.hh,v 1.1.1.1 2011/07/13 16:20:52 loiacono Exp $
 
 #ifndef LBNENUWEIGHT_H
 #define LBNENUWEIGHT_H 1

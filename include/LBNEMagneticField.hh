@@ -1,5 +1,5 @@
 
-// $Id: LBNEMagneticField.hh,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: LBNEMagneticField.hh,v 1.1.1.1 2011/07/13 16:20:52 loiacono Exp $
 // --------------------------------------------------------------
 // LBNEMagneticField.hh modified by Yuki 2004/7/16
 // modified by Yuki 8/2/04

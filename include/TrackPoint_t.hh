@@ -3,7 +3,7 @@
 // ADM, July 2005
 // the g4numi output in a root tree.
 //
-// $Id: TrackPoint_t.hh,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: TrackPoint_t.hh,v 1.1.1.1 2011/07/13 16:20:52 loiacono Exp $
 //----------------------------------------------------------------------
 
 #ifndef TRACKPOINT_T_HH

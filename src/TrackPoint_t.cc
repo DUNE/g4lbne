@@ -2,7 +2,7 @@
 // Sets the relevant memebers of the data class for storing the
 // MC data for the Hadron and Muon Monitors.
 //
-// $Id: TrackPoint_t.cc,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: TrackPoint_t.cc,v 1.1.1.1 2011/07/13 16:20:52 loiacono Exp $
 //----------------------------------------------------------------------
 
 

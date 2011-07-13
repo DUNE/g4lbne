@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNEStackingAction.cc
-// $Id: LBNEStackingAction.cc,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: LBNEStackingAction.cc,v 1.1.1.1 2011/07/13 16:20:52 loiacono Exp $
 //----------------------------------------------------------------------
 
 #include "LBNEStackingAction.hh"

@@ -4,7 +4,7 @@
 //  ADM, July 2005
 //  This is a class that defines the LBNEDataNtp_t object that is used to 
 //  store the g4numi output in a root tree.
-// $Id: LBNEDataNtp_t.cc,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: LBNEDataNtp_t.cc,v 1.1.1.1 2011/07/13 16:20:52 loiacono Exp $
 //------------------
 
 #include "globals.hh"

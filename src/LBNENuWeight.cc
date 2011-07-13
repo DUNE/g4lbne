@@ -1,4 +1,4 @@
-// $Id: LBNENuWeight.cc,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: LBNENuWeight.cc,v 1.1.1.1 2011/07/13 16:20:52 loiacono Exp $
 
 #include <iostream>
 #include <cmath>

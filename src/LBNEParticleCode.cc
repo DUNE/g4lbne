@@ -2,7 +2,7 @@
 // Particle names should match the geant4 particle names since this is 
 // currently used to translate particles from external ntuple to geant 
 // (LBNEPrimaryGeneratorAction.cc)
-// $Id: LBNEParticleCode.cc,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: LBNEParticleCode.cc,v 1.1.1.1 2011/07/13 16:20:52 loiacono Exp $
 //----------------------------------------------------------------------
 
 #include "LBNEParticleCode.hh"

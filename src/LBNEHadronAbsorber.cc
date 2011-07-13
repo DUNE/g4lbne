@@ -7,7 +7,7 @@
 // volumes are rotated. In the G4NuMI world, the beam is horizontal,
 // while all the MC elements are rotated. 
 //
-// $Id: LBNEHadronAbsorber.cc,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: LBNEHadronAbsorber.cc,v 1.1.1.1 2011/07/13 16:20:52 loiacono Exp $
 //----------------------------------------------------------------------
 
 #include "LBNEDetectorConstruction.hh"

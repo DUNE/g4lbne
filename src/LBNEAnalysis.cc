@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 // LBNEAnalysis.cc
 //
-// $Id: LBNEAnalysis.cc,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: LBNEAnalysis.cc,v 1.2 2011/08/02 16:29:08 loiacono Exp $
 //----------------------------------------------------------------------
 
 #include <vector>
@@ -309,7 +309,7 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
    
    G4double parentp = sqrt(ParentMomentumProduction*ParentMomentumProduction);
    
-   fLBNEOutNtpData->ppenergy = sqrt((parentp*parentp-Parent_mass*Parent_mass))/GeV;
+   fLBNEOutNtpData->ppenergy = sqrt((parentp*parentp+Parent_mass*Parent_mass))/GeV;
    
    fLBNEOutNtpData->ppmedium = 0.; //this is still empty
    

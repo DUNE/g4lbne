@@ -119,7 +119,7 @@ FluxArea       1
 C=======================================================================
 FluxAreaX0near 0.0
 FluxAreaY0near 0.0
-FluxAreaZ0near 613.8
+FluxAreaZ0near 1000.0
 FluxAreaRnear  1.0
 FluxAreaX0far  0.0
 FluxAreaY0far  0.0

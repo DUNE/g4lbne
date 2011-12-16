@@ -7,10 +7,10 @@ Getting g4lbne
 get g4lbne from /cvs/projects/lbne-beamsim repository
 
 in read mode:
-cvs -d :pserver:anonymous@cdcvs.fnal.gov:/cvs/projects/lbne-beamsim checkout g4lbne
+cvs -d :pserver:anonymous@cdcvs.fnal.gov:/cvs/projects/lbne-beamsim checkout lbne-beamsim/g4lbne
 
 in read/write mode:
-cvs -d :ext:p-lbne-beamsim@cdcvs.fnal.gov:/cvs/projects/lbne-beamsim checkout g4lbne
+cvs -d :ext:p-lbne-beamsim@cdcvs.fnal.gov:/cvs/projects/lbne-beamsim checkout lbne-beamsim/g4lbne
 
 ************************************************************
 

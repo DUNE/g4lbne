@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 //
-// $Id: LBNEMaterials.cc,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: LBNEMaterials.cc,v 1.2 2012/06/15 19:15:04 loiacono Exp $
 //----------------------------------------------------------------------
 
 #include "LBNEDetectorConstruction.hh"
@@ -31,8 +31,8 @@ void LBNEDetectorConstruction::DefineMaterials()
   A = 1.01*g/mole;
   G4Element* elH  = new G4Element(name="Hydrogen",symbol="H" , Z= 1, A);
 
-  //A = 4.003*g/mole; 
-  //G4Element* elHe  = new G4Element(name="Helium",symbol="He" , Z= 2, A);
+  A = 4.003*g/mole; 
+  G4Element* elHe  = new G4Element(name="Helium",symbol="He" , Z= 2, A);
 
   A = 12.01*g/mole;
   G4Element* elC  = new G4Element(name="Carbon"  ,symbol="C" , Z = 6, A);
@@ -159,6 +159,10 @@ void LBNEDetectorConstruction::DefineMaterials()
   pressure=atmosphere/760.*0.4; //Decay Pipe Vacuum is ~0.4Torr
   DecayPipeVacuum = new G4Material("DecayPipeVacuum", density, 1, kStateGas,temperature,pressure);
   DecayPipeVacuum-> AddMaterial(Air, 1.);
+
+  NumiDecayPipeHelium = new G4Material("NumiDecayPipeHelium", 0.145*kg/m3, 1, 
+				   kStateGas,300*kelvin,0.9*atmosphere);
+  NumiDecayPipeHelium->AddElement(elHe,1.0);
 
   //other materials  
   He = new G4Material("Helium", Z=2., A=4.0026*g/mole, density= 0.1785*kg/m3,kStateGas,300*kelvin,2.55*atmosphere);
@@ -373,6 +377,7 @@ G4Material* LBNEDetectorConstruction::GetMaterial(G4int matcode)
   if (matcode==24) return A500_Stl;
   if (matcode==25) return Water;
   if (matcode==26) return M1018_Stl;
+  if (matcode==27) return NumiDecayPipeHelium;
   if (matcode==28) return DecayPipeVacuum;
   if (matcode==31) return CT852;
   if (matcode==32) return Alumina;
@@ -397,6 +402,7 @@ G4int LBNEDetectorConstruction::GetMaterialCode(const G4String &matName)
   //if (matName=="Argon")     return 16;
   if (matName=="Vacuum")    return 16;
   if (matName=="DecayPipeVacuum") return 28;
+  if (matName=="NumiDecayPipeHelium") return 27;
   if (matName=="Concrete")  return 17;
   if (matName=="Target")    return 18;
   if (matName=="Rebar_Concrete") return 19;
@@ -439,6 +445,7 @@ G4VisAttributes* LBNEDetectorConstruction::GetMaterialVisAttrib(G4int matCode)
   if (matCode==25) visAttrib=new G4VisAttributes(G4Color(0., 0., 1.));//Water
   if (matCode==28) visAttrib=new G4VisAttributes(false);//Vacuum
   if (matCode==31) visAttrib=new G4VisAttributes(G4Color(1., 1., 1.));//CT852
+  if (matCode==27) visAttrib=new G4VisAttributes(G4Color(1.0, 0.0, 0.0));  // red //NumiDecayPipeHelium
 
   return visAttrib;
 }
@@ -455,6 +462,7 @@ G4VisAttributes* LBNEDetectorConstruction::GetMaterialVisAttrib(G4String matName
   if (matName=="Argon") return GetMaterialVisAttrib(16);
   if (matName=="Vacuum") return GetMaterialVisAttrib(16);
   if (matName=="DecayPipeVacuum") return GetMaterialVisAttrib(16);
+  if (matName=="NumiDecayPipeHelium") return GetMaterialVisAttrib(27);
   if (matName=="Concrete") return GetMaterialVisAttrib(17);
   if (matName=="Target") return GetMaterialVisAttrib(18);
   if (matName=="Rebar_Concrete") return GetMaterialVisAttrib(19);

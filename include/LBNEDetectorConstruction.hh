@@ -129,6 +129,7 @@ private:
    // Materials
    G4Material* Vacuum;
    G4Material* DecayPipeVacuum;
+   G4Material* NumiDecayPipeHelium;
    G4Material* Air;
    G4Material* Water;
    G4Material* He;
@@ -170,7 +171,7 @@ private:
   G4LogicalVolume* TRGT_lv;
   // G4LogicalVolume* lvTUNE;
   G4LogicalVolume* BLK_log[100]; 
-  G4LogicalVolume* CShld_log[15];
+  G4LogicalVolume* CShld_log[16];
   G4LogicalVolume* TGAR_log;
   G4LogicalVolume* Horn_PM_lv[8];
   G4LogicalVolume* LVCPipe[20];
@@ -193,7 +194,7 @@ private:
   //Solids
   //
   G4VSolid* BLK_solid[100];
-  G4VSolid* CShld_solid[15];
+  G4VSolid* CShld_solid[16];
   G4VSolid* Horn_PM[8];
 };
 

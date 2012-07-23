@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: LBNEDetectorConstruction.cc,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.2 2012/07/23 18:14:57 loiacono Exp $
 //----------------------------------------------------------------------
 
 #include <fstream>
@@ -32,6 +32,7 @@
 #include "G4RegionStore.hh"
 #include "G4SolidStore.hh"
 #include "G4GeometryManager.hh"
+#include "G4FieldManager.hh"
 
 #include "G4RunManager.hh"
 
@@ -40,18 +41,52 @@
 //-------------------------------------------------------------------------
 LBNEDetectorConstruction::LBNEDetectorConstruction()
 {
-  //Scan the input file     
+  //This must Scan the input file     
   LBNEData = LBNEDataInput::GetLBNEDataInput();
+
+  if(!LBNEData)
+  {
+     std::cout << "********************************BIG PROBLEM*****************************" << std::endl; 
+     std::cout << "********************************BIG PROBLEM*****************************" << std::endl; 
+     std::cout << "********************************BIG PROBLEM*****************************" << std::endl; 
+     std::cout << " LBNEData does not exist in LBNEDetectorConstruction Constructor." << std::endl;
+     std::cout << "********************************BIG PROBLEM*****************************" << std::endl; 
+     std::cout << "********************************BIG PROBLEM*****************************" << std::endl; 
+     std::cout << "********************************BIG PROBLEM*****************************" << std::endl; 
+     return;
+  }
 
   if(LBNEData->GetDebugLevel() > 0)
   {
      std::cout << "LBNEDetectorConstruction Constructor Called." << std::endl;
   }
 
-  // Pointers for magnetic fields ***    
-  lbneMagField = new LBNEMagneticField(); 
-  lbneMagFieldIC = new LBNEMagneticFieldIC();
-  lbneMagFieldOC = new LBNEMagneticFieldOC();
+
+  G4int nhornparts = LBNEData -> GetTotalNumberOfHornParts();
+
+  // Create Magnetic field Pointers for magnetic fields here***    
+  //lbneMagField = new LBNEMagneticField(); 
+  //lbneMagFieldIC = new LBNEMagneticFieldIC();
+  //lbneMagFieldOC = new LBNEMagneticFieldOC();
+
+  fHornBFieldVec.clear();
+  fHornICBFieldVec.clear();
+  fHornOCBFieldVec.clear();
+
+  for(int npart = 1; npart < nhornparts+1; ++npart)
+  {
+     LBNEMagneticField* bf     = new LBNEMagneticField(); 
+     LBNEMagneticFieldIC* bfic = new LBNEMagneticFieldIC();
+     LBNEMagneticFieldOC* bfoc = new LBNEMagneticFieldOC();
+
+     bf   -> SetHornCurrent(LBNEData->GetHornCurrentForHornPart(npart));
+     bfic -> SetHornCurrent(LBNEData->GetHornCurrentForHornPart(npart));
+     bfoc -> SetHornCurrent(LBNEData->GetHornCurrentForHornPart(npart));
+     
+     fHornBFieldVec.push_back(bf);
+     fHornICBFieldVec.push_back(bfic);
+     fHornOCBFieldVec.push_back(bfoc);
+  }
   
 
   // create commands for interactive definition of the geometry
@@ -68,9 +103,20 @@ LBNEDetectorConstruction::~LBNEDetectorConstruction()
       std::cout << "LBNEDetectorConstruction Destructor Called." << std::endl;
    }
 
-   delete lbneMagField; 
-   delete lbneMagFieldIC;
-   delete lbneMagFieldOC; 
+   for(unsigned int i = 0; i < fHornBFieldVec.size(); ++i)
+   {
+      delete fHornBFieldVec[i];
+      delete fHornICBFieldVec[i];
+      delete fHornOCBFieldVec[i];
+   }
+
+   fHornBFieldVec.clear();
+   fHornICBFieldVec.clear();
+   fHornOCBFieldVec.clear();
+
+//   delete lbneMagField; 
+//   delete lbneMagFieldIC;
+//   delete lbneMagFieldOC; 
    delete LBNEData;
    DestroyMaterials();
 
@@ -90,7 +136,21 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct()
         
   if (!LBNEData) 
   {
-  
+     G4cout << G4endl;
+     G4cout << G4endl;
+     G4cout << "********************************************************************" << G4endl;
+     G4cout << "********************************************************************" << G4endl; 
+     G4cout << "********************************************************************" << G4endl;
+     G4cout << "********************************************************************" << G4endl;
+     G4cout << "I am in LBNEDetectorConstruction::Construct() - this if statement should never be executed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!." << G4endl;
+     G4cout << "********************************************************************" << G4endl;
+     G4cout << "********************************************************************" << G4endl;
+     G4cout << "********************************************************************" << G4endl;
+     G4cout << "********************************************************************" << G4endl;
+     G4cout << "********************************************************************" << G4endl;
+
+     
+     /*
       //Scan the input file     
       LBNEData = LBNEDataInput::GetLBNEDataInput();
 
@@ -100,6 +160,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct()
       lbneMagFieldOC = new LBNEMagneticFieldOC();
 
       DefineMaterials();
+     */
   }
 
   /* FLUGG - Fluka wants a rectangular world volume
@@ -267,7 +328,14 @@ void LBNEDetectorConstruction::PrintDetectorGeometry()
 	 std::stringstream hornName;
 	 hornName << "PH0" << ihorn << "-0" << ipart;
 	 LBNEDetectorConstruction::PrintDetectorGeometry(hornName.str()+"_mother", 
-							 hornName.str()+"_mother");
+	 						 hornName.str()+"_mother");
+	 LBNEDetectorConstruction::PrintDetectorGeometry(hornName.str()+"_in",
+							 hornName.str()+"_in");
+	 LBNEDetectorConstruction::PrintDetectorGeometry(hornName.str()+"_IC",
+							 hornName.str()+"_IC");
+	 LBNEDetectorConstruction::PrintDetectorGeometry(hornName.str()+"_OC",
+							 hornName.str()+"_OC");
+	 
       }
 
       std::stringstream hornNeckName;
@@ -440,13 +508,50 @@ void LBNEDetectorConstruction::PrintSolidDescription(const G4VSolid *solidvol,
    const G4Tubs*      solidvol_tub   = dynamic_cast<const G4Tubs*>(solidvol);
    const G4Box*       solidvol_box   = dynamic_cast<const G4Box*>(solidvol);
    const G4Polycone*  solidvol_pcone = dynamic_cast<const G4Polycone*>(solidvol);
+
+   //
+   //check for a Field
+   //
+   bool bfieldExists = false;
+   double hCurrent = -999.0;
+   const G4FieldManager *fldmgr = logvol -> GetFieldManager();
+   if(fldmgr)
+   {
+      if(fldmgr -> DoesFieldExist())
+      {
+	 const G4Field* fld = fldmgr -> GetDetectorField();
+
+	 const LBNEMagneticField*   hornbfield   = dynamic_cast<const LBNEMagneticField*>(fld);
+	 const LBNEMagneticFieldIC* hornbfieldic = dynamic_cast<const LBNEMagneticFieldIC*>(fld);
+	 const LBNEMagneticFieldOC* hornbfieldoc = dynamic_cast<const LBNEMagneticFieldOC*>(fld);
+
+	 if(hornbfield)
+	 {
+	    hCurrent = hornbfield -> GetHornCurrent();
+	    bfieldExists = true;
+	 }
+	 else if(hornbfieldic)
+	 {
+	    hCurrent = hornbfieldic -> GetHornCurrent();
+	    bfieldExists = true;
+	 }
+	 else if(hornbfieldoc)
+	 {
+	    hCurrent = hornbfieldoc -> GetHornCurrent();
+	    bfieldExists = true;
+	 }
+
+      }
+
+   }
+   //done checking for field
    
    if(solidvol_pcone)
    {
       std::cout << "Volume is a G4Polycone" << std::endl;
       std::cout << "Material Name = " << materialName << std::endl
 		<< "Material Code = " << materialCode << std::endl;
-
+      
       G4double zmax = -9999999.0;
       G4double zmin =  9999999.0;
       G4double rmax = -9999999.0;
@@ -475,6 +580,9 @@ void LBNEDetectorConstruction::PrintSolidDescription(const G4VSolid *solidvol,
       std::cout << "               (" << rmin/cm << ",\t" << rmax/cm << ") cm" << std::endl;
       std::cout << std::endl;      
       std::cout << "Full Length = " << (zmax-zmin)/m << " m\t" << (zmax-zmin)/cm << "cm " << std::endl;
+
+      if(bfieldExists)
+	 std::cout << "Has a Magnetic Field with Current = " << hCurrent/ampere/1000. << " kA."<< std::endl;            	 
    }
    else if(solidvol_tub) 
    {
@@ -518,6 +626,9 @@ void LBNEDetectorConstruction::PrintSolidDescription(const G4VSolid *solidvol,
       std::cout << "                             (" << (WorldTranslation.z()-zhalflength)/mm 
 		<< ", " << WorldTranslation.z()/mm 
 		<< ", " << (WorldTranslation.z()+zhalflength)/mm << ") mm" << std::endl;
+
+      if(bfieldExists)
+	 std::cout << "Has a Magnetic Field with Current = " << hCurrent/ampere/1000. << " kA."<< std::endl;
       
       
    }
@@ -575,14 +686,16 @@ void LBNEDetectorConstruction::PrintSolidDescription(const G4VSolid *solidvol,
       std::cout << "                             (" << (WorldTranslation.z()-zhalflength)/mm 
 		<< ", " << WorldTranslation.z()/mm 
 		<< ", " << (WorldTranslation.z()+zhalflength)/mm << ") mm" << std::endl;
-      
-      
-      
+
+      if(bfieldExists)
+	 std::cout << "Has a Magnetic Field with Current = " << hCurrent/ampere/1000. << " kA."<< std::endl;            
    }
    else
    {
       
       solidvol -> DumpInfo();
+      if(bfieldExists)
+	 std::cout << "Has a Magnetic Field with Current = " << hCurrent << " kA."<< std::endl;
    }
    
    //

@@ -1,5 +1,5 @@
 
-// $Id: LBNEMagneticField.hh,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: LBNEMagneticField.hh,v 1.2 2012/07/23 18:13:53 loiacono Exp $
 // --------------------------------------------------------------
 // LBNEMagneticField.hh modified by Yuki 2004/7/16
 // modified by Yuki 8/2/04
@@ -13,17 +13,29 @@
 
 class LBNEMagneticField : public G4MagneticField
 {
-  public:
-    LBNEMagneticField();
-    ~LBNEMagneticField();
-
-  virtual void GetFieldValue( const double Point[3],
+public:
+   LBNEMagneticField();
+   ~LBNEMagneticField();
+   
+   virtual void GetFieldValue( const double Point[3],
                                double *Bfield ) const;
-  
-  private:
-    LBNEDataInput* LBNEData;
-  //G4double current;
+
+   void SetHornCurrent(G4double ihorn);
+   G4double GetHornCurrent() const { return fhorncurrent;}
+   
+private:
+   LBNEDataInput* LBNEData;
+   G4double fhorncurrent;
+   G4bool fIsHornCurrentSet;
+   
 };
+
+inline void LBNEMagneticField::SetHornCurrent(G4double ihorn)
+{
+   fhorncurrent = ihorn;
+   fIsHornCurrentSet = true;
+}
+
 
 class LBNEMagneticFieldIC : public G4MagneticField
 {
@@ -33,10 +45,21 @@ class LBNEMagneticFieldIC : public G4MagneticField
 
   virtual void GetFieldValue( const double Point[3], double *Bfield ) const;
 
+   void SetHornCurrent(G4double ihorn);
+   G4double GetHornCurrent() const { return fhorncurrent;}
+
   private:
-    LBNEDataInput* LBNEData;
-  //G4double current;
+   LBNEDataInput* LBNEData;
+   G4double fhorncurrent;
+   G4bool fIsHornCurrentSet;
+
 };
+
+inline void LBNEMagneticFieldIC::SetHornCurrent(G4double ihorn)
+{
+   fhorncurrent = ihorn;
+   fIsHornCurrentSet = true;
+}
 
 class LBNEMagneticFieldOC : public G4MagneticField
 {
@@ -46,10 +69,22 @@ class LBNEMagneticFieldOC : public G4MagneticField
 
   virtual void GetFieldValue( const double Point[3], double *Bfield ) const;
 
+   void SetHornCurrent(G4double ihorn);
+   G4double GetHornCurrent() const { return fhorncurrent;}
+
   private:
-    LBNEDataInput* LBNEData;
-  //G4double current;
+   LBNEDataInput* LBNEData;
+   G4double fhorncurrent;
+   G4bool fIsHornCurrentSet;
+
 };
+
+inline void LBNEMagneticFieldOC::SetHornCurrent(G4double ihorn)
+{
+   fhorncurrent = ihorn;
+   fIsHornCurrentSet = true;
+}
+
 
 #endif
 

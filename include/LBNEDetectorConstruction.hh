@@ -28,6 +28,9 @@ class LBNEMagneticFieldOC;
 
 typedef std::vector<G4double> vdouble_t; 
 typedef std::vector<G4int> vint_t;
+typedef std::vector<LBNEMagneticField*> BFieldVec;
+typedef std::vector<LBNEMagneticFieldIC*> ICBFieldVec;
+typedef std::vector<LBNEMagneticFieldOC*> OCBFieldVec;
 
 class LBNEDetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -51,9 +54,13 @@ public:
    
 private:
    LBNEDataInput* LBNEData;
-   LBNEMagneticField* lbneMagField;
-   LBNEMagneticFieldIC* lbneMagFieldIC;
-   LBNEMagneticFieldOC* lbneMagFieldOC;
+   //LBNEMagneticField* lbneMagField;
+   //LBNEMagneticFieldIC* lbneMagFieldIC;
+   //LBNEMagneticFieldOC* lbneMagFieldOC;
+
+   BFieldVec   fHornBFieldVec;
+   ICBFieldVec fHornICBFieldVec;
+   OCBFieldVec fHornOCBFieldVec;
 
    void PrintDetectorGeometry();
    void PrintDetectorGeometry(const G4String &desc, 

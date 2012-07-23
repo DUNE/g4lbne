@@ -14,6 +14,9 @@
 
 //magnetic field between conductors ====================================================
 LBNEMagneticField::LBNEMagneticField()
+   :fhorncurrent(-999.0),
+    fIsHornCurrentSet(false)
+    
 {
   LBNEData=LBNEDataInput::GetLBNEDataInput();
 
@@ -23,9 +26,17 @@ LBNEMagneticField::~LBNEMagneticField(){;}
 
 void LBNEMagneticField::GetFieldValue(const double Point[3],double *Bfield) const
 {
+
+   if(!fIsHornCurrentSet) 
+   {
+      G4cout << "PROBLEM IN LBNEMagneticField::GetFieldValue() -"
+	     << " the horn current has not been set. Call"
+	     << " LBNEMagneticField::SetHornCurrent() first." << G4endl; 
+      return;
+   }
   
-  
-   G4double current = LBNEData->GetHornCurrent()/ampere/1000.;
+   G4double current = fhorncurrent/ampere/1000.;
+//   G4double current = LBNEData->GetHornCurrent()/ampere/1000.;
 
   //G4cout << "LBNEData->HornCurrent = " << LBNEData->HornCurrent/ampere << " A" << G4endl;
   //G4cout << "current = " << current << G4endl;
@@ -43,6 +54,8 @@ void LBNEMagneticField::GetFieldValue(const double Point[3],double *Bfield) cons
 
 //magnetic field in inner conductor ====================================================
 LBNEMagneticFieldIC::LBNEMagneticFieldIC()
+   :fhorncurrent(-999.0),
+    fIsHornCurrentSet(false)
 {
   LBNEData=LBNEDataInput::GetLBNEDataInput();
 }
@@ -51,9 +64,17 @@ LBNEMagneticFieldIC::~LBNEMagneticFieldIC(){;}
 
 void LBNEMagneticFieldIC::GetFieldValue(const double Point[3],double *Bfield) const
 {
-  
 
-   G4double current = LBNEData->GetHornCurrent()/ampere/1000.;
+   if(!fIsHornCurrentSet) 
+   {
+      G4cout << "PROBLEM IN LBNEMagneticFieldIC::GetFieldValue() -"
+	     << " the horn current has not been set. Call"
+	     << " LBNEMagneticFieldIC::SetHornCurrent() first." << G4endl; 
+      return;
+   }
+  
+   G4double current = fhorncurrent/ampere/1000.;
+//   G4double current = LBNEData->GetHornCurrent()/ampere/1000.;
    G4Navigator* numinavigator=new G4Navigator(); //geometry navigator
    G4Navigator* theNavigator=G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
    numinavigator->SetWorldVolume(theNavigator->GetWorldVolume());
@@ -107,6 +128,8 @@ void LBNEMagneticFieldIC::GetFieldValue(const double Point[3],double *Bfield) co
 
 //magnetic field in outter conductor====================================================
 LBNEMagneticFieldOC::LBNEMagneticFieldOC()
+   :fhorncurrent(-999.0),
+    fIsHornCurrentSet(false)
 {
   LBNEData=LBNEDataInput::GetLBNEDataInput();
 }
@@ -115,48 +138,55 @@ LBNEMagneticFieldOC::~LBNEMagneticFieldOC(){;}
 
 void LBNEMagneticFieldOC::GetFieldValue(const double Point[3],double *Bfield) const
 {
+   if(!fIsHornCurrentSet) 
+   {
+      G4cout << "PROBLEM IN LBNEMagneticFieldOC::GetFieldValue() -"
+	     << " the horn current has not been set. Call"
+	     << " LBNEMagneticFieldOC::SetHornCurrent() first." << G4endl; 
+      return;
+   }
 
+   G4double current = fhorncurrent/ampere/1000.;
+//   G4double current = LBNEData->GetHornCurrent()/ampere/1000.;
+   G4Navigator* numinavigator=new G4Navigator(); //geometry navigator
+   G4Navigator* theNavigator=G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
+   numinavigator->SetWorldVolume(theNavigator->GetWorldVolume());
+   G4ThreeVector Position=G4ThreeVector(Point[0],Point[1],Point[2]); 
+   G4VPhysicalVolume* myVolume = numinavigator->LocateGlobalPointAndSetup(Position);
+   G4TouchableHistoryHandle aTouchable = numinavigator->CreateTouchableHistoryHandle();
+   G4ThreeVector localPosition = aTouchable->GetHistory()->GetTopTransform().TransformPoint(Position);
+   
+   delete numinavigator;
 
-   G4double current = LBNEData->GetHornCurrent()/ampere/1000.;
-  G4Navigator* numinavigator=new G4Navigator(); //geometry navigator
-  G4Navigator* theNavigator=G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
-  numinavigator->SetWorldVolume(theNavigator->GetWorldVolume());
-  G4ThreeVector Position=G4ThreeVector(Point[0],Point[1],Point[2]); 
-  G4VPhysicalVolume* myVolume = numinavigator->LocateGlobalPointAndSetup(Position);
-  G4TouchableHistoryHandle aTouchable = numinavigator->CreateTouchableHistoryHandle();
-  G4ThreeVector localPosition = aTouchable->GetHistory()->GetTopTransform().TransformPoint(Position);
+   G4VSolid *solid=myVolume->GetLogicalVolume()->GetSolid();
+   
+   G4double radius = sqrt(Point[0]*Point[0]+Point[1]*Point[1]);
+   G4double dOut=0.;
+   G4double dIn=0.;
+   G4double magBField = 0.;
+   
+   if (myVolume->GetName().contains("OC")){
+      dOut=solid->DistanceToOut(localPosition,G4ThreeVector(Point[0]/radius,Point[1]/radius,0)); //distance to outer boundary
+      dIn=solid->DistanceToOut(localPosition,G4ThreeVector(-Point[0]/radius,-Point[1]/radius,0));//distance to inner boundary
+      if (dOut<1.*m&&dIn<1.*m&&(dOut!=0.&&dIn!=0.)) 
+      {
+	 magBField = current / (5.*radius/cm)/10*tesla; //B(kG)=i(kA)/[5*r(cm)], 1T=10kG
+	 G4double rIn=radius-dIn;
+	 G4double rOut=radius+dOut;
+	 magBField=magBField*(1-(radius*radius-rIn*rIn)/(rOut*rOut-rIn*rIn)); // linear distribution of current
+      }
+   }
 
-  delete numinavigator;
-
-  G4VSolid *solid=myVolume->GetLogicalVolume()->GetSolid();
-
-  G4double radius = sqrt(Point[0]*Point[0]+Point[1]*Point[1]);
-  G4double dOut=0.;
-  G4double dIn=0.;
-  G4double magBField = 0.;
-
-  if (myVolume->GetName().contains("OC")){
-  dOut=solid->DistanceToOut(localPosition,G4ThreeVector(Point[0]/radius,Point[1]/radius,0)); //distance to outer boundary
-  dIn=solid->DistanceToOut(localPosition,G4ThreeVector(-Point[0]/radius,-Point[1]/radius,0));//distance to inner boundary
-  if (dOut<1.*m&&dIn<1.*m&&(dOut!=0.&&dIn!=0.)) 
-    {
-      magBField = current / (5.*radius/cm)/10*tesla; //B(kG)=i(kA)/[5*r(cm)], 1T=10kG
-      G4double rIn=radius-dIn;
-      G4double rOut=radius+dOut;
-      magBField=magBField*(1-(radius*radius-rIn*rIn)/(rOut*rOut-rIn*rIn)); // linear distribution of current
-    }
-  }
-
-  if (radius!=0){
-  Bfield[0] = -magBField*Point[1]/radius;
-  Bfield[1] = magBField*Point[0]/radius;
-  Bfield[2] = 0.;
-  }
-  else{
-    Bfield[0] = 0.; 
-    Bfield[1] = 0.; 
-    Bfield[2] = 0.;
-  }
+   if (radius!=0){
+      Bfield[0] = -magBField*Point[1]/radius;
+      Bfield[1] = magBField*Point[0]/radius;
+      Bfield[2] = 0.;
+   }
+   else{
+      Bfield[0] = 0.; 
+      Bfield[1] = 0.; 
+      Bfield[2] = 0.;
+   }
   
   
 }

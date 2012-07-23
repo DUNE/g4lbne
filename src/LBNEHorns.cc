@@ -36,8 +36,8 @@ void LBNEDetectorConstruction::ConstructLBNEHorns()
    fTrackingPlane_X0         = (fTgtHallShield_closest_xplus + fTgtHallShield_closest_xminus)/2.0;
    fTrackingPlane_Y0         = (fTgtHallShield_closest_yplus + fTgtHallShield_closest_yminus)/2.0;
 
-   G4int nHorns      = LBNEData->NPhorns;
-   vint_t hornNParts = LBNEData->PhornNParts;
+   G4int nHorns      = LBNEData-> GetNumberOfHorns();//NPhorns;
+   vint_t hornNParts = LBNEData-> GetVectorOfNHornParts();//PhornNParts;
    
    for(int ihorn = 0; ihorn < nHorns; ++ihorn)
    {
@@ -156,9 +156,11 @@ void LBNEDetectorConstruction::ConstructLBNEHorn(G4int nhorn, G4int nparts, G4in
       vol_name = phHornName.str() + "_IC_lv";
       G4LogicalVolume* Horn_in_lv=new G4LogicalVolume(Horn_in,material,vol_name,0,0,0);
       // Magnetic field
-      G4FieldManager* FieldMgr = new G4FieldManager(lbneMagFieldIC); //create a local field		 
-      FieldMgr->SetDetectorField(lbneMagFieldIC); //set the field 
-      FieldMgr->CreateChordFinder(lbneMagFieldIC); //create the objects which calculate the trajectory
+////////////////////////////////
+//      G4FieldManager* FieldMgr = new G4FieldManager(lbneMagFieldIC); //create a local field		 
+      G4FieldManager* FieldMgr = new G4FieldManager(fHornICBFieldVec[jj]); //create a local field		 
+      FieldMgr->SetDetectorField(fHornICBFieldVec[jj]); //set the field 
+      FieldMgr->CreateChordFinder(fHornICBFieldVec[jj]); //create the objects which calculate the trajectory
       Horn_in_lv->SetFieldManager(FieldMgr,true); //attach the local field to logical volume
 	 
       vol_name = phHornName.str() + "_IC";
@@ -191,9 +193,11 @@ void LBNEDetectorConstruction::ConstructLBNEHorn(G4int nhorn, G4int nparts, G4in
       vol_name = phHornName.str() + "_OC_lv";
       G4LogicalVolume* Horn_out_lv=new G4LogicalVolume(Horn_out,material,vol_name,0,0,0);
       // Magnetic field
-      G4FieldManager* FieldMgr2 = new G4FieldManager(lbneMagFieldOC); //create a local field
-      FieldMgr2->SetDetectorField(lbneMagFieldOC); //set the field 
-      FieldMgr2->CreateChordFinder(lbneMagFieldOC); //create the objects which calculate the trajectory
+/////////////////////////////////////////////
+      //G4FieldManager* FieldMgr2 = new G4FieldManager(lbneMagFieldOC); //create a local field
+      G4FieldManager* FieldMgr2 = new G4FieldManager(fHornOCBFieldVec[jj]);
+      FieldMgr2->SetDetectorField(fHornOCBFieldVec[jj]); //set the field 
+      FieldMgr2->CreateChordFinder(fHornOCBFieldVec[jj]); //create the objects which calculate the trajectory
       Horn_out_lv->SetFieldManager(FieldMgr2,true); //attach the local field to logical volume
       
       vol_name = phHornName.str() + "_OC";
@@ -228,9 +232,10 @@ void LBNEDetectorConstruction::ConstructLBNEHorn(G4int nhorn, G4int nparts, G4in
       vol_name = phHornName.str() + "_in_lv";
       G4LogicalVolume* Horn_inside_lv=new G4LogicalVolume(Horn_inside,Vacuum,vol_name,0,0,0);
       // Magnetic field  
-      G4FieldManager* FieldMgr3 = new G4FieldManager(lbneMagField); //create a local field      
-      FieldMgr3->SetDetectorField(lbneMagField); //set the field 
-      FieldMgr3->CreateChordFinder(lbneMagField); //create the objects which calculate the trajectory 
+      //G4FieldManager* FieldMgr3 = new G4FieldManager(lbneMagField); //create a local field      
+      G4FieldManager* FieldMgr3 = new G4FieldManager(fHornBFieldVec[jj]); //create a local field      
+      FieldMgr3->SetDetectorField(fHornBFieldVec[jj]); //set the field 
+      FieldMgr3->CreateChordFinder(fHornBFieldVec[jj]); //create the objects which calculate the trajectory 
       Horn_inside_lv->SetFieldManager(FieldMgr3,true); //attach the local field to logical volume
       
       Horn_inside_lv->SetUserLimits(new G4UserLimits(10.*cm));

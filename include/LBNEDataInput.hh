@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 //
-// $Id: LBNEDataInput.hh,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: LBNEDataInput.hh,v 1.2 2012/07/23 18:13:53 loiacono Exp $
 //----------------------------------------------------------------------
 
 //----------------------------------------------------------------------
@@ -217,6 +217,12 @@ public:
 
    G4double GetTargetZ0(G4int i=0);
 
+   const G4int GetNumberOfHorns() {return NPhorns;}       //number of horns
+   const vint_t GetVectorOfNHornParts() {return PhornNParts;}  //vector of number of parts per horn
+   const G4int GetNPartsOfHorn(unsigned int nhorn);
+   const G4int GetTotalNumberOfHornParts(){ return PhornNphorn;}
+   const G4double GetHornCurrentForHornPart(G4int npart);
+
    
 
 ////////////////////////////////////
@@ -359,6 +365,37 @@ private:
 
   
 };
+
+
+//-----------------------------------------------------------------
+inline const G4double LBNEDataInput::GetHornCurrentForHornPart(G4int npart)
+{
+   if(npart < 1 || npart > PhornNphorn) 
+   {
+      G4cout << " LBNEDataInput::GetHornCurrentForHornPart() - "
+	     << " invalid horn part " << npart 
+	     << ". npart can only be in [1," << PhornNphorn << "]" << G4endl; 
+
+      return -999;
+      
+   }
+   return PhornCurrent[npart-1];
+}
+
+//-----------------------------------------------------------------
+inline const G4int LBNEDataInput::GetNPartsOfHorn(unsigned int nhorn)
+{ 
+   if(nhorn != (unsigned int)NPhorns || PhornNParts.size() != nhorn)
+   {
+      G4cout << " LBNEDataInput::GetNPartsOfHorn() - "
+	     << " invalid horn number nhorn " << nhorn 
+	     << ". There are " << NPhorns << "(" 
+	     << PhornNParts.size() << ")" << G4endl;
+      return -999;
+   }
+
+   return PhornNParts[nhorn-1];
+}
 
 //-----------------------------------------------------------------
 inline G4double LBNEDataInput::GetTargetZ0(G4int i)

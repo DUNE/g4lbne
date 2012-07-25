@@ -12,6 +12,8 @@ ifndef G4INSTALL
   G4INSTALL = ../..
 endif
 
+CPPFLAGS += -g -fPIC -Wno-deprecated
+
 include $(G4INSTALL)/config/architecture.gmk
 
 #
@@ -46,12 +48,12 @@ CPPFLAGS += $(shell $(ROOTSYS)/bin/root-config --cflags)
 
 ROOTLIBS      = $(shell $(ROOTSYS)/bin/root-config --glibs) -lMinuit -lHtml
 ROOTLIBS      := $(filter-out -lNew,$(ROOTLIBS))
-ROOTLIBS      := $(filter-out -lThread,$(ROOTLIBS))
+#ROOTLIBS      := $(filter-out -lThread,$(ROOTLIBS))
 ROOTLIBS      := $(filter-out -lpthread,$(ROOTLIBS))
 INTYLIBS      += $(ROOTLIBS)
 
 #for debuging
-CPPFLAGS += -g -Wno-deprecated
+
 
 CPPFLAGS += -I$(G4INCLUDE)
 
@@ -69,4 +71,4 @@ g4lbneCint: include/TrackPoint_t.hh include/LBNEDataNtp_t.hh Linkdef.h
 	rootcint -f ./src/g4lbneCint.cc -c -I./include ../include/TrackPoint_t.hh ../include/LBNEDataNtp_t.hh ../Linkdef.h
 
 libg4lbneDict:  $(G4WORKDIR)/tmp/$(G4SYSTEM)/g4lbne/TrackPoint_t.o $(G4WORKDIR)/tmp/$(G4SYSTEM)/g4lbne/LBNEDataNtp_t.o $(G4WORKDIR)/tmp/$(G4SYSTEM)/g4lbne/g4lbneCint.o
-	gcc -g -shared -o libg4lbneDict.so    $(G4WORKDIR)/tmp/$(G4SYSTEM)/g4lbne/TrackPoint_t.o $(G4WORKDIR)/tmp/$(G4SYSTEM)/g4lbne/LBNEDataNtp_t.o $(G4WORKDIR)/tmp/$(G4SYSTEM)/g4lbne/g4lbneCint.o
+	gcc -g -fPIC -shared -o libg4lbneDict.so    $(G4WORKDIR)/tmp/$(G4SYSTEM)/g4lbne/TrackPoint_t.o $(G4WORKDIR)/tmp/$(G4SYSTEM)/g4lbne/LBNEDataNtp_t.o $(G4WORKDIR)/tmp/$(G4SYSTEM)/g4lbne/g4lbneCint.o

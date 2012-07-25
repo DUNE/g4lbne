@@ -1,14 +1,14 @@
 //----------------------------------------------------------------------
 // LBNEAnalysis.cc
 //
-// $Id: LBNEAnalysis.cc,v 1.2 2011/08/02 16:29:08 loiacono Exp $
+// $Id: LBNEAnalysis.cc,v 1.3 2012/07/25 00:38:06 loiacono Exp $
 //----------------------------------------------------------------------
 
 #include <vector>
 #include <fstream>
 #include <iomanip>
 #include <stdlib.h>
-#include <map.h>
+#include <map>
 
 //Root 
 #include <TSystem.h>        // ROOT head file for a generic interface to the OS
@@ -362,7 +362,7 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
    //
    //if not using external ntuple then need to find the particle that exited the target
    //
-   G4int tptrkid = -99;
+   //G4int tptrkid = -99;
    if(!(LBNEData->GetUseFlukaInput()) && !(LBNEData->GetUseMarsInput())) 
    {
 
@@ -449,7 +449,7 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
 	       fLBNEOutNtpData->tpy = ParticleMomentum[1]/GeV;
 	       fLBNEOutNtpData->tpz = ParticleMomentum[2]/GeV;
 	       fLBNEOutNtpData->tptype = tptype;
-	       tptrkid = trackID;
+	       //tptrkid = trackID;
 	       findTarget = true;
 	       
 	       break;

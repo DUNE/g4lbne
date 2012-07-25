@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 //
-// $Id: LBNEDataInput.hh,v 1.2 2012/07/23 18:13:53 loiacono Exp $
+// $Id: LBNEDataInput.hh,v 1.3 2012/07/25 00:37:00 loiacono Exp $
 //----------------------------------------------------------------------
 
 //----------------------------------------------------------------------
@@ -164,7 +164,7 @@ public:
    G4String GetGeometryTag()           { return fGeometryTag; }
    G4String GetRunNumber()             { return fRunNumber; }
    G4String GetASCIIOutputFileName()   { return fASCIIOutputFileName; }
-   G4String GetHornNeckPartName(G4int ihorn);
+   G4String GetHornNeckPartName(G4int ihorn) const;
 
    G4int    GetDebugLevel()            { return fDebugLevel;}
    G4int    GetNEvents()               {return fNEvents;}   
@@ -215,13 +215,16 @@ public:
 
 
 
-   G4double GetTargetZ0(G4int i=0);
+   G4double GetTargetZ0(G4int i=0) const;
 
-   const G4int GetNumberOfHorns() {return NPhorns;}       //number of horns
-   const vint_t GetVectorOfNHornParts() {return PhornNParts;}  //vector of number of parts per horn
-   const G4int GetNPartsOfHorn(unsigned int nhorn);
-   const G4int GetTotalNumberOfHornParts(){ return PhornNphorn;}
-   const G4double GetHornCurrentForHornPart(G4int npart);
+   G4int GetNumberOfHorns() const 
+      {return NPhorns;}       //number of horns
+   const vint_t GetVectorOfNHornParts() const 
+      {return PhornNParts;}  //vector of number of parts per horn
+   G4int GetNPartsOfHorn(unsigned int nhorn) const;
+   G4int GetTotalNumberOfHornParts() const 
+      { return PhornNphorn;}
+   G4double GetHornCurrentForHornPart(G4int npart) const;
 
    
 
@@ -368,7 +371,7 @@ private:
 
 
 //-----------------------------------------------------------------
-inline const G4double LBNEDataInput::GetHornCurrentForHornPart(G4int npart)
+inline G4double LBNEDataInput::GetHornCurrentForHornPart(G4int npart) const
 {
    if(npart < 1 || npart > PhornNphorn) 
    {
@@ -383,7 +386,7 @@ inline const G4double LBNEDataInput::GetHornCurrentForHornPart(G4int npart)
 }
 
 //-----------------------------------------------------------------
-inline const G4int LBNEDataInput::GetNPartsOfHorn(unsigned int nhorn)
+inline G4int LBNEDataInput::GetNPartsOfHorn(unsigned int nhorn) const
 { 
    if(nhorn != (unsigned int)NPhorns || PhornNParts.size() != nhorn)
    {
@@ -398,7 +401,7 @@ inline const G4int LBNEDataInput::GetNPartsOfHorn(unsigned int nhorn)
 }
 
 //-----------------------------------------------------------------
-inline G4double LBNEDataInput::GetTargetZ0(G4int i)
+inline G4double LBNEDataInput::GetTargetZ0(G4int i) const
 {
    if(i >= 0 && i < TargetNtarget )
    {
@@ -414,7 +417,7 @@ inline G4double LBNEDataInput::GetTargetZ0(G4int i)
 }
 
 //-----------------------------------------------------------------
-inline G4String LBNEDataInput::GetHornNeckPartName(G4int ihorn)
+inline G4String LBNEDataInput::GetHornNeckPartName(G4int ihorn) const
 {
    G4int nhorns = fHornNeckPartName.size();
 

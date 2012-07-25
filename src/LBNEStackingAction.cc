@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNEStackingAction.cc
-// $Id: LBNEStackingAction.cc,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: LBNEStackingAction.cc,v 1.2 2012/07/25 00:38:06 loiacono Exp $
 //----------------------------------------------------------------------
 
 #include "LBNEStackingAction.hh"
@@ -129,10 +129,10 @@ void LBNEStackingAction::KillEMParticles(G4ClassificationOfNewTrack &classificat
 
    G4ParticleDefinition * particleType = aTrack->GetDefinition();
    // Discard Gammas, Electrons, ...
-   if ((particleType==G4Gamma::GammaDefinition())       ||
-       (particleType==G4Electron::ElectronDefinition()) ||
-       (particleType==G4Positron::PositronDefinition()) &&
-       (classification != fKill))
+   if ( (particleType==G4Gamma::GammaDefinition()       ||
+        particleType==G4Electron::ElectronDefinition()  ||
+        particleType==G4Positron::PositronDefinition() ) &&
+	(classification != fKill) )
    {classification = fKill;}
    
 }

@@ -286,12 +286,13 @@ void LBNEDetectorConstruction::ConstructLBNEHorn(G4int nhorn, G4int nparts, G4in
 	 //
 	 //need to subtract the horn itself from the plane
 	 //
-	 G4double z_neck;
-	 G4double rmin_neck;
-	 G4double rmax_neck;
 	 
-	 z_neck=((LBNEData->PhornNeckZ2[jj]-LBNEData->PhornNeckZ1[jj]));
-	 rmin_neck=LBNEphornRgivenZ(LBNEData->PhornAin[jj],LBNEData->PhornBin[jj],LBNEData->PhornCin[jj],z_neck+LBNEData->PhornZ1[jj]);
+	 //G4double z_neck;
+         //G4double rmin_neck;
+	 //z_neck=((LBNEData->PhornNeckZ2[jj]-LBNEData->PhornNeckZ1[jj]));
+	 //rmin_neck=LBNEphornRgivenZ(LBNEData->PhornAin[jj],LBNEData->PhornBin[jj],LBNEData->PhornCin[jj],z_neck+LBNEData->PhornZ1[jj]);
+	 
+	 G4double rmax_neck;
 	 rmax_neck=LBNEData->PhornROCout[jj];
 	 
          

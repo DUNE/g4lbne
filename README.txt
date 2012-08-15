@@ -1,6 +1,11 @@
 
 G4LBNE Documentation
 
+The Beam Simulation Group Wiki is here
+https://cdcvs.fnal.gov/redmine/projects/lbne-beamsim/wiki
+This contains much information about Fermilab accounts,
+g4lbne and flux files.
+
 *************************************************************
 Getting g4lbne
 *************************************************************
@@ -9,7 +14,8 @@ get g4lbne from /cvs/projects/lbne-beamsim repository
 in read mode:
 cvs -d :pserver:anonymous@cdcvs.fnal.gov:/cvs/projects/lbne-beamsim checkout lbne-beamsim/g4lbne
 
-in read/write mode:
+
+(see Wiki first) in read/write mode:
 cvs -d :ext:p-lbne-beamsim@cdcvs.fnal.gov:/cvs/projects/lbne-beamsim checkout lbne-beamsim/g4lbne
 
 ************************************************************
@@ -21,24 +27,27 @@ Setting up products and work directory
 You need to setup Geant4 (and CLHEP) and ROOT products.
 You will need to determine what products you want to use.
 
-On lbnegpvm01 ..... in the g4lbne directory
-There is a setup.sh file
+G4LBNE CAN BE INSTALLED AT ANY INSTITUTION(SEE THE WIKI).
+BUT WE MUST ALL USE THE SAME PRODUCT VERSIONS!!!!!!!!!!
+
+
+AT FERMILAB:
+On lbnegpvm01 (At Fermilab) ..... in the g4lbne/setups directory
+There is a setup_g4lbne_fnal.sh file. (This file will setup
+Geant4, ROOT and CLHEP that are installed and used by Larsoft 
+in the nusoft area at fermilab.)
 
 IN THAT FILE DO THE FOLLOWING....
-( look for #!!!!!!!!!!!! in the setup.sh file)
+( look for ##!!!!!!!!!!!! in the setup_g4lbne_fnal.sh file)
 You need to define a g4lbne work directory, for example
 export G4WORKDIR="path to work directory/g4lbne_work"
 this is where the binaries will be stored when compiling
 
 Now....
-source this file
-source setup.sh
-then do
-setup_g4lbne
+source this file (in g4lbne directory do..)
+source setups/setup_g4lbne_fnal.sh
 
-Right now this file uses MINOS code and is a bit of a hack.
-Need to figure out how to use LBNE geant, root and clhep products.
-the file setup-fnal.sh should work but doesn't.
+
 
 
 *************************************************************
@@ -56,9 +65,9 @@ if there is an error message that says something about
 or upon linking
 not being able to find a lib.so file just type make again.
 
-There will be errors related to 64 bit compilation...these dont 
-prevent the code from running with the current GNUMakefile and setup.sh
-but eventually these will go away once the proper setup is found.
+(If running with 32bit versions of Geant4, ROOT, CLHEP on a 64bit machine, 
+there will be errors related to 64 bit compilation...these dont 
+prevent the code from compiling and running.)  
 
 once you get
 
@@ -74,12 +83,15 @@ as your last line...you are good :-)
 Running  (see next section for a step by step example)
 *************************************************************
 
-There are 3 example macros 
+There are 3 example macros in the macros/ directory
 nubeam-G4PBeam-stdnubeam.mac
 nubeam-Fluka-stdnubeam.mac
 nubeam-G4PBeam-Tracking.mac
 Read the comments in each macro to understand what is in them.
 Visualization commands are also listed in each macro.
+The macro 
+vis_nubeam-G4PBeam-stdnubeam.mac
+is already setup for visualization.
 
 nubeam-G4PBeam-stdnubeam.mac is for running the standard neutrino
 beam simulation with a geant4 generated proton beam on the target.
@@ -93,7 +105,7 @@ not something a standard user would ever use.
 The Geometry is configured from input files in the /input directory
 to run g4lbne type for example
 
-./g4lbne --input inputs/lbnedocdb2161v6.input nubeam-G4PBeam-stdnubeam.mac
+./g4lbne --input inputs/lbnedocdb2161v6.input macros/nubeam-G4PBeam-stdnubeam.mac
 
 
 ************************************************************

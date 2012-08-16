@@ -48,8 +48,6 @@ source this file (in g4lbne directory do..)
 source setups/setup_g4lbne_fnal.sh
 
 
-
-
 *************************************************************
 Compiling
 *************************************************************

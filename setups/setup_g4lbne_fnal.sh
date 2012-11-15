@@ -69,12 +69,14 @@ if [ -z "${G4LBNE_IS_SETUP}" ]; then
     setup ${SETUP_GEANT4}
     echo "setup ${SETUP_GEANT4}"
 
+    echo "Setting up G4Photon"
+    export SETUP_G4PHOTON="g4photon v2_1"
+    setup ${SETUP_G4PHOTON}
+    echo "setup ${SETUP_G4PHOTON}"
+
 ##!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     export G4WORKDIR="SET YOUR WORKING DIRECTORY e.g /lbne/app/users/loiacono/lbne-beamsim/g4lbne_work"
 ##!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    #echo "Setting up G4Photon"
-    #setup ${SETUP_G4PHOTON}
-    #echo "setup ${SETUP_G4PHOTON}"
 
     export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:$G4LIB/Linux-g++"
 

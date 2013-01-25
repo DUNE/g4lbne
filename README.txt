@@ -73,7 +73,6 @@ once you get
 cp G4WORKDIR/bin/Linux-g++/g4lbne .
 
 as your last line...you are good :-)
-
 ************************************************************
 
 
@@ -153,25 +152,33 @@ root [1] nudata t
 root [2] t.Loop()
 Warning in <TClass::TClass>: no dictionary for class TrackPoint_t is available
 Warning in <TClass::TClass>: no dictionary for class LBNEDataNtp_t is available
-nentries = 8568
-Info in <TCanvas::MakeDefCanvas>:  created default TCanvas with name c1
-Info in <TCanvas::Print>: eps file g4lbne_example_lbnedocdb2161v6_totalfluxnear.eps has been created
-Info in <TCanvas::Print>: file g4lbne_example_lbnedocdb2161v6_totalfluxnear.png has been created
-Info in <TCanvas::Print>: eps file g4lbne_example_lbnedocdb2161v6_numufluxnear.eps has been created
-Info in <TCanvas::Print>: file g4lbne_example_lbnedocdb2161v6_numufluxnear.png has been created
-Info in <TCanvas::Print>: eps file g4lbne_example_lbnedocdb2161v6_numubarfluxnear.eps has been created
-Info in <TCanvas::Print>: file g4lbne_example_lbnedocdb2161v6_numubarfluxnear.png has been created
-Info in <TCanvas::Print>: eps file g4lbne_example_lbnedocdb2161v6_nuefluxnear.eps has been created
-Info in <TCanvas::Print>: file g4lbne_example_lbnedocdb2161v6_nuefluxnear.png has been created
-Info in <TCanvas::Print>: eps file g4lbne_example_lbnedocdb2161v6_nuebarfluxnear.eps has been created
-Info in <TCanvas::Print>: file g4lbne_example_lbnedocdb2161v6_nuebarfluxnear.png has been created
+Total number of Entries = 6710
+Info in <TCanvas::Print>: eps file g4lbne_fluxexample_le010z185i_NumiDPHelium_totalfluxatMINOSND.eps has been created
+Info in <TCanvas::Print>: file g4lbne_fluxexample_le010z185i_NumiDPHelium_totalfluxatMINOSND.png has been created
+Info in <TCanvas::Print>: eps file g4lbne_fluxexample_le010z185i_NumiDPHelium_numufluxatMINOSND.eps has been created
+Info in <TCanvas::Print>: file g4lbne_fluxexample_le010z185i_NumiDPHelium_numufluxatMINOSND.png has been created
+Info in <TCanvas::Print>: eps file g4lbne_fluxexample_le010z185i_NumiDPHelium_numubarfluxatMINOSND.eps has been created
+Info in <TCanvas::Print>: file g4lbne_fluxexample_le010z185i_NumiDPHelium_numubarfluxatMINOSND.png has been created
+Info in <TCanvas::Print>: eps file g4lbne_fluxexample_le010z185i_NumiDPHelium_nuefluxatMINOSND.eps has been created
+Info in <TCanvas::Print>: file g4lbne_fluxexample_le010z185i_NumiDPHelium_nuefluxatMINOSND.png has been created
+Info in <TCanvas::Print>: eps file g4lbne_fluxexample_le010z185i_NumiDPHelium_nuebarfluxatMINOSND.eps has been created
+Info in <TCanvas::Print>: file g4lbne_fluxexample_le010z185i_NumiDPHelium_nuebarfluxatMINOSND.png has been created
+Info in <TCanvas::Print>: eps file g4lbne_fluxexample_le010z185i_NumiDPHelium_totalfluxatSOMEDETECTOR.eps has been created
+Info in <TCanvas::Print>: file g4lbne_fluxexample_le010z185i_NumiDPHelium_totalfluxatSOMEDETECTOR.png has been created
+Info in <TCanvas::Print>: eps file g4lbne_fluxexample_le010z185i_NumiDPHelium_numufluxatSOMEDETECTOR.eps has been created
+Info in <TCanvas::Print>: file g4lbne_fluxexample_le010z185i_NumiDPHelium_numufluxatSOMEDETECTOR.png has been created
+Info in <TCanvas::Print>: eps file g4lbne_fluxexample_le010z185i_NumiDPHelium_numubarfluxatSOMEDETECTOR.eps has been created
+Info in <TCanvas::Print>: file g4lbne_fluxexample_le010z185i_NumiDPHelium_numubarfluxatSOMEDETECTOR.png has been created
+Info in <TCanvas::Print>: eps file g4lbne_fluxexample_le010z185i_NumiDPHelium_nuefluxatSOMEDETECTOR.eps has been created
+Info in <TCanvas::Print>: file g4lbne_fluxexample_le010z185i_NumiDPHelium_nuefluxatSOMEDETECTOR.png has been created
+Info in <TCanvas::Print>: eps file g4lbne_fluxexample_le010z185i_NumiDPHelium_nuebarfluxatSOMEDETECTOR.eps has been created
+Info in <TCanvas::Print>: file g4lbne_fluxexample_le010z185i_NumiDPHelium_nuebarfluxatSOMEDETECTOR.png has been created
 root [3] .q
 
+After each print statment you will have plots of the Total Flux, NuMu Flux only, NuMuBar Flux only, NuE Flux only and NuEBar flux only at the MINOS Near detector and at "some detector".  All of the histograms will also be written to the file flux_histograms.root.  
 
-after each print statment you will have a plot of the Total Flux, NuMu Flux only,
-NuMuBar Flux only, NuE Flux only and NuEBar flux only. Each will be saved
-as an eps and a png in the g4lbne/example directory.
+The MINOS near detector plots are produced using the weights from the g4lbne ntuple.  The "some detector" plots use weights from the NuWeight() function in nudata.C, which reweights the MINOSNear detector flux to flux at some other (x,y,z) coordinate specified by the user.  The position of "some detector" is currently set to the position of the MINOS near detector, so the MINOSND and SOMEDETECTOR plots will be identical.  However, you may change the position of "some detector" to be anything you desire.  Each plot will be saved as an eps and a png in the g4lbne/example directory.  
 
-Examine nudata.C to understand how the flux is calculated.
+More information on how the flux is calculated can be obtained by examining nudata.C.
 
 ************************************************************

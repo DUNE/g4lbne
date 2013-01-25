@@ -1,28 +1,30 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Thu Dec 15 16:17:39 2011 by ROOT version 5.20/00
+// Fri Jun 15 11:03:32 2012 by ROOT version 5.28/00
 // from TTree nudata/g4lbne Neutrino ntuple
-// found on file: g4lbne_testing_010.root
+// found on file: g4lbne_example_le010z185i_NumiDPHelium_010.root
 //////////////////////////////////////////////////////////
+
+//modified after creation by L. Loiacono
 
 #ifndef nudata_h
 #define nudata_h
 
-
 // C++
 #include <string>
 #include <vector>
-//Root
+//ROOT
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
 
 class nudata {
 public :
+
    TChain          *fChain;   //!pointer to the analyzed TTree or TChain
    //TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
-
+   
    Double_t        fTotalPOT; //total pot used for all files
    std::string     ffilename; //filename for saving histograms
 
@@ -172,6 +174,12 @@ public :
    void SetTitles(TH1* h, 
 		  const std::string &xtitle = "", 
 		  const std::string &ytitle = "");
+   
+   double nudata::GetWeight(const std::vector<double> xdet,
+			    double& nu_wght, 
+			    double& nu_energy);
+
+   
 };
 
 #endif
@@ -180,25 +188,32 @@ public :
 nudata::nudata(TTree *tree)
 {
 
+//????????????????????????????
+//????????????????????????????
+//
    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    //
    //Add files here
    //
    std::vector<std::string> fFileVec;
-   fFileVec.push_back("g4lbne_example_lbnedocdb2161v6_010.root");
-   fFileVec.push_back("g4lbne_example_lbnedocdb2161v6_011.root");
+   fFileVec.push_back("g4lbne_example_le010z185i_NumiDPHelium_010.root");
+   fFileVec.push_back("g4lbne_example_le010z185i_NumiDPHelium_011.root");
 
    //
-   //set number of pot per file
+   //set number of pot per file !!!!!!!!!!!!!!!!!!!!!!!!!!!!
    //
    double potperfile = 10000.0;
    fTotalPOT  = potperfile*(double)fFileVec.size();
 
-   //
-   //set the filename for saving histograms
-   //
-   ffilename = "g4lbne_example_lbnedocdb2161v6";
    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   //set the filename prefix for saving histogram plots 
+   //
+   ffilename = "g4lbne_fluxexample_le010z185i_NumiDPHelium";
+  
+
+//
+//????????????????????????????
+//????????????????????????????
 
    fChain = new TChain("nudata");
    for(std::vector<std::string>::const_iterator sit = fFileVec.begin(); sit != fFileVec.end(); ++sit)
@@ -207,7 +222,26 @@ nudata::nudata(TTree *tree)
    }
 
    Init(fChain);
+
+
 }
+/*
+nudata::nudata(TTree *tree)
+{
+// if parameter tree is not specified (or zero), connect the file
+// used to generate this class and read the Tree.
+   if (tree == 0) {
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("g4lbne_example_le010z185i_NumiDPHelium_010.root");
+      if (!f) {
+         f = new TFile("g4lbne_example_le010z185i_NumiDPHelium_010.root");
+      }
+      tree = (TTree*)gDirectory->Get("nudata");
+
+   }
+   Init(tree);
+}
+*/
+
 
 nudata::~nudata()
 {
@@ -247,7 +281,7 @@ void nudata::Init(TTree *tree)
    // (once per file to be processed).
 
    // Set branch addresses and branch pointers
-   
+
    fCurrent = -1;
    fChain->SetMakeClass(1);
 

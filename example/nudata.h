@@ -195,10 +195,10 @@ nudata::nudata(TTree *tree)
    //
    //Add files here
    //
-   std::vector<std::string> fFileVec;
-   fFileVec.push_back("g4lbne_example_le010z185i_NumiDPHelium_010.root");
-   fFileVec.push_back("g4lbne_example_le010z185i_NumiDPHelium_011.root");
-
+  std::vector<std::string> fFileVec;
+  fFileVec.push_back("g4lbne_example_lbnedocdb2161v6_010.root");
+  fFileVec.push_back("g4lbne_example_lbnedocdb2161v6_011.root");
+  
    //
    //set number of pot per file !!!!!!!!!!!!!!!!!!!!!!!!!!!!
    //

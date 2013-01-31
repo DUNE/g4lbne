@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 //
-// $Id: LBNEDataInput.hh,v 1.3 2012/07/25 00:37:00 loiacono Exp $
+// $Id: LBNEDataInput.hh,v 1.4 2013/01/31 19:26:03 loiacono Exp $
 //----------------------------------------------------------------------
 
 //----------------------------------------------------------------------
@@ -69,10 +69,11 @@ private:
    void readFile();
    void preInit();
    void initHornStandard();
-   void initBeam();
+   void initBeam(G4double beamz0 = -999.0);
    void initRock();
    void initTargetArea();
    void initTarget();
+   void initNUMITarget();
    void initBaffle();
    void initTunnel();
    void initShield();

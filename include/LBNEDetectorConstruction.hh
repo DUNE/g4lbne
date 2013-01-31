@@ -97,6 +97,24 @@ private:
    G4double LBNEphornRgivenZ(G4double a, G4double b, G4double c, G4double z);
 //
 //
+
+
+//
+//Specifically Exact Numi Target
+//This automatically constructs the NUMI baffle and budal monitor
+   void ConstructNUMITarget(); //budal mon is constructed in this function
+   void ConstructNUMIBaffle();
+//
+//
+
+   ///use for testing gometry stuff
+   void ConstructTesting();
+  
+
+
+
+ 
+//
    /*
    void ConstructTargetHall();
    void ConstructTarget();
@@ -151,6 +169,7 @@ private:
    G4Material* Shotcrete;
    G4Material* Rebar_Concrete;
    G4Material* Target;
+   G4Material* NumiTargetHelium;
    G4Material* DolomiteRock;
    G4Material* DoloStone;
    G4Material* MaqShale;

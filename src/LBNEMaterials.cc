@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 //
-// $Id: LBNEMaterials.cc,v 1.2 2012/06/15 19:15:04 loiacono Exp $
+// $Id: LBNEMaterials.cc,v 1.3 2013/01/31 19:23:30 loiacono Exp $
 //----------------------------------------------------------------------
 
 #include "LBNEDetectorConstruction.hh"
@@ -13,9 +13,9 @@ void LBNEDetectorConstruction::DefineMaterials()
 {  
 
    if(LBNEData->GetDebugLevel() > 0)
-   {
-      std::cout << "LBNEDetectorConstruction::DefineMaterials() Called." << std::endl;
-   }
+   { std::cout << "LBNEDetectorConstruction::DefineMaterials() Called..." << std::endl; }
+
+
 
   //------------------------------------------------------ materials
 
@@ -49,6 +49,11 @@ void LBNEDetectorConstruction::DefineMaterials()
 #else
   G4Element* elNa  = new G4Element(name="Natrium"  ,symbol="Na" , Z=11 , A);
 #endif
+
+
+  std::cout << "...LBNEDetectorConstruction::DefineMaterials() 1 " << std::endl; 
+
+
   
   A = 24.305*g/mole;  
   G4Element* elMg  = new G4Element(name="Magnesium"  ,symbol="Mg" , Z=12 , A); 
@@ -98,6 +103,10 @@ void LBNEDetectorConstruction::DefineMaterials()
 
   //A = 69.72*g/mole; 
   //G4Element* elGa  = new G4Element(name="Gallium"  ,symbol="Ga" , Z=31 , A);
+
+  std::cout << "...LBNEDetectorConstruction::DefineMaterials() 2 " << std::endl; 
+
+
 
   A = 200.59*g/mole; 
   G4Element* elHg  = new G4Element(name="Mercury"  ,symbol="Hg" , Z=80, A);
@@ -167,13 +176,23 @@ void LBNEDetectorConstruction::DefineMaterials()
   //other materials  
   He = new G4Material("Helium", Z=2., A=4.0026*g/mole, density= 0.1785*kg/m3,kStateGas,300*kelvin,2.55*atmosphere);
 
+  std::cout << "...LBNEDetectorConstruction::DefineMaterials() 3 " << std::endl; 
+
 //#ifdef FLUGG
 //  Be = new G4Material("Berylliu", Z=4.,A=9.01*g/mole, density=1.848*g/cm3);
 //  Target =  new G4Material("Carbon", Z=LBNEData->TargetZ, A=LBNEData->TargetA, density= LBNEData->TargetDensity);
 //#else
   Be = new G4Material("Berillium", Z=4.,A=9.01*g/mole, density=1.848*g/cm3);
   C =  new G4Material("Carbon", Z=6., A=12.01*g/mole, density= 1.83*g/cm3);
+
+
   Target =  new G4Material("Target", Z=LBNEData->TargetZ[0], A=LBNEData->TargetA[0], density= LBNEData->TargetDensity[0]);
+
+  NumiTargetHelium = new G4Material("NumiTargetHelium", Z=2., A=4.0026*g/mole, density= 0.1785*kg/m3,kStateGas,300*kelvin,2.55*atmosphere);
+
+
+  std::cout << "...LBNEDetectorConstruction::DefineMaterials() 4 " << std::endl; 
+
 //#endif
   Al = new G4Material("Aluminum", Z= 13., A= 26.98*g/mole, density= 2.7*g/cm3);
   Ar = new G4Material("Argon", Z= 18, A=39.948*g/mole,1.784*kg/m3,kStateGas,300*kelvin,atmosphere);
@@ -350,6 +369,10 @@ void LBNEDetectorConstruction::DefineMaterials()
 
   DefaultMaterial = Air;
   LBNEData->SetDefaultMaterial(DefaultMaterial);
+
+  if(LBNEData->GetDebugLevel() > 0)
+  { std::cout << "...LBNEDetectorConstruction::DefineMaterials() Finished." << std::endl; }
+
 }
 //-----------------------------------------------------------------------
 G4Material* LBNEDetectorConstruction::GetMaterial(G4int matcode)
@@ -438,7 +461,7 @@ G4VisAttributes* LBNEDetectorConstruction::GetMaterialVisAttrib(G4int matCode)
   if (matCode==9 || matCode==20) visAttrib=new G4VisAttributes(G4Color(0.2, 0.8, 1.));//Al
   if (matCode==10 || matCode==11) visAttrib=new G4VisAttributes(G4Color(0.5, 0.3, 0.0));//Fe
   if (matCode==12) visAttrib=new G4VisAttributes(G4Color(0.0, 0.4, .9));//BluBlocks
-  if (matCode==15) visAttrib=new G4VisAttributes(false); //Air
+  if (matCode==15) visAttrib=new G4VisAttributes(G4Color(0.0, 0.9, 0.1)); //Air
   if (matCode==16) visAttrib=new G4VisAttributes(false);//Vacuum
   if (matCode==17 || matCode==19 || matCode==20) visAttrib=new G4VisAttributes(G4Color(0.75, 0.85, 0.95));//Concrete
   if (matCode==18) visAttrib=new G4VisAttributes(G4Color(0.6, 0.6, 0.7));//Target

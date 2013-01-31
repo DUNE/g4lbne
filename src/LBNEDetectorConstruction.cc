@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: LBNEDetectorConstruction.cc,v 1.2 2012/07/23 18:14:57 loiacono Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3 2013/01/31 19:23:30 loiacono Exp $
 //----------------------------------------------------------------------
 
 #include <fstream>
@@ -41,26 +41,25 @@
 //-------------------------------------------------------------------------
 LBNEDetectorConstruction::LBNEDetectorConstruction()
 {
-  //This must Scan the input file     
-  LBNEData = LBNEDataInput::GetLBNEDataInput();
-
-  if(!LBNEData)
-  {
-     std::cout << "********************************BIG PROBLEM*****************************" << std::endl; 
-     std::cout << "********************************BIG PROBLEM*****************************" << std::endl; 
-     std::cout << "********************************BIG PROBLEM*****************************" << std::endl; 
-     std::cout << " LBNEData does not exist in LBNEDetectorConstruction Constructor." << std::endl;
-     std::cout << "********************************BIG PROBLEM*****************************" << std::endl; 
-     std::cout << "********************************BIG PROBLEM*****************************" << std::endl; 
-     std::cout << "********************************BIG PROBLEM*****************************" << std::endl; 
-     return;
-  }
-
-  if(LBNEData->GetDebugLevel() > 0)
-  {
-     std::cout << "LBNEDetectorConstruction Constructor Called." << std::endl;
-  }
-
+   //This must Scan the input file     
+   LBNEData = LBNEDataInput::GetLBNEDataInput();
+   
+   if(LBNEData->GetDebugLevel() > 0)
+   { std::cout << "LBNEDetectorConstruction Constructor Called..." << std::endl; }
+   
+   
+   if(!LBNEData)
+   {
+      std::cout << "********************************BIG PROBLEM*****************************" << std::endl; 
+      std::cout << "********************************BIG PROBLEM*****************************" << std::endl; 
+      std::cout << "********************************BIG PROBLEM*****************************" << std::endl; 
+      std::cout << " LBNEData does not exist in LBNEDetectorConstruction Constructor." << std::endl;
+      std::cout << "********************************BIG PROBLEM*****************************" << std::endl; 
+      std::cout << "********************************BIG PROBLEM*****************************" << std::endl; 
+      std::cout << "********************************BIG PROBLEM*****************************" << std::endl; 
+      return;
+   }
+   
 
   G4int nhornparts = LBNEData -> GetTotalNumberOfHornParts();
 
@@ -87,21 +86,24 @@ LBNEDetectorConstruction::LBNEDetectorConstruction()
      fHornICBFieldVec.push_back(bfic);
      fHornOCBFieldVec.push_back(bfoc);
   }
-  
+
 
   // create commands for interactive definition of the geometry
   detectorMessenger = new LBNEDetectorMessenger(this);
 
   DefineMaterials();
+
+  if(LBNEData->GetDebugLevel() > 0)
+  { std::cout << "...LBNEDetectorConstruction Constructor Complete." << std::endl; }
+  
+
 }
 //-------------------------------------------------------------------------
 LBNEDetectorConstruction::~LBNEDetectorConstruction()
 {
 
    if(LBNEData->GetDebugLevel() > 0)
-   {
-      std::cout << "LBNEDetectorConstruction Destructor Called." << std::endl;
-   }
+   { std::cout << "LBNEDetectorConstruction Destructor Called..." << std::endl; }
 
    for(unsigned int i = 0; i < fHornBFieldVec.size(); ++i)
    {
@@ -121,6 +123,9 @@ LBNEDetectorConstruction::~LBNEDetectorConstruction()
    DestroyMaterials();
 
    delete detectorMessenger;
+
+   if(LBNEData->GetDebugLevel() > 0)
+   { std::cout << "...LBNEDetectorConstruction Destructor Complete." << std::endl; }
 
 }
 //-------------------------------------------------------------------------
@@ -150,6 +155,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct()
      G4cout << "********************************************************************" << G4endl;
 
      
+/////////////////////////////////
      /*
       //Scan the input file     
       LBNEData = LBNEDataInput::GetLBNEDataInput();
@@ -161,13 +167,10 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct()
 
       DefineMaterials();
      */
+/////////////////////////////////
   }
 
-  /* FLUGG - Fluka wants a rectangular world volume
-  //Define world volume 
-  G4Tubs* ROCK_solid = new G4Tubs("ROCK_solid",0.,LBNEData->RockRadius,LBNEData->RockHalfLen,0,360.*deg);
-  //  ROCK_log = new G4LogicalVolume(ROCK_solid,DoloStone,"ROCK_log",0,0,0);
-  */
+
   G4Box* ROCK_solid = new G4Box("ROCK_solid",LBNEData->RockRadius,
                                 LBNEData->RockRadius,LBNEData->RockHalfLen); 
   ROCK_log = new G4LogicalVolume(ROCK_solid, DoloStone,"ROCK_log",0,0,0); 
@@ -175,6 +178,12 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct()
   ROCK = new G4PVPlacement(0,G4ThreeVector(),ROCK_log,"ROCK",0,false,0);
   
 
+
+/*
+  LBNEDetectorConstruction::ConstructTesting();
+  
+
+*/
 
 
 
@@ -185,11 +194,27 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct()
      ConstructLBNEDecayPipe(); //temporarily swapped with ConstructTargetHall...
      ConstructLBNETargetHall();
      ConstructLBNEShielding(); //MUST call this BEFORE ConstructHorns
-     if(LBNEData->HPBaffle) ConstructLBNEBaffle();
-     
      ConstructLBNEHorns();
 
-     if (LBNEData->GetConstructTarget()) { ConstructLBNETarget();}
+     if(LBNEData->GetConstructTarget())
+     {
+	if(LBNEData->TargetShape == "NUMI" || 
+	   LBNEData->TargetShape == "numi" || 
+	   LBNEData->TargetShape == "Numi" || 
+	   LBNEData->TargetShape == "NuMI")
+	{
+	  G4cout << "CONSTRUCTING NUMI TARGET" << G4endl;
+	  ConstructNUMITarget();
+	  G4cout << "CONSTRUCTING NUMI TARGET" << G4endl;
+	}
+	else
+	{
+	   ConstructLBNETarget();
+	   if(LBNEData->HPBaffle) ConstructLBNEBaffle();
+	}
+	
+     }
+
      //ConstructLBNEHadronAbsorber(); 
      
      CheckOverlaps();
@@ -201,20 +226,53 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct()
   {
      
      ConstructLBNETargetHall();
-     if(LBNEData->HPBaffle) ConstructLBNEBaffle();
-     ConstructLBNETarget();
+
+     if(LBNEData->GetConstructTarget())
+     {
+	if(LBNEData->TargetShape == "NUMI" || 
+	   LBNEData->TargetShape == "numi" || 
+	   LBNEData->TargetShape == "Numi" || 
+	   LBNEData->TargetShape == "NuMI")
+	{
+	   ConstructNUMITarget();
+	}
+	else
+	{
+	   ConstructLBNETarget();
+	   if(LBNEData->HPBaffle) ConstructLBNEBaffle();
+	}
+	
+     }
+
      
      CheckOverlaps();
   }
   else if(LBNEData->GetSimulation() == "Horn 1 Tracking" ||
 	  LBNEData->GetSimulation() == "Horn 2 Tracking")
   {
+
+
      ConstructLBNEDecayPipe(); //temporarily swapped with ConstructTargetHall...
      ConstructLBNETargetHall();
      ConstructLBNEShielding(); //MUST call this BEFORE ConstructHorns
-     if(LBNEData->HPBaffle) ConstructLBNEBaffle();
-     ConstructLBNETarget();
      ConstructLBNEHorns();
+
+     if(LBNEData->GetConstructTarget())
+     {
+	if(LBNEData->TargetShape == "NUMI" || 
+	   LBNEData->TargetShape == "numi" || 
+	   LBNEData->TargetShape == "Numi" || 
+	   LBNEData->TargetShape == "NuMI")
+	{
+	   ConstructNUMITarget();
+	}
+	else
+	{
+	   ConstructLBNETarget();
+	   if(LBNEData->HPBaffle) ConstructLBNEBaffle();
+	}
+	
+     }
 
      CheckOverlaps();
   }
@@ -245,6 +303,9 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct()
 
 
 
+
+
+
   //Set Vis Attributes according to solid material (only for volumes not explicitly set)
   G4LogicalVolumeStore* lvStore=G4LogicalVolumeStore::GetInstance();
   lvStore=G4LogicalVolumeStore::GetInstance();
@@ -264,7 +325,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct()
   G4cout << G4endl;
   G4cout << G4endl;
   
-  
+
 
   return ROCK;
 }

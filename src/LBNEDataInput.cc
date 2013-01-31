@@ -1,10 +1,11 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: LBNEDataInput.cc,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: LBNEDataInput.cc,v 1.2 2013/01/31 19:23:30 loiacono Exp $
 //----------------------------------------------------------------------
 
 #include "LBNEDataInput.hh"
+#include "LBNENumiDataInput.hh"
 #include "G4ThreeVector.hh"
 //#include "NumiHornSpiderSupport.hh"
 #include "G4UserLimits.hh"
@@ -74,7 +75,7 @@ LBNEDataInput::LBNEDataInput()
     fBeamOnTarget(false),
     fConstructTarget(true),
 
-    fDebugLevel(0),
+    fDebugLevel(1),
     fRunPeriod(-999),
     fNEvents(-1),
 
@@ -116,10 +117,10 @@ LBNEDataInput::LBNEDataInput()
   //preInit();
   initHornStandard();
 
-  initBeam();
-  initRock();
-  initTargetArea();
-  initTarget();
+  initBeam();       // must come before initTarget
+  initRock();       // must come before initTargetArea
+  initTargetArea(); // must come before initTarget
+  initTarget();     // must come before initBaffle
   initBaffle();
   initTunnel();
   initShield();
@@ -128,6 +129,7 @@ LBNEDataInput::LBNEDataInput()
   initHadrBox();
   initHorns();
   initDetectors();
+
 
   if(keyedInput != NULL) delete keyedInput;
 
@@ -263,16 +265,22 @@ void LBNEDataInput::initHornStandard()
 }
 
 //-------------------------------------------------------------------------------
-void LBNEDataInput::initBeam() 
+void LBNEDataInput::initBeam(G4double beamz0) 
 {
-  G4float beam_x_dir = 0;
-  G4float beam_y_dir = 0;
-  G4float beam_z_dir = 1;
+  G4float beam_x_dir = -999.0;
+  G4float beam_y_dir = -999.0;
+  G4float beam_z_dir = -999.0;
   
-  G4double beam_x_pos, beam_y_pos, beam_z_pos;
+  G4double beam_x_pos = -999.0;
+  G4double beam_y_pos = -999.0;
+  G4double beam_z_pos = beamz0;
+  if(beam_z_pos == beam_x_pos)
+  {  
+     get(beam_z_pos, "BeamZ0", m); 
+  }
   get(beam_x_pos, "BeamX0", m);
   get(beam_y_pos, "BeamY0", m);
-  get(beam_z_pos, "BeamZ0", m);
+
   
   get(fProtonMomentum, "BeamP", GeV);
   get(fBeamSigmaX, "BeamSigx", m);
@@ -297,61 +305,157 @@ void LBNEDataInput::initRock() {
 }
 //-------------------------------------------------------------------------------
 void LBNEDataInput::initTargetArea() {
-  get(TargetAreaZ0, "TargetAreaZ0", m);
-  get(TargetAreaLength, "TargetAreaLength", m);
-  get(TargetAreaHeight, "TargetAreaHeight", m);
-  get(TargetAreaWidth, "TargetAreaWidth", m);
+  get(TargetAreaZ0,       "TargetAreaZ0",     m);
+  get(TargetAreaLength,   "TargetAreaLength", m);
+  get(TargetAreaHeight,   "TargetAreaHeight", m);
+  get(TargetAreaWidth,    "TargetAreaWidth",  m);
   get(TargetAreaGEANTmat, "TargetAreaGEANTmat");
 }
+
 //-------------------------------------------------------------------------------
-void LBNEDataInput::initTarget() {
+void LBNEDataInput::initTarget() 
+{
   //All of the Target inputs are now being used.
 
   fConstructTarget = true;
 
   getConstructFlag(TargetNtarget, "TargetNtarget");
-  //if(TargetNtarget <= 0) return;
   if(TargetNtarget <= 0) G4Exception("TargetNtarget must be at least one");
 
   get(TargetShape, "TargetShape");
 
-  get(TargetX0, "TargetX0", TargetNtarget, m);
-  get(TargetY0, "TargetY0", TargetNtarget, m);
-  get(TargetZ0, "TargetZ0", TargetNtarget, m);
-  get(TargetDxdz, "TargetDxdz", TargetNtarget);
-  get(TargetDydz, "TargetDydz", TargetNtarget);
-  get(TargetLength, "TargetLength", TargetNtarget, m);
 
-  if(TargetShape == "BOX") {
-    get(TargetWidth, "TargetWidth", TargetNtarget, m);
-    get(TargetHeight, "TargetHeight", TargetNtarget, m);
+  if(TargetShape == "NUMI" || 
+     TargetShape == "numi" || 
+     TargetShape == "Numi" || 
+     TargetShape == "NuMI")
+  {
+     if (TargetNtarget != 1)
+     {
+	G4Exception("TargetNtarget must be 1 for the Numi target");
+     }
+     LBNEDataInput::initNUMITarget();
   }
-  else if(TargetShape == "TUBE") {
-    get(TargetRadius, "TargetRadius", TargetNtarget, m);
-  }
-  else {
-    G4Exception("TargetShape must be either 'BOX' or 'TUBE'");
+  else
+  {
+     get(TargetX0,     "TargetX0",     TargetNtarget, m);
+     get(TargetY0,     "TargetY0",     TargetNtarget, m);
+     get(TargetZ0,     "TargetZ0",     TargetNtarget, m);
+     get(TargetDxdz,   "TargetDxdz",   TargetNtarget);
+     get(TargetDydz,   "TargetDydz",   TargetNtarget);
+     get(TargetLength, "TargetLength", TargetNtarget, m);
+     
+     if(TargetShape == "BOX") 
+     {
+	get(TargetWidth,  "TargetWidth",  TargetNtarget, m);
+	get(TargetHeight, "TargetHeight", TargetNtarget, m);
+     }
+     else if(TargetShape == "TUBE") 
+     {
+	get(TargetRadius, "TargetRadius", TargetNtarget, m);
+     }
+     else 
+     {
+	G4Exception("TargetShape must be either 'BOX', 'TUBE', or 'NUMI'");
+     }
+
+     get(TargetA,        "TargetA",         TargetNtarget, g/mole);
+     get(TargetZ,        "TargetZ",         TargetNtarget);
+     get(TargetDensity,  "TargetDensity",   TargetNtarget, g/cm3);
+     get(TargetGEANTmat, "TargetGEANTmat",  TargetNtarget);
   }
 
-  get(TargetA, "TargetA", TargetNtarget, g/mole);
-  get(TargetZ, "TargetZ", TargetNtarget);
-  get(TargetDensity, "TargetDensity", TargetNtarget, g/cm3);
-  get(TargetGEANTmat, "TargetGEANTmat", TargetNtarget);
+
 }
+
+//-------------------------------------------------------------------------------
+void LBNEDataInput::initNUMITarget() 
+{
+   G4cout << G4endl;
+   G4cout << "****************************************************************" << G4endl;
+   G4cout << "LBNEDataInput::initNUMITarget() - Initializing NUMI Target..." << G4endl;
+
+   //
+   //Set NUMI Target Numbers
+   //
+
+   G4double TgtZ0BaffleDownZDist = 680*mm; //see notes in LBNENumiDataInput
+   G4double HPBaffleLength       = 1.5*m;
+   G4double BaffleBeamDist       = 10*cm; //arbitrary
+
+   TargetA.push_back(12.01*g/mole);
+   TargetZ.push_back(6.);
+   TargetDensity.push_back(1.78*g/cm3); //1.815*g/cm3;//1.754*g/cm3;
+   TargetGEANTmat.push_back(18);
+   
+   //
+   //Read In Target Z0 but nothing but Z0 works right now 
+   //!!!!!!This is all that may be set for the NUMI target!!!!!!
+   //
+
+
+//   getConstructFlag(TargetNtarget, "TargetNtarget");
+   get(TargetX0,     "TargetX0",     TargetNtarget, m);
+   get(TargetY0,     "TargetY0",     TargetNtarget, m);
+   get(TargetZ0,     "TargetZ0",     TargetNtarget, m);
+   get(TargetDxdz,   "TargetDxdz",   TargetNtarget);
+   get(TargetDydz,   "TargetDydz",   TargetNtarget);
+   
+   LBNENumiDataInput *LBNENumiData = LBNENumiDataInput::GetLBNENumiDataInput();
+   LBNENumiData -> SetTargetX0  (TargetX0[0]);
+   LBNENumiData -> SetTargetY0  (TargetY0[0]);
+   LBNENumiData -> SetTargetZ0  (TargetZ0[0]);
+   LBNENumiData -> SetTargetDxdz(TargetDxdz[0]);
+   LBNENumiData -> SetTargetDydz(TargetDydz[0]);
+   //
+   //Target Area Must have been read in before now
+   //
+   LBNENumiData -> SetTargetAreaZ0       (TargetAreaZ0);
+   LBNENumiData -> SetTargetAreaLength   (TargetAreaLength);
+   LBNENumiData -> SetTargetAreaHeight   (TargetAreaHeight);
+   LBNENumiData -> SetTargetAreaWidth    (TargetAreaWidth);
+   LBNENumiData -> SetTargetAreaGEANTmat (TargetAreaGEANTmat);
+
+
+   //set proton beam location to be BaffleBeamDist in front of baffle
+   G4double beamz0 = TargetZ0[0] - TgtZ0BaffleDownZDist -  HPBaffleLength - BaffleBeamDist;
+   initBeam(beamz0); 
+
+
+   G4cout << "LBNEDataInput::initNUMITarget() - Done initializing NUMI Target." << G4endl;
+   G4cout << "****************************************************************" << G4endl;
+   G4cout << G4endl;
+
+}
+
 //-------------------------------------------------------------------------------
 void LBNEDataInput::initBaffle() {
   getConstructFlag(HPBaffle, "HPBaffle");
   if(!HPBaffle) return;
+
+  if(TargetShape == "NUMI" || 
+     TargetShape == "numi" || 
+     TargetShape == "Numi" || 
+     TargetShape == "NuMI")
+ {
+    
+    G4cout << "*****************************************************"<< G4endl;
+    G4cout << "LBNEDataInput::initBaffle() - The Baffle is automatically" << G4endl;
+    G4cout << " constructed when choosing to simulate the NUMI Target." << G4endl;
+    G4cout << "*****************************************************"<< G4endl;
+    G4cout << G4endl;
+    return;
+ }
   
   get(HPBaffleGEANTMat, "HPBaffleGEANTMat");
-  get(HPBaffleX0, "HPBaffleX0", m);
-  get(HPBaffleY0, "HPBaffleY0", m);
-  get(HPBaffleZ0, "HPBaffleZ0", m);
-  get(HPBaffleDXDZ, "HPBaffleDXDZ");
-  get(HPBaffleDYDZ, "HPBaffleDYDZ");
-  get(HPBaffleLength, "HPBaffleLength", m);
-  get(HPBaffleRin, "HPBaffleHoleR", m);
-  get(HPBaffleRout, "HPBaffleRadius", m);
+  get(HPBaffleX0,       "HPBaffleX0", m);
+  get(HPBaffleY0,       "HPBaffleY0", m);
+  get(HPBaffleZ0,       "HPBaffleZ0", m);
+  get(HPBaffleDXDZ,     "HPBaffleDXDZ");
+  get(HPBaffleDYDZ,     "HPBaffleDYDZ");
+  get(HPBaffleLength,   "HPBaffleLength", m);
+  get(HPBaffleRin,      "HPBaffleHoleR", m);
+  get(HPBaffleRout,     "HPBaffleRadius", m);
 }
 //-------------------------------------------------------------------------------
 void LBNEDataInput::initTunnel() {
@@ -391,7 +495,8 @@ void LBNEDataInput::initDecayPipe() {
   get(DecayPipeFillGeantMat, "DecayPipeFillGeantMat");
 }
 //-------------------------------------------------------------------------------
-void LBNEDataInput::initBlocks() {
+void LBNEDataInput::initBlocks() 
+{
   get(BlockNblock, "BlockNblock");
 
   get(BlockX0, "BlockX0", BlockNblock, m);

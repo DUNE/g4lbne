@@ -13,18 +13,19 @@ LBNEKeyedInput::LBNEKeyedInput() {}
 //text input and add the appropriate variables to the varMap.
 //See the class description for details on the format.
 
+//-------------------------------------------------------------------------------
 void LBNEKeyedInput::readFile(cstr_t filename) {
   ifstream in(filename.c_str());
   if(!in.is_open()) fail("unable to open file");
   readStream(in);
   in.close();
 }
-
+//-------------------------------------------------------------------------------
 void LBNEKeyedInput::readString(cstr_t data) {
   istringstream in(data);
   readStream(in);
 }
-
+//-------------------------------------------------------------------------------
 void LBNEKeyedInput::readStream(istream& in) {
   G4String line;
   while(!in.eof()) {
@@ -36,7 +37,7 @@ void LBNEKeyedInput::readStream(istream& in) {
   }
 }
 
-
+//-------------------------------------------------------------------------------
 //return true iff a variable with the given name was read from input
 G4bool LBNEKeyedInput::contains(G4String name) const {
   name.toUpper();
@@ -69,7 +70,7 @@ void LBNEKeyedInput::get(cstr_t name, vector<G4bool>& buffer, G4int length)
 void LBNEKeyedInput::get(cstr_t name, vector<G4String>& buffer, G4int length)
   {getVector(name, buffer, length);}
 
-
+//-------------------------------------------------------------------------------
 //Prints contents of the varMap to standard output.
 void LBNEKeyedInput::printAll() const {
   G4cout << G4endl;
@@ -81,6 +82,7 @@ void LBNEKeyedInput::printAll() const {
   G4cout << "--------------------------" << G4endl << G4endl;
 }
 
+//-------------------------------------------------------------------------------
 //Processes a single line of input data. If line is empty or a comment,
 //this will do nothing. If line is a continuation of an array, it will
 //append the new contents to the pre-existing contents. Otherwise, it will
@@ -106,6 +108,7 @@ void LBNEKeyedInput::handleLine(cstr_t line) {
   varMap[key] = value.str();
 }
 
+//-------------------------------------------------------------------------------
 //Return true iff line is a comment or "". A comment starts with a series
 //of C's, then a non-alphanumeric character like ' '.
 G4bool LBNEKeyedInput::isLineComment(cstr_t line) {
@@ -117,6 +120,7 @@ G4bool LBNEKeyedInput::isLineComment(cstr_t line) {
   return true;
 }
 
+//-------------------------------------------------------------------------------
 //Checks if there is a "#=" term (what I call the "index specifier") as the
 //next thing in the input stream "in". After this function, the input stream
 //will be positioned right after the index specifier, if it exists. Also
@@ -135,6 +139,7 @@ void LBNEKeyedInput::readIndexSpec(istringstream& in, cstr_t name) {
   }
 }
 
+//-------------------------------------------------------------------------------
 //counts how many words (separated by spaces) are in value
 G4int LBNEKeyedInput::countTerms(cstr_t value) {
   istringstream in(value);
@@ -147,7 +152,7 @@ G4int LBNEKeyedInput::countTerms(cstr_t value) {
   }
   return count;
 }
-
+//-------------------------------------------------------------------------------
 //calls G4Exception with a constructed message
 //-message: description of the nature of the error
 //-key: optional variable name relating to the error (default: "")
@@ -160,7 +165,7 @@ void LBNEKeyedInput::fail(cstr_t message, cstr_t key, G4int expected) {
   if(expected >= 0) exc << "  expected: " << expected << '\n';
   G4Exception(exc.str());
 }
-
+//-------------------------------------------------------------------------------
 //Similar to getVector, but only reads in one value instead of a vector.
 template<class T>
 void LBNEKeyedInput::getSingle(cstr_t name, T& buffer) {
@@ -168,7 +173,7 @@ void LBNEKeyedInput::getSingle(cstr_t name, T& buffer) {
   getVector(name, myVector, 1);
   buffer = myVector[0];
 }
-
+//-------------------------------------------------------------------------------
 //A template function to parse a variable with the given name, and write
 //the result to buffer. The general form of this variable is a sequence
 //of terms, separated by single spaces. Each term will be parsed using one
@@ -194,6 +199,7 @@ void LBNEKeyedInput::getVector(G4String name, vector<T>& buffer, G4int length)
 }
 
 
+//-------------------------------------------------------------------------------
 //The parse(in, buffer, name) functions will read a single term from the input
 //stream "in" and write it to buffer.  The exact function that is called
 //depends on the type of buffer. name is the name of the variable, used
@@ -232,7 +238,7 @@ void LBNEKeyedInput::parse(istream& in, G4String& buffer, cstr_t name) {
 	 "expected string(s) in single quotes, no spaces within string", name);
 }
 
-
+//-------------------------------------------------------------------------------
 //Called by parse functions to make sure the input stream "in" was
 //successful in reading the data. If not, fail is called with the given
 //message and variable name.

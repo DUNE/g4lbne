@@ -1,0 +1,180 @@
+##################################################
+##
+## submit_flux.py
+##
+## Laura Fields
+## Aug 2012
+##
+## Submits g4lbne flux jobs using macro, input, number of
+## protons, number of jobs and output directory
+## specified by user
+##
+###################################################
+
+from optparse import OptionParser
+import sys, os, subprocess, shutil
+
+
+###################################################
+#
+# Setup parser that reads in options
+#
+###################################################
+
+usage = "usage: %prog [options]"
+parser = OptionParser(usage=usage)
+
+parser.add_option("-g", "--g4lbne_dir", dest="g4lbne_dir",
+                  help="g4lbne directory", default="/lbne/app/users/$USER/lbne-beamsim/g4lbne")
+parser.add_option("-i", "--input", dest="input",
+                  help="Input Card", default="lbnedocdb2161v6")
+parser.add_option("-m", "--macro", dest="macro",
+                  help="Template Macro", default="nubeam-G4PBeam-stdnubeam")
+parser.add_option("-n", "--n_events", dest="n_events",
+                  help="Number of events per job", default=500000)
+parser.add_option("-f", "--first_job", dest="first_job",
+                  help="First job number", default="1")
+parser.add_option("-l", "--last_job", dest="last_job",
+                  help="Last job number", default="1")
+parser.add_option("-o", "--output_dir", dest="output_dir",
+                  help="Output directory", default="/lbne/data/users/$USER/fluxfiles/g4lbne")
+parser.add_option("-v", "--interactive", dest="interactive",action="store_true",
+                  help="Run interactively", default=False)
+
+(options, args) = parser.parse_args()
+
+
+if options.g4lbne_dir.find("$USER")>=0:
+    options.g4lbne_dir = options.g4lbne_dir.replace("$USER",os.getenv("USER"));
+if options.output_dir.find("$USER")>=0:
+    options.output_dir = options.output_dir.replace("$USER",os.getenv("USER"));
+
+###################################################
+#
+# Check validity of specified options
+#
+###################################################
+g4lbne_executable=options.g4lbne_dir+"/g4lbne";
+if not os.path.exists(g4lbne_executable):
+    print "I can't find a g4lbne executable at "+g4lbne_executable
+    sys.exit()
+
+g4lbne_setup=options.g4lbne_dir+"/setups/setup_g4lbne_fnal.sh"
+if not os.path.exists(g4lbne_setup):
+    print "I can't find a g4lbne setup script at "+g4lbne_setup
+    sys.exit()
+    
+macro_template = options.g4lbne_dir+"/macros/"+options.macro+".mac"
+if not os.path.exists(macro_template):
+    print "I can't find a macro at "+macro_template
+    sys.exit()
+
+input_card = options.g4lbne_dir+"/inputs/"+options.input+".input"
+if not os.path.exists(macro_template):
+    print "I can't find an input card at at "+input_card
+    sys.exit()
+
+###################################################
+#
+# Print options
+#
+###################################################
+if options.interactive: 
+    print "Running",str(int(options.last_job)-int(options.first_job)+1),"jobs starting with JobID",options.first_job,"."
+    print "Submitting",str(int(options.last_job)-int(options.first_job)+1),"jobs starting with JobID",options.first_job,"."
+print "Using the g4lbne installed at",options.g4lbne_dir
+print "Each job will have",options.n_events,"protons on target."
+print "Using macro template:",macro_template
+print "Using input card:",input_card
+print "Output will be written to:",options.output_dir
+
+###################################################
+#
+# Create Directories
+#
+###################################################
+macro_dir = options.output_dir+"/"+options.input+"/"+options.macro+"/macros/"
+flux_dir = options.output_dir+"/"+options.input+"/"+options.macro+"/flux/"
+log_dir = options.output_dir+"/"+options.input+"/"+options.macro+"/logfiles/"
+
+# executables have to go on /app
+macro_dir = macro_dir.replace("lbne/data","lbne/app")
+
+print "Creating",macro_dir
+if not os.path.exists(macro_dir):
+    os.makedirs(macro_dir)
+print "Creating",flux_dir
+if not os.path.exists(flux_dir):
+    os.makedirs(flux_dir)
+print "Creating",log_dir
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
+
+os.chmod(macro_dir,0777)
+os.chmod(flux_dir,0777)
+os.chmod(log_dir,0777)
+    
+temp_dir = os.getenv("PWD")+"/"
+if not options.interactive:
+    temp_dir = "$_CONDOR_SCRATCH_DIR/"
+
+###################################################
+#
+# Loop over requested jobs
+#
+###################################################
+file_prefix = options.input+"_"+options.macro
+for i in range(int(options.first_job),int(options.last_job)+1):
+
+    # Write macro file
+    oldmac = open(macro_template)    
+    new_macro_filename = macro_dir+os.path.basename(macro_template).replace(".mac","_"+str(i).zfill(3)+".mac")
+    newmac = open(new_macro_filename, 'w')
+    for s in oldmac.xreadlines():
+        if s.find("/LBNE/output/OutputNtpFileName")>=0:
+            newmac.write("/LBNE/output/OutputNtpFileName "+temp_dir+file_prefix)
+        elif s.find("/LBNE/rndm/setRndmSeed")>=0:
+            newmac.write("/LBNE/rndm/setRndmSeed "+str(i))
+        elif s.find("/LBNE/run/setRunID")>=0:
+            newmac.write("/LBNE/run/setRunID "+str(i))
+        elif s.find("/LBNE/run/NEvents")>=0:
+            newmac.write("/LBNE/run/NEvents "+str(options.n_events))
+        else:
+            newmac.write(s);
+
+    # Write the script that will run on the grid
+    script_filename = macro_dir+os.path.basename(macro_template).replace(".mac","_"+str(i).zfill(3)+".sh")
+    wrapper = open(script_filename, 'w')
+    #wrapper.write("#!/bin/sh \n\n")
+    wrapper.write("source "+g4lbne_setup+" \n\n")
+    wrapper.write(g4lbne_executable+" --input "+input_card+" "+new_macro_filename+'\n\n')
+        # copy the output
+    temp_output = temp_dir+"/"+file_prefix+"_"+str(i).zfill(3)+".root"
+    final_output = temp_output.replace(temp_dir,flux_dir);
+    if options.interactive:
+        wrapper.write("cp "+temp_output+" "+final_output+"\n");
+    else:
+        wrapper.write("/grid/fermiapp/minos/scripts/cpn "+temp_output+" "+final_output+"\n");
+
+    wrapper.close();
+    
+    os.chmod(script_filename,0777);
+
+
+
+    # remove old files to prevent permissions conflicts
+    logfile = log_dir + os.path.basename(final_output).replace(".root",".log");
+    if os.path.exists(logfile):
+        os.remove(logfile)
+    if os.path.exists(final_output):
+        os.remove(final_output);
+
+    # Submit the job
+    
+    if options.interactive:
+        print "type "+script_filename+" to execute"
+    else:
+        os.system("jobsub -g -L "+logfile+" "+script_filename);
+
+    print "DONE"
+    

@@ -1,3 +1,4 @@
+#include <getopt.h>
 
 #include "G4RunManager.hh"
 #include "G4UImanager.hh"
@@ -17,13 +18,7 @@
 #include "LBNEDetectorConstruction.hh"
 
 // Interaction Physics Lists
-
-#include "QGSP.hh"
-//#include "QGSC.hh"
-//#include "QBBC.hh"
-//#include "FTFC.hh"
-//#include "FTFP.hh"
-//#include "LHEP.hh"
+#include "G4PhysListFactory.hh"
 
 #include "LBNEPrimaryGeneratorAction.hh"
 #include "LBNEEventAction.hh"
@@ -43,33 +38,96 @@
 #endif
 
 
+void DisplayHelp()
+{
+  // Helpful help message goes here
+  G4cout << "" << G4endl;
+  G4cout << "-------------------------------------------------" << G4endl;
+  G4cout << "G4LBNE Help" << G4endl;
+  G4cout << "Usage:" << G4endl;
+  G4cout << "  /path/to/g4lbne --input /path/to/inputfile ";
+  G4cout << "--physicslist physlistname /path/to/macrofile" << G4endl;
+  G4cout << "ALTERNATELY: " << G4endl;
+  G4cout << "  /path/to/g4lbne -i /path/to/inputfile -p physlistname ";
+  G4cout << "/path/to/macrofile " << G4endl;
+  G4cout << "The default physics list is QGSP_BERT" << G4endl;
+  G4cout << "The options --help or -h display this message " << G4endl;
+  G4cout << "-------------------------------------------------" << G4endl;
+  G4cout << "" << G4endl;
+}
 
 int main(int argc,char** argv)
 {
 
-   for(int i = 1; i < argc-1; i++) 
-   {
-      if(argv[i] == G4String("--input")) 
-      {
-	 LBNEDataInput::setInputFile(argv[i+1]);
-	 for(; i < argc-2; i++) 
-	 {
-	    argv[i] = argv[i+2];
-	 }
-	 argc -= 2;
-	 break;
-      }
-   }
+  G4String macroFileName = "";
+  G4String inputFileName = "";
+  G4String physListName = "QGSP_BERT"; // default
+  
+  // Parse Arguments
+  int c;
+  while(1){
+    int option_index = 0;
+    static struct option long_options[] = {
+      {"help", 0, 0, 0},
+      {"input", required_argument, 0, 0},
+      {"physicslist", required_argument, 0, 0},
+      {0,0,0,0}
+    };
+    c = getopt_long(argc, argv, "hi:p:", long_options, &option_index);
+    if(c == -1) break;
+    switch (c) {
+      case 0:
+        switch(option_index){
+          case 0: // --help
+            DisplayHelp();
+            exit(0);
+          case 1: // --input
+            inputFileName = optarg;
+            break;
+          case 2: // --physicslist
+            physListName = optarg;
+            break;
+        }
+        break;
+      case 'h':
+        DisplayHelp();
+        exit(0);
+        break;
+      case 'i':
+        inputFileName = optarg;
+        break;
+      case 'p':
+        physListName = optarg;
+        break;
+    }  
+  }
+  if(optind < argc){ 
+    G4cout << "Setting macroFile to " << argv[argc-1] << G4endl;
+    macroFileName = argv[argc-1];
+  }
+
+  if(!inputFileName.isNull()){
+    LBNEDataInput::setInputFile(inputFileName);
+  }
 
   // Construct the default run manager
   G4RunManager* runManager = new LBNERunManager();
 
   // set mandatory initialization classes
   runManager->SetUserInitialization(new LBNEDetectorConstruction);
-
+  
   // Initialize Physics Lists
-  QGSP * theQGSP = new QGSP;
-  runManager->SetUserInitialization(theQGSP);
+  G4PhysListFactory factory;
+  G4VModularPhysicsList *phys = 0;
+  if(factory.IsReferencePhysList(physListName)){
+    phys = factory.GetReferencePhysList(physListName);
+  } else {
+    G4cout << "Couldn't find physics list name " << physListName << G4endl;
+    G4cout << "Exiting" << G4endl;
+    exit(0);
+  }
+  runManager->SetUserInitialization(phys);
+  runManager->SetUserAction(new LBNEPrimaryGeneratorAction);
 
 #ifdef G4VIS_USE
   // Visualization, if you choose to have it!
@@ -77,8 +135,6 @@ int main(int argc,char** argv)
   visManager->Initialize();
 #endif
 
-  // set mandatory user action class
-  runManager->SetUserAction(new LBNEPrimaryGeneratorAction);
 
   // set user action classes
   runManager->SetUserAction(new LBNEEventAction);
@@ -275,9 +331,8 @@ int main(int argc,char** argv)
   else  // Batch mode
   { 
     G4String command = "/control/execute ";
-    G4String fileName = argv[1];
-    G4cout << "Executing " << command+fileName << G4endl;
-    UI->ApplyCommand(command+fileName);
+    G4cout << "Executing " << command+macroFileName << G4endl;
+    UI->ApplyCommand(command+macroFileName);
   }
 
 #ifdef G4VIS_USE

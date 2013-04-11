@@ -1,0 +1,2778 @@
+<?xml version="1.0"?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+  <define>
+    <position name="Premask_itself_hole_3_1inPremask_itself_3pos" x="14.986000" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="Core_watrcool_longvert_1inPremask_itself_3pos" x="0.000000" y="-95.250000" z="-12.700000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_1inPremask_itself_3rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_2inPremask_itself_3pos" x="0.000000" y="-95.250000" z="-10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_2inPremask_itself_3rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_3inPremask_itself_3pos" x="0.000000" y="95.250000" z="-12.700000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_3inPremask_itself_3rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_4inPremask_itself_3pos" x="0.000000" y="95.250000" z="-10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_4inPremask_itself_3rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_1inPremask_itself_3pos" x="-106.680000" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_1inPremask_itself_3rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_2inPremask_itself_3pos" x="-106.680000" y="0.000000" z="-10.160000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_2inPremask_itself_3rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_3inPremask_itself_3pos" x="106.680000" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_3inPremask_itself_3rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_4inPremask_itself_3pos" x="106.680000" y="0.000000" z="-10.160000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_4inPremask_itself_3rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_5inPremask_itself_3pos" x="0.000000" y="-95.250000" z="-2.540000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_5inPremask_itself_3rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_6inPremask_itself_3pos" x="0.000000" y="-95.250000" z="0.000000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_6inPremask_itself_3rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_7inPremask_itself_3pos" x="0.000000" y="95.250000" z="-2.540000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_7inPremask_itself_3rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_8inPremask_itself_3pos" x="0.000000" y="95.250000" z="0.000000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_8inPremask_itself_3rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_5inPremask_itself_3pos" x="-106.680000" y="0.000000" z="-2.540000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_5inPremask_itself_3rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_6inPremask_itself_3pos" x="-106.680000" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_6inPremask_itself_3rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_7inPremask_itself_3pos" x="106.680000" y="0.000000" z="-2.540000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_7inPremask_itself_3rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_8inPremask_itself_3pos" x="106.680000" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_8inPremask_itself_3rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_9inPremask_itself_3pos" x="0.000000" y="-95.250000" z="7.620000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_9inPremask_itself_3rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_10inPremask_itself_3pos" x="0.000000" y="-95.250000" z="10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_10inPremask_itself_3rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_11inPremask_itself_3pos" x="0.000000" y="95.250000" z="7.620000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_11inPremask_itself_3rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_12inPremask_itself_3pos" x="0.000000" y="95.250000" z="10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_12inPremask_itself_3rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_9inPremask_itself_3pos" x="-106.680000" y="0.000000" z="7.620000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_9inPremask_itself_3rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_10inPremask_itself_3pos" x="-106.680000" y="0.000000" z="10.160000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_10inPremask_itself_3rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_11inPremask_itself_3pos" x="106.680000" y="0.000000" z="7.620000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_11inPremask_itself_3rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_12inPremask_itself_3pos" x="106.680000" y="0.000000" z="10.160000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_12inPremask_itself_3rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_itself_3_1inPreM_sppos" x="0.000000" y="0.000000" z="-77.700000" unit="cm"/>
+    <position name="Premask_itself_3_2inPreM_sppos" x="0.000000" y="0.000000" z="-46.720000" unit="cm"/>
+    <position name="Premask_itself_hole_5_1inPremask_itself_5pos" x="8.890000" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="Core_watrcool_longvert_10x1inPremask_itself_5pos" x="0.000000" y="-95.250000" z="-12.700000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_10x1inPremask_itself_5rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_20x1inPremask_itself_5pos" x="0.000000" y="-95.250000" z="-10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_20x1inPremask_itself_5rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_30x1inPremask_itself_5pos" x="0.000000" y="95.250000" z="-12.700000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_30x1inPremask_itself_5rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_40x1inPremask_itself_5pos" x="0.000000" y="95.250000" z="-10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_40x1inPremask_itself_5rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_10x1inPremask_itself_5pos" x="-106.680000" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_10x1inPremask_itself_5rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_20x1inPremask_itself_5pos" x="-106.680000" y="0.000000" z="-10.160000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_20x1inPremask_itself_5rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_30x1inPremask_itself_5pos" x="106.680000" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_30x1inPremask_itself_5rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_40x1inPremask_itself_5pos" x="106.680000" y="0.000000" z="-10.160000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_40x1inPremask_itself_5rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_50x1inPremask_itself_5pos" x="0.000000" y="-95.250000" z="-2.540000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_50x1inPremask_itself_5rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_60x1inPremask_itself_5pos" x="0.000000" y="-95.250000" z="0.000000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_60x1inPremask_itself_5rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_70x1inPremask_itself_5pos" x="0.000000" y="95.250000" z="-2.540000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_70x1inPremask_itself_5rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_80x1inPremask_itself_5pos" x="0.000000" y="95.250000" z="0.000000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_80x1inPremask_itself_5rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_50x1inPremask_itself_5pos" x="-106.680000" y="0.000000" z="-2.540000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_50x1inPremask_itself_5rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_60x1inPremask_itself_5pos" x="-106.680000" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_60x1inPremask_itself_5rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_70x1inPremask_itself_5pos" x="106.680000" y="0.000000" z="-2.540000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_70x1inPremask_itself_5rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_80x1inPremask_itself_5pos" x="106.680000" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_80x1inPremask_itself_5rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_90x1inPremask_itself_5pos" x="0.000000" y="-95.250000" z="7.620000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_90x1inPremask_itself_5rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_100x1inPremask_itself_5pos" x="0.000000" y="-95.250000" z="10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_100x1inPremask_itself_5rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_110x1inPremask_itself_5pos" x="0.000000" y="95.250000" z="7.620000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_110x1inPremask_itself_5rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_120x1inPremask_itself_5pos" x="0.000000" y="95.250000" z="10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_120x1inPremask_itself_5rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_90x1inPremask_itself_5pos" x="-106.680000" y="0.000000" z="7.620000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_90x1inPremask_itself_5rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_100x1inPremask_itself_5pos" x="-106.680000" y="0.000000" z="10.160000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_100x1inPremask_itself_5rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_110x1inPremask_itself_5pos" x="106.680000" y="0.000000" z="7.620000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_110x1inPremask_itself_5rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_120x1inPremask_itself_5pos" x="106.680000" y="0.000000" z="10.160000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_120x1inPremask_itself_5rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_itself_5_1inPreM_sppos" x="0.000000" y="0.000000" z="-15.740000" unit="cm"/>
+    <position name="Premask_itself_5_2inPreM_sppos" x="0.000000" y="0.000000" z="15.240000" unit="cm"/>
+    <position name="Premask_itself_hole_7_1inPremask_itself_7pos" x="4.064000" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="Core_watrcool_longvert_10x2inPremask_itself_7pos" x="0.000000" y="-95.250000" z="-12.700000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_10x2inPremask_itself_7rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_20x2inPremask_itself_7pos" x="0.000000" y="-95.250000" z="-10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_20x2inPremask_itself_7rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_30x2inPremask_itself_7pos" x="0.000000" y="95.250000" z="-12.700000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_30x2inPremask_itself_7rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_40x2inPremask_itself_7pos" x="0.000000" y="95.250000" z="-10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_40x2inPremask_itself_7rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_10x2inPremask_itself_7pos" x="-106.680000" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_10x2inPremask_itself_7rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_20x2inPremask_itself_7pos" x="-106.680000" y="0.000000" z="-10.160000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_20x2inPremask_itself_7rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_30x2inPremask_itself_7pos" x="106.680000" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_30x2inPremask_itself_7rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_40x2inPremask_itself_7pos" x="106.680000" y="0.000000" z="-10.160000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_40x2inPremask_itself_7rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_50x2inPremask_itself_7pos" x="0.000000" y="-95.250000" z="-2.540000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_50x2inPremask_itself_7rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_60x2inPremask_itself_7pos" x="0.000000" y="-95.250000" z="0.000000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_60x2inPremask_itself_7rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_70x2inPremask_itself_7pos" x="0.000000" y="95.250000" z="-2.540000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_70x2inPremask_itself_7rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_80x2inPremask_itself_7pos" x="0.000000" y="95.250000" z="0.000000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_80x2inPremask_itself_7rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_50x2inPremask_itself_7pos" x="-106.680000" y="0.000000" z="-2.540000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_50x2inPremask_itself_7rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_60x2inPremask_itself_7pos" x="-106.680000" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_60x2inPremask_itself_7rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_70x2inPremask_itself_7pos" x="106.680000" y="0.000000" z="-2.540000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_70x2inPremask_itself_7rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_80x2inPremask_itself_7pos" x="106.680000" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_80x2inPremask_itself_7rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_90x2inPremask_itself_7pos" x="0.000000" y="-95.250000" z="7.620000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_90x2inPremask_itself_7rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_100x2inPremask_itself_7pos" x="0.000000" y="-95.250000" z="10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_100x2inPremask_itself_7rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_110x2inPremask_itself_7pos" x="0.000000" y="95.250000" z="7.620000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_110x2inPremask_itself_7rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_120x2inPremask_itself_7pos" x="0.000000" y="95.250000" z="10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_120x2inPremask_itself_7rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_90x2inPremask_itself_7pos" x="-106.680000" y="0.000000" z="7.620000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_90x2inPremask_itself_7rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_100x2inPremask_itself_7pos" x="-106.680000" y="0.000000" z="10.160000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_100x2inPremask_itself_7rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_110x2inPremask_itself_7pos" x="106.680000" y="0.000000" z="7.620000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_110x2inPremask_itself_7rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_watrcool_horiz_120x2inPremask_itself_7pos" x="106.680000" y="0.000000" z="10.160000" unit="cm"/>
+    <rotation name="Premask_watrcool_horiz_120x2inPremask_itself_7rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_itself_7_1inPreM_sppos" x="0.000000" y="0.000000" z="46.220000" unit="cm"/>
+    <position name="Premask_itself_7_2inPreM_sppos" x="0.000000" y="0.000000" z="77.200000" unit="cm"/>
+    <position name="PreM_sp_1inConc_SHpos" x="-4.749700" y="0.000000" z="-288.817300" unit="cm"/>
+    <position name="water_3_hh_1inPremask_3_slab_horpos" x="66.878200" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="water_3_hh_1inPremask_3_slab_horrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_3_hh_2inPremask_3_slab_horpos" x="-66.878200" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="water_3_hh_2inPremask_3_slab_horrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_3_hv_1inPremask_3_slab_horpos" x="0.000000" y="280.665200" z="-12.700000" unit="cm"/>
+    <rotation name="water_3_hv_1inPremask_3_slab_horrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_3_hv_2inPremask_3_slab_horpos" x="0.000000" y="-281.935200" z="-12.700000" unit="cm"/>
+    <rotation name="water_3_hv_2inPremask_3_slab_horrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_3_hh_5inPremask_3_slab_horpos" x="66.878200" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="water_3_hh_5inPremask_3_slab_horrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_3_hh_6inPremask_3_slab_horpos" x="-66.878200" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="water_3_hh_6inPremask_3_slab_horrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_3_hv_5inPremask_3_slab_horpos" x="0.000000" y="280.665200" z="0.000000" unit="cm"/>
+    <rotation name="water_3_hv_5inPremask_3_slab_horrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_3_hv_6inPremask_3_slab_horpos" x="0.000000" y="-281.935200" z="0.000000" unit="cm"/>
+    <rotation name="water_3_hv_6inPremask_3_slab_horrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_3_hh_9inPremask_3_slab_horpos" x="66.878200" y="0.000000" z="12.700000" unit="cm"/>
+    <rotation name="water_3_hh_9inPremask_3_slab_horrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_3_hh_10inPremask_3_slab_horpos" x="-66.878200" y="0.000000" z="12.700000" unit="cm"/>
+    <rotation name="water_3_hh_10inPremask_3_slab_horrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_3_hv_9inPremask_3_slab_horpos" x="0.000000" y="280.665200" z="12.700000" unit="cm"/>
+    <rotation name="water_3_hv_9inPremask_3_slab_horrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_3_hv_10inPremask_3_slab_horpos" x="0.000000" y="-281.935200" z="12.700000" unit="cm"/>
+    <rotation name="water_3_hv_10inPremask_3_slab_horrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Premask_3_slab_hor_1inConc_SHpos" x="-229.966700" y="-0.000000" z="-366.017300" unit="cm"/>
+    <position name="Premask_3_slab_hor_2inConc_SHpos" x="-229.966700" y="-0.000000" z="-335.037300" unit="cm"/>
+    <position name="Premask_3_slab_hor_3inConc_SHpos" x="220.467300" y="-0.000000" z="-366.017300" unit="cm"/>
+    <position name="Premask_3_slab_hor_4inConc_SHpos" x="220.467300" y="-0.000000" z="-335.037300" unit="cm"/>
+    <position name="water_3_vv_1inPremask_3_slab_verpos" x="0.000000" y="66.878200" z="-12.700000" unit="cm"/>
+    <rotation name="water_3_vv_1inPremask_3_slab_verrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_3_vv_2inPremask_3_slab_verpos" x="0.000000" y="-66.878200" z="-12.700000" unit="cm"/>
+    <rotation name="water_3_vv_2inPremask_3_slab_verrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_3_vh_1inPremask_3_slab_verpos" x="153.258800" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="water_3_vh_1inPremask_3_slab_verrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_3_vh_2inPremask_3_slab_verpos" x="-153.258800" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="water_3_vh_2inPremask_3_slab_verrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_3_vv_5inPremask_3_slab_verpos" x="0.000000" y="66.878200" z="0.000000" unit="cm"/>
+    <rotation name="water_3_vv_5inPremask_3_slab_verrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_3_vv_6inPremask_3_slab_verpos" x="0.000000" y="-66.878200" z="0.000000" unit="cm"/>
+    <rotation name="water_3_vv_6inPremask_3_slab_verrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_3_vh_5inPremask_3_slab_verpos" x="153.258800" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="water_3_vh_5inPremask_3_slab_verrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_3_vh_6inPremask_3_slab_verpos" x="-153.258800" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="water_3_vh_6inPremask_3_slab_verrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_3_vv_9inPremask_3_slab_verpos" x="0.000000" y="66.878200" z="12.700000" unit="cm"/>
+    <rotation name="water_3_vv_9inPremask_3_slab_verrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_3_vv_10inPremask_3_slab_verpos" x="0.000000" y="-66.878200" z="12.700000" unit="cm"/>
+    <rotation name="water_3_vv_10inPremask_3_slab_verrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_3_vh_9inPremask_3_slab_verpos" x="153.258800" y="0.000000" z="12.700000" unit="cm"/>
+    <rotation name="water_3_vh_9inPremask_3_slab_verrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_3_vh_10inPremask_3_slab_verpos" x="-153.258800" y="0.000000" z="12.700000" unit="cm"/>
+    <rotation name="water_3_vh_10inPremask_3_slab_verrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_3_slab_ver_1inConc_SHpos" x="-4.749700" y="-213.787000" z="-366.017300" unit="cm"/>
+    <position name="Premask_3_slab_ver_2inConc_SHpos" x="-4.749700" y="213.787000" z="-335.037300" unit="cm"/>
+    <position name="Premask_3_slab_ver_3inConc_SHpos" x="-4.749700" y="213.787000" z="-366.017300" unit="cm"/>
+    <position name="Premask_3_slab_ver_4inConc_SHpos" x="-4.749700" y="-213.787000" z="-335.037300" unit="cm"/>
+    <position name="PreM_G1x_1inConc_SHpos" x="127.909700" y="0.000000" z="-350.527300" unit="cm"/>
+    <position name="PreM_G1x_2inConc_SHpos" x="-137.409100" y="0.000000" z="-350.527300" unit="cm"/>
+    <position name="PreG1y_1inConc_SHpos" x="-4.749700" y="121.229400" z="-350.527300" unit="cm"/>
+    <position name="PreG1y_2inConc_SHpos" x="-4.749700" y="-121.229400" z="-350.527300" unit="cm"/>
+    <position name="water_5_hh_1inPremask_5_slab_horpos" x="66.878200" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="water_5_hh_1inPremask_5_slab_horrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_5_hh_2inPremask_5_slab_horpos" x="-66.878200" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="water_5_hh_2inPremask_5_slab_horrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_5_hv_1inPremask_5_slab_horpos" x="0.000000" y="257.525800" z="-12.700000" unit="cm"/>
+    <rotation name="water_5_hv_1inPremask_5_slab_horrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_5_hv_2inPremask_5_slab_horpos" x="0.000000" y="-258.795800" z="-12.700000" unit="cm"/>
+    <rotation name="water_5_hv_2inPremask_5_slab_horrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_5_hh_5inPremask_5_slab_horpos" x="66.878200" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="water_5_hh_5inPremask_5_slab_horrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_5_hh_6inPremask_5_slab_horpos" x="-66.878200" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="water_5_hh_6inPremask_5_slab_horrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_5_hv_5inPremask_5_slab_horpos" x="0.000000" y="257.525800" z="0.000000" unit="cm"/>
+    <rotation name="water_5_hv_5inPremask_5_slab_horrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_5_hv_6inPremask_5_slab_horpos" x="0.000000" y="-258.795800" z="0.000000" unit="cm"/>
+    <rotation name="water_5_hv_6inPremask_5_slab_horrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_5_hh_9inPremask_5_slab_horpos" x="66.878200" y="0.000000" z="12.700000" unit="cm"/>
+    <rotation name="water_5_hh_9inPremask_5_slab_horrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_5_hh_10inPremask_5_slab_horpos" x="-66.878200" y="0.000000" z="12.700000" unit="cm"/>
+    <rotation name="water_5_hh_10inPremask_5_slab_horrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_5_hv_9inPremask_5_slab_horpos" x="0.000000" y="257.525800" z="12.700000" unit="cm"/>
+    <rotation name="water_5_hv_9inPremask_5_slab_horrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_5_hv_10inPremask_5_slab_horpos" x="0.000000" y="-258.795800" z="12.700000" unit="cm"/>
+    <rotation name="water_5_hv_10inPremask_5_slab_horrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Premask_5_slab_hor_1inConc_SHpos" x="-206.827300" y="-0.000000" z="-304.057300" unit="cm"/>
+    <position name="Premask_5_slab_hor_2inConc_SHpos" x="-206.827300" y="-0.000000" z="-273.077300" unit="cm"/>
+    <position name="Premask_5_slab_hor_3inConc_SHpos" x="197.327900" y="-0.000000" z="-304.057300" unit="cm"/>
+    <position name="Premask_5_slab_hor_4inConc_SHpos" x="197.327900" y="-0.000000" z="-273.077300" unit="cm"/>
+    <position name="water_5_vv_1inPremask_5_slab_verpos" x="0.000000" y="66.878200" z="-12.700000" unit="cm"/>
+    <rotation name="water_5_vv_1inPremask_5_slab_verrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_5_vv_2inPremask_5_slab_verpos" x="0.000000" y="-66.878200" z="-12.700000" unit="cm"/>
+    <rotation name="water_5_vv_2inPremask_5_slab_verrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_5_vh_1inPremask_5_slab_verpos" x="130.119400" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="water_5_vh_1inPremask_5_slab_verrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_5_vh_2inPremask_5_slab_verpos" x="-130.119400" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="water_5_vh_2inPremask_5_slab_verrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_5_vv_5inPremask_5_slab_verpos" x="0.000000" y="66.878200" z="0.000000" unit="cm"/>
+    <rotation name="water_5_vv_5inPremask_5_slab_verrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_5_vv_6inPremask_5_slab_verpos" x="0.000000" y="-66.878200" z="0.000000" unit="cm"/>
+    <rotation name="water_5_vv_6inPremask_5_slab_verrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_5_vh_5inPremask_5_slab_verpos" x="130.119400" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="water_5_vh_5inPremask_5_slab_verrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_5_vh_6inPremask_5_slab_verpos" x="-130.119400" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="water_5_vh_6inPremask_5_slab_verrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_5_vv_9inPremask_5_slab_verpos" x="0.000000" y="66.878200" z="12.700000" unit="cm"/>
+    <rotation name="water_5_vv_9inPremask_5_slab_verrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_5_vv_10inPremask_5_slab_verpos" x="0.000000" y="-66.878200" z="12.700000" unit="cm"/>
+    <rotation name="water_5_vv_10inPremask_5_slab_verrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_5_vh_9inPremask_5_slab_verpos" x="130.119400" y="0.000000" z="12.700000" unit="cm"/>
+    <rotation name="water_5_vh_9inPremask_5_slab_verrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_5_vh_10inPremask_5_slab_verpos" x="-130.119400" y="0.000000" z="12.700000" unit="cm"/>
+    <rotation name="water_5_vh_10inPremask_5_slab_verrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_5_slab_ver_1inConc_SHpos" x="-4.749700" y="-190.647600" z="-304.057300" unit="cm"/>
+    <position name="Premask_5_slab_ver_2inConc_SHpos" x="-4.749700" y="190.647600" z="-273.077300" unit="cm"/>
+    <position name="Premask_5_slab_ver_3inConc_SHpos" x="-4.749700" y="190.647600" z="-304.057300" unit="cm"/>
+    <position name="Premask_5_slab_ver_4inConc_SHpos" x="-4.749700" y="-190.647600" z="-273.077300" unit="cm"/>
+    <position name="PreM_G2x_1inConc_SHpos" x="116.340000" y="0.000000" z="-288.317300" unit="cm"/>
+    <position name="PreM_G2x_2inConc_SHpos" x="-125.839400" y="0.000000" z="-288.317300" unit="cm"/>
+    <position name="PreG2y_1inConc_SHpos" x="-4.749700" y="109.659700" z="-288.317300" unit="cm"/>
+    <position name="PreG2y_2inConc_SHpos" x="-4.749700" y="-109.659700" z="-288.317300" unit="cm"/>
+    <position name="water_7_hh_1inPremask_7_slab_horpos" x="66.878200" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="water_7_hh_1inPremask_7_slab_horrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_7_hh_2inPremask_7_slab_horpos" x="-66.878200" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="water_7_hh_2inPremask_7_slab_horrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_7_hv_1inPremask_7_slab_horpos" x="0.000000" y="234.386400" z="-12.700000" unit="cm"/>
+    <rotation name="water_7_hv_1inPremask_7_slab_horrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_7_hv_2inPremask_7_slab_horpos" x="0.000000" y="-235.656400" z="-12.700000" unit="cm"/>
+    <rotation name="water_7_hv_2inPremask_7_slab_horrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_7_hh_5inPremask_7_slab_horpos" x="66.878200" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="water_7_hh_5inPremask_7_slab_horrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_7_hh_6inPremask_7_slab_horpos" x="-66.878200" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="water_7_hh_6inPremask_7_slab_horrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_7_hv_5inPremask_7_slab_horpos" x="0.000000" y="234.386400" z="0.000000" unit="cm"/>
+    <rotation name="water_7_hv_5inPremask_7_slab_horrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_7_hv_6inPremask_7_slab_horpos" x="0.000000" y="-235.656400" z="0.000000" unit="cm"/>
+    <rotation name="water_7_hv_6inPremask_7_slab_horrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_7_hh_9inPremask_7_slab_horpos" x="66.878200" y="0.000000" z="12.700000" unit="cm"/>
+    <rotation name="water_7_hh_9inPremask_7_slab_horrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_7_hh_10inPremask_7_slab_horpos" x="-66.878200" y="0.000000" z="12.700000" unit="cm"/>
+    <rotation name="water_7_hh_10inPremask_7_slab_horrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_7_hv_9inPremask_7_slab_horpos" x="0.000000" y="234.386400" z="12.700000" unit="cm"/>
+    <rotation name="water_7_hv_9inPremask_7_slab_horrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_7_hv_10inPremask_7_slab_horpos" x="0.000000" y="-235.656400" z="12.700000" unit="cm"/>
+    <rotation name="water_7_hv_10inPremask_7_slab_horrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Premask_7_slab_hor_1inConc_SHpos" x="-183.687900" y="-0.000000" z="-242.097300" unit="cm"/>
+    <position name="Premask_7_slab_hor_2inConc_SHpos" x="-183.687900" y="-0.000000" z="-211.117300" unit="cm"/>
+    <position name="Premask_7_slab_hor_3inConc_SHpos" x="174.188500" y="-0.000000" z="-242.097300" unit="cm"/>
+    <position name="Premask_7_slab_hor_4inConc_SHpos" x="174.188500" y="-0.000000" z="-211.117300" unit="cm"/>
+    <position name="water_7_vv_1inPremask_7_slab_verpos" x="0.000000" y="66.878200" z="-12.700000" unit="cm"/>
+    <rotation name="water_7_vv_1inPremask_7_slab_verrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_7_vv_2inPremask_7_slab_verpos" x="0.000000" y="-66.878200" z="-12.700000" unit="cm"/>
+    <rotation name="water_7_vv_2inPremask_7_slab_verrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_7_vh_1inPremask_7_slab_verpos" x="106.980000" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="water_7_vh_1inPremask_7_slab_verrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_7_vh_2inPremask_7_slab_verpos" x="-106.980000" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="water_7_vh_2inPremask_7_slab_verrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_7_vv_5inPremask_7_slab_verpos" x="0.000000" y="66.878200" z="0.000000" unit="cm"/>
+    <rotation name="water_7_vv_5inPremask_7_slab_verrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_7_vv_6inPremask_7_slab_verpos" x="0.000000" y="-66.878200" z="0.000000" unit="cm"/>
+    <rotation name="water_7_vv_6inPremask_7_slab_verrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_7_vh_5inPremask_7_slab_verpos" x="106.980000" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="water_7_vh_5inPremask_7_slab_verrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_7_vh_6inPremask_7_slab_verpos" x="-106.980000" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="water_7_vh_6inPremask_7_slab_verrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_7_vv_9inPremask_7_slab_verpos" x="0.000000" y="66.878200" z="12.700000" unit="cm"/>
+    <rotation name="water_7_vv_9inPremask_7_slab_verrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_7_vv_10inPremask_7_slab_verpos" x="0.000000" y="-66.878200" z="12.700000" unit="cm"/>
+    <rotation name="water_7_vv_10inPremask_7_slab_verrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="water_7_vh_9inPremask_7_slab_verpos" x="106.980000" y="0.000000" z="12.700000" unit="cm"/>
+    <rotation name="water_7_vh_9inPremask_7_slab_verrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="water_7_vh_10inPremask_7_slab_verpos" x="-106.980000" y="0.000000" z="12.700000" unit="cm"/>
+    <rotation name="water_7_vh_10inPremask_7_slab_verrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Premask_7_slab_ver_1inConc_SHpos" x="-4.749700" y="-167.508200" z="-242.097300" unit="cm"/>
+    <position name="Premask_7_slab_ver_2inConc_SHpos" x="-4.749700" y="167.508200" z="-211.117300" unit="cm"/>
+    <position name="Premask_7_slab_ver_3inConc_SHpos" x="-4.749700" y="167.508200" z="-242.097300" unit="cm"/>
+    <position name="Premask_7_slab_ver_4inConc_SHpos" x="-4.749700" y="-167.508200" z="-211.117300" unit="cm"/>
+    <position name="Core_block_Steel_1inCore_blockpos" x="76.200000" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="Core_watrcool_longvert_10x3inCore_blockpos" x="0.952500" y="-73.660000" z="-12.700000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_10x3inCore_blockrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_20x3inCore_blockpos" x="0.952500" y="73.660000" z="-10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_20x3inCore_blockrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_shortvert_1inCore_blockpos" x="-108.915200" y="-73.660000" z="-10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_shortvert_1inCore_blockrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_shortvert_2inCore_blockpos" x="-108.915200" y="73.660000" z="-12.700000" unit="cm"/>
+    <rotation name="Core_watrcool_shortvert_2inCore_blockrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_short_3inCore_blockpos" x="-182.575200" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="Core_watrcool_short_3inCore_blockrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_short_4inCore_blockpos" x="-182.575200" y="0.000000" z="-10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_short_4inCore_blockrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_short_5inCore_blockpos" x="-35.255200" y="0.000000" z="-11.430000" unit="cm"/>
+    <rotation name="Core_watrcool_short_5inCore_blockrot" x="-89.050000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_30x3inCore_blockpos" x="0.952500" y="-73.660000" z="-2.540000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_30x3inCore_blockrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_40x3inCore_blockpos" x="0.952500" y="73.660000" z="0.000000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_40x3inCore_blockrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_shortvert_6inCore_blockpos" x="-108.915200" y="-73.660000" z="0.000000" unit="cm"/>
+    <rotation name="Core_watrcool_shortvert_6inCore_blockrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_shortvert_7inCore_blockpos" x="-108.915200" y="73.660000" z="-2.540000" unit="cm"/>
+    <rotation name="Core_watrcool_shortvert_7inCore_blockrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_short_8inCore_blockpos" x="-182.575200" y="0.000000" z="-2.540000" unit="cm"/>
+    <rotation name="Core_watrcool_short_8inCore_blockrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_short_9inCore_blockpos" x="-182.575200" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="Core_watrcool_short_9inCore_blockrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_short_10inCore_blockpos" x="-35.255200" y="0.000000" z="-1.270000" unit="cm"/>
+    <rotation name="Core_watrcool_short_10inCore_blockrot" x="-89.050000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_50x3inCore_blockpos" x="0.952500" y="-73.660000" z="7.620000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_50x3inCore_blockrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_60x3inCore_blockpos" x="0.952500" y="73.660000" z="10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_60x3inCore_blockrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_shortvert_11inCore_blockpos" x="-108.915200" y="-73.660000" z="10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_shortvert_11inCore_blockrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_shortvert_12inCore_blockpos" x="-108.915200" y="73.660000" z="7.620000" unit="cm"/>
+    <rotation name="Core_watrcool_shortvert_12inCore_blockrot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_short_13inCore_blockpos" x="-182.575200" y="0.000000" z="7.620000" unit="cm"/>
+    <rotation name="Core_watrcool_short_13inCore_blockrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_short_14inCore_blockpos" x="-182.575200" y="0.000000" z="10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_short_14inCore_blockrot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_short_15inCore_blockpos" x="-35.255200" y="0.000000" z="8.890000" unit="cm"/>
+    <rotation name="Core_watrcool_short_15inCore_blockrot" x="-89.050000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_block_1inCore_sppos" x="-23.639400" y="2.540000" z="-173.140000" unit="cm"/>
+    <position name="Core_block_2inCore_sppos" x="-23.639400" y="2.540000" z="-141.660000" unit="cm"/>
+    <position name="Core_block_3inCore_sppos" x="-23.639400" y="2.540000" z="-110.180000" unit="cm"/>
+    <position name="Core_block_4inCore_sppos" x="-23.639400" y="2.540000" z="-78.700000" unit="cm"/>
+    <position name="Core_block_5inCore_sppos" x="-23.639400" y="-2.540000" z="-47.220000" unit="cm"/>
+    <position name="Core_block_6inCore_sppos" x="-23.639400" y="-2.540000" z="-15.740000" unit="cm"/>
+    <position name="Core_block_7inCore_sppos" x="-23.639400" y="-2.540000" z="15.740000" unit="cm"/>
+    <position name="Core_block_8inCore_sppos" x="-23.639400" y="-2.540000" z="47.220000" unit="cm"/>
+    <position name="Core_watrcool_longvert_10x4inCore_block_20x1pos" x="0.952500" y="-73.660000" z="-12.700000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_10x4inCore_block_20x1rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_20x4inCore_block_20x1pos" x="0.952500" y="73.660000" z="-10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_20x4inCore_block_20x1rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_shortvert_10x1inCore_block_20x1pos" x="-108.915200" y="-73.660000" z="-10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_shortvert_10x1inCore_block_20x1rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_shortvert_20x1inCore_block_20x1pos" x="-108.915200" y="73.660000" z="-12.700000" unit="cm"/>
+    <rotation name="Core_watrcool_shortvert_20x1inCore_block_20x1rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_short_30x1inCore_block_20x1pos" x="-182.575200" y="0.000000" z="-12.700000" unit="cm"/>
+    <rotation name="Core_watrcool_short_30x1inCore_block_20x1rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_short_40x1inCore_block_20x1pos" x="-182.575200" y="0.000000" z="-10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_short_40x1inCore_block_20x1rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_short_50x1inCore_block_20x1pos" x="-35.255200" y="0.000000" z="-11.430000" unit="cm"/>
+    <rotation name="Core_watrcool_short_50x1inCore_block_20x1rot" x="-89.050000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_30x4inCore_block_20x1pos" x="0.952500" y="-73.660000" z="-2.540000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_30x4inCore_block_20x1rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_40x4inCore_block_20x1pos" x="0.952500" y="73.660000" z="0.000000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_40x4inCore_block_20x1rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_shortvert_60x1inCore_block_20x1pos" x="-108.915200" y="-73.660000" z="0.000000" unit="cm"/>
+    <rotation name="Core_watrcool_shortvert_60x1inCore_block_20x1rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_shortvert_70x1inCore_block_20x1pos" x="-108.915200" y="73.660000" z="-2.540000" unit="cm"/>
+    <rotation name="Core_watrcool_shortvert_70x1inCore_block_20x1rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_short_80x1inCore_block_20x1pos" x="-182.575200" y="0.000000" z="-2.540000" unit="cm"/>
+    <rotation name="Core_watrcool_short_80x1inCore_block_20x1rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_short_90x1inCore_block_20x1pos" x="-182.575200" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="Core_watrcool_short_90x1inCore_block_20x1rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_short_100x1inCore_block_20x1pos" x="-35.255200" y="0.000000" z="-1.270000" unit="cm"/>
+    <rotation name="Core_watrcool_short_100x1inCore_block_20x1rot" x="-89.050000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_50x4inCore_block_20x1pos" x="0.952500" y="-73.660000" z="7.620000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_50x4inCore_block_20x1rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_longvert_60x4inCore_block_20x1pos" x="0.952500" y="73.660000" z="10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_longvert_60x4inCore_block_20x1rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_shortvert_110x1inCore_block_20x1pos" x="-108.915200" y="-73.660000" z="10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_shortvert_110x1inCore_block_20x1rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_shortvert_120x1inCore_block_20x1pos" x="-108.915200" y="73.660000" z="7.620000" unit="cm"/>
+    <rotation name="Core_watrcool_shortvert_120x1inCore_block_20x1rot" x="-90.000000" y="-90.000000" z="0.000000" unit="deg"/>
+    <position name="Core_watrcool_short_130x1inCore_block_20x1pos" x="-182.575200" y="0.000000" z="7.620000" unit="cm"/>
+    <rotation name="Core_watrcool_short_130x1inCore_block_20x1rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_short_140x1inCore_block_20x1pos" x="-182.575200" y="0.000000" z="10.160000" unit="cm"/>
+    <rotation name="Core_watrcool_short_140x1inCore_block_20x1rot" x="-90.000000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_watrcool_short_150x1inCore_block_20x1pos" x="-35.255200" y="0.000000" z="8.890000" unit="cm"/>
+    <rotation name="Core_watrcool_short_150x1inCore_block_20x1rot" x="-89.050000" y="-0.000000" z="-0.000000" unit="deg"/>
+    <position name="Core_block_2_1inCore_sppos" x="-23.639400" y="2.540000" z="78.700000" unit="cm"/>
+    <position name="Core_block_2_2inCore_sppos" x="-23.639400" y="2.540000" z="110.180000" unit="cm"/>
+    <position name="Core_block_2_3inCore_sppos" x="-23.639400" y="2.540000" z="141.660000" unit="cm"/>
+    <position name="Core_block_2_4inCore_sppos" x="-23.639400" y="2.540000" z="173.140000" unit="cm"/>
+    <position name="Big_core_spacer_1inCore_sppos" x="-23.639400" y="-80.360000" z="-125.920000" unit="cm"/>
+    <position name="Big_core_spacer_2inCore_sppos" x="-23.639400" y="-80.360000" z="125.920000" unit="cm"/>
+    <position name="Big_core_spacer_3inCore_sppos" x="-23.639400" y="80.360000" z="0.000000" unit="cm"/>
+    <position name="Small_core_spacer_1inCore_sppos" x="-23.639400" y="82.900000" z="-125.920000" unit="cm"/>
+    <position name="Small_core_spacer_10x1inCore_sppos" x="-23.639400" y="82.900000" z="125.920000" unit="cm"/>
+    <position name="Small_core_spacer_10x2inCore_sppos" x="-23.639400" y="-82.900000" z="0.000000" unit="cm"/>
+    <position name="Core_top_slab_1inCore_sppos" x="174.045500" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="Core_top_slab_2inCore_sppos" x="197.484900" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="Core_sp_1inConc_SHpos" x="106.214900" y="-0.000000" z="-6.497300" unit="cm"/>
+    <position name="Shield_back_slab_0inConc_SHpos" x="82.575500" y="0.000000" z="194.452400" unit="cm"/>
+    <position name="Shield_back_slab_1inConc_SHpos" x="82.575500" y="0.000000" z="217.891800" unit="cm"/>
+    <position name="Shield_back_slab_2inConc_SHpos" x="82.575500" y="0.000000" z="241.331200" unit="cm"/>
+    <position name="Shield_back_slab_3inConc_SHpos" x="82.575500" y="0.000000" z="264.770600" unit="cm"/>
+    <position name="Shield_back_slab_4inConc_SHpos" x="82.575500" y="0.000000" z="288.210000" unit="cm"/>
+    <position name="Shield_back_slab_5inConc_SHpos" x="82.575500" y="0.000000" z="311.649400" unit="cm"/>
+    <position name="Shield_back_slab_6inConc_SHpos" x="82.575500" y="0.000000" z="335.088800" unit="cm"/>
+    <position name="Shield_side_slab_horiz_0inConc_SHpos" x="-33.121500" y="98.929700" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_10inConc_SHpos" x="-33.121500" y="145.808500" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_20inConc_SHpos" x="-33.121500" y="192.687300" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_30inConc_SHpos" x="-33.121500" y="239.566100" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_1inConc_SHpos" x="106.014900" y="98.929700" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_11inConc_SHpos" x="106.014900" y="145.808500" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_21inConc_SHpos" x="106.014900" y="192.687300" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_31inConc_SHpos" x="106.014900" y="239.566100" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_2inConc_SHpos" x="245.151300" y="98.929700" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_12inConc_SHpos" x="245.151300" y="145.808500" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_22inConc_SHpos" x="245.151300" y="192.687300" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_32inConc_SHpos" x="245.151300" y="239.566100" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_vert_0inConc_SHpos" x="106.014900" y="122.369100" z="-125.859100" unit="cm"/>
+    <position name="Shield_side_slab_vert_10inConc_SHpos" x="106.014900" y="169.247900" z="-125.859100" unit="cm"/>
+    <position name="Shield_side_slab_vert_20inConc_SHpos" x="106.014900" y="216.126700" z="-125.859100" unit="cm"/>
+    <position name="Shield_side_slab_vert_30inConc_SHpos" x="106.014900" y="263.005500" z="-125.859100" unit="cm"/>
+    <position name="Shield_side_slab_vert_1inConc_SHpos" x="106.014900" y="122.369100" z="13.277300" unit="cm"/>
+    <position name="Shield_side_slab_vert_11inConc_SHpos" x="106.014900" y="169.247900" z="13.277300" unit="cm"/>
+    <position name="Shield_side_slab_vert_21inConc_SHpos" x="106.014900" y="216.126700" z="13.277300" unit="cm"/>
+    <position name="Shield_side_slab_vert_31inConc_SHpos" x="106.014900" y="263.005500" z="13.277300" unit="cm"/>
+    <position name="Shield_side_slab_vert_2inConc_SHpos" x="106.014900" y="122.369100" z="152.413700" unit="cm"/>
+    <position name="Shield_side_slab_vert_12inConc_SHpos" x="106.014900" y="169.247900" z="152.413700" unit="cm"/>
+    <position name="Shield_side_slab_vert_22inConc_SHpos" x="106.014900" y="216.126700" z="152.413700" unit="cm"/>
+    <position name="Shield_side_slab_vert_32inConc_SHpos" x="106.014900" y="263.005500" z="152.413700" unit="cm"/>
+    <position name="Shield_side_slab_vert_3inConc_SHpos" x="106.014900" y="122.369100" z="291.550100" unit="cm"/>
+    <position name="Shield_side_slab_vert_13inConc_SHpos" x="106.014900" y="169.247900" z="291.550100" unit="cm"/>
+    <position name="Shield_side_slab_vert_23inConc_SHpos" x="106.014900" y="216.126700" z="291.550100" unit="cm"/>
+    <position name="Shield_side_slab_vert_33inConc_SHpos" x="106.014900" y="263.005500" z="291.550100" unit="cm"/>
+    <position name="Shield_side_slab_horiz_00x1inConc_SHpos" x="-33.121500" y="-98.929700" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_100x1inConc_SHpos" x="-33.121500" y="-145.808500" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_200x1inConc_SHpos" x="-33.121500" y="-192.687300" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_300x1inConc_SHpos" x="-33.121500" y="-239.566100" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_10x1inConc_SHpos" x="106.014900" y="-98.929700" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_110x1inConc_SHpos" x="106.014900" y="-145.808500" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_210x1inConc_SHpos" x="106.014900" y="-192.687300" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_310x1inConc_SHpos" x="106.014900" y="-239.566100" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_20x1inConc_SHpos" x="245.151300" y="-98.929700" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_120x1inConc_SHpos" x="245.151300" y="-145.808500" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_220x1inConc_SHpos" x="245.151300" y="-192.687300" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_horiz_320x1inConc_SHpos" x="245.151300" y="-239.566100" z="76.140600" unit="cm"/>
+    <position name="Shield_side_slab_vert_00x1inConc_SHpos" x="106.014900" y="-122.369100" z="-125.859100" unit="cm"/>
+    <position name="Shield_side_slab_vert_100x1inConc_SHpos" x="106.014900" y="-169.247900" z="-125.859100" unit="cm"/>
+    <position name="Shield_side_slab_vert_200x1inConc_SHpos" x="106.014900" y="-216.126700" z="-125.859100" unit="cm"/>
+    <position name="Shield_side_slab_vert_300x1inConc_SHpos" x="106.014900" y="-263.005500" z="-125.859100" unit="cm"/>
+    <position name="Shield_side_slab_vert_10x1inConc_SHpos" x="106.014900" y="-122.369100" z="13.277300" unit="cm"/>
+    <position name="Shield_side_slab_vert_110x1inConc_SHpos" x="106.014900" y="-169.247900" z="13.277300" unit="cm"/>
+    <position name="Shield_side_slab_vert_210x1inConc_SHpos" x="106.014900" y="-216.126700" z="13.277300" unit="cm"/>
+    <position name="Shield_side_slab_vert_310x1inConc_SHpos" x="106.014900" y="-263.005500" z="13.277300" unit="cm"/>
+    <position name="Shield_side_slab_vert_20x1inConc_SHpos" x="106.014900" y="-122.369100" z="152.413700" unit="cm"/>
+    <position name="Shield_side_slab_vert_120x1inConc_SHpos" x="106.014900" y="-169.247900" z="152.413700" unit="cm"/>
+    <position name="Shield_side_slab_vert_220x1inConc_SHpos" x="106.014900" y="-216.126700" z="152.413700" unit="cm"/>
+    <position name="Shield_side_slab_vert_320x1inConc_SHpos" x="106.014900" y="-263.005500" z="152.413700" unit="cm"/>
+    <position name="Shield_side_slab_vert_30x1inConc_SHpos" x="106.014900" y="-122.369100" z="291.550100" unit="cm"/>
+    <position name="Shield_side_slab_vert_130x1inConc_SHpos" x="106.014900" y="-169.247900" z="291.550100" unit="cm"/>
+    <position name="Shield_side_slab_vert_230x1inConc_SHpos" x="106.014900" y="-216.126700" z="291.550100" unit="cm"/>
+    <position name="Shield_side_slab_vert_330x1inConc_SHpos" x="106.014900" y="-263.005500" z="291.550100" unit="cm"/>
+    <position name="Shield_side_slab_vert_00x2inConc_SHpos" x="-114.409400" y="0.000000" z="-125.859100" unit="cm"/>
+    <position name="Shield_side_slab_vert_100x2inConc_SHpos" x="-161.288200" y="0.000000" z="-125.859100" unit="cm"/>
+    <position name="Shield_side_slab_vert_200x2inConc_SHpos" x="-208.167000" y="0.000000" z="-125.859100" unit="cm"/>
+    <position name="Shield_side_slab_vert_10x2inConc_SHpos" x="-114.409400" y="0.000000" z="13.277300" unit="cm"/>
+    <position name="Shield_side_slab_vert_110x2inConc_SHpos" x="-161.288200" y="0.000000" z="13.277300" unit="cm"/>
+    <position name="Shield_side_slab_vert_210x2inConc_SHpos" x="-208.167000" y="0.000000" z="13.277300" unit="cm"/>
+    <position name="Shield_side_slab_vert_20x2inConc_SHpos" x="-114.409400" y="0.000000" z="152.413700" unit="cm"/>
+    <position name="Shield_side_slab_vert_120x2inConc_SHpos" x="-161.288200" y="0.000000" z="152.413700" unit="cm"/>
+    <position name="Shield_side_slab_vert_220x2inConc_SHpos" x="-208.167000" y="0.000000" z="152.413700" unit="cm"/>
+    <position name="Shield_side_slab_vert_30x2inConc_SHpos" x="-114.409400" y="0.000000" z="291.550100" unit="cm"/>
+    <position name="Shield_side_slab_vert_130x2inConc_SHpos" x="-161.288200" y="0.000000" z="291.550100" unit="cm"/>
+    <position name="Shield_side_slab_vert_230x2inConc_SHpos" x="-208.167000" y="0.000000" z="291.550100" unit="cm"/>
+    <position name="Shield_side_slab_horiz_00x2inConc_SHpos" x="-137.848800" y="-208.704600" z="82.845500" unit="cm"/>
+    <position name="Shield_side_slab_horiz_100x2inConc_SHpos" x="-184.727600" y="-208.704600" z="82.845500" unit="cm"/>
+    <position name="Shield_side_slab_horiz_200x2inConc_SHpos" x="-231.606400" y="-208.704600" z="82.845500" unit="cm"/>
+    <position name="Shield_side_slab_horiz_10x2inConc_SHpos" x="-137.848800" y="-69.568200" z="82.845500" unit="cm"/>
+    <position name="Shield_side_slab_horiz_110x2inConc_SHpos" x="-184.727600" y="-69.568200" z="82.845500" unit="cm"/>
+    <position name="Shield_side_slab_horiz_210x2inConc_SHpos" x="-231.606400" y="-69.568200" z="82.845500" unit="cm"/>
+    <position name="Shield_side_slab_horiz_20x2inConc_SHpos" x="-137.848800" y="69.568200" z="82.845500" unit="cm"/>
+    <position name="Shield_side_slab_horiz_120x2inConc_SHpos" x="-184.727600" y="69.568200" z="82.845500" unit="cm"/>
+    <position name="Shield_side_slab_horiz_220x2inConc_SHpos" x="-231.606400" y="69.568200" z="82.845500" unit="cm"/>
+    <position name="Shield_side_slab_horiz_3inConc_SHpos" x="-137.848800" y="208.704600" z="82.845500" unit="cm"/>
+    <position name="Shield_side_slab_horiz_13inConc_SHpos" x="-184.727600" y="208.704600" z="82.845500" unit="cm"/>
+    <position name="Shield_side_slab_horiz_23inConc_SHpos" x="-231.606400" y="208.704600" z="82.845500" unit="cm"/>
+    <position name="Shield_top_airgap_1inConc_SHpos" x="343.641300" y="0.000000" z="30.482700" unit="cm"/>
+    <position name="Prepremask_hole_centre_1inPrepremaskpos" x="0.000000" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="Prepremask_hole_up_2inPrepremaskpos" x="304.500000" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="Prepremask_1inConc_SHpos" x="-26.339700" y="0.000000" z="-427.977300" unit="cm"/>
+    <position name="Prepremask_2_hole_centre_1inPrepremask_2_stpos" x="0.000000" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="Prepremask_2_st_1inPrepremask_2pos" x="0.000000" y="0.000000" z="0.250000" unit="cm"/>
+    <position name="Prepremask_2_1inConc_SHpos" x="-26.339700" y="0.000000" z="-397.247300" unit="cm"/>
+    <position name="slab_maskup_1_1inConc_SHpos" x="255.476400" y="-0.000000" z="-227.107300" unit="cm"/>
+    <position name="slab_maskup_2_1inConc_SHpos" x="278.915800" y="-0.000000" z="-258.087300" unit="cm"/>
+    <position name="slab_maskup_3_1inConc_SHpos" x="302.355200" y="-0.000000" z="-289.067300" unit="cm"/>
+    <position name="slab_maskup_3_2inConc_SHpos" x="325.794600" y="-0.000000" z="-289.067300" unit="cm"/>
+    <position name="slab_maskup_4_1inConc_SHpos" x="349.234000" y="-0.000000" z="-289.067300" unit="cm"/>
+    <position name="slab_maskdown_3_1inConc_SHpos" x="-311.854600" y="-0.000000" z="-289.067300" unit="cm"/>
+    <position name="slab_maskdown_3_2inConc_SHpos" x="-335.294000" y="-0.000000" z="-289.067300" unit="cm"/>
+    <position name="slab_maskdown_3_3inConc_SHpos" x="-311.854600" y="-0.000000" z="-103.387300" unit="cm"/>
+    <position name="slab_maskdown_3_4inConc_SHpos" x="-311.854600" y="-0.000000" z="82.292700" unit="cm"/>
+    <position name="slab_maskdown_4_1inConc_SHpos" x="-358.733400" y="-0.000000" z="-289.067300" unit="cm"/>
+    <position name="slab_maskside_1_1inConc_SHpos" x="-4.749700" y="248.796100" z="-227.107300" unit="cm"/>
+    <position name="slab_maskside_2_1inConc_SHpos" x="-4.749700" y="271.935500" z="-258.087300" unit="cm"/>
+    <position name="slab_maskside_3_1inConc_SHpos" x="-4.749700" y="295.074900" z="-289.067300" unit="cm"/>
+    <position name="slab_maskside_3_2inConc_SHpos" x="-4.749700" y="318.214300" z="-289.067300" unit="cm"/>
+    <position name="slab_maskside_1_2inConc_SHpos" x="-4.749700" y="-248.796100" z="-227.107300" unit="cm"/>
+    <position name="slab_maskside_2_2inConc_SHpos" x="-4.749700" y="-271.935500" z="-258.087300" unit="cm"/>
+    <position name="slab_maskside_3_3inConc_SHpos" x="-4.749700" y="-295.074900" z="-289.067300" unit="cm"/>
+    <position name="slab_maskside_3_4inConc_SHpos" x="-4.749700" y="-318.214300" z="-289.067300" unit="cm"/>
+    <position name="slab_bl_1inConc_SHpos" x="-26.339700" y="-0.000000" z="372.838000" unit="cm"/>
+    <position name="slab_bl_2inConc_SHpos" x="-165.476100" y="-0.000000" z="372.838000" unit="cm"/>
+    <position name="slab_bl_3inConc_SHpos" x="112.796700" y="-0.000000" z="372.838000" unit="cm"/>
+    <position name="slab_bl_4inConc_SHpos" x="251.933100" y="-0.000000" z="372.838000" unit="cm"/>
+    <position name="slab_bl_5inConc_SHpos" x="43.228500" y="-0.000000" z="396.277400" unit="cm"/>
+    <position name="slab_bl_6inConc_SHpos" x="182.364900" y="-0.000000" z="396.277400" unit="cm"/>
+    <position name="slab_bl_7inConc_SHpos" x="-95.907900" y="-0.000000" z="396.277400" unit="cm"/>
+    <position name="slab_maskdown_5_1inConc_SHpos" x="-264.975800" y="-0.000000" z="-188.419100" unit="cm"/>
+    <position name="slab_maskdown_5_2inConc_SHpos" x="-264.975800" y="-0.000000" z="-49.582700" unit="cm"/>
+    <position name="slab_maskdown_5_3inConc_SHpos" x="-264.975800" y="-0.000000" z="89.253700" unit="cm"/>
+    <position name="slab_maskdown_5_4inConc_SHpos" x="-264.975800" y="-0.000000" z="228.090100" unit="cm"/>
+    <position name="slab_maskdown_5_5inConc_SHpos" x="-288.415200" y="-0.000000" z="-250.379100" unit="cm"/>
+    <position name="slab_maskdown_5_6inConc_SHpos" x="-288.415200" y="-0.000000" z="-111.542700" unit="cm"/>
+    <position name="slab_maskdown_5_7inConc_SHpos" x="-288.415200" y="-0.000000" z="27.293700" unit="cm"/>
+    <position name="slab_maskdown_5_8inConc_SHpos" x="-288.415200" y="-0.000000" z="166.130100" unit="cm"/>
+    <position name="AH_topair_1inAH_toppos" x="0.000000" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="AH_backair_1_1inAH_backpos" x="45.720000" y="0.000000" z="-45.720000" unit="cm"/>
+    <position name="AH_backair_2_1inAH_backpos" x="-67.513100" y="0.000000" z="182.880000" unit="cm"/>
+    <position name="AH_Muon_alkair_1inAH_Muon_alkpos" x="0.000000" y="0.000000" z="-45.720000" unit="cm"/>
+    <position name="Conc_SH_1inTOPpos" x="26.339700" y="0.000000" z="427.977300" unit="cm"/>
+    <position name="AH_top_1inTOPpos" x="1045.285900" y="0.000000" z="656.327300" unit="cm"/>
+    <position name="AH_back_1inTOPpos" x="25.339700" y="0.000000" z="1099.794600" unit="cm"/>
+    <position name="AH_Muon_alk_1inTOPpos" x="-41.173400" y="0.000000" z="1988.794600" unit="cm"/>
+
+
+</define>
+  <materials>
+    <material name="VAC" Z="1.000000">
+      <D unit="g/cm3" value="0.000000"/>
+      <atom unit="g/mole" value="0.000000"/>
+    </material>
+    <material name="AL" Z="13.000000">
+      <D unit="g/cm3" value="1.000000"/>
+      <atom unit="g/mole" value="26.981539"/>
+    </material>
+    <material name="VAC0x1" Z="1.000000">
+      <D unit="g/cm3" value="0.000000"/>
+      <atom unit="g/mole" value="0.000000"/>
+    </material>
+    <element name="OXYGEN_elm" formula="O" Z="8">
+      <atom unit="g/mole" value="15.999400"/>
+    </element>
+    <element name="HYDROGEN_elm" formula="H" Z="1">
+      <atom unit="g/mole" value="1.007940"/>
+    </element>
+    <material name="WATR">
+      <D unit="g/cm3" value="1.000000"/>
+      <fraction n="0.111898" ref="HYDROGEN_elm"/>
+      <fraction n="0.888102" ref="OXYGEN_elm"/>
+    </material>
+    <element name="CARBON_elm" formula="C" Z="6">
+      <atom unit="g/mole" value="12.010700"/>
+    </element>
+    <element name="SODIUM_elm" formula="NA" Z="11">
+      <atom unit="g/mole" value="22.989770"/>
+    </element>
+    <element name="ALUMINIUM_elm" formula="AL" Z="13">
+      <atom unit="g/mole" value="26.981538"/>
+    </element>
+    <element name="SILICON_elm" formula="SI" Z="14">
+      <atom unit="g/mole" value="28.085500"/>
+    </element>
+    <element name="POTASSIUM_elm" formula="K" Z="19">
+      <atom unit="g/mole" value="39.098300"/>
+    </element>
+    <element name="CALCIUM_elm" formula="CA" Z="20">
+      <atom unit="g/mole" value="40.078000"/>
+    </element>
+    <element name="IRON_elm" formula="FE" Z="26">
+      <atom unit="g/mole" value="55.845000"/>
+    </element>
+    <material name="CONC">
+      <D unit="g/cm3" value="2.350000"/>
+      <fraction n="0.030000" ref="ALUMINIUM_elm"/>
+      <fraction n="0.200000" ref="CALCIUM_elm"/>
+      <fraction n="0.030000" ref="CARBON_elm"/>
+      <fraction n="0.006000" ref="HYDROGEN_elm"/>
+      <fraction n="0.014000" ref="IRON_elm"/>
+      <fraction n="0.500000" ref="OXYGEN_elm"/>
+      <fraction n="0.010000" ref="POTASSIUM_elm"/>
+      <fraction n="0.200000" ref="SILICON_elm"/>
+      <fraction n="0.010000" ref="SODIUM_elm"/>
+    </material>
+    <element name="NITROGEN_elm" formula="N" Z="7">
+      <atom unit="g/mole" value="14.006740"/>
+    </element>
+    <element name="ARGON_elm" formula="AR" Z="18">
+      <atom unit="g/mole" value="39.948000"/>
+    </element>
+    <material name="AIR">
+      <D unit="g/cm3" value="0.001210"/>
+      <fraction n="0.012900" ref="ARGON_elm"/>
+      <fraction n="0.000800" ref="HYDROGEN_elm"/>
+      <fraction n="0.749400" ref="NITROGEN_elm"/>
+      <fraction n="0.236900" ref="OXYGEN_elm"/>
+    </material>
+    <element name="CHROMIUM_elm" formula="CR" Z="24">
+      <atom unit="g/mole" value="51.996100"/>
+    </element>
+    <element name="MANGANESE_elm" formula="MN" Z="25">
+      <atom unit="g/mole" value="54.938049"/>
+    </element>
+    <element name="NICKEL_elm" formula="NI" Z="28">
+      <atom unit="g/mole" value="58.693400"/>
+    </element>
+    <material name="STST">
+      <D unit="g/cm3" value="7.920000"/>
+      <fraction n="0.190000" ref="CHROMIUM_elm"/>
+      <fraction n="0.695000" ref="IRON_elm"/>
+      <fraction n="0.020000" ref="MANGANESE_elm"/>
+      <fraction n="0.095000" ref="NICKEL_elm"/>
+    </material>
+    <material name="C" Z="6.000000">
+      <D unit="g/cm3" value="1.000000"/>
+      <atom unit="g/mole" value="12.011000"/>
+    </material>
+    <element name="MAGNESIUM_elm" formula="MG" Z="12">
+      <atom unit="g/mole" value="24.305000"/>
+    </element>
+    <material name="DLMT">
+      <D unit="g/cm3" value="2.850000"/>
+      <fraction n="0.206000" ref="CALCIUM_elm"/>
+      <fraction n="0.123500" ref="CARBON_elm"/>
+      <fraction n="0.005800" ref="HYDROGEN_elm"/>
+      <fraction n="0.124900" ref="MAGNESIUM_elm"/>
+      <fraction n="0.539800" ref="OXYGEN_elm"/>
+    </material>
+  </materials>
+  <solids>
+    <box name="TOP0x1" x="7000.0" y="7000.0" z="7000.0" lunit="cm"/>
+    <box name="Conc_SH0x1" x="1018.946200" y="1023.924800" z="886.434600" lunit="cm"/>
+    <box name="PreM_sp0x1" x="219.040000" y="196.180000" z="185.880000" lunit="cm"/>
+    <box name="Premask_itself_30x1" x="218.440000" y="195.580000" z="30.480000" lunit="cm"/>
+    <tube name="Premask_itself_hole_30x1" rmin="0.000000" rmax="50.800000" z="30.480000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="Core_watrcool_longvert0x1" rmin="0.000000" rmax="0.635000" z="214.630000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="Premask_watrcool_horiz0x1" rmin="0.000000" rmax="0.635000" z="189.230000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <box name="Premask_itself_50x1" x="218.440000" y="195.580000" z="30.480000" lunit="cm"/>
+    <tube name="Premask_itself_hole_50x1" rmin="0.000000" rmax="44.450000" z="30.480000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <box name="Premask_itself_70x1" x="218.440000" y="195.580000" z="30.480000" lunit="cm"/>
+    <tube name="Premask_itself_hole_70x1" rmin="0.000000" rmax="31.750000" z="30.480000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <box name="Premask_3_slab_hor0x1" x="138.836400" y="566.410400" z="30.480000" lunit="cm"/>
+    <tube name="water_3_hh0x1" rmin="0.000000" rmax="0.635000" z="562.600400" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="water_3_hv0x1" rmin="0.000000" rmax="0.635000" z="132.486400" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <box name="Premask_3_slab_ver0x1" x="311.597600" y="138.836400" z="30.480000" lunit="cm"/>
+    <tube name="water_3_vv0x1" rmin="0.000000" rmax="0.635000" z="305.247600" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="water_3_vh0x1" rmin="0.000000" rmax="0.635000" z="135.026400" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <box name="PreM_G1x0x1" x="46.278800" y="288.737600" z="62.460000" lunit="cm"/>
+    <box name="PreG1y0x1" x="219.040000" y="46.278800" z="62.460000" lunit="cm"/>
+    <box name="Premask_5_slab_hor0x1" x="138.836400" y="520.131600" z="30.480000" lunit="cm"/>
+    <tube name="water_5_hh0x1" rmin="0.000000" rmax="0.635000" z="511.241600" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="water_5_hv0x1" rmin="0.000000" rmax="0.635000" z="127.406400" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <box name="Premask_5_slab_ver0x1" x="265.318800" y="138.836400" z="30.480000" lunit="cm"/>
+    <tube name="water_5_vv0x1" rmin="0.000000" rmax="0.635000" z="253.888800" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="water_5_vh0x1" rmin="0.000000" rmax="0.635000" z="129.946400" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <box name="PreM_G2x0x1" x="23.139400" y="242.458800" z="61.960000" lunit="cm"/>
+    <box name="PreG2y0x1" x="219.040000" y="23.139400" z="61.960000" lunit="cm"/>
+    <box name="Premask_7_slab_hor0x1" x="138.836400" y="473.852800" z="30.480000" lunit="cm"/>
+    <tube name="water_7_hh0x1" rmin="0.000000" rmax="0.635000" z="470.042800" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="water_7_hv0x1" rmin="0.000000" rmax="0.635000" z="132.486400" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <box name="Premask_7_slab_ver0x1" x="219.040000" y="138.836400" z="30.480000" lunit="cm"/>
+    <tube name="water_7_vv0x1" rmin="0.000000" rmax="0.635000" z="212.690000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="water_7_vh0x1" rmin="0.000000" rmax="0.635000" z="135.026400" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <box name="Core_sp0x1" x="418.109200" y="174.720000" z="378.760000" lunit="cm"/>
+    <box name="Core_block0x1" x="370.230400" y="152.400000" z="30.480000" lunit="cm"/>
+    <box name="Core_block_Steel0x1" x="217.830400" y="142.240000" z="30.480000" lunit="cm"/>
+    <tube name="Core_watrcool_longvert0x3" rmin="0.000000" rmax="0.635000" z="368.325400" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="Core_watrcool_shortvert0x1" rmin="0.000000" rmax="0.635000" z="148.590000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="Core_watrcool_short0x1" rmin="0.000000" rmax="0.635000" z="146.050000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <box name="Core_block_20x2" x="370.230400" y="152.400000" z="30.480000" lunit="cm"/>
+    <box name="Big_core_spacer0x1" x="370.230400" y="11.400000" z="124.920000" lunit="cm"/>
+    <box name="Small_core_spacer0x1" x="370.230400" y="6.320000" z="124.920000" lunit="cm"/>
+    <box name="Core_top_slab0x1" x="23.139400" y="138.836400" z="376.760000" lunit="cm"/>
+    <box name="Shield_back_slab0x1" x="370.230400" y="174.720000" z="23.139400" lunit="cm"/>
+    <box name="Shield_side_slab_horiz0x1" x="138.836400" y="23.139400" z="542.835800" lunit="cm"/>
+    <box name="Shield_side_slab_vert0x1" x="417.109200" y="23.139400" z="138.836400" lunit="cm"/>
+    <box name="Shield_side_slab_vert0x3" x="23.139400" y="556.245600" z="138.836400" lunit="cm"/>
+    <box name="Shield_side_slab_horiz0x3" x="23.139400" y="138.836400" z="556.245600" lunit="cm"/>
+    <box name="Shield_top_airgap0x1" x="56.743600" y="157.480000" z="452.720000" lunit="cm"/>
+    <box name="Prepremask0x1" x="853.000000" y="610.000000" z="30.480000" lunit="cm"/>
+    <box name="Prepremask_hole_centre0x1" x="366.000000" y="366.000000" z="30.480000" lunit="cm"/>
+    <box name="Prepremask_hole_up0x1" x="244.000000" y="122.000000" z="30.480000" lunit="cm"/>
+    <box name="Prepremask_20x1" x="751.000000" y="728.000000" z="30.980000" lunit="cm"/>
+    <box name="Prepremask_2_st0x1" x="751.000000" y="728.000000" z="30.480000" lunit="cm"/>
+    <box name="Prepremask_2_hole_centre0x1" x="376.000000" y="358.000000" z="30.480000" lunit="cm"/>
+    <box name="slab_maskup_10x1" x="23.139400" y="473.852800" z="61.460000" lunit="cm"/>
+    <box name="slab_maskup_20x1" x="23.139400" y="473.852800" z="123.420000" lunit="cm"/>
+    <box name="slab_maskup_30x1" x="23.139400" y="473.852800" z="185.380000" lunit="cm"/>
+    <box name="slab_maskup_40x1" x="23.139400" y="661.368000" z="185.380000" lunit="cm"/>
+    <box name="slab_maskdown_30x1" x="23.139400" y="473.852800" z="185.380000" lunit="cm"/>
+    <box name="slab_maskdown_40x1" x="23.139400" y="661.368000" z="185.380000" lunit="cm"/>
+    <box name="slab_maskside_10x1" x="684.228000" y="23.139400" z="61.460000" lunit="cm"/>
+    <box name="slab_maskside_20x1" x="684.228000" y="23.139400" z="123.420000" lunit="cm"/>
+    <box name="slab_maskside_30x1" x="684.228000" y="23.139400" z="185.380000" lunit="cm"/>
+    <box name="slab_bl0x1" x="138.836400" y="556.245600" z="23.139400" lunit="cm"/>
+    <box name="slab_maskdown_50x1" x="23.139400" y="473.852800" z="138.836400" lunit="cm"/>
+    <box name="AH_top0x1" x="1018.946200" y="1023.924800" z="1343.134600" lunit="cm"/>
+    <box name="AH_topair0x1" x="836.066200" y="841.044800" z="1160.254600" lunit="cm"/>
+    <box name="AH_back0x1" x="1018.946200" y="1023.924800" z="457.200000" lunit="cm"/>
+    <box name="AH_backair_10x1" x="927.506200" y="841.044800" z="365.760000" lunit="cm"/>
+    <box name="AH_backair_20x1" x="701.040000" y="548.640000" z="91.440000" lunit="cm"/>
+    <box name="AH_Muon_alk0x1" x="883.920000" y="731.520000" z="1320.800000" lunit="cm"/>
+    <box name="AH_Muon_alkair0x1" x="701.040000" y="548.640000" z="1229.360000" lunit="cm"/>
+  </solids>
+  <structure>
+    <volume name="Premask_itself_hole_3">
+      <materialref ref="AIR"/>
+      <solidref ref="Premask_itself_hole_30x1"/>
+    </volume>
+    <volume name="Core_watrcool_longvert">
+      <materialref ref="WATR"/>
+      <solidref ref="Core_watrcool_longvert0x1"/>
+    </volume>
+    <volume name="Premask_watrcool_horiz">
+      <materialref ref="WATR"/>
+      <solidref ref="Premask_watrcool_horiz0x1"/>
+    </volume>
+    <volume name="Premask_itself_3">
+      <materialref ref="AL"/>
+      <solidref ref="Premask_itself_30x1"/>
+      <physvol>
+        <volumeref ref="Premask_itself_hole_3"/>
+        <positionref ref="Premask_itself_hole_3_1inPremask_itself_3pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_1inPremask_itself_3pos"/>
+        <rotationref ref="Core_watrcool_longvert_1inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_2inPremask_itself_3pos"/>
+        <rotationref ref="Core_watrcool_longvert_2inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_3inPremask_itself_3pos"/>
+        <rotationref ref="Core_watrcool_longvert_3inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_4inPremask_itself_3pos"/>
+        <rotationref ref="Core_watrcool_longvert_4inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_1inPremask_itself_3pos"/>
+        <rotationref ref="Premask_watrcool_horiz_1inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_2inPremask_itself_3pos"/>
+        <rotationref ref="Premask_watrcool_horiz_2inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_3inPremask_itself_3pos"/>
+        <rotationref ref="Premask_watrcool_horiz_3inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_4inPremask_itself_3pos"/>
+        <rotationref ref="Premask_watrcool_horiz_4inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_5inPremask_itself_3pos"/>
+        <rotationref ref="Core_watrcool_longvert_5inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_6inPremask_itself_3pos"/>
+        <rotationref ref="Core_watrcool_longvert_6inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_7inPremask_itself_3pos"/>
+        <rotationref ref="Core_watrcool_longvert_7inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_8inPremask_itself_3pos"/>
+        <rotationref ref="Core_watrcool_longvert_8inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_5inPremask_itself_3pos"/>
+        <rotationref ref="Premask_watrcool_horiz_5inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_6inPremask_itself_3pos"/>
+        <rotationref ref="Premask_watrcool_horiz_6inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_7inPremask_itself_3pos"/>
+        <rotationref ref="Premask_watrcool_horiz_7inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_8inPremask_itself_3pos"/>
+        <rotationref ref="Premask_watrcool_horiz_8inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_9inPremask_itself_3pos"/>
+        <rotationref ref="Core_watrcool_longvert_9inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_10inPremask_itself_3pos"/>
+        <rotationref ref="Core_watrcool_longvert_10inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_11inPremask_itself_3pos"/>
+        <rotationref ref="Core_watrcool_longvert_11inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_12inPremask_itself_3pos"/>
+        <rotationref ref="Core_watrcool_longvert_12inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_9inPremask_itself_3pos"/>
+        <rotationref ref="Premask_watrcool_horiz_9inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_10inPremask_itself_3pos"/>
+        <rotationref ref="Premask_watrcool_horiz_10inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_11inPremask_itself_3pos"/>
+        <rotationref ref="Premask_watrcool_horiz_11inPremask_itself_3rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_12inPremask_itself_3pos"/>
+        <rotationref ref="Premask_watrcool_horiz_12inPremask_itself_3rot"/>
+      </physvol>
+    </volume>
+    <volume name="Premask_itself_hole_5">
+      <materialref ref="AIR"/>
+      <solidref ref="Premask_itself_hole_50x1"/>
+    </volume>
+    <volume name="Premask_itself_5">
+      <materialref ref="AL"/>
+      <solidref ref="Premask_itself_50x1"/>
+      <physvol>
+        <volumeref ref="Premask_itself_hole_5"/>
+        <positionref ref="Premask_itself_hole_5_1inPremask_itself_5pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_10x1inPremask_itself_5pos"/>
+        <rotationref ref="Core_watrcool_longvert_10x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_20x1inPremask_itself_5pos"/>
+        <rotationref ref="Core_watrcool_longvert_20x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_30x1inPremask_itself_5pos"/>
+        <rotationref ref="Core_watrcool_longvert_30x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_40x1inPremask_itself_5pos"/>
+        <rotationref ref="Core_watrcool_longvert_40x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_10x1inPremask_itself_5pos"/>
+        <rotationref ref="Premask_watrcool_horiz_10x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_20x1inPremask_itself_5pos"/>
+        <rotationref ref="Premask_watrcool_horiz_20x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_30x1inPremask_itself_5pos"/>
+        <rotationref ref="Premask_watrcool_horiz_30x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_40x1inPremask_itself_5pos"/>
+        <rotationref ref="Premask_watrcool_horiz_40x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_50x1inPremask_itself_5pos"/>
+        <rotationref ref="Core_watrcool_longvert_50x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_60x1inPremask_itself_5pos"/>
+        <rotationref ref="Core_watrcool_longvert_60x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_70x1inPremask_itself_5pos"/>
+        <rotationref ref="Core_watrcool_longvert_70x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_80x1inPremask_itself_5pos"/>
+        <rotationref ref="Core_watrcool_longvert_80x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_50x1inPremask_itself_5pos"/>
+        <rotationref ref="Premask_watrcool_horiz_50x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_60x1inPremask_itself_5pos"/>
+        <rotationref ref="Premask_watrcool_horiz_60x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_70x1inPremask_itself_5pos"/>
+        <rotationref ref="Premask_watrcool_horiz_70x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_80x1inPremask_itself_5pos"/>
+        <rotationref ref="Premask_watrcool_horiz_80x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_90x1inPremask_itself_5pos"/>
+        <rotationref ref="Core_watrcool_longvert_90x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_100x1inPremask_itself_5pos"/>
+        <rotationref ref="Core_watrcool_longvert_100x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_110x1inPremask_itself_5pos"/>
+        <rotationref ref="Core_watrcool_longvert_110x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_120x1inPremask_itself_5pos"/>
+        <rotationref ref="Core_watrcool_longvert_120x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_90x1inPremask_itself_5pos"/>
+        <rotationref ref="Premask_watrcool_horiz_90x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_100x1inPremask_itself_5pos"/>
+        <rotationref ref="Premask_watrcool_horiz_100x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_110x1inPremask_itself_5pos"/>
+        <rotationref ref="Premask_watrcool_horiz_110x1inPremask_itself_5rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_120x1inPremask_itself_5pos"/>
+        <rotationref ref="Premask_watrcool_horiz_120x1inPremask_itself_5rot"/>
+      </physvol>
+    </volume>
+    <volume name="Premask_itself_hole_7">
+      <materialref ref="AIR"/>
+      <solidref ref="Premask_itself_hole_70x1"/>
+    </volume>
+    <volume name="Premask_itself_7">
+      <materialref ref="AL"/>
+      <solidref ref="Premask_itself_70x1"/>
+      <physvol>
+        <volumeref ref="Premask_itself_hole_7"/>
+        <positionref ref="Premask_itself_hole_7_1inPremask_itself_7pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_10x2inPremask_itself_7pos"/>
+        <rotationref ref="Core_watrcool_longvert_10x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_20x2inPremask_itself_7pos"/>
+        <rotationref ref="Core_watrcool_longvert_20x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_30x2inPremask_itself_7pos"/>
+        <rotationref ref="Core_watrcool_longvert_30x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_40x2inPremask_itself_7pos"/>
+        <rotationref ref="Core_watrcool_longvert_40x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_10x2inPremask_itself_7pos"/>
+        <rotationref ref="Premask_watrcool_horiz_10x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_20x2inPremask_itself_7pos"/>
+        <rotationref ref="Premask_watrcool_horiz_20x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_30x2inPremask_itself_7pos"/>
+        <rotationref ref="Premask_watrcool_horiz_30x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_40x2inPremask_itself_7pos"/>
+        <rotationref ref="Premask_watrcool_horiz_40x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_50x2inPremask_itself_7pos"/>
+        <rotationref ref="Core_watrcool_longvert_50x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_60x2inPremask_itself_7pos"/>
+        <rotationref ref="Core_watrcool_longvert_60x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_70x2inPremask_itself_7pos"/>
+        <rotationref ref="Core_watrcool_longvert_70x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_80x2inPremask_itself_7pos"/>
+        <rotationref ref="Core_watrcool_longvert_80x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_50x2inPremask_itself_7pos"/>
+        <rotationref ref="Premask_watrcool_horiz_50x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_60x2inPremask_itself_7pos"/>
+        <rotationref ref="Premask_watrcool_horiz_60x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_70x2inPremask_itself_7pos"/>
+        <rotationref ref="Premask_watrcool_horiz_70x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_80x2inPremask_itself_7pos"/>
+        <rotationref ref="Premask_watrcool_horiz_80x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_90x2inPremask_itself_7pos"/>
+        <rotationref ref="Core_watrcool_longvert_90x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_100x2inPremask_itself_7pos"/>
+        <rotationref ref="Core_watrcool_longvert_100x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_110x2inPremask_itself_7pos"/>
+        <rotationref ref="Core_watrcool_longvert_110x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert"/>
+        <positionref ref="Core_watrcool_longvert_120x2inPremask_itself_7pos"/>
+        <rotationref ref="Core_watrcool_longvert_120x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_90x2inPremask_itself_7pos"/>
+        <rotationref ref="Premask_watrcool_horiz_90x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_100x2inPremask_itself_7pos"/>
+        <rotationref ref="Premask_watrcool_horiz_100x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_110x2inPremask_itself_7pos"/>
+        <rotationref ref="Premask_watrcool_horiz_110x2inPremask_itself_7rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_watrcool_horiz"/>
+        <positionref ref="Premask_watrcool_horiz_120x2inPremask_itself_7pos"/>
+        <rotationref ref="Premask_watrcool_horiz_120x2inPremask_itself_7rot"/>
+      </physvol>
+    </volume>
+    <volume name="PreM_sp">
+      <materialref ref="AIR"/>
+      <solidref ref="PreM_sp0x1"/>
+      <physvol>
+        <volumeref ref="Premask_itself_3"/>
+        <positionref ref="Premask_itself_3_1inPreM_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_itself_3"/>
+        <positionref ref="Premask_itself_3_2inPreM_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_itself_5"/>
+        <positionref ref="Premask_itself_5_1inPreM_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_itself_5"/>
+        <positionref ref="Premask_itself_5_2inPreM_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_itself_7"/>
+        <positionref ref="Premask_itself_7_1inPreM_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_itself_7"/>
+        <positionref ref="Premask_itself_7_2inPreM_sppos"/>
+      </physvol>
+    </volume>
+    <volume name="water_3_hh">
+      <materialref ref="WATR"/>
+      <solidref ref="water_3_hh0x1"/>
+    </volume>
+    <volume name="water_3_hv">
+      <materialref ref="WATR"/>
+      <solidref ref="water_3_hv0x1"/>
+    </volume>
+    <volume name="Premask_3_slab_hor">
+      <materialref ref="STST"/>
+      <solidref ref="Premask_3_slab_hor0x1"/>
+      <physvol>
+        <volumeref ref="water_3_hh"/>
+        <positionref ref="water_3_hh_1inPremask_3_slab_horpos"/>
+        <rotationref ref="water_3_hh_1inPremask_3_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_hh"/>
+        <positionref ref="water_3_hh_2inPremask_3_slab_horpos"/>
+        <rotationref ref="water_3_hh_2inPremask_3_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_hv"/>
+        <positionref ref="water_3_hv_1inPremask_3_slab_horpos"/>
+        <rotationref ref="water_3_hv_1inPremask_3_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_hv"/>
+        <positionref ref="water_3_hv_2inPremask_3_slab_horpos"/>
+        <rotationref ref="water_3_hv_2inPremask_3_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_hh"/>
+        <positionref ref="water_3_hh_5inPremask_3_slab_horpos"/>
+        <rotationref ref="water_3_hh_5inPremask_3_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_hh"/>
+        <positionref ref="water_3_hh_6inPremask_3_slab_horpos"/>
+        <rotationref ref="water_3_hh_6inPremask_3_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_hv"/>
+        <positionref ref="water_3_hv_5inPremask_3_slab_horpos"/>
+        <rotationref ref="water_3_hv_5inPremask_3_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_hv"/>
+        <positionref ref="water_3_hv_6inPremask_3_slab_horpos"/>
+        <rotationref ref="water_3_hv_6inPremask_3_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_hh"/>
+        <positionref ref="water_3_hh_9inPremask_3_slab_horpos"/>
+        <rotationref ref="water_3_hh_9inPremask_3_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_hh"/>
+        <positionref ref="water_3_hh_10inPremask_3_slab_horpos"/>
+        <rotationref ref="water_3_hh_10inPremask_3_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_hv"/>
+        <positionref ref="water_3_hv_9inPremask_3_slab_horpos"/>
+        <rotationref ref="water_3_hv_9inPremask_3_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_hv"/>
+        <positionref ref="water_3_hv_10inPremask_3_slab_horpos"/>
+        <rotationref ref="water_3_hv_10inPremask_3_slab_horrot"/>
+      </physvol>
+    </volume>
+    <volume name="water_3_vv">
+      <materialref ref="WATR"/>
+      <solidref ref="water_3_vv0x1"/>
+    </volume>
+    <volume name="water_3_vh">
+      <materialref ref="WATR"/>
+      <solidref ref="water_3_vh0x1"/>
+    </volume>
+    <volume name="Premask_3_slab_ver">
+      <materialref ref="STST"/>
+      <solidref ref="Premask_3_slab_ver0x1"/>
+      <physvol>
+        <volumeref ref="water_3_vv"/>
+        <positionref ref="water_3_vv_1inPremask_3_slab_verpos"/>
+        <rotationref ref="water_3_vv_1inPremask_3_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_vv"/>
+        <positionref ref="water_3_vv_2inPremask_3_slab_verpos"/>
+        <rotationref ref="water_3_vv_2inPremask_3_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_vh"/>
+        <positionref ref="water_3_vh_1inPremask_3_slab_verpos"/>
+        <rotationref ref="water_3_vh_1inPremask_3_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_vh"/>
+        <positionref ref="water_3_vh_2inPremask_3_slab_verpos"/>
+        <rotationref ref="water_3_vh_2inPremask_3_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_vv"/>
+        <positionref ref="water_3_vv_5inPremask_3_slab_verpos"/>
+        <rotationref ref="water_3_vv_5inPremask_3_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_vv"/>
+        <positionref ref="water_3_vv_6inPremask_3_slab_verpos"/>
+        <rotationref ref="water_3_vv_6inPremask_3_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_vh"/>
+        <positionref ref="water_3_vh_5inPremask_3_slab_verpos"/>
+        <rotationref ref="water_3_vh_5inPremask_3_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_vh"/>
+        <positionref ref="water_3_vh_6inPremask_3_slab_verpos"/>
+        <rotationref ref="water_3_vh_6inPremask_3_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_vv"/>
+        <positionref ref="water_3_vv_9inPremask_3_slab_verpos"/>
+        <rotationref ref="water_3_vv_9inPremask_3_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_vv"/>
+        <positionref ref="water_3_vv_10inPremask_3_slab_verpos"/>
+        <rotationref ref="water_3_vv_10inPremask_3_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_vh"/>
+        <positionref ref="water_3_vh_9inPremask_3_slab_verpos"/>
+        <rotationref ref="water_3_vh_9inPremask_3_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_3_vh"/>
+        <positionref ref="water_3_vh_10inPremask_3_slab_verpos"/>
+        <rotationref ref="water_3_vh_10inPremask_3_slab_verrot"/>
+      </physvol>
+    </volume>
+    <volume name="PreM_G1x">
+      <materialref ref="AIR"/>
+      <solidref ref="PreM_G1x0x1"/>
+    </volume>
+    <volume name="PreG1y">
+      <materialref ref="AIR"/>
+      <solidref ref="PreG1y0x1"/>
+    </volume>
+    <volume name="water_5_hh">
+      <materialref ref="WATR"/>
+      <solidref ref="water_5_hh0x1"/>
+    </volume>
+    <volume name="water_5_hv">
+      <materialref ref="WATR"/>
+      <solidref ref="water_5_hv0x1"/>
+    </volume>
+    <volume name="Premask_5_slab_hor">
+      <materialref ref="STST"/>
+      <solidref ref="Premask_5_slab_hor0x1"/>
+      <physvol>
+        <volumeref ref="water_5_hh"/>
+        <positionref ref="water_5_hh_1inPremask_5_slab_horpos"/>
+        <rotationref ref="water_5_hh_1inPremask_5_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_hh"/>
+        <positionref ref="water_5_hh_2inPremask_5_slab_horpos"/>
+        <rotationref ref="water_5_hh_2inPremask_5_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_hv"/>
+        <positionref ref="water_5_hv_1inPremask_5_slab_horpos"/>
+        <rotationref ref="water_5_hv_1inPremask_5_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_hv"/>
+        <positionref ref="water_5_hv_2inPremask_5_slab_horpos"/>
+        <rotationref ref="water_5_hv_2inPremask_5_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_hh"/>
+        <positionref ref="water_5_hh_5inPremask_5_slab_horpos"/>
+        <rotationref ref="water_5_hh_5inPremask_5_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_hh"/>
+        <positionref ref="water_5_hh_6inPremask_5_slab_horpos"/>
+        <rotationref ref="water_5_hh_6inPremask_5_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_hv"/>
+        <positionref ref="water_5_hv_5inPremask_5_slab_horpos"/>
+        <rotationref ref="water_5_hv_5inPremask_5_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_hv"/>
+        <positionref ref="water_5_hv_6inPremask_5_slab_horpos"/>
+        <rotationref ref="water_5_hv_6inPremask_5_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_hh"/>
+        <positionref ref="water_5_hh_9inPremask_5_slab_horpos"/>
+        <rotationref ref="water_5_hh_9inPremask_5_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_hh"/>
+        <positionref ref="water_5_hh_10inPremask_5_slab_horpos"/>
+        <rotationref ref="water_5_hh_10inPremask_5_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_hv"/>
+        <positionref ref="water_5_hv_9inPremask_5_slab_horpos"/>
+        <rotationref ref="water_5_hv_9inPremask_5_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_hv"/>
+        <positionref ref="water_5_hv_10inPremask_5_slab_horpos"/>
+        <rotationref ref="water_5_hv_10inPremask_5_slab_horrot"/>
+      </physvol>
+    </volume>
+    <volume name="water_5_vv">
+      <materialref ref="WATR"/>
+      <solidref ref="water_5_vv0x1"/>
+    </volume>
+    <volume name="water_5_vh">
+      <materialref ref="WATR"/>
+      <solidref ref="water_5_vh0x1"/>
+    </volume>
+    <volume name="Premask_5_slab_ver">
+      <materialref ref="STST"/>
+      <solidref ref="Premask_5_slab_ver0x1"/>
+      <physvol>
+        <volumeref ref="water_5_vv"/>
+        <positionref ref="water_5_vv_1inPremask_5_slab_verpos"/>
+        <rotationref ref="water_5_vv_1inPremask_5_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_vv"/>
+        <positionref ref="water_5_vv_2inPremask_5_slab_verpos"/>
+        <rotationref ref="water_5_vv_2inPremask_5_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_vh"/>
+        <positionref ref="water_5_vh_1inPremask_5_slab_verpos"/>
+        <rotationref ref="water_5_vh_1inPremask_5_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_vh"/>
+        <positionref ref="water_5_vh_2inPremask_5_slab_verpos"/>
+        <rotationref ref="water_5_vh_2inPremask_5_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_vv"/>
+        <positionref ref="water_5_vv_5inPremask_5_slab_verpos"/>
+        <rotationref ref="water_5_vv_5inPremask_5_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_vv"/>
+        <positionref ref="water_5_vv_6inPremask_5_slab_verpos"/>
+        <rotationref ref="water_5_vv_6inPremask_5_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_vh"/>
+        <positionref ref="water_5_vh_5inPremask_5_slab_verpos"/>
+        <rotationref ref="water_5_vh_5inPremask_5_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_vh"/>
+        <positionref ref="water_5_vh_6inPremask_5_slab_verpos"/>
+        <rotationref ref="water_5_vh_6inPremask_5_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_vv"/>
+        <positionref ref="water_5_vv_9inPremask_5_slab_verpos"/>
+        <rotationref ref="water_5_vv_9inPremask_5_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_vv"/>
+        <positionref ref="water_5_vv_10inPremask_5_slab_verpos"/>
+        <rotationref ref="water_5_vv_10inPremask_5_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_vh"/>
+        <positionref ref="water_5_vh_9inPremask_5_slab_verpos"/>
+        <rotationref ref="water_5_vh_9inPremask_5_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_5_vh"/>
+        <positionref ref="water_5_vh_10inPremask_5_slab_verpos"/>
+        <rotationref ref="water_5_vh_10inPremask_5_slab_verrot"/>
+      </physvol>
+    </volume>
+    <volume name="PreM_G2x">
+      <materialref ref="AIR"/>
+      <solidref ref="PreM_G2x0x1"/>
+    </volume>
+    <volume name="PreG2y">
+      <materialref ref="AIR"/>
+      <solidref ref="PreG2y0x1"/>
+    </volume>
+    <volume name="water_7_hh">
+      <materialref ref="WATR"/>
+      <solidref ref="water_7_hh0x1"/>
+    </volume>
+    <volume name="water_7_hv">
+      <materialref ref="WATR"/>
+      <solidref ref="water_7_hv0x1"/>
+    </volume>
+    <volume name="Premask_7_slab_hor">
+      <materialref ref="STST"/>
+      <solidref ref="Premask_7_slab_hor0x1"/>
+      <physvol>
+        <volumeref ref="water_7_hh"/>
+        <positionref ref="water_7_hh_1inPremask_7_slab_horpos"/>
+        <rotationref ref="water_7_hh_1inPremask_7_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_hh"/>
+        <positionref ref="water_7_hh_2inPremask_7_slab_horpos"/>
+        <rotationref ref="water_7_hh_2inPremask_7_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_hv"/>
+        <positionref ref="water_7_hv_1inPremask_7_slab_horpos"/>
+        <rotationref ref="water_7_hv_1inPremask_7_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_hv"/>
+        <positionref ref="water_7_hv_2inPremask_7_slab_horpos"/>
+        <rotationref ref="water_7_hv_2inPremask_7_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_hh"/>
+        <positionref ref="water_7_hh_5inPremask_7_slab_horpos"/>
+        <rotationref ref="water_7_hh_5inPremask_7_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_hh"/>
+        <positionref ref="water_7_hh_6inPremask_7_slab_horpos"/>
+        <rotationref ref="water_7_hh_6inPremask_7_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_hv"/>
+        <positionref ref="water_7_hv_5inPremask_7_slab_horpos"/>
+        <rotationref ref="water_7_hv_5inPremask_7_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_hv"/>
+        <positionref ref="water_7_hv_6inPremask_7_slab_horpos"/>
+        <rotationref ref="water_7_hv_6inPremask_7_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_hh"/>
+        <positionref ref="water_7_hh_9inPremask_7_slab_horpos"/>
+        <rotationref ref="water_7_hh_9inPremask_7_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_hh"/>
+        <positionref ref="water_7_hh_10inPremask_7_slab_horpos"/>
+        <rotationref ref="water_7_hh_10inPremask_7_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_hv"/>
+        <positionref ref="water_7_hv_9inPremask_7_slab_horpos"/>
+        <rotationref ref="water_7_hv_9inPremask_7_slab_horrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_hv"/>
+        <positionref ref="water_7_hv_10inPremask_7_slab_horpos"/>
+        <rotationref ref="water_7_hv_10inPremask_7_slab_horrot"/>
+      </physvol>
+    </volume>
+    <volume name="water_7_vv">
+      <materialref ref="WATR"/>
+      <solidref ref="water_7_vv0x1"/>
+    </volume>
+    <volume name="water_7_vh">
+      <materialref ref="WATR"/>
+      <solidref ref="water_7_vh0x1"/>
+    </volume>
+    <volume name="Premask_7_slab_ver">
+      <materialref ref="STST"/>
+      <solidref ref="Premask_7_slab_ver0x1"/>
+      <physvol>
+        <volumeref ref="water_7_vv"/>
+        <positionref ref="water_7_vv_1inPremask_7_slab_verpos"/>
+        <rotationref ref="water_7_vv_1inPremask_7_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_vv"/>
+        <positionref ref="water_7_vv_2inPremask_7_slab_verpos"/>
+        <rotationref ref="water_7_vv_2inPremask_7_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_vh"/>
+        <positionref ref="water_7_vh_1inPremask_7_slab_verpos"/>
+        <rotationref ref="water_7_vh_1inPremask_7_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_vh"/>
+        <positionref ref="water_7_vh_2inPremask_7_slab_verpos"/>
+        <rotationref ref="water_7_vh_2inPremask_7_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_vv"/>
+        <positionref ref="water_7_vv_5inPremask_7_slab_verpos"/>
+        <rotationref ref="water_7_vv_5inPremask_7_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_vv"/>
+        <positionref ref="water_7_vv_6inPremask_7_slab_verpos"/>
+        <rotationref ref="water_7_vv_6inPremask_7_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_vh"/>
+        <positionref ref="water_7_vh_5inPremask_7_slab_verpos"/>
+        <rotationref ref="water_7_vh_5inPremask_7_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_vh"/>
+        <positionref ref="water_7_vh_6inPremask_7_slab_verpos"/>
+        <rotationref ref="water_7_vh_6inPremask_7_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_vv"/>
+        <positionref ref="water_7_vv_9inPremask_7_slab_verpos"/>
+        <rotationref ref="water_7_vv_9inPremask_7_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_vv"/>
+        <positionref ref="water_7_vv_10inPremask_7_slab_verpos"/>
+        <rotationref ref="water_7_vv_10inPremask_7_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_vh"/>
+        <positionref ref="water_7_vh_9inPremask_7_slab_verpos"/>
+        <rotationref ref="water_7_vh_9inPremask_7_slab_verrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="water_7_vh"/>
+        <positionref ref="water_7_vh_10inPremask_7_slab_verpos"/>
+        <rotationref ref="water_7_vh_10inPremask_7_slab_verrot"/>
+      </physvol>
+    </volume>
+    <volume name="Core_block_Steel">
+      <materialref ref="STST"/>
+      <solidref ref="Core_block_Steel0x1"/>
+    </volume>
+    <volume name="Core_watrcool_longvert0x2">
+      <materialref ref="WATR"/>
+      <solidref ref="Core_watrcool_longvert0x3"/>
+    </volume>
+    <volume name="Core_watrcool_shortvert">
+      <materialref ref="WATR"/>
+      <solidref ref="Core_watrcool_shortvert0x1"/>
+    </volume>
+    <volume name="Core_watrcool_short">
+      <materialref ref="WATR"/>
+      <solidref ref="Core_watrcool_short0x1"/>
+    </volume>
+    <volume name="Core_block">
+      <materialref ref="AL"/>
+      <solidref ref="Core_block0x1"/>
+      <physvol>
+        <volumeref ref="Core_block_Steel"/>
+        <positionref ref="Core_block_Steel_1inCore_blockpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert0x2"/>
+        <positionref ref="Core_watrcool_longvert_10x3inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_longvert_10x3inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert0x2"/>
+        <positionref ref="Core_watrcool_longvert_20x3inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_longvert_20x3inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_shortvert"/>
+        <positionref ref="Core_watrcool_shortvert_1inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_shortvert_1inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_shortvert"/>
+        <positionref ref="Core_watrcool_shortvert_2inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_shortvert_2inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_short"/>
+        <positionref ref="Core_watrcool_short_3inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_short_3inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_short"/>
+        <positionref ref="Core_watrcool_short_4inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_short_4inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_short"/>
+        <positionref ref="Core_watrcool_short_5inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_short_5inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert0x2"/>
+        <positionref ref="Core_watrcool_longvert_30x3inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_longvert_30x3inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert0x2"/>
+        <positionref ref="Core_watrcool_longvert_40x3inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_longvert_40x3inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_shortvert"/>
+        <positionref ref="Core_watrcool_shortvert_6inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_shortvert_6inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_shortvert"/>
+        <positionref ref="Core_watrcool_shortvert_7inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_shortvert_7inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_short"/>
+        <positionref ref="Core_watrcool_short_8inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_short_8inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_short"/>
+        <positionref ref="Core_watrcool_short_9inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_short_9inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_short"/>
+        <positionref ref="Core_watrcool_short_10inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_short_10inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert0x2"/>
+        <positionref ref="Core_watrcool_longvert_50x3inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_longvert_50x3inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert0x2"/>
+        <positionref ref="Core_watrcool_longvert_60x3inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_longvert_60x3inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_shortvert"/>
+        <positionref ref="Core_watrcool_shortvert_11inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_shortvert_11inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_shortvert"/>
+        <positionref ref="Core_watrcool_shortvert_12inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_shortvert_12inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_short"/>
+        <positionref ref="Core_watrcool_short_13inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_short_13inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_short"/>
+        <positionref ref="Core_watrcool_short_14inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_short_14inCore_blockrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_short"/>
+        <positionref ref="Core_watrcool_short_15inCore_blockpos"/>
+        <rotationref ref="Core_watrcool_short_15inCore_blockrot"/>
+      </physvol>
+    </volume>
+    <volume name="Core_block_20x1">
+      <materialref ref="STST"/>
+      <solidref ref="Core_block_20x2"/>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert0x2"/>
+        <positionref ref="Core_watrcool_longvert_10x4inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_longvert_10x4inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert0x2"/>
+        <positionref ref="Core_watrcool_longvert_20x4inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_longvert_20x4inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_shortvert"/>
+        <positionref ref="Core_watrcool_shortvert_10x1inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_shortvert_10x1inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_shortvert"/>
+        <positionref ref="Core_watrcool_shortvert_20x1inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_shortvert_20x1inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_short"/>
+        <positionref ref="Core_watrcool_short_30x1inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_short_30x1inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_short"/>
+        <positionref ref="Core_watrcool_short_40x1inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_short_40x1inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_short"/>
+        <positionref ref="Core_watrcool_short_50x1inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_short_50x1inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert0x2"/>
+        <positionref ref="Core_watrcool_longvert_30x4inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_longvert_30x4inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert0x2"/>
+        <positionref ref="Core_watrcool_longvert_40x4inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_longvert_40x4inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_shortvert"/>
+        <positionref ref="Core_watrcool_shortvert_60x1inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_shortvert_60x1inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_shortvert"/>
+        <positionref ref="Core_watrcool_shortvert_70x1inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_shortvert_70x1inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_short"/>
+        <positionref ref="Core_watrcool_short_80x1inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_short_80x1inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_short"/>
+        <positionref ref="Core_watrcool_short_90x1inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_short_90x1inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_short"/>
+        <positionref ref="Core_watrcool_short_100x1inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_short_100x1inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert0x2"/>
+        <positionref ref="Core_watrcool_longvert_50x4inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_longvert_50x4inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_longvert0x2"/>
+        <positionref ref="Core_watrcool_longvert_60x4inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_longvert_60x4inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_shortvert"/>
+        <positionref ref="Core_watrcool_shortvert_110x1inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_shortvert_110x1inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_shortvert"/>
+        <positionref ref="Core_watrcool_shortvert_120x1inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_shortvert_120x1inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_short"/>
+        <positionref ref="Core_watrcool_short_130x1inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_short_130x1inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_short"/>
+        <positionref ref="Core_watrcool_short_140x1inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_short_140x1inCore_block_20x1rot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_watrcool_short"/>
+        <positionref ref="Core_watrcool_short_150x1inCore_block_20x1pos"/>
+        <rotationref ref="Core_watrcool_short_150x1inCore_block_20x1rot"/>
+      </physvol>
+    </volume>
+    <volume name="Big_core_spacer">
+      <materialref ref="STST"/>
+      <solidref ref="Big_core_spacer0x1"/>
+    </volume>
+    <volume name="Small_core_spacer">
+      <materialref ref="STST"/>
+      <solidref ref="Small_core_spacer0x1"/>
+    </volume>
+    <volume name="Core_top_slab">
+      <materialref ref="STST"/>
+      <solidref ref="Core_top_slab0x1"/>
+    </volume>
+    <volume name="Core_sp">
+      <materialref ref="AIR"/>
+      <solidref ref="Core_sp0x1"/>
+      <physvol>
+        <volumeref ref="Core_block"/>
+        <positionref ref="Core_block_1inCore_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_block"/>
+        <positionref ref="Core_block_2inCore_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_block"/>
+        <positionref ref="Core_block_3inCore_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_block"/>
+        <positionref ref="Core_block_4inCore_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_block"/>
+        <positionref ref="Core_block_5inCore_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_block"/>
+        <positionref ref="Core_block_6inCore_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_block"/>
+        <positionref ref="Core_block_7inCore_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_block"/>
+        <positionref ref="Core_block_8inCore_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_block_20x1"/>
+        <positionref ref="Core_block_2_1inCore_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_block_20x1"/>
+        <positionref ref="Core_block_2_2inCore_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_block_20x1"/>
+        <positionref ref="Core_block_2_3inCore_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_block_20x1"/>
+        <positionref ref="Core_block_2_4inCore_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Big_core_spacer"/>
+        <positionref ref="Big_core_spacer_1inCore_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Big_core_spacer"/>
+        <positionref ref="Big_core_spacer_2inCore_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Big_core_spacer"/>
+        <positionref ref="Big_core_spacer_3inCore_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Small_core_spacer"/>
+        <positionref ref="Small_core_spacer_1inCore_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Small_core_spacer"/>
+        <positionref ref="Small_core_spacer_10x1inCore_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Small_core_spacer"/>
+        <positionref ref="Small_core_spacer_10x2inCore_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_top_slab"/>
+        <positionref ref="Core_top_slab_1inCore_sppos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_top_slab"/>
+        <positionref ref="Core_top_slab_2inCore_sppos"/>
+      </physvol>
+    </volume>
+    <volume name="Shield_back_slab">
+      <materialref ref="STST"/>
+      <solidref ref="Shield_back_slab0x1"/>
+    </volume>
+    <volume name="Shield_side_slab_horiz">
+      <materialref ref="STST"/>
+      <solidref ref="Shield_side_slab_horiz0x1"/>
+    </volume>
+    <volume name="Shield_side_slab_vert">
+      <materialref ref="STST"/>
+      <solidref ref="Shield_side_slab_vert0x1"/>
+    </volume>
+    <volume name="Shield_side_slab_vert0x2">
+      <materialref ref="STST"/>
+      <solidref ref="Shield_side_slab_vert0x3"/>
+    </volume>
+    <volume name="Shield_side_slab_horiz0x2">
+      <materialref ref="STST"/>
+      <solidref ref="Shield_side_slab_horiz0x3"/>
+    </volume>
+    <volume name="Shield_top_airgap">
+      <materialref ref="AIR"/>
+      <solidref ref="Shield_top_airgap0x1"/>
+    </volume>
+    <volume name="Prepremask_hole_centre">
+      <materialref ref="AIR"/>
+      <solidref ref="Prepremask_hole_centre0x1"/>
+    </volume>
+    <volume name="Prepremask_hole_up">
+      <materialref ref="AIR"/>
+      <solidref ref="Prepremask_hole_up0x1"/>
+    </volume>
+    <volume name="Prepremask">
+      <materialref ref="STST"/>
+      <solidref ref="Prepremask0x1"/>
+      <physvol>
+        <volumeref ref="Prepremask_hole_centre"/>
+        <positionref ref="Prepremask_hole_centre_1inPrepremaskpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Prepremask_hole_up"/>
+        <positionref ref="Prepremask_hole_up_2inPrepremaskpos"/>
+      </physvol>
+    </volume>
+    <volume name="Prepremask_2_hole_centre">
+      <materialref ref="AIR"/>
+      <solidref ref="Prepremask_2_hole_centre0x1"/>
+    </volume>
+    <volume name="Prepremask_2_st">
+      <materialref ref="STST"/>
+      <solidref ref="Prepremask_2_st0x1"/>
+      <physvol>
+        <volumeref ref="Prepremask_2_hole_centre"/>
+        <positionref ref="Prepremask_2_hole_centre_1inPrepremask_2_stpos"/>
+      </physvol>
+    </volume>
+    <volume name="Prepremask_2">
+      <materialref ref="AIR"/>
+      <solidref ref="Prepremask_20x1"/>
+      <physvol>
+        <volumeref ref="Prepremask_2_st"/>
+        <positionref ref="Prepremask_2_st_1inPrepremask_2pos"/>
+      </physvol>
+    </volume>
+    <volume name="slab_maskup_1">
+      <materialref ref="STST"/>
+      <solidref ref="slab_maskup_10x1"/>
+    </volume>
+    <volume name="slab_maskup_2">
+      <materialref ref="STST"/>
+      <solidref ref="slab_maskup_20x1"/>
+    </volume>
+    <volume name="slab_maskup_3">
+      <materialref ref="STST"/>
+      <solidref ref="slab_maskup_30x1"/>
+    </volume>
+    <volume name="slab_maskup_4">
+      <materialref ref="STST"/>
+      <solidref ref="slab_maskup_40x1"/>
+    </volume>
+    <volume name="slab_maskdown_3">
+      <materialref ref="STST"/>
+      <solidref ref="slab_maskdown_30x1"/>
+    </volume>
+    <volume name="slab_maskdown_4">
+      <materialref ref="STST"/>
+      <solidref ref="slab_maskdown_40x1"/>
+    </volume>
+    <volume name="slab_maskside_1">
+      <materialref ref="STST"/>
+      <solidref ref="slab_maskside_10x1"/>
+    </volume>
+    <volume name="slab_maskside_2">
+      <materialref ref="STST"/>
+      <solidref ref="slab_maskside_20x1"/>
+    </volume>
+    <volume name="slab_maskside_3">
+      <materialref ref="STST"/>
+      <solidref ref="slab_maskside_30x1"/>
+    </volume>
+    <volume name="slab_bl">
+      <materialref ref="STST"/>
+      <solidref ref="slab_bl0x1"/>
+    </volume>
+    <volume name="slab_maskdown_5">
+      <materialref ref="STST"/>
+      <solidref ref="slab_maskdown_50x1"/>
+    </volume>
+    <volume name="Conc_SH">
+      <materialref ref="CONC"/>
+      <solidref ref="Conc_SH0x1"/>
+      <physvol>
+        <volumeref ref="PreM_sp"/>
+        <positionref ref="PreM_sp_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_3_slab_hor"/>
+        <positionref ref="Premask_3_slab_hor_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_3_slab_hor"/>
+        <positionref ref="Premask_3_slab_hor_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_3_slab_hor"/>
+        <positionref ref="Premask_3_slab_hor_3inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_3_slab_hor"/>
+        <positionref ref="Premask_3_slab_hor_4inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_3_slab_ver"/>
+        <positionref ref="Premask_3_slab_ver_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_3_slab_ver"/>
+        <positionref ref="Premask_3_slab_ver_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_3_slab_ver"/>
+        <positionref ref="Premask_3_slab_ver_3inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_3_slab_ver"/>
+        <positionref ref="Premask_3_slab_ver_4inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="PreM_G1x"/>
+        <positionref ref="PreM_G1x_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="PreM_G1x"/>
+        <positionref ref="PreM_G1x_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="PreG1y"/>
+        <positionref ref="PreG1y_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="PreG1y"/>
+        <positionref ref="PreG1y_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_5_slab_hor"/>
+        <positionref ref="Premask_5_slab_hor_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_5_slab_hor"/>
+        <positionref ref="Premask_5_slab_hor_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_5_slab_hor"/>
+        <positionref ref="Premask_5_slab_hor_3inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_5_slab_hor"/>
+        <positionref ref="Premask_5_slab_hor_4inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_5_slab_ver"/>
+        <positionref ref="Premask_5_slab_ver_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_5_slab_ver"/>
+        <positionref ref="Premask_5_slab_ver_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_5_slab_ver"/>
+        <positionref ref="Premask_5_slab_ver_3inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_5_slab_ver"/>
+        <positionref ref="Premask_5_slab_ver_4inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="PreM_G2x"/>
+        <positionref ref="PreM_G2x_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="PreM_G2x"/>
+        <positionref ref="PreM_G2x_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="PreG2y"/>
+        <positionref ref="PreG2y_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="PreG2y"/>
+        <positionref ref="PreG2y_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_7_slab_hor"/>
+        <positionref ref="Premask_7_slab_hor_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_7_slab_hor"/>
+        <positionref ref="Premask_7_slab_hor_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_7_slab_hor"/>
+        <positionref ref="Premask_7_slab_hor_3inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_7_slab_hor"/>
+        <positionref ref="Premask_7_slab_hor_4inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_7_slab_ver"/>
+        <positionref ref="Premask_7_slab_ver_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_7_slab_ver"/>
+        <positionref ref="Premask_7_slab_ver_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_7_slab_ver"/>
+        <positionref ref="Premask_7_slab_ver_3inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Premask_7_slab_ver"/>
+        <positionref ref="Premask_7_slab_ver_4inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_sp"/>
+        <positionref ref="Core_sp_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_back_slab"/>
+        <positionref ref="Shield_back_slab_0inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_back_slab"/>
+        <positionref ref="Shield_back_slab_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_back_slab"/>
+        <positionref ref="Shield_back_slab_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_back_slab"/>
+        <positionref ref="Shield_back_slab_3inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_back_slab"/>
+        <positionref ref="Shield_back_slab_4inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_back_slab"/>
+        <positionref ref="Shield_back_slab_5inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_back_slab"/>
+        <positionref ref="Shield_back_slab_6inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_0inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_10inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_20inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_30inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_11inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_21inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_31inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_12inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_22inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_32inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_0inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_10inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_20inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_30inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_11inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_21inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_31inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_12inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_22inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_32inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_3inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_13inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_23inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_33inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_00x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_100x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_200x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_300x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_10x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_110x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_210x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_310x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_20x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_120x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_220x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_320x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_00x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_100x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_200x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_300x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_10x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_110x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_210x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_310x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_20x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_120x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_220x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_320x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_30x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_130x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_230x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_330x1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert0x2"/>
+        <positionref ref="Shield_side_slab_vert_00x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert0x2"/>
+        <positionref ref="Shield_side_slab_vert_100x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert0x2"/>
+        <positionref ref="Shield_side_slab_vert_200x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert0x2"/>
+        <positionref ref="Shield_side_slab_vert_10x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert0x2"/>
+        <positionref ref="Shield_side_slab_vert_110x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert0x2"/>
+        <positionref ref="Shield_side_slab_vert_210x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert0x2"/>
+        <positionref ref="Shield_side_slab_vert_20x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert0x2"/>
+        <positionref ref="Shield_side_slab_vert_120x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert0x2"/>
+        <positionref ref="Shield_side_slab_vert_220x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert0x2"/>
+        <positionref ref="Shield_side_slab_vert_30x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert0x2"/>
+        <positionref ref="Shield_side_slab_vert_130x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert0x2"/>
+        <positionref ref="Shield_side_slab_vert_230x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz0x2"/>
+        <positionref ref="Shield_side_slab_horiz_00x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz0x2"/>
+        <positionref ref="Shield_side_slab_horiz_100x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz0x2"/>
+        <positionref ref="Shield_side_slab_horiz_200x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz0x2"/>
+        <positionref ref="Shield_side_slab_horiz_10x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz0x2"/>
+        <positionref ref="Shield_side_slab_horiz_110x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz0x2"/>
+        <positionref ref="Shield_side_slab_horiz_210x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz0x2"/>
+        <positionref ref="Shield_side_slab_horiz_20x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz0x2"/>
+        <positionref ref="Shield_side_slab_horiz_120x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz0x2"/>
+        <positionref ref="Shield_side_slab_horiz_220x2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz0x2"/>
+        <positionref ref="Shield_side_slab_horiz_3inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz0x2"/>
+        <positionref ref="Shield_side_slab_horiz_13inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz0x2"/>
+        <positionref ref="Shield_side_slab_horiz_23inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_top_airgap"/>
+        <positionref ref="Shield_top_airgap_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Prepremask"/>
+        <positionref ref="Prepremask_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Prepremask_2"/>
+        <positionref ref="Prepremask_2_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskup_1"/>
+        <positionref ref="slab_maskup_1_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskup_2"/>
+        <positionref ref="slab_maskup_2_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskup_3"/>
+        <positionref ref="slab_maskup_3_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskup_3"/>
+        <positionref ref="slab_maskup_3_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskup_4"/>
+        <positionref ref="slab_maskup_4_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskdown_3"/>
+        <positionref ref="slab_maskdown_3_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskdown_3"/>
+        <positionref ref="slab_maskdown_3_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskdown_3"/>
+        <positionref ref="slab_maskdown_3_3inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskdown_3"/>
+        <positionref ref="slab_maskdown_3_4inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskdown_4"/>
+        <positionref ref="slab_maskdown_4_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskside_1"/>
+        <positionref ref="slab_maskside_1_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskside_2"/>
+        <positionref ref="slab_maskside_2_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskside_3"/>
+        <positionref ref="slab_maskside_3_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskside_3"/>
+        <positionref ref="slab_maskside_3_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskside_1"/>
+        <positionref ref="slab_maskside_1_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskside_2"/>
+        <positionref ref="slab_maskside_2_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskside_3"/>
+        <positionref ref="slab_maskside_3_3inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskside_3"/>
+        <positionref ref="slab_maskside_3_4inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_bl"/>
+        <positionref ref="slab_bl_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_bl"/>
+        <positionref ref="slab_bl_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_bl"/>
+        <positionref ref="slab_bl_3inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_bl"/>
+        <positionref ref="slab_bl_4inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_bl"/>
+        <positionref ref="slab_bl_5inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_bl"/>
+        <positionref ref="slab_bl_6inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_bl"/>
+        <positionref ref="slab_bl_7inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskdown_5"/>
+        <positionref ref="slab_maskdown_5_1inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskdown_5"/>
+        <positionref ref="slab_maskdown_5_2inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskdown_5"/>
+        <positionref ref="slab_maskdown_5_3inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskdown_5"/>
+        <positionref ref="slab_maskdown_5_4inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskdown_5"/>
+        <positionref ref="slab_maskdown_5_5inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskdown_5"/>
+        <positionref ref="slab_maskdown_5_6inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskdown_5"/>
+        <positionref ref="slab_maskdown_5_7inConc_SHpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskdown_5"/>
+        <positionref ref="slab_maskdown_5_8inConc_SHpos"/>
+      </physvol>
+    </volume>
+    <volume name="AH_topair">
+      <materialref ref="AIR"/>
+      <solidref ref="AH_topair0x1"/>
+    </volume>
+    <volume name="AH_top">
+      <materialref ref="CONC"/>
+      <solidref ref="AH_top0x1"/>
+      <physvol>
+        <volumeref ref="AH_topair"/>
+        <positionref ref="AH_topair_1inAH_toppos"/>
+      </physvol>
+    </volume>
+    <volume name="AH_backair_1">
+      <materialref ref="AIR"/>
+      <solidref ref="AH_backair_10x1"/>
+    </volume>
+    <volume name="AH_backair_2">
+      <materialref ref="AIR"/>
+      <solidref ref="AH_backair_20x1"/>
+    </volume>
+    <volume name="AH_back">
+      <materialref ref="CONC"/>
+      <solidref ref="AH_back0x1"/>
+      <physvol>
+        <volumeref ref="AH_backair_1"/>
+        <positionref ref="AH_backair_1_1inAH_backpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="AH_backair_2"/>
+        <positionref ref="AH_backair_2_1inAH_backpos"/>
+      </physvol>
+    </volume>
+    <volume name="AH_Muon_alkair">
+      <materialref ref="AIR"/>
+      <solidref ref="AH_Muon_alkair0x1"/>
+    </volume>
+    <volume name="AH_Muon_alk">
+      <materialref ref="CONC"/>
+      <solidref ref="AH_Muon_alk0x1"/>
+      <physvol>
+        <volumeref ref="AH_Muon_alkair"/>
+        <positionref ref="AH_Muon_alkair_1inAH_Muon_alkpos"/>
+      </physvol>
+    </volume>
+    <volume name="TOP">
+      <materialref ref="AIR"/>
+      <solidref ref="TOP0x1"/>
+      <physvol>
+        <volumeref ref="Conc_SH"/>
+        <positionref ref="Conc_SH_1inTOPpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="AH_top"/>
+        <positionref ref="AH_top_1inTOPpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="AH_back"/>
+        <positionref ref="AH_back_1inTOPpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="AH_Muon_alk"/>
+        <positionref ref="AH_Muon_alk_1inTOPpos"/>
+      </physvol>
+    </volume>
+  </structure>
+  <setup name="default" version="1.0">
+    <world ref="TOP"/>
+  </setup>
+</gdml>

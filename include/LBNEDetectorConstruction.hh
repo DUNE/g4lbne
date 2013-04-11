@@ -24,8 +24,6 @@ class LBNEMagneticField;
 class LBNEMagneticFieldIC;
 class LBNEMagneticFieldOC;
 
-
-
 typedef std::vector<G4double> vdouble_t; 
 typedef std::vector<G4int> vint_t;
 typedef std::vector<LBNEMagneticField*> BFieldVec;
@@ -53,6 +51,8 @@ public:
 
    
 private:
+   
+   
    LBNEDataInput* LBNEData;
    //LBNEMagneticField* lbneMagField;
    //LBNEMagneticFieldIC* lbneMagFieldIC;
@@ -216,7 +216,12 @@ private:
   G4VPhysicalVolume* CNT[20];
   G4VPhysicalVolume* HadrBox;
   G4VPhysicalVolume* ShldBox;
-  
+ 
+  G4LogicalVolume* fConcShld; 
+  G4LogicalVolume* fAHTop;
+  G4LogicalVolume* fAHBack; 
+  G4LogicalVolume* fMuonAlk; 
+
   //Solids
   //
   G4VSolid* BLK_solid[100];

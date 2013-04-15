@@ -1,3 +1,4 @@
+
 ##################################################
 ##
 ## submit_flux.py
@@ -26,6 +27,8 @@ parser = OptionParser(usage=usage)
 
 parser.add_option("-g", "--g4lbne_dir", dest="g4lbne_dir",
                   help="g4lbne directory", default="/lbne/app/users/$USER/lbne-beamsim/g4lbne")
+parser.add_option("-p", "--physics_list", dest="physics_list",
+                  help="Geant4 Physics List", default="QGSP_BERT");
 parser.add_option("-i", "--input", dest="input",
                   help="Input Card", default="lbnedocdb2161v6")
 parser.add_option("-m", "--macro", dest="macro",
@@ -74,6 +77,9 @@ if not os.path.exists(macro_template):
     print "I can't find an input card at at "+input_card
     sys.exit()
 
+physics_list = options.physics_list
+print "Using GEANT4 physics list",physics_list
+
 ###################################################
 #
 # Print options
@@ -93,9 +99,9 @@ print "Output will be written to:",options.output_dir
 # Create Directories
 #
 ###################################################
-macro_dir = options.output_dir+"/"+options.input+"/"+options.macro+"/macros/"
-flux_dir = options.output_dir+"/"+options.input+"/"+options.macro+"/flux/"
-log_dir = options.output_dir+"/"+options.input+"/"+options.macro+"/logfiles/"
+macro_dir = options.output_dir+"/"+options.input+"/"+"/"+physics_list+"/"+options.macro+"/macros/"
+flux_dir = options.output_dir+"/"+options.input+"/"+physics_list+"/"+options.macro+"/flux/"
+log_dir = options.output_dir+"/"+options.input+"/"+physics_list+"/"+options.macro+"/logfiles/"
 
 # executables have to go on /app
 macro_dir = macro_dir.replace("lbne/data","lbne/app")
@@ -114,7 +120,7 @@ os.chmod(macro_dir,0777)
 os.chmod(flux_dir,0777)
 os.chmod(log_dir,0777)
     
-temp_dir = os.getenv("PWD")+"/"
+temp_dir = " "
 if not options.interactive:
     temp_dir = "$_CONDOR_SCRATCH_DIR/"
 
@@ -123,7 +129,7 @@ if not options.interactive:
 # Loop over requested jobs
 #
 ###################################################
-file_prefix = options.input+"_"+options.macro
+file_prefix = options.input+"_"+physics_list+"_"+options.macro
 for i in range(int(options.first_job),int(options.last_job)+1):
 
     # Write macro file
@@ -147,10 +153,10 @@ for i in range(int(options.first_job),int(options.last_job)+1):
     wrapper = open(script_filename, 'w')
     #wrapper.write("#!/bin/sh \n\n")
     wrapper.write("source "+g4lbne_setup+" \n\n")
-    wrapper.write(g4lbne_executable+" --input "+input_card+" "+new_macro_filename+'\n\n')
+    wrapper.write(g4lbne_executable+" --physicslist "+physics_list+" --input "+input_card+" "+new_macro_filename+'\n\n')
         # copy the output
-    temp_output = temp_dir+"/"+file_prefix+"_"+str(i).zfill(3)+".root"
-    final_output = temp_output.replace(temp_dir,flux_dir);
+    temp_output = temp_dir+file_prefix+"_"+str(i).zfill(3)+".root"
+    final_output = flux_dir+file_prefix+"_"+str(i).zfill(3)+".root"
     if options.interactive:
         wrapper.write("cp "+temp_output+" "+final_output+"\n");
     else:

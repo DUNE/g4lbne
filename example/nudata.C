@@ -191,6 +191,7 @@ void nudata::Loop()
       // MINOS Far  Detector COORDS are  (x,y,z) = (0.0, 0.0, 73534000.0) cm.
       // NOVA  Far  Detector COORDS are  (x,y,z) = (1104000.0, -420000.0, 81045000.0)
       // should confirm with nova the coords, these are pretty old numbers.
+      // LBNE  Far Detector COORDS are   (x,y,z) = (0.0, 0.0, 129700000.0) cm.
       //
       double detx = 0.0;
       double dety = 0.0;

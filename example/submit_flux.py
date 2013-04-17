@@ -28,7 +28,7 @@ parser = OptionParser(usage=usage)
 parser.add_option("-g", "--g4lbne_dir", dest="g4lbne_dir",
                   help="g4lbne directory", default="/lbne/app/users/$USER/lbne-beamsim/g4lbne")
 parser.add_option("-p", "--physics_list", dest="physics_list",
-                  help="Geant4 Physics List", default="QGSP_BERT");
+                  help="Geant4 Physics List", default="QGSP");
 parser.add_option("-i", "--input", dest="input",
                   help="Input Card", default="lbnedocdb2161v6")
 parser.add_option("-m", "--macro", dest="macro",

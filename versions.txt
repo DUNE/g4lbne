@@ -1,3 +1,6 @@
 v1r0
 v1r2
 v2r0 tagged on Jan 31 2013 at ~14:00 CT
+v2r1 tagged on 19 April, 2013, corresponding to rev. 47 in the CVS (3/15/2013)
+v2r2 tagged on 19 April, 2013, corresponding to rev. 50 in the CVS (4/11/2013)
+v2r3 tagged on 19 April, 2013, corresponding to rev. 54 in the CVS (4/17/2013)

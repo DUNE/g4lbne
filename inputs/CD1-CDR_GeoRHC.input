@@ -1,0 +1,304 @@
+C***********************************************************************
+C $Id: CD1-CDR_GeoRHC.input,v 1.1 2013/05/07 16:41:46 ljf26 Exp $
+C
+C Note: when shifting target positions these elements must all be
+C shifted together:
+C  -THIS Card is specifically for the Exact Numi Target
+C   By setting TargetShape = 'NUMI' below, the Exact Numi
+C   baffle and budal fin are automatically constructed with
+C   respect to TargetZ0.
+C   LE000 = TargetZ0 = -0.35*m
+C
+C Low energy beam line definition card
+C***********************************************************************
+List
+
+pCutGamma    999999.
+pCutElectron 999999.
+pCutPiZero   999999.
+pCutKaon     0.1
+pCutNonKaon  0.1
+
+Beam         1 
+C=======================================================================
+C
+C=======================================================================
+C
+C BeamOnTarget = FALSE -> beam starts in front of baffle
+C
+BeamOnTarget FALSE
+BeamX0      0.0 
+BeamY0      0.0
+C Beam Z0 will be deterimined internally With respect to the NUMI
+C baffle and target. Whatever is assigned here will have no effect
+C when using TargetShape = 'NUMI'
+BeamZ0      -0.9
+BeamSigx    0.0015
+BeamSigy    0.0015
+BeamMaxx    5.0E-3
+BeamMaxy    5.0E-3
+BeamDx      0.0
+BeamDy      0.0
+BeamSigdx   17.0E-6
+BeamSigdy   17.0E-6
+BeamMaxdx   130E-6
+BeamMaxdy   130E-6
+BeamP       120.93
+
+C NOTE: The Blocks define the Target hall shielding and Absorber Shielding
+C THIS CARD CONSTRUCTS THE EXACT NUMI TARGET. THE EXACT NUMI HORIZONTAL
+C BUDAL FIN WILL AUTOMATICALLY BE CONSTRUCTED. DO NOT ADD IT HERE!!!!
+BlockNblock 16
+C======================================================================= 
+C Target area shielding 
+C This is X0 at center of block
+BlockX0        1=  2.324    -2.324	 0.0       0.0      0.0
+C This is Y0 at center of block
+BlockY0        1=  0.0       0.0      -3.593     3.8655   0.2725
+C This is Z0 at most upstream edge of block
+BlockZ0        1=  -10.9    -10.9     -10.9     -10.9    -10.9
+BlockDxdz      1=  0.0       0.0       0.0       0.0       0.0
+BlockDydz      1=  0.0       0.0       0.0       0.0       0.0
+C This is Full z length of block
+BlockLength    1=  28.2      28.2      28.2      28.2     3.8608
+C This is the half x length
+BlockHdx       1=  1.5115    1.5115    0.8125    0.8125   0.8125
+C This is the half y length
+BlockHdy       1=  5.931     5.931     2.338     2.0655   1.5275
+BlockGeantmat  1=  10       10         10        10       10 
+
+C 
+C Absorber Al core and steel
+C X0,Y0,Z0 is the upstream face
+C From A. Makarov, June 10, 2010
+C AL core is 60"x60"x96"
+C Steel covers an area of  228"x228"x274"
+C upstream Al mask is not included
+BlockX0        6= 0.0     0.0     1.829    -1.829      0.0     0.0  
+BlockY0        6= 0.0     0.0     0.0      0.0      1.829    -1.829
+BlockZ0        6= 223.06  225.50  222.22   222.22   222.22  222.22
+BlockDxdz      6= 0.0     0.0     0.0      0.0      0.0     0.0     
+BlockDydz      6= 0.0     0.0     0.0      0.0      0.0     0.0  
+BlockLength    6= 2.44   3.65     6.96     6.96     6.96    6.96
+BlockHdx       6= .762   .762    1.067     1.067      2.90    2.90 
+BlockHdy       6= .762   .762   .762      .762      1.067    1.067 
+BlockGeantmat  6= 9       10      10       10       10       10 
+
+C
+C  Concrete sides and back
+C
+C  60" thick at downstream end, 72" on the top and bottom,
+C  47" on the passage side,  60" on the morgue side of the tunnel
+BlockX0        12= .165    .165    .165      3.662   -3.4925  
+BlockY0        12= 0.0     3.81     -3.81    0.       0.
+BlockZ0        12= 229.18  222.22   222.22   222.22  222.22
+BlockDxdz      12= 0.0     0.0      0.0      0.0     0.0     
+BlockDydz      12= 0.0     0.0      0.0      0.0     0.0  
+BlockLength    12= 1.524    6.96    6.96     6.96    6.96
+BlockHdx       12= 4.255    4.255   4.255    .762    .579
+BlockHdy       12= 4.724   .914     .914     2.895   2.895 
+BlockGeantmat  12= 17      17       17       17       17 
+
+C Subtracted 50 from all of the z0 values for objects at the end of the decay pipe - S. Johnson
+C Changed some of the positions of the blocks to eliminate overlaps - S. Johnson
+
+
+
+
+DecayPipe          1    
+C=======================================================================
+DecayPipeZ0	   17.3
+DecayPipeRadius    2.00
+DecayPipeLength    204.0
+DecayPipeFWinThick 0.0001
+DecayPipeEWinThick 0.0001 
+DecayPipeWallThick 0.0125
+DecayPipeA         55.85
+DecayPipeZ         26.0
+DecayPipeGEANTmat  10
+DecayPipeFWinmat   15
+DecayPipeEWinmat   10
+C fill the decay pipe with air
+C air = 15, vac=16, he= 24
+DecayPipeFillGEANTmat 15
+
+C S. Johnson - changed length from 250 to 200
+C changed upstream window to air
+C downstream window will probably be thicker and more complicated than what is here
+C changed WallThick to 0.0125 from 0.0127
+
+
+DumpNDump 0
+C=======================================================================
+C Absorbed defined by Blocks
+
+FluxArea       1
+C=======================================================================
+FluxAreaX0near 0.0
+FluxAreaY0near 0.0
+FluxAreaZ0near 1000.0
+FluxAreaRnear  1.0
+FluxAreaX0far  0.0
+FluxAreaY0far  0.0
+FluxAreaZ0far  1297.0E3
+FluxAreaRfar   1.0
+
+
+C These 3 lines were added 2/2011 -Laura  
+NPhorns 2
+PhornNParts 5 3
+PhornNphorn 8
+C=======================================================================
+C Horn 1
+C=======================================================================
+PhornZ1         1=   0.00000   0.44047   0.80000   0.83982   0.95128
+PhornZ2         1=   0.44047   0.80000   0.83982   0.95128   3.00000
+C
+C These 2 lines were added 2/2011 -Laura  
+PhornNeckZ1     1=   -999.0    -999.0    0.839819  -999.0    -999.0
+PhornNeckZ2     1=   -999.0    -999.0    0.83982   -999.0    -999.0
+C
+PhornNpoint     1=        10        10         1         5        10
+PhornAin        1=   92.8454   85.7091    0.0000  -82.2123  -80.0000
+PhornBin        1=    7.0483    7.0483    0.0000    2.1850    2.1850
+PhornCin        1=   -0.2000    0.0000    0.9000    0.0000   -0.2000
+PhornAout       1=   92.8454   92.8454    0.0000  -80.0000  -80.0000
+PhornBout       1=    7.0483    7.0483    0.0000    2.1850    2.1850
+PhornCout       1=    0.0000    0.0000    1.3500    0.0000    0.0000
+C
+PhornROCin      1=    0.1533    0.1533    0.1533    0.1533    0.1533
+PhornROCout     1=    0.1620    0.1620    0.1620    0.1620    0.1620
+C
+PhornThickFront 1=    0.0030    0.0000    0.0000    0.0000    0.0000
+PhornThickEnd   1=    0.0000    0.0000    0.0000    0.0000    0.0030
+C
+PhornX0         1=    0.0000    0.0000    0.0000    0.0000    0.0000
+PhornY0         1=    0.0000    0.0000    0.0000    0.0000    0.0000
+PhornZ0         1=    0.0000    0.0000    0.0000    0.0000    0.0000
+PhornDXDZ       1=    0.0000    0.0000    0.0000    0.0000    0.0000
+PhornDYDZ       1=    0.0000    0.0000    0.0000    0.0000    0.0000
+PhornCurrent    1=   -0.2000   -0.2000   -0.2000   -0.2000   -0.2000
+PhornGEANTmat   1=        20        20        20        20        20
+C=======================================================================
+C Horn 2
+C=======================================================================
+PhornZ1         6=   0.00000   0.97617   1.04803
+PhornZ2         6=   0.97617   1.04803   3.00000
+C
+C These 2 lines were added 2/2011 -Laura  
+PhornNeckZ1     6=   -999.0    1.048029  -999.0
+PhornNeckZ2     6=   -999.0    1.04803   -999.0
+C
+PhornNpoint     6=        10         1        10
+PhornAin        6=  100.0000    0.0000 -100.0000
+PhornBin        6=    0.1351    0.0000    0.2723
+PhornCin        6=   -0.3000    3.9000   -0.3000
+PhornAout       6=  100.0000    0.0000 -100.0000
+PhornBout       6=    0.1351    0.0000    0.2723
+PhornCout       6=    0.0000    4.4000    0.0000
+C
+PhornROCin      6=    0.3700    0.3700    0.3700
+PhornROCout     6=    0.3787    0.3787    0.3787
+C
+PhornThickFront 6=    0.0030    0.0000    0.0000
+PhornThickEnd   6=    0.0000    0.0000    0.0030
+C
+PhornX0         6=    0.0000    0.0000    0.0000
+PhornY0         6=    0.0000    0.0000    0.0000
+PhornZ0         6=    6.6000    6.6000    6.6000
+PhornDXDZ       6=    0.0000    0.0000    0.0000
+PhornDYDZ       6=    0.0000    0.0000    0.0000
+PhornCurrent    6=   -0.2000   -0.2000   -0.2000
+PhornGEANTmat   6=        20        20        20
+C=======================================================================
+
+Rock        1
+C=======================================================================
+RockRadius  10.0
+RockHalfLen 1200.0
+RockDensity 0.0
+RockRadLen  0.0
+
+ShieldNshield  1
+C   shield region includes the steel around the decay pipe 
+C======================================================================= 
+ShieldGapRin      1= 2.0125
+ShieldGapRout     1= 2.2125
+ShieldGapGEANTmat 1= 15
+
+ShieldL2Rin       1= 2.2125
+ShieldL2Rout      1= 2.225
+ShieldL2GEANTmat  1= 10
+
+ShieldX0          1= 0.0   
+ShieldY0          1= 0.0    
+ShieldZ0          1= 17.3   
+ShieldDxdz        1= 0.0    
+ShieldDydz        1= 0.0    
+ShieldLength      1= 204.0  
+ShieldRout        1= 7.725 
+ShieldRin         1= 2.225 
+ShieldGEANTmat    1= 17  
+
+C  17=concrete 10 = iron
+C  S. Johnson - changed length from 250 to 200
+C  changed concrete thickness to 5.5 m
+C  added air and steel layer to the outside of the decay pipe
+
+
+C
+C NOTE THAT THIS IS THE NUMI TARGET EXACTLY(Cooling pipes, details and all)
+C YOU CANNOT CHANGE ANYTHING EXCEPT the values listed here.
+C - L. Loiacono 20120820
+C
+TargetNtarget  1
+C=======================================================================
+TargetShape    'NUMI'
+TargetX0       0.0
+TargetY0       0.0
+TargetZ0      -0.35
+TargetDxdz     0.0
+TargetDydz     0.0
+
+C
+C NOTE THAT THE NUMI TARGET HAS A BAFFLE.
+C By choosing TargetShape = NUMI, the EXACT NUMI Baffle will
+C be constructed at the correct position with respect to TargetZ0
+C - L. Loiacono 20120820
+C
+
+C
+C NOTE THAT THE NUMI TARGET HAS A Horizontal Budal Fin.
+C By choosing TargetShape = NUMI, the EXACT NUMI Budal fin will
+C be constructed at the correct position with respect to TargetZ0.
+C DO NOT DEFINE IT AS A BLOCK, ABOVE. As was done in GEANT3.
+C - L. Loiacono 20120820
+C
+
+
+TargetArea          1
+C=======================================================================
+TargetAreaZ0       -10.9
+TargetAreaLength    28.2
+TargetAreaHeight    11.862
+TargetAreaWidth     7.671
+C  fill target area with air
+C air = 15, vac=16, he= 24
+TargetAreaGEANTmat  15
+
+
+Tunnel         1
+C=======================================================================
+TunnelZ0       17.3
+TunnelRadius   7.725
+TunnelLength   225.0
+TunnelA        0.0 
+TunnelZ        0.0
+C  fill tunnel with air 
+TunnelGEANTmat  15
+
+C S. Johnson - changed length from 275 to 225
+C Radius increased to 7.725
+
+
+C***********************************************************************

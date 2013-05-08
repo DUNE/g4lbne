@@ -19,11 +19,8 @@ int iread = 0;
 void eventRates::Loop()
 {
 //   In a ROOT session, you can do:
-//      Root > .L eventRates.C
+//      Root > .L eventRates.C++  // The ++ is important because the code runs MUCH faster when compiled
 //      Root > eventRates t
-//      Root > t.GetEntry(12); // Fill t data members with entry number 12
-//      Root > t.Show();       // Show values of entry 12
-//      Root > t.Show(16);     // Read and show values of entry 16
 //      Root > t.Loop();       // Loop on all entries
 //
 

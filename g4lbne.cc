@@ -136,15 +136,9 @@ int main(int argc,char** argv)
 #endif
 
 
-  // set user action classes
-  runManager->SetUserAction(new LBNEEventAction);
-  runManager->SetUserAction(new LBNESteppingAction);
-  runManager->SetUserAction(new LBNEStackingAction);
-  runManager->SetUserAction(new LBNETrackingAction);
-  runManager->SetUserAction(new LBNERunAction);
-
-  // Initialize G4 kernel
-  runManager->Initialize();
+  // Initialize G4 kernel (actually don't, let the macro do that so you can set
+  // geometric stuff using messengers)
+  //runManager->Initialize();
 
   // get the pointer to the UI manager and set verbosities
   G4UImanager* UI = G4UImanager::GetUIpointer();

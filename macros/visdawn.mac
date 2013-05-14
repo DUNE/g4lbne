@@ -1,0 +1,21 @@
+#-----------------------------------------------------------------------------------
+#
+# An example script for creating a DAWN .prim file of the g4lbne beamline
+# simulation and for testing out messenger commands
+
+# Just an example of setting some of the geometry parameters
+/LBNE/det/DecayPipe/pipeLength 204 m
+/LBNE/det/setBeamlineAngle 101 mrad
+/run/initialize
+
+#########################################
+/vis/scene/create
+/vis/open DAWNFILE
+/vis/drawVolume
+/vis/viewer/set/viewpointThetaPhi 90 0 deg
+/vis/viewer/flush
+
+/run/beamOn  1
+
+
+

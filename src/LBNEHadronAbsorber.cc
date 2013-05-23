@@ -132,15 +132,15 @@ void LBNEHadronAbsorber::ConstructSubdetector()
 
   
   G4LogicalVolume *alumAbsorberLogical = 
-    new G4LogicalVolume(aluminumShell, G4Material::GetMaterial("Air"), 
+    new G4LogicalVolume(aluminumShell, G4Material::GetMaterial("Aluminum"), 
                         "AluminumAbsorberLogical", 0,0,0);
 
   G4LogicalVolume *steelAbsorberLogical = 
-    new G4LogicalVolume(steelShell, G4Material::GetMaterial("Air"), //FIXME
+    new G4LogicalVolume(steelShell, G4Material::GetMaterial("Slab_Stl"),
                         "SteelAbsorberLogical", 0,0,0);
 
   G4LogicalVolume *concreteAbsorberLogical = 
-    new G4LogicalVolume(concreteShell, G4Material::GetMaterial("Air"), //FIXME
+    new G4LogicalVolume(concreteShell, G4Material::GetMaterial("Concrete"),
                         "ConcreteAbsorberLogical", 0,0,0);
 
   G4LogicalVolume *hadronAbsorberLogical = 

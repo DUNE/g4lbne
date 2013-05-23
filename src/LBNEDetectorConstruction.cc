@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.2 2013/05/23 17:40:39 robj137 Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.3 2013/05/23 19:22:30 robj137 Exp $
 //----------------------------------------------------------------------
 
 #include <fstream>
@@ -53,10 +53,9 @@
 LBNEDetectorConstruction::LBNEDetectorConstruction()
 {
   InitializeSubVolumes();
-  
+  InitializeMaterials();
   Initialize();
   fDetectorMessenger = new LBNEDetectorMessenger(this);
-  //DefineMaterials();
 }
 
 
@@ -133,18 +132,105 @@ void LBNEDetectorConstruction::Initialize()
 
 //-------------------------------------------------------------------------
 
+void LBNEDetectorConstruction::InitializeMaterials() {
+
+  G4Element* elH  = new G4Element("Hydrogen","H" , 1., 1.01*g/mole);
+  G4Element* elHe = new G4Element("Helium","He" , 2., 4.003*g/mole);
+  G4Element* elC  = new G4Element("Carbon","C" , 6., 12.01*g/mole);
+  G4Element* elN  = new G4Element("Nitrogen","N" , 7., 14.01*g/mole);
+  G4Element* elO  = new G4Element("Oxygen"  ,"O" , 8., 16.00*g/mole); 
+  G4Element* elNa = new G4Element("Sodium"  ,"Na" , 11., 22.99*g/mole); 
+  G4Element* elMg = new G4Element("Magnesium"  ,"Mg" , 12., 24.305*g/mole); 
+  G4Element* elAl = new G4Element("Aluminum"  ,"Al" , 13., 26.98*g/mole); 
+  G4Element* elSi = new G4Element("Silicon"  ,"Si" , 14., 28.09*g/mole); 
+  G4Element* elP  = new G4Element("Phosphorus"  ,"P" , 15., 30.974*g/mole); 
+  G4Element* elS  = new G4Element("Sulfur"  ,"S" , 16., 32.065*g/mole); 
+  G4Element* elK  = new G4Element("Potassium"  ,"K" , 19., 39.1*g/mole); 
+  G4Element* elCa = new G4Element("Calcium"  ,"Ca" , 20., 40.09*g/mole); 
+  G4Element* elTi = new G4Element("Titanium"  ,"Ti" , 22., 47.867*g/mole); 
+  G4Element* elCr = new G4Element("Chromium"  ,"Cr" , 24., 51.9961*g/mole); 
+  G4Element* elMn = new G4Element("Manganese"  ,"Mn" , 25., 54.938*g/mole); 
+  G4Element* elFe = new G4Element("Iron"  ,"Fe" , 26., 55.85*g/mole); 
+  G4Element* elNi = new G4Element("Nickel"  ,"Ni" , 28., 58.6934*g/mole); 
+  G4Element* elCu = new G4Element("Copper"  ,"Cu" , 29., 63.546*g/mole); 
+  G4Element* elHg = new G4Element("Mercury"  ,"Hg" , 80., 200.59*g/mole); 
+
+
+  Air = new G4Material("Air"  , 1.290*mg/cm3, 2);
+  Air->AddElement(elN, 0.7);
+  Air->AddElement(elO, 0.3);
+  
+  CT852 = new G4Material("CT852", 7.75*g/cm3, 10); 
+  CT852->AddElement(elC,  0.001); 
+  CT852->AddElement(elSi, 0.008); 
+  CT852->AddElement(elMn, 0.008); 
+  CT852->AddElement(elCr, 0.13); 
+  CT852->AddElement(elS,  0.00025); 
+  CT852->AddElement(elP,  0.0003); 
+  CT852->AddElement(elTi, 0.002); 
+  CT852->AddElement(elCu, 0.003); 
+  CT852->AddElement(elNi, 0.006); 
+  CT852->AddElement(elFe, 0.84145); 
+
+  // ASTM836 steel
+  Slab_Stl = new G4Material("Slab_Stl", 7.8416*g/cm3, 6);
+  Slab_Stl->AddElement(elC,  0.001);
+  Slab_Stl->AddElement(elSi, 0.001);
+  Slab_Stl->AddElement(elMn, 0.004);
+  Slab_Stl->AddElement(elFe, 0.982);
+  Slab_Stl->AddElement(elNi, 0.01);
+  Slab_Stl->AddElement(elCu, 0.002);
+
+  // BluBlock Steel
+  Blu_Stl = new G4Material("Blu_Stl", 7.25*g/cm3, 1);
+  Blu_Stl->AddElement(elFe, 1.0);
+
+  Water = new G4Material("Water", 1.0*g/cm3, 2);
+  Water->AddElement(elH, 2);
+  Water->AddElement(elO, 1);
+
+  Vacuum = new G4Material("Vacuum", 2.376e-15*g/cm3,1,kStateGas,300.*kelvin,2.0e-7*bar);
+  Vacuum->AddMaterial(Air, 1.);
+
+  G4Material* Helium = new G4Material("Helium", 2, 4.0026*g/mole, 0.1785*kg/m3, kStateGas,
+                          300*kelvin, 2.55*atmosphere);
+
+  G4Material* Aluminum = new G4Material("Aluminum", 13, 26.98*g/mole, 2.7*g/cm3);
+  G4Material* Argon = new G4Material("Argon", 18, 39.948*g/mole, 1.784*kg/m3, kStateGas,
+                          300*kelvin, atmosphere);
+  G4Material* Lead = new G4Material("Lead", 82, 207.19*g/mole, 11.35*g/cm3);
+  G4Material* Iron = new G4Material("Iron", 26, 55.85*g/mole, 7.86999*g/cm3);
+
+  Concrete = new G4Material("Concrete", 2.03*g/cm3, 10);
+  Concrete->AddElement( elH,  0.01);
+  Concrete->AddElement( elO,  0.529);
+  Concrete->AddElement( elNa, 0.016);
+  Concrete->AddElement( elHg, 0.002);
+  Concrete->AddElement( elAl, 0.034);
+  Concrete->AddElement( elSi, 0.337);
+  Concrete->AddElement( elK,  0.013);
+  Concrete->AddElement( elCa, 0.044);
+  Concrete->AddElement( elFe, 0.014);
+  Concrete->AddElement( elC,  0.001);
+  
+  G4Material *rockMat = new G4Material( "rockMat", 2.78*g/cm3, 4 ); //CaMg(CO3)2
+  rockMat->AddElement( elCa, 1);
+  rockMat->AddElement( elMg, 1); 
+  rockMat->AddElement( elC,  2); 
+  rockMat->AddElement( elO,  6); 
+
+}
+
 G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
-  G4Element* N  = new G4Element("Nitrogen","N" , 7., 14.01*g/mole);
-  G4Element* O  = new G4Element("Oxygen"  ,"O" , 8., 16.00*g/mole);  
-  G4Material* Air = new G4Material("Air"  , 1.290*mg/cm3, 2);
-  Air->AddElement(N, 0.7);
-  Air->AddElement(O, 0.3);
   fRockX = 60.0*m;
   fRockY = 60.0*m;
   fRockLength = 300.0*m;
   G4Box* ROCK_solid = new G4Box("ROCK_solid",fRockX/2, fRockY/2, fRockLength/2);
-  G4LogicalVolume *RockLogical = new G4LogicalVolume(ROCK_solid, Air,"RockLogical",0,0,0); 
-  //RockLogical->SetVisAttributes(G4VisAttributes::Invisible);
+  G4LogicalVolume *RockLogical = 
+            new G4LogicalVolume(ROCK_solid,
+                                G4Material::GetMaterial("rockMat"),
+                                "RockLogical",0,0,0); 
+  RockLogical->SetVisAttributes(G4VisAttributes::Invisible);
   ROCK = new G4PVPlacement(0,G4ThreeVector(),RockLogical,"ROCK",0,false,0);
   
   G4cout << "SIMULATION IS " << fSimulationType << G4endl;
@@ -225,9 +311,9 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   G4LogicalVolume *hallConcreteLogical; 
   G4LogicalVolume *hallLogical; 
   
-  //FIXME this needs to be concrete (duh)
-  hallConcreteLogical = new G4LogicalVolume(HallConcreteSolid, G4Material::GetMaterial("Air"),
-                                    "hallConcreteLogical",0,0,0);
+  hallConcreteLogical = new G4LogicalVolume(HallConcreteSolid,
+                                            G4Material::GetMaterial("Concrete"),
+                                            "hallConcreteLogical",0,0,0);
 
   hallLogical = new G4LogicalVolume(HallSolid, G4Material::GetMaterial("Air"),
                                     "hallLogical",0,0,0);

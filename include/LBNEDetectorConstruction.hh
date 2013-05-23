@@ -60,6 +60,7 @@ public:
   G4VPhysicalVolume* GetPhysicalVolume(G4String PVname);
   G4Material* GetMaterial(G4int matcode);
   void InitializeSubVolumes();
+  void InitializeMaterials();
   void SetCheckOverlaps(bool val){ fCheckOverlaps = val; }
   void SetConstructTarget(bool val) { fConstructTarget = val; }
   void SetSimulationType(G4String val) { fSimulationType = val; }

@@ -51,7 +51,7 @@ void LBNEDecayPipe::ConstructSubdetector()
                                       fDecayPipeLength/2, 0, 360*deg);
   
   G4LogicalVolume* decayPipeLogical =  new G4LogicalVolume(decayPipeSolid,
-                                            G4Material::GetMaterial("Air"), 
+                                            G4Material::GetMaterial("Slab_Stl"), 
                                             "DecayPipeLogical", 0,0,0);
   
   G4Tubs* decayVolumeSolid = new G4Tubs("DecayVolumeSolid", 0,

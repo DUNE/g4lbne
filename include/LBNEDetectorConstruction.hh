@@ -15,6 +15,8 @@
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "LBNEDecayPipe.hh"
+#include "LBNEHadronAbsorber.hh"
+#include "LBNEStandardPerson.hh"
 //#include "LBNEDetectorMessenger.hh"
 #include "LBNESubDetector.hh"
 
@@ -73,8 +75,8 @@ private:
   //LBNEBaffle                            *fBaffle;
   //LBNEHornAssembly                      *fHornAssembly;
   LBNEDecayPipe                         *fDecayPipe;
-  //LBNEHadronAbsorber                    *fHadronAbsorber;
-
+  LBNEHadronAbsorber                    *fHadronAbsorber;
+  LBNEStandardPerson                    *fStandardPerson;
   
   std::vector<LBNEMagneticField*>       fHornBFieldVec;
   std::vector<LBNEMagneticFieldIC*>     fHornICBFieldVec;

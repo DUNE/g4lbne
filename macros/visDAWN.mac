@@ -5,7 +5,8 @@
 
 # Just an example of setting some of the geometry parameters
 /LBNE/det/DecayPipe/pipeLength 204 m
-/LBNE/det/setBeamlineAngle 101 mrad
+/LBNE/det/setBeamlineAngle 0 mrad
+/LBNE/det/setBeamlineAngle -101 mrad
 /run/initialize
 
 #########################################

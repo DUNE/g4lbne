@@ -1,91 +1,191 @@
-//----------------------------------------------------------------------
-// LBNEHadronAbsorber.cc covers the elements of the Hadron Absorber in
-// the G4NuMI framework. The blocks and elements within the parent
-// volumes are all oriented in a refernce frame that has gravity going
-// straight down. To properly align the NuMI Decay tunnel and beam,
-// which have a downward slope, with the elements of the MC, the parent
-// volumes are rotated. In the G4NuMI world, the beam is horizontal,
-// while all the MC elements are rotated. 
-//
-// $Id: LBNEHadronAbsorber.cc,v 1.2 2013/04/11 18:39:09 ayarritu Exp $
-//----------------------------------------------------------------------
 
-#include "LBNEDetectorConstruction.hh"
-#include "LBNEDataInput.hh"
-#include "G4VisAttributes.hh"
+//C++
+#include <stdio.h>
+#include <math.h>
+
+//Local and Geant4
+//#include "LBNEDetectorConstruction.hh"
+
+#include "G4Material.hh"
+#include "G4Box.hh"
+#include "G4Tubs.hh"
+#include "G4Trap.hh"
+#include "G4Cons.hh"
+#include "G4Torus.hh"
+#include "G4LogicalVolume.hh"
+#include "G4ThreeVector.hh"
 #include "G4PVPlacement.hh"
-
-#include <G4GDMLParser.hh>
-
-#include <TGeoManager.h>
-#include <TGeoNode.h>
-#include <TGeoVolume.h>
-
-#include <fstream>
-
+#include "G4SubtractionSolid.hh"
+#include "G4UnionSolid.hh"
+#include "G4VisAttributes.hh"
 #include "globals.hh"
+#include "G4Transform3D.hh"
+#include "G4RotationMatrix.hh"
+#include "G4AssemblyVolume.hh"
 
+#include "LBNEDataInput.hh"
+#include "LBNEHadronAbsorber.hh"
 
-void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber()
+LBNEHadronAbsorber::LBNEHadronAbsorber(G4String detName):LBNESubDetector(detName)
 {
+  fMessenger = new LBNEHadronAbsorberMessenger(this);
+}
 
-   LBNEDataInput *LBNEData = LBNEDataInput::GetLBNEDataInput();
-
-   G4cout << "Importing hadron absorber gdml file... " << G4endl;
-    
-    std::string relpathgdml("gdml/lbne_absorber_112912.gdml");
-    std::ifstream gdmlfile( relpathgdml.c_str() ); 
-    
-    if ( gdmlfile ) {
-      
-         
-        G4double DP_end = LBNEData->DecayPipeZ0 + LBNEData->DecayPipeLength;
-        G4RotationMatrix *zrot=new G4RotationMatrix();
-        
-        G4double beam_angle = LBNEData->BeamAngle;
-        
-         G4double in = .0254*m;
-         G4double CShld_length = 72*in;
-         G4double xo = DP_end + 10.25*12*in;
-         G4double xp = (-6.0625*12*in - CShld_length/2.0);
-         G4double yp = 0;
-         G4double yo = -1*in; 
-         G4double z_shld = xp*cos(beam_angle) - yp*sin(beam_angle) + xo;
-         G4double y_shld = xp*sin(beam_angle) + yp*cos(beam_angle) + yo;
-          
-         G4ThreeVector tunnelPos = G4ThreeVector(0,0,LBNEData->TunnelLength/2.+LBNEData->TunnelZ0);
-         G4ThreeVector shldpos = G4ThreeVector(0, y_shld, z_shld)-tunnelPos;
-         
-         const G4String GDMLfile = static_cast<const G4String>( relpathgdml );  
-         G4GDMLParser parser;
-         parser.Read( GDMLfile );
-         fConcShld = parser.GetVolume( "Conc_SH" ); 
-         fAHTop = parser.GetVolume( "AH_top" ); 
-         fAHBack = parser.GetVolume( "AH_back" ); 
-         fMuonAlk = parser.GetVolume( "AH_Muon_alk" ); 
-         
-         G4ThreeVector conc = parser.GetPosition( "Conc_SH_1inTOPpos" )+shldpos;         
-         G4ThreeVector top = parser.GetPosition( "AH_top_1inTOPpos" ) +shldpos;         
-         G4ThreeVector back = parser.GetPosition( "AH_back_1inTOPpos" )+shldpos;         
-         G4ThreeVector muon = parser.GetPosition( "AH_Muon_alk_1inTOPpos" )+shldpos;         
-
-         // rotate about beamline z-axis, zrot rotates about z-axis relative to local object 
-         G4ThreeVector concRotZ( -conc.y(), conc.x(), conc.z() );
-         G4ThreeVector topRotZ( -top.y(), top.x(), top.z() );
-         G4ThreeVector backRotZ( -back.y(), back.x(), back.z() );
-         G4ThreeVector muonRotZ( -muon.y(), muon.x(), muon.z() );
-
-         new G4PVPlacement(zrot, concRotZ, "Conc_SH", fConcShld, pvTUNE, false, 0);
-         new G4PVPlacement(zrot, topRotZ, "AH_top", fAHTop, pvTUNE, false, 0);
-         new G4PVPlacement(zrot, backRotZ, "AH_back", fAHBack, pvTUNE, false, 0);
-         new G4PVPlacement(zrot, muonRotZ, "AH_Muon_alk", fMuonAlk, pvTUNE, false, 0);
-
-
-    } else
-       std::cout << "Cannot find the gdml file for the hadron absorber" << std::endl;
-
-
+LBNEHadronAbsorber::~LBNEHadronAbsorber()
+{
+  delete fMessenger;
 }
 
 
+void LBNEHadronAbsorber::ConstructSubdetector()
+{
+  // Hadron Absorber
+  
+  G4cout << "Constructing the Hadron Absorber" << G4endl;
+  G4ThreeVector absorberPosition = G4ThreeVector(0,0,0);
+  
 
+//---------------------------------------------------------------------------// 
+/*      
+  So the absorber is a block. The outer block is concrete, the mid block is
+  steel, and there's aluminum and i guess air in there somewhere as well. For
+  construction, the outer volume will be air, and then nested shells for the
+  concrete, steel, and aluminum.
+
+*/
+//---------------------------------------------------------------------------// 
+//---------------------------------------------------------------------------// 
+// Dimensions
+//---------------------------------------------------------------------------// 
+
+//---------------------------------------------------------------------------// 
+  G4double eps = 1.0e-6*cm;
+
+  fAirX = 12.5*m;
+  fAirY = 12.5*m;
+  fAirZ = 10.5*m;
+
+  fConcreteX = 12.0*m;
+  fConcreteY = 12.0*m;
+  fConcreteZ = 10.0*m;
+  
+  fSteelX = 6.6*m;
+  fSteelY = 6.6*m;
+  fSteelZ = 6.6*m;
+  
+  fAlX = 2.0*m;
+  fAlY = 2.0*m;
+  fAlZ = 2.0*m;
+
+  fCavityX = 15*cm;
+  fCavityY = 15*cm;
+  fCavityZ = 15*cm;
+
+  // Displacements
+  G4ThreeVector cavityDisplacement(0,0,-fAlZ/2 + fCavityZ/2 - eps);
+  G4ThreeVector alumDisplacement(0,0,-fSteelZ/2 + fAlZ/2 - eps);
+  G4ThreeVector steelDisplacement(0,0,-fConcreteZ/2 + fSteelZ/2 - eps);
+  G4ThreeVector concreteDisplacement(0,0,-fAirZ/2 + fConcreteZ/2 - eps);
+
+  // Placements
+  G4ThreeVector concretePlacement(0,0,0);       
+  G4ThreeVector steelPlacement(0,0, -fConcreteZ/2 + fSteelZ/2);
+  G4ThreeVector alumPlacement(0,0,-fSteelZ/2 + fAlZ/2);
+  
+  // Base Solids
+  G4Box* absorberAirSolid = new G4Box("absorberAirSolid", 
+                                      fAirX/2, fAirY/2, fAirZ/2);
+  
+  G4Box *aluminumBlock = new G4Box("aluminumBlock", fAlX/2, fAlY/2, fAlZ/2);
+                                                  
+
+  G4Box *steelBlock = new G4Box("steelBlock", fSteelX/2, fSteelY/2, fSteelZ/2);
+
+  G4Box *concreteBlock = new G4Box("concreteBlock", 
+                                    fConcreteX/2, fConcreteY/2, fConcreteZ/2);
+
+
+  G4Box *innerCavity = new G4Box("innerCavity",
+                                  fCavityX/2,
+                                  fCavityY/2,
+                                  fCavityZ/2);
+
+  // Boolean Solids (the actual concrete shell, steel shell, and aluminum shell)
+
+  G4SubtractionSolid *aluminumShell = new G4SubtractionSolid("aluminumShell", 
+                                                            aluminumBlock,
+                                                            innerCavity,
+                                                            0,
+                                                            cavityDisplacement);
+
+  G4SubtractionSolid *steelShell = new G4SubtractionSolid("steelShell", 
+                                                            steelBlock,
+                                                            aluminumBlock,
+                                                            0,
+                                                            alumDisplacement);
+
+  G4SubtractionSolid *concreteShell = new G4SubtractionSolid("concreteShell", 
+                                                            concreteBlock,
+                                                            steelBlock,
+                                                            0,
+                                                            steelDisplacement);
+
+  
+  G4LogicalVolume *alumAbsorberLogical = 
+    new G4LogicalVolume(aluminumShell, G4Material::GetMaterial("Air"), 
+                        "AluminumAbsorberLogical", 0,0,0);
+
+  G4LogicalVolume *steelAbsorberLogical = 
+    new G4LogicalVolume(steelShell, G4Material::GetMaterial("Air"), //FIXME
+                        "SteelAbsorberLogical", 0,0,0);
+
+  G4LogicalVolume *concreteAbsorberLogical = 
+    new G4LogicalVolume(concreteShell, G4Material::GetMaterial("Air"), //FIXME
+                        "ConcreteAbsorberLogical", 0,0,0);
+
+  G4LogicalVolume *hadronAbsorberLogical = 
+    new G4LogicalVolume(absorberAirSolid, G4Material::GetMaterial("Air"),
+                        "HadronAbsorberLogical", 0,0,0);
+
+  
+  // The geometry is more akin to nested measuring cups than nested Russian
+  // Dolls, so a 'deep' nesting (air < aluminum < steel < concrete < air) isn't
+  // practical, so the three shells get placed flat within an air volume.
+  
+  G4VPhysicalVolume* alumShellPhysical;
+  G4VPhysicalVolume* steelShellPhysical;
+  G4VPhysicalVolume* concreteShellPhysical;
+  
+  concreteShellPhysical = new G4PVPlacement(0, concretePlacement,
+                                            concreteAbsorberLogical,
+                                            "ConcreteAbsorberPhysical",
+                                            hadronAbsorberLogical, 0,0,0);
+
+  steelShellPhysical = new G4PVPlacement(0, steelPlacement,
+                                            steelAbsorberLogical,
+                                            "SteelAbsorberPhysical",
+                                            concreteAbsorberLogical, 0,0,0);
+
+  alumShellPhysical = new G4PVPlacement(0, alumPlacement,
+                                            alumAbsorberLogical,
+                                            "AluminumAbsorberPhysical",
+                                            steelAbsorberLogical, 0,0,0);
+
+  G4VisAttributes *Vis = new G4VisAttributes(G4Colour(0,0.3,0.3));
+  hadronAbsorberLogical->SetVisAttributes(Vis);
+  fSubDetectorLogical = hadronAbsorberLogical;
+}
+
+LBNEHadronAbsorberMessenger::LBNEHadronAbsorberMessenger(LBNESubDetector *subDetector)
+  :LBNESubDetectorMessenger(subDetector) 
+{
+  fHadronAbsorber = (LBNEHadronAbsorber*)subDetector; 
+}
+
+LBNEHadronAbsorberMessenger::~LBNEHadronAbsorberMessenger()
+{
+}
+
+void LBNEHadronAbsorberMessenger::SetNewValue(G4UIcommand* command, G4String val)
+{
+}

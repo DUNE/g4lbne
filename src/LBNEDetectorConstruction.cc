@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.1 2013/05/14 10:37:50 robj137 Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.2 2013/05/23 17:40:39 robj137 Exp $
 //----------------------------------------------------------------------
 
 #include <fstream>
@@ -85,6 +85,8 @@ LBNEDetectorConstruction::~LBNEDetectorConstruction()
 void LBNEDetectorConstruction::InitializeSubVolumes()
 {
   fDecayPipe = new LBNEDecayPipe("DecayPipe");
+  fHadronAbsorber = new LBNEHadronAbsorber("HadronAbsorber");
+  fStandardPerson = new LBNEStandardPerson("StandardPerson");
   /*
   fTarget = new LBNETarget();
   fBaffle = new LBNEBaffle();
@@ -97,7 +99,7 @@ void LBNEDetectorConstruction::InitializeSubVolumes()
   fHadronAbsorber->SetDefaults();
   */
   fSubDetectors.clear();
-  fBeamlineAngle = 0*mrad;
+  fBeamlineAngle = -101*mrad;
 }
 
 void LBNEDetectorConstruction::Initialize()
@@ -165,7 +167,6 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   fAbsorberHallX = 10*m;
   fAbsorberHallY = 22*m;
   fAbsorberHallZ = 14*m;
-  //fBeamlineAngle = 101*mrad;
   // First the outer concrete shell solids...
   G4Box *TargetHallConcreteSolid = new G4Box("TargetHallConcreteSolid",
                                              (fTargetHallX+concreteWidth*2)/2,
@@ -198,7 +199,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   G4ThreeVector
   AbsorberTranslation(0,0,fAbsorberHallZ/2+fPipeHallLength+fTargetHallZ/2);
   G4RotationMatrix AbsorberRotation;
-  AbsorberRotation.rotateY(fBeamlineAngle);
+  AbsorberRotation.rotateX(fBeamlineAngle);
   G4cout << "Rotating beamline by " << fBeamlineAngle/mrad << " mrad" << G4endl;
   G4Transform3D transformAbsorber(AbsorberRotation,AbsorberTranslation);
   
@@ -248,9 +249,12 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   G4cout << " Total hall length is " << hallLength/m << " m long" << G4endl;
   G4double decayPipePosition = 0.5*fTargetHallZ + fPipeHallLength/2;
   fDecayPipe->SetPlacement(0,0,decayPipePosition);
-  //fDecayPipe->SetPlacement(0,0,-targetHallZ);
-  //Center of the tube portion = 
-
+  fHadronAbsorber->SetRotation(0,-fBeamlineAngle, 0);
+  fHadronAbsorber->SetPlacement(0,0,0.5*(fTargetHallZ+2*fPipeHallLength+fAbsorberHallZ));
+  fStandardPerson->SetPlacement(0,
+                                0.9*m-fAbsorberHallY/2,
+                                0.5*fTargetHallZ + fPipeHallLength + 0.5*fAbsorberHallZ + 5*m);
+  fStandardPerson->SetRotation(0,-fBeamlineAngle+90*deg,0);
     // Individual geometries within all halls:
     // baffle
     // target
@@ -270,7 +274,8 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
     //fSubDetectors.push_back(fBaffle);
     //fSubDetectors.push_back(fHornAssembly);
     fSubDetectors.push_back(fDecayPipe);
-    //fSubDetectors.push_back(fHadronAbsorber);
+    fSubDetectors.push_back(fHadronAbsorber);
+    fSubDetectors.push_back(fStandardPerson);
   } else if(fSimulationType == "Target Tracking") {
     // FIXME .. anyting aside from not adding everythin but the target?
   } else { // unknown simulation type
@@ -296,7 +301,6 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   for(unsigned int i = 0; i<fSubDetectors.size(); i++){
     
     LBNESubDetector *subDetector = fSubDetectors[i];
-    //LBNEDecayPipe *subDetector = (LBNEDecayPipe*)fSubDetectors[i];
     subDetector->ConstructSubdetector();
     G4ThreeVector detPlacement;
     subDetector->FillPlacement(detPlacement);

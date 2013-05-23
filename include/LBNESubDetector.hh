@@ -39,6 +39,9 @@ public:
   G4ThreeVector GetPlacement(G4ThreeVector vec) {return fPlacement + vec; }
   G4String GetPhysicalName() { return fSubDetectorName; };
 
+  void SetRotation(G4double phi, G4double theta, G4double psi) {
+    fRotation.set(phi,theta,psi);
+  }
   void SetPlacement(G4double x, G4double y, G4double z) { 
               fPlacement.set(x,y,z);
   }

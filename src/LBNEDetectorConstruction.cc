@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.3 2013/05/23 19:22:30 robj137 Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.4 2013/05/31 21:31:00 robj137 Exp $
 //----------------------------------------------------------------------
 
 #include <fstream>
@@ -68,11 +68,12 @@ LBNEDetectorConstruction::~LBNEDetectorConstruction()
      delete fHornOCBFieldVec[i];
   }
 
+
   fHornBFieldVec.clear();
   fHornICBFieldVec.clear();
   fHornOCBFieldVec.clear();
 
-  //DestroyMaterials();
+  DestroyMaterials();
 
   //for(size_t i = 0; i< fSubDetectors.size(); i++){
   //  delete fSubDetectors[i];
@@ -221,6 +222,32 @@ void LBNEDetectorConstruction::InitializeMaterials() {
 
 }
 
+
+G4VisAttributes* LBNEDetectorConstruction::GetMaterialVisAttrib(G4String mName){
+  G4VisAttributes* visAtt;
+  if(mName == "Vacuum")  visAtt = new G4VisAttributes(false);
+  if(mName=="Aluminum") visAtt = new G4VisAttributes(G4Color(0.2, 0.8, 1));
+  if(mName=="Air") visAtt = new G4VisAttributes(G4Color(0.6,0.7,0.8));
+  if(mName=="Iron" || mName=="Slab_Stl") visAtt=new G4VisAttributes(G4Color(0.5,0.3,0));
+  if(mName=="Concrete") visAtt = new G4VisAttributes(G4Color(0.75,0.85,0.95));
+  if(!visAtt) visAtt = new G4VisAttributes(G4Color(1,0,0));
+  return visAtt;
+}
+
+void LBNEDetectorConstruction::DestroyMaterials()
+{
+  // Destroy all allocated elements and materials
+  size_t i;
+  G4MaterialTable* matTable = (G4MaterialTable*)G4Material::GetMaterialTable();
+  for(i=0;i<matTable->size();i++)
+  { delete (*(matTable))[i]; }
+  matTable->clear();
+  G4ElementTable* elemTable = (G4ElementTable*)G4Element::GetElementTable();
+  for(i=0;i<elemTable->size();i++)
+  { delete (*(elemTable))[i]; }
+  elemTable->clear();
+}
+
 G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   fRockX = 60.0*m;
   fRockY = 60.0*m;
@@ -262,7 +289,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
                                             fPipeHallShieldingX/2,
                                             fPipeHallShieldingY/2,
                                             fPipeHallShieldingZ/2);
-                                    
+
   G4Box *AbsorberHallConcreteSolid = new G4Box("AbsorberHallSolid",
                                      (fAbsorberHallX+concreteWidth*2)/2,
                                      (fAbsorberHallY+concreteWidth*2)/2,
@@ -275,7 +302,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 
   G4Tubs *PipeHallSolid = new G4Tubs("PipeHallSolid", 0,fDecayPipeRadius+eps,
                                       fDecayPipeLength/2+eps, 0*deg, 360*deg);
-                                    
+
   G4Box *AbsorberHallSolid = new G4Box("AbsorberHallSolid",
                                         fAbsorberHallX/2,
                                         fAbsorberHallY/2,
@@ -404,15 +431,12 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   // (only for volumes not explicitly set)
   G4LogicalVolumeStore* lvStore=G4LogicalVolumeStore::GetInstance();
   lvStore=G4LogicalVolumeStore::GetInstance();
-  /*
   for (size_t ii=0;ii<(*lvStore).size();ii++){   
     if ((*lvStore)[ii]->GetVisAttributes()==0) {
-      G4String matName=(*lvStore)[ii]->GetMaterial()->GetName();
-      (*lvStore)[ii]->SetVisAttributes(GetMaterialVisAttrib(matName));
+      G4String mName=(*lvStore)[ii]->GetMaterial()->GetName();
+      (*lvStore)[ii]->SetVisAttributes(GetMaterialVisAttrib(mName));
     }
   }
-  */
-  //return hallPlacement;
   return ROCK;
 }
 

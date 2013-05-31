@@ -63,8 +63,6 @@ void LBNEDecayPipe::ConstructSubdetector()
                                                 G4Material::GetMaterial("Air"), 
                                                 "DecayVolumeLogical", 0,0,0);
   
-  G4VisAttributes *decayVolVis = new G4VisAttributes(G4Colour(0,0.3,0.3));
-  decayVolumeLogical->SetVisAttributes(decayVolVis);
   G4VPhysicalVolume* decayVolumePhysical;
   decayVolumePhysical = new G4PVPlacement(0,decayPipePosition,
                                           decayVolumeLogical,

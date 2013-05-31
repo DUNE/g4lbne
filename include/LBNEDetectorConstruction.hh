@@ -176,10 +176,8 @@ private:
   void ConstructHorn2(G4ThreeVector pos, G4RotationMatrix rot);
   void ConstructSecMonitors();
   */
-  void DefineMaterials();
   G4int GetMaterialCode(const G4String &matName);
   G4Material* GetMaterial(G4String matName);
-  G4VisAttributes* GetMaterialVisAttrib(G4int matCode);
   G4VisAttributes* GetMaterialVisAttrib(G4String matName);
   void DestroyMaterials();
   

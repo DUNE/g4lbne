@@ -171,8 +171,6 @@ void LBNEHadronAbsorber::ConstructSubdetector()
                                             "AluminumAbsorberPhysical",
                                             steelAbsorberLogical, 0,0,0);
 
-  G4VisAttributes *Vis = new G4VisAttributes(G4Colour(0,0.3,0.3));
-  hadronAbsorberLogical->SetVisAttributes(Vis);
   fSubDetectorLogical = hadronAbsorberLogical;
 }
 

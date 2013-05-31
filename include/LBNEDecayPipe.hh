@@ -16,6 +16,7 @@ private:
   G4double      fDecayPipeEWinThickness;
   G4double      fDecayPipeFWinThickness;
   G4double      fDecayPipeWinThickness;
+  G4String      fMaterialName;
 
 public:
   LBNEDecayPipe(G4String detName);
@@ -26,9 +27,13 @@ public:
   void SetDecayPipeRadius(G4double val) { fDecayPipeRadius = val; }
   void SetDecayPipeLength(G4double val) { fDecayPipeLength = val; }
   void SetDecayPipeWindowThickness(G4double val) {fDecayPipeWinThickness = val;}
+  void SetMaterialName(G4String name) { fMaterialName = name; }
 
   G4double GetDecayPipeRadius() { return fDecayPipeRadius; }
   G4double GetDecayPipeLength() { return fDecayPipeLength; }
+  G4String GetMaterialName() { return fMaterialName; }
+
+
 };
 
 class LBNEDecayPipeMessenger: public LBNESubDetectorMessenger{

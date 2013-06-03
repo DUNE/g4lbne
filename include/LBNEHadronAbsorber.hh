@@ -1,12 +1,12 @@
 #ifndef LBNEHadronAbsorber_H
 #define LBNEHadronAbsorber_H 
 
-#include "LBNESubDetector.hh"
+#include "LBNESubVolume.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 
 class G4LogicalVolume;
 
-class LBNEHadronAbsorber : public LBNESubDetector
+class LBNEHadronAbsorber : public LBNESubVolume
 {
 
 private:
@@ -29,14 +29,14 @@ private:
 public:
   LBNEHadronAbsorber(G4String detName);
   ~LBNEHadronAbsorber();
-  void ConstructSubdetector();
+  void ConstructSubvolume();
 
 };
 
-class LBNEHadronAbsorberMessenger: public LBNESubDetectorMessenger{
+class LBNEHadronAbsorberMessenger: public LBNESubVolumeMessenger{
   
   public:
-    LBNEHadronAbsorberMessenger(LBNESubDetector *subDetector);
+    LBNEHadronAbsorberMessenger(LBNESubVolume *subVolume);
     ~LBNEHadronAbsorberMessenger();
     void SetNewValue(G4UIcommand *cmd, G4String val);
 

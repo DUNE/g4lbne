@@ -18,7 +18,7 @@
 #include "LBNEHadronAbsorber.hh"
 #include "LBNEStandardPerson.hh"
 //#include "LBNEDetectorMessenger.hh"
-#include "LBNESubDetector.hh"
+#include "LBNESubVolume.hh"
 
 class G4VSolid;
 class G4LogicalVolume;
@@ -30,14 +30,14 @@ class LBNEMagneticField;
 class LBNEMagneticFieldIC;
 class LBNEMagneticFieldOC;
 
-//class LBNESubDetector;
+//class LBNESubVolume;
 //class LBNEHadronAbsorber;
 //class LBNEDecayPipe;
 //class LBNETarget;
 //class LBNEBaffle;
 //class LBNEHornAssembly;
 
-typedef std::vector<LBNESubDetector*> LBNEDet;
+typedef std::vector<LBNESubVolume*> LBNEDet;
 
 class LBNEDetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -70,7 +70,7 @@ private:
 
   // Geometric instantiations
 
-  std::vector<LBNESubDetector*>        fSubDetectors;
+  std::vector<LBNESubVolume*>        fSubVolumes;
 
   //LBNETarget                            *fTarget;
   //LBNEBaffle                            *fBaffle;
@@ -100,10 +100,10 @@ private:
   G4double fTargetHallX;
   G4double fTargetHallY;
   G4double fTargetHallZ;
-  G4double fPipeHallShieldingX;
-  G4double fPipeHallShieldingY;
-  G4double fPipeHallShieldingZ;
-  G4double fPipeHallLength;
+  G4double fDecayHallShieldingX;
+  G4double fDecayHallShieldingY;
+  G4double fDecayHallShieldingZ;
+  G4double fDecayHallZ;
   G4double fAbsorberHallX;
   G4double fAbsorberHallY;
   G4double fAbsorberHallZ;

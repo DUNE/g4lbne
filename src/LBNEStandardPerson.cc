@@ -27,7 +27,7 @@
 #include "LBNEDataInput.hh"
 #include "LBNEStandardPerson.hh"
 
-LBNEStandardPerson::LBNEStandardPerson(G4String detName):LBNESubDetector(detName)
+LBNEStandardPerson::LBNEStandardPerson(G4String detName):LBNESubVolume(detName)
 {
   fMessenger = new LBNEStandardPersonMessenger(this);
 }
@@ -38,7 +38,7 @@ LBNEStandardPerson::~LBNEStandardPerson()
 }
 
 
-void LBNEStandardPerson::ConstructSubdetector()
+void LBNEStandardPerson::ConstructSubvolume()
 {
   // Hadron Absorber
   
@@ -95,13 +95,13 @@ void LBNEStandardPerson::ConstructSubdetector()
   
   G4VisAttributes *Vis = new G4VisAttributes(G4Colour(0,0.3,0.3));
   humanLogical->SetVisAttributes(Vis);
-  fSubDetectorLogical = humanLogical;
+  fSubVolumeLogical = humanLogical;
 }
 
-LBNEStandardPersonMessenger::LBNEStandardPersonMessenger(LBNESubDetector *subDetector)
-  :LBNESubDetectorMessenger(subDetector) 
+LBNEStandardPersonMessenger::LBNEStandardPersonMessenger(LBNESubVolume *subVolume)
+  :LBNESubVolumeMessenger(subVolume) 
 {
-  fStandardPerson = (LBNEStandardPerson*)subDetector; 
+  fStandardPerson = (LBNEStandardPerson*)subVolume; 
 }
 
 LBNEStandardPersonMessenger::~LBNEStandardPersonMessenger()

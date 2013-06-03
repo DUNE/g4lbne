@@ -13,7 +13,7 @@
 /vis/scene/create
 /vis/open DAWNFILE
 /vis/drawVolume
-/vis/viewer/set/viewpointThetaPhi 90 0 deg
+/vis/viewer/set/viewpointThetaPhi 90 180 deg
 /vis/viewer/flush
 
 /run/beamOn  1

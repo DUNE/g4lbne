@@ -1,12 +1,12 @@
 #ifndef LBNEDecayPipe_H
 #define LBNEDecayPipe_H 
 
-#include "LBNESubDetector.hh"
+#include "LBNESubVolume.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 
 class G4LogicalVolume;
 
-class LBNEDecayPipe : public LBNESubDetector
+class LBNEDecayPipe : public LBNESubVolume
 {
 
 private:
@@ -21,7 +21,7 @@ private:
 public:
   LBNEDecayPipe(G4String detName);
   ~LBNEDecayPipe();
-  void ConstructSubdetector();
+  void ConstructSubvolume();
 
   void SetDecayPipeThickness(G4double val) { fDecayPipeWallThickness = val; }
   void SetDecayPipeRadius(G4double val) { fDecayPipeRadius = val; }
@@ -36,10 +36,10 @@ public:
 
 };
 
-class LBNEDecayPipeMessenger: public LBNESubDetectorMessenger{
+class LBNEDecayPipeMessenger: public LBNESubVolumeMessenger{
   
   public:
-    LBNEDecayPipeMessenger(LBNESubDetector *subDetector);
+    LBNEDecayPipeMessenger(LBNESubVolume *subVolume);
     ~LBNEDecayPipeMessenger();
     void SetNewValue(G4UIcommand *cmd, G4String val);
 

@@ -26,7 +26,7 @@
 #include "LBNEDataInput.hh"
 #include "LBNEDecayPipe.hh"
 
-LBNEDecayPipe::LBNEDecayPipe(G4String detName):LBNESubDetector(detName)
+LBNEDecayPipe::LBNEDecayPipe(G4String detName):LBNESubVolume(detName)
 {
   fDecayPipeLength = 204.0*m;
   fDecayPipeRadius = 2.0*m;
@@ -40,7 +40,7 @@ LBNEDecayPipe::~LBNEDecayPipe()
 }
 
 
-void LBNEDecayPipe::ConstructSubdetector()
+void LBNEDecayPipe::ConstructSubvolume()
 {
   // Decay Pipe
   
@@ -69,13 +69,13 @@ void LBNEDecayPipe::ConstructSubdetector()
                                           "DecayVolumePhysical",
                                           decayPipeLogical, 0,0,0);
 
-  fSubDetectorLogical = decayPipeLogical;
+  fSubVolumeLogical = decayPipeLogical;
 }
 
-LBNEDecayPipeMessenger::LBNEDecayPipeMessenger(LBNESubDetector *subDetector)
-  :LBNESubDetectorMessenger(subDetector) 
+LBNEDecayPipeMessenger::LBNEDecayPipeMessenger(LBNESubVolume *subVolume)
+  :LBNESubVolumeMessenger(subVolume) 
 {
-  fDecayPipe = (LBNEDecayPipe*)subDetector; 
+  fDecayPipe = (LBNEDecayPipe*)subVolume; 
 
   fDecayPipeLengthCmd = 
     new G4UIcmdWithADoubleAndUnit(G4String(fDirectoryName+"pipeLength"),this);

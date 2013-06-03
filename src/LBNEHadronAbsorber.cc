@@ -26,7 +26,7 @@
 #include "LBNEDataInput.hh"
 #include "LBNEHadronAbsorber.hh"
 
-LBNEHadronAbsorber::LBNEHadronAbsorber(G4String detName):LBNESubDetector(detName)
+LBNEHadronAbsorber::LBNEHadronAbsorber(G4String detName):LBNESubVolume(detName)
 {
   fMessenger = new LBNEHadronAbsorberMessenger(this);
 }
@@ -37,7 +37,7 @@ LBNEHadronAbsorber::~LBNEHadronAbsorber()
 }
 
 
-void LBNEHadronAbsorber::ConstructSubdetector()
+void LBNEHadronAbsorber::ConstructSubvolume()
 {
   // Hadron Absorber
   
@@ -171,13 +171,13 @@ void LBNEHadronAbsorber::ConstructSubdetector()
                                             "AluminumAbsorberPhysical",
                                             steelAbsorberLogical, 0,0,0);
 
-  fSubDetectorLogical = hadronAbsorberLogical;
+  fSubVolumeLogical = hadronAbsorberLogical;
 }
 
-LBNEHadronAbsorberMessenger::LBNEHadronAbsorberMessenger(LBNESubDetector *subDetector)
-  :LBNESubDetectorMessenger(subDetector) 
+LBNEHadronAbsorberMessenger::LBNEHadronAbsorberMessenger(LBNESubVolume *subVolume)
+  :LBNESubVolumeMessenger(subVolume) 
 {
-  fHadronAbsorber = (LBNEHadronAbsorber*)subDetector; 
+  fHadronAbsorber = (LBNEHadronAbsorber*)subVolume; 
 }
 
 LBNEHadronAbsorberMessenger::~LBNEHadronAbsorberMessenger()

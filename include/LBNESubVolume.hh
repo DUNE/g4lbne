@@ -1,8 +1,8 @@
-// LBNESubDetector.hh
+// LBNESubVolume.hh
 //---------------------------------------------------------------------------// 
 
-#ifndef LBNESubDetector_H
-#define LBNESubDetector_H
+#ifndef LBNESubVolume_H
+#define LBNESubVolume_H
 
 #include "globals.hh"
 #include "G4RotationMatrix.hh"
@@ -13,18 +13,18 @@
 
 class G4LogicalVolume;
 //---------------------------------------------------------------------------// 
-class LBNESubDetector
+class LBNESubVolume
 {
 public:
 
-  LBNESubDetector(G4String detName);
-  virtual ~LBNESubDetector();
+  LBNESubVolume(G4String detName);
+  virtual ~LBNESubVolume();
   
-  virtual void ConstructSubdetector();
-  inline G4LogicalVolume* GetSubDetectorLogical() { return fSubDetectorLogical; }
-  inline G4LogicalVolume *GetLogicalVolume() { return fSubDetectorLogical; }
+  virtual void ConstructSubvolume();
+  inline G4LogicalVolume* GetSubVolumeLogical() { return fSubVolumeLogical; }
+  inline G4LogicalVolume *GetLogicalVolume() { return fSubVolumeLogical; }
 
-  void SetSubDetectorName( G4String aName ) { fSubDetectorName = aName; }
+  void SetSubVolumeName( G4String aName ) { fSubVolumeName = aName; }
   void SetDefaults();
   G4RotationMatrix GetRotation() { return fRotation; }
   G4ThreeVector GetPlacement() { return fPlacement; }
@@ -37,7 +37,7 @@ public:
     mat.setPsi(fRotation.getPsi());
   }
   G4ThreeVector GetPlacement(G4ThreeVector vec) {return fPlacement + vec; }
-  G4String GetPhysicalName() { return fSubDetectorName; };
+  G4String GetPhysicalName() { return fSubVolumeName; };
 
   void SetRotation(G4double phi, G4double theta, G4double psi) {
     fRotation.set(phi,theta,psi);
@@ -51,19 +51,19 @@ protected:
 
   G4ThreeVector                 fPlacement;
   G4RotationMatrix              fRotation;
-  G4LogicalVolume*              fSubDetectorLogical;
-  G4String                      fSubDetectorName;
+  G4LogicalVolume*              fSubVolumeLogical;
+  G4String                      fSubVolumeName;
   G4UImessenger*                fMessenger;
 };
 
-class LBNESubDetectorMessenger: public G4UImessenger {
+class LBNESubVolumeMessenger: public G4UImessenger {
 protected:
-  LBNESubDetector *fSubDetector;
+  LBNESubVolume *fSubVolume;
   G4UIdirectory *fDirectory;
   G4String fDirectoryName;
 public:
-  LBNESubDetectorMessenger(LBNESubDetector *subDetector);
-  ~LBNESubDetectorMessenger();
+  LBNESubVolumeMessenger(LBNESubVolume *subVolume);
+  ~LBNESubVolumeMessenger();
   G4String GetDirectoryName() { return fDirectoryName; }
   G4UIdirectory *GetDirectory() { return fDirectory; }
   G4String GetCommandString(G4String cmd) {

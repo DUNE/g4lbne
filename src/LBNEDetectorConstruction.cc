@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.4 2013/05/31 21:31:00 robj137 Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.5 2013/06/03 18:07:30 robj137 Exp $
 //----------------------------------------------------------------------
 
 #include <fstream>
@@ -47,7 +47,7 @@
 #include "G4VisExtent.hh"
 
 //-------------------------------------------------------------------------
-// Constructor, Destrutor, and Initialization
+// Constructor, Destructor, and Initialization
 //---------------------------------------------------------------------------// 
 
 LBNEDetectorConstruction::LBNEDetectorConstruction()
@@ -75,8 +75,8 @@ LBNEDetectorConstruction::~LBNEDetectorConstruction()
 
   DestroyMaterials();
 
-  //for(size_t i = 0; i< fSubDetectors.size(); i++){
-  //  delete fSubDetectors[i];
+  //for(size_t i = 0; i< fSubVolumes.size(); i++){
+  //  delete fSubVolumes[i];
   //}
 
   delete fDetectorMessenger;
@@ -98,7 +98,7 @@ void LBNEDetectorConstruction::InitializeSubVolumes()
   fDecayPipe->SetDefaults();
   fHadronAbsorber->SetDefaults();
   */
-  fSubDetectors.clear();
+  fSubVolumes.clear();
   fBeamlineAngle = -101*mrad;
 }
 
@@ -255,17 +255,15 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   G4Box* ROCK_solid = new G4Box("ROCK_solid",fRockX/2, fRockY/2, fRockLength/2);
   G4LogicalVolume *RockLogical = 
             new G4LogicalVolume(ROCK_solid,
-                                G4Material::GetMaterial("rockMat"),
+                                G4Material::GetMaterial("Concrete"),
                                 "RockLogical",0,0,0); 
   RockLogical->SetVisAttributes(G4VisAttributes::Invisible);
   ROCK = new G4PVPlacement(0,G4ThreeVector(),RockLogical,"ROCK",0,false,0);
   
-  G4cout << "SIMULATION IS " << fSimulationType << G4endl;
   // First create the Target Hall, Pipe Hall, and Absorber Hall, and then
   // connect them together.
 
-  G4double eps = 1e-6*cm;
-  G4double concreteWidth= 2*m; // Shouldn't matter.
+  G4double eps = 1e-7*m; // 0.1 micron
 
   fTargetHallX = 7.671*m;
   fTargetHallY = 11.862*m;
@@ -273,100 +271,77 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 
   fDecayPipeLength = fDecayPipe->GetDecayPipeLength();
   fDecayPipeRadius = fDecayPipe->GetDecayPipeRadius();
-  fPipeHallShieldingX = 15.4*m;
-  fPipeHallShieldingY = 15.4*m;
-  fPipeHallShieldingZ = fDecayPipe->GetDecayPipeLength();
-  fPipeHallLength = fDecayPipeLength;
+  fDecayHallZ = fDecayPipeLength;
   fAbsorberHallX = 10*m;
   fAbsorberHallY = 22*m;
   fAbsorberHallZ = 14*m;
-  // First the outer concrete shell solids...
-  G4Box *TargetHallConcreteSolid = new G4Box("TargetHallConcreteSolid",
-                                             (fTargetHallX+concreteWidth*2)/2,
-                                             (fTargetHallY+concreteWidth*2)/2,
-                                             (fTargetHallZ+concreteWidth*2)/2);
-  G4Box *PipeHallConcreteSolid = new G4Box("PipeHallConcreteSolid", 
-                                            fPipeHallShieldingX/2,
-                                            fPipeHallShieldingY/2,
-                                            fPipeHallShieldingZ/2);
-
-  G4Box *AbsorberHallConcreteSolid = new G4Box("AbsorberHallSolid",
-                                     (fAbsorberHallX+concreteWidth*2)/2,
-                                     (fAbsorberHallY+concreteWidth*2)/2,
-                                     (fAbsorberHallZ+concreteWidth*2)/2);
-  // And now the actual target 'halls'
+  
   G4Box *TargetHallSolid = new G4Box("TargetHallSolid", 
                                       fTargetHallX/2,
                                       fTargetHallY/2,
                                       fTargetHallZ/2);
 
-  G4Tubs *PipeHallSolid = new G4Tubs("PipeHallSolid", 0,fDecayPipeRadius+eps,
-                                      fDecayPipeLength/2+eps, 0*deg, 360*deg);
+  G4Tubs *DecayHallPreSolid = new G4Tubs("DecayHallPreSolid", 0,fDecayPipeRadius+eps,
+                                      fDecayPipeLength/2+5*m, 0*deg, 360*deg);
 
   G4Box *AbsorberHallSolid = new G4Box("AbsorberHallSolid",
                                         fAbsorberHallX/2,
                                         fAbsorberHallY/2,
                                         fAbsorberHallZ/2);
-
-  G4ThreeVector PipeTranslation(0,0,fPipeHallLength/2+fTargetHallZ/2);
-  G4ThreeVector
-  AbsorberTranslation(0,0,fAbsorberHallZ/2+fPipeHallLength+fTargetHallZ/2);
+  
   G4RotationMatrix AbsorberRotation;
   AbsorberRotation.rotateX(fBeamlineAngle);
+  G4Transform3D DecayHallXform( AbsorberRotation,
+                                G4ThreeVector(0,0,fDecayHallZ/2 +
+                                fAbsorberHallZ/2));
+  G4SubtractionSolid *DecayHallSolid = new G4SubtractionSolid("DecayHallSolid",
+  DecayHallPreSolid, AbsorberHallSolid, DecayHallXform);
+  G4ThreeVector targetHallPosition(0,0,-fDecayHallZ/2 - fTargetHallZ/2-eps);
+  G4ThreeVector decayHallPosition(0,0,5*m);
+  G4ThreeVector absorberHallPosition(0,0,fDecayHallZ/2 +
+  fAbsorberHallZ/2+eps+5*m);
+  
+  G4ThreeVector
+  AbsorberTranslation(0,0,fAbsorberHallZ/2+fDecayHallZ+fTargetHallZ/2);
   G4cout << "Rotating beamline by " << fBeamlineAngle/mrad << " mrad" << G4endl;
-  G4Transform3D transformAbsorber(AbsorberRotation,AbsorberTranslation);
+  G4Transform3D transformAbsorber(AbsorberRotation,absorberHallPosition);
   
-  G4UnionSolid *HallConcreteSolid = new G4UnionSolid("TargetPipeHallConcreteSolid", 
-                                             TargetHallConcreteSolid,
-                                             PipeHallConcreteSolid,
-                                             0, PipeTranslation);
-
-  HallConcreteSolid = new G4UnionSolid("HallConcreteSolid", 
-                               HallConcreteSolid,
-                               AbsorberHallConcreteSolid,transformAbsorber);
-                               
-  G4UnionSolid *HallSolid = new G4UnionSolid("TargetPipeHallSolid", 
-                                             TargetHallSolid,
-                                             PipeHallSolid,
-                                             0, PipeTranslation);
-
-  HallSolid = new G4UnionSolid("HallSolid", 
-                               HallSolid,
-                               AbsorberHallSolid,transformAbsorber);
-
-
-  G4LogicalVolume *hallConcreteLogical; 
-  G4LogicalVolume *hallLogical; 
+  G4LogicalVolume *targetHallLogical = 
+      new G4LogicalVolume(TargetHallSolid, G4Material::GetMaterial("Air"), 
+                          "targetHallLogical", 0,0,0);
   
-  hallConcreteLogical = new G4LogicalVolume(HallConcreteSolid,
-                                            G4Material::GetMaterial("Concrete"),
-                                            "hallConcreteLogical",0,0,0);
+  G4LogicalVolume *decayHallLogical = 
+      new G4LogicalVolume(DecayHallSolid, G4Material::GetMaterial("Air"), 
+                          "decayHallLogical", 0,0,0);
+  
+  G4LogicalVolume *absorberHallLogical = 
+      new G4LogicalVolume(AbsorberHallSolid, G4Material::GetMaterial("Air"), 
+                          "absorberHallLogical", 0,0,0);
+  
+  G4PVPlacement* targetHallPhysical = 
+      new G4PVPlacement(0, targetHallPosition, targetHallLogical,
+                        "targetHallPlacement", RockLogical, false, 0);
 
-  hallLogical = new G4LogicalVolume(HallSolid, G4Material::GetMaterial("Air"),
-                                    "hallLogical",0,0,0);
+  G4PVPlacement* decayHallPhysical = 
+      new G4PVPlacement(0, decayHallPosition, decayHallLogical,
+                        "decayHallPlacement", RockLogical, false, 0);
 
-  G4VPhysicalVolume *hallPlacement;
-  G4VPhysicalVolume *hallConcretePlacement;
-  hallConcretePlacement = new G4PVPlacement(0,-0.5*AbsorberTranslation,
-                                            hallConcreteLogical,
-                                            "hallConcretePlacement",
-                                            RockLogical,false,0);
-                                                    
-  hallPlacement = new G4PVPlacement(0,G4ThreeVector(0,0,0),hallLogical,
-                                    "hallPlacement",
-                                    hallConcreteLogical,false,0);
+  G4PVPlacement* absorberHallPhysical = 
+      new G4PVPlacement(transformAbsorber, absorberHallLogical,
+                        "absorberHallPlacement", RockLogical, false, 0);
+
                              
 
   // Now to calculate useful positions within the hall
-  G4double hallLength = fTargetHallZ + fPipeHallLength + fAbsorberHallZ;
+  G4double hallLength = fTargetHallZ + fDecayHallZ + fAbsorberHallZ;
   G4cout << " Total hall length is " << hallLength/m << " m long" << G4endl;
-  G4double decayPipePosition = 0.5*fTargetHallZ + fPipeHallLength/2;
+  G4double decayPipePosition = 0.5*fTargetHallZ + fDecayHallZ/2;
   fDecayPipe->SetPlacement(0,0,decayPipePosition);
   fHadronAbsorber->SetRotation(0,-fBeamlineAngle, 0);
-  fHadronAbsorber->SetPlacement(0,0,0.5*(fTargetHallZ+2*fPipeHallLength+fAbsorberHallZ));
+  fHadronAbsorber->SetPlacement(0,0,0.5*(fTargetHallZ+2*fDecayHallZ+fAbsorberHallZ));
   fStandardPerson->SetPlacement(0,
                                 0.9*m-fAbsorberHallY/2,
-                                0.5*fTargetHallZ + fPipeHallLength + 0.5*fAbsorberHallZ + 5*m);
+                                0.5*fTargetHallZ + fDecayHallZ + 0.5*fAbsorberHallZ + 5*m);
   fStandardPerson->SetRotation(0,-fBeamlineAngle+90*deg,0);
     // Individual geometries within all halls:
     // baffle
@@ -378,17 +353,17 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 
   // is baffle necessary????
 
-  //fSubDetectors.push_back(fTarget);
+  //fSubVolumes.push_back(fTarget);
 
   if( fSimulationType == "Standard Neutrino Beam" ||
       fSimulationType == "Horn 1 Tracking" ||
       fSimulationType == "Horn 2 Tracking") {
     // Then we need everything!
-    //fSubDetectors.push_back(fBaffle);
-    //fSubDetectors.push_back(fHornAssembly);
-    fSubDetectors.push_back(fDecayPipe);
-    fSubDetectors.push_back(fHadronAbsorber);
-    fSubDetectors.push_back(fStandardPerson);
+    //fSubVolumes.push_back(fBaffle);
+    //fSubVolumes.push_back(fHornAssembly);
+    //fSubVolumes.push_back(fDecayPipe);
+    //fSubVolumes.push_back(fHadronAbsorber);
+    fSubVolumes.push_back(fStandardPerson);
   } else if(fSimulationType == "Target Tracking") {
     // FIXME .. anyting aside from not adding everythin but the target?
   } else { // unknown simulation type
@@ -410,21 +385,21 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 	std::cout << std::endl;
     }
   } 
-  G4cout << "Trying to process subdetector " << G4endl;
-  for(unsigned int i = 0; i<fSubDetectors.size(); i++){
+  G4cout << "Trying to process subvolume " << G4endl;
+  for(unsigned int i = 0; i<fSubVolumes.size(); i++){
     
-    LBNESubDetector *subDetector = fSubDetectors[i];
-    subDetector->ConstructSubdetector();
+    LBNESubVolume *subVolume = fSubVolumes[i];
+    subVolume->ConstructSubvolume();
     G4ThreeVector detPlacement;
-    subDetector->FillPlacement(detPlacement);
+    subVolume->FillPlacement(detPlacement);
     G4RotationMatrix detRotation;
-    subDetector->FillRotation(detRotation);
+    subVolume->FillRotation(detRotation);
     
     G4Transform3D transform(detRotation,detPlacement);
     new G4PVPlacement(transform,
-                      subDetector->GetLogicalVolume(),
-                      subDetector->GetPhysicalName(),
-                      hallLogical,
+                      subVolume->GetLogicalVolume(),
+                      subVolume->GetPhysicalName(),
+                      decayHallLogical,
                       false, 0,false);
   }
   //Set Vis Attributes according to solid material 

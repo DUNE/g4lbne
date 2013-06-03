@@ -1,12 +1,12 @@
 #ifndef LBNEStandardPerson_H
 #define LBNEStandardPerson_H 
 
-#include "LBNESubDetector.hh"
+#include "LBNESubVolume.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 
 class G4LogicalVolume;
 
-class LBNEStandardPerson : public LBNESubDetector
+class LBNEStandardPerson : public LBNESubVolume
 {
 
 private:
@@ -20,14 +20,14 @@ private:
 public:
   LBNEStandardPerson(G4String detName);
   ~LBNEStandardPerson();
-  void ConstructSubdetector();
+  void ConstructSubvolume();
 
 };
 
-class LBNEStandardPersonMessenger: public LBNESubDetectorMessenger{
+class LBNEStandardPersonMessenger: public LBNESubVolumeMessenger{
   
   public:
-    LBNEStandardPersonMessenger(LBNESubDetector *subDetector);
+    LBNEStandardPersonMessenger(LBNESubVolume *subVolume);
     ~LBNEStandardPersonMessenger();
     void SetNewValue(G4UIcommand *cmd, G4String val);
 

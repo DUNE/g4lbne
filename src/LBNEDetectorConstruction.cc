@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.5 2013/06/03 18:07:30 robj137 Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.6 2013/06/03 18:55:37 robj137 Exp $
 //----------------------------------------------------------------------
 
 #include <fstream>
@@ -298,7 +298,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   DecayHallPreSolid, AbsorberHallSolid, DecayHallXform);
   G4ThreeVector targetHallPosition(0,0,-fDecayHallZ/2 - fTargetHallZ/2-eps);
   G4ThreeVector decayHallPosition(0,0,5*m);
-  G4ThreeVector absorberHallPosition(0,0,fDecayHallZ/2 +
+  G4ThreeVector absorberHallPosition(0,3*m,fDecayHallZ/2 +
   fAbsorberHallZ/2+eps+5*m);
   
   G4ThreeVector

@@ -1,4 +1,4 @@
-// LBNEDetectorConstruction.hh
+// $Id: LBNEDetectorConstruction.hh,v 1.5.2.6 2013/06/03 18:50:21 robj137 Exp $
 //------------------------------------------------------------
 
 #ifndef LBNEDetectorConstruction_H
@@ -64,8 +64,9 @@ public:
   void SetCheckOverlaps(bool val){ fCheckOverlaps = val; }
   void SetConstructTarget(bool val) { fConstructTarget = val; }
   void SetSimulationType(G4String val) { fSimulationType = val; }
-  void SetBeamlineAngle(G4double angle) { G4cout<< "Setting beamline angle to "
-  << angle/mrad << " mrad" << G4endl; fBeamlineAngle = angle; }
+  void SetBeamlineAngle(G4double angle) { fBeamlineAngle = angle; }
+
+
 private:
 
   // Geometric instantiations

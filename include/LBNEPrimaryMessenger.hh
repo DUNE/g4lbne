@@ -25,11 +25,12 @@ public:
 private:
   LBNEPrimaryGeneratorAction*   fPrimaryAction;
   G4UIdirectory*                fDirectory;
-  G4UIcmdWithADoubleAndUnit*    fBeamThetaCmd;
-  G4UIcmdWithADoubleAndUnit*    fBeamPhiCmd;
+  G4UIcmdWithADoubleAndUnit*    fBeamOffsetXCmd;
+  G4UIcmdWithADoubleAndUnit*    fBeamOffsetYCmd;
   G4UIcmdWithADoubleAndUnit*    fBeamThetaCmd;
   G4UIcmdWithADoubleAndUnit*    fBeamPhiCmd;
   G4UIcmdWithABool*             fCorrectForAngle;
+  G4UIcmdWithABool*             fBeamOnTarget;
 };
 
 #endif

@@ -29,8 +29,8 @@ private:
   G4UIcmdWithADoubleAndUnit*    fBeamOffsetYCmd;
   G4UIcmdWithADoubleAndUnit*    fBeamThetaCmd;
   G4UIcmdWithADoubleAndUnit*    fBeamPhiCmd;
-  G4UIcmdWithABool*             fCorrectForAngle;
-  G4UIcmdWithABool*             fBeamOnTarget;
+  G4UIcmdWithABool*             fCorrectForAngleCmd;
+  G4UIcmdWithABool*             fBeamOnTargetCmd;
 };
 
 #endif

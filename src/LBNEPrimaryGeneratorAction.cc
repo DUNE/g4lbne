@@ -57,8 +57,12 @@ LBNEPrimaryGeneratorAction::LBNEPrimaryGeneratorAction()
     fTgen(-99),
     fType(-99),
     fWeight(1.0),
-    fBeamAngleTheta(0),
-    fBeamAnglePhi(0)
+    fCorrectForAngle(true),
+    fBeamOnTarget(true),
+    fBeamOffsetX(0.0),
+    fBeamOffsetY(0.0),
+    fBeamAngleTheta(0.0),
+    fBeamAnglePhi(0.0)
 
 {
    fLBNEData = LBNEDataInput::GetLBNEDataInput();
@@ -290,6 +294,13 @@ void LBNEPrimaryGeneratorAction::GenerateG4ProtonBeam(G4Event* anEvent)
     y0 = G4RandGauss::shoot(fLBNEData->GetBeamYPosition(),sigmay);
     z0 = fLBNEData->GetBeamZPosition();
 
+    if(!fBeamOnTarget){
+      // b.c. if fBeamOnTarget, all offsets are ignored.
+      x0 += fBeamOffsetX;
+      y0 += fBeamOffsetY;
+    }
+
+
     G4double dx, dy, dz;
     do 
     {
@@ -310,18 +321,11 @@ void LBNEPrimaryGeneratorAction::GenerateG4ProtonBeam(G4Event* anEvent)
     dz = sqrt(1.0 - (dx*dx + dy*dy));
     G4ThreeVector direction(dx, dy, dz);
     
-    G4cout << "The direction is " << dx << " " << dy << " " << dz << G4endl;
     
-    //if(fLBNEData->beamOnTarget) 
-    //{
-       //G4double zDist = fLBNEData->TargetZ0[0] - z0;
-       //x0 += (dx/dz)*zDist;
-       //y0 += (dy/dz)*zDist;
-       //z0 += zDist;
+    if(fCorrectForAngle || fBeamOnTarget){
        x0 += (dx/dz)*z0;
        y0 += (dy/dz)*z0;
-
-       //}
+    }
 
     fProtonN = fCurrentPrimaryNo;
     

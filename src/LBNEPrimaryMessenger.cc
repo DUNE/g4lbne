@@ -25,20 +25,50 @@ LBNEPrimaryMessenger::LBNEPrimaryMessenger(LBNEPrimaryGeneratorAction* RA)
    }
   fDirectory = new G4UIdirectory("/LBNE/generator/");
 
-  fBeamlineThetaCmd =
+  fBeamOffsetXCmd = 
+    new G4UIcmdWithADoubleAndUnit("/LBNE/generator/beamOffsetX",this);
+  fBeamOffsetXCmd->SetGuidance("Set the X offset of the proton beam");
+  fBeamOffsetXCmd->SetUnitCategory("Length");
+  
+  fBeamOffsetYCmd = 
+    new G4UIcmdWithADoubleAndUnit("/LBNE/generator/beamOffsetY",this);
+  fBeamOffsetYCmd->SetGuidance("Set the Y offset of the proton beam");
+  fBeamOffsetYCmd->SetUnitCategory("Length");
+  
+  fBeamThetaCmd =
     new G4UIcmdWithADoubleAndUnit("/LBNE/generator/beamTheta",this);
-  fBeamlineThetaCmd->SetGuidance("Set the angle (theta) of the proton beam");
-  fBeamlineThetaCmd->SetUnitCategory("Angle");
-  fBeamlinePhiCmd =
+  fBeamThetaCmd->SetGuidance("Set the angle (theta) of the proton beam");
+  fBeamThetaCmd->SetUnitCategory("Angle");
+  
+  fBeamPhiCmd =
     new G4UIcmdWithADoubleAndUnit("/LBNE/generator/beamPhi",this);
-  fBeamlinePhiCmd->SetGuidance("Set the angle (phi) of the proton beam.");
-  fBeamlinePhiCmd->SetUnitCategory("Angle");
+  fBeamPhiCmd->SetGuidance("Set the angle (phi) of the proton beam.");
+  fBeamPhiCmd->SetUnitCategory("Angle");
+
+  fCorrectForAngleCmd = 
+    new G4UIcmdWithABool("/LBNE/generator/correctForAngle", this);
+  fCorrectForAngleCmd->SetGuidance("If true, beam x/y position is corrected");
+  fCorrectForAngleCmd->SetGuidance("to hit center of target using angle of");
+  fCorrectForAngleCmd->SetGuidance("beam. Offsets in x and y specified via");
+  fCorrectForAngleCmd->SetGuidance("messenger are still respected.");
+  
+  fBeamOnTargetCmd = 
+    new G4UIcmdWithABool("/LBNE/generator/beamOnTarget", this);
+  fBeamOnTargetCmd->SetGuidance("If true, forces beam to hit the center");
+  fBeamOnTargetCmd->SetGuidance("of target. Any x or y offsets supplied");
+  fBeamOnTargetCmd->SetGuidance("via messenger are ignored");
+  
+
 }
 
 LBNEPrimaryMessenger::~LBNEPrimaryMessenger()
 {
-  delete fBeamlinePhiCmd;
-  delete fBeamlineThetaCmd;
+  delete fBeamOffsetXCmd;
+  delete fBeamOffsetYCmd;
+  delete fBeamPhiCmd;
+  delete fBeamThetaCmd;
+  delete fCorrectForAngleCmd;
+  delete fBeamThetaCmd;
   delete fDirectory;
 }
 
@@ -57,11 +87,23 @@ void LBNEPrimaryMessenger::SetNewValue(G4UIcommand* cmd, G4String val)
       G4cout << "LBNEPrimaryMessenger::SetNewValue - Done Setting parameter value." << G4endl;
    }
 
-  if(cmd == fBeamlineThetaCmd){
-    fPrimaryAction->SetBeamTheta(fBeamlineThetaCmd->GetNewDoubleValue(val));   
+  if(cmd == fBeamOffsetXCmd){
+    fPrimaryAction->SetBeamOffsetX(fBeamOffsetXCmd->GetNewDoubleValue(val));   
   }
-  if(cmd == fBeamlinePhiCmd){
-    fPrimaryAction->SetBeamPhi(fBeamlinePhiCmd->GetNewDoubleValue(val));   
+  if(cmd == fBeamOffsetYCmd){
+    fPrimaryAction->SetBeamOffsetY(fBeamOffsetYCmd->GetNewDoubleValue(val));   
+  }
+  if(cmd == fBeamThetaCmd){
+    fPrimaryAction->SetBeamTheta(fBeamThetaCmd->GetNewDoubleValue(val));   
+  }
+  if(cmd == fBeamPhiCmd){
+    fPrimaryAction->SetBeamPhi(fBeamPhiCmd->GetNewDoubleValue(val));   
+  }
+  if(cmd == fCorrectForAngleCmd){
+    fPrimaryAction->SetCorrectForAngle(fCorrectForAngleCmd->GetNewBoolValue(val));
+  }
+  if(cmd == fBeamOnTargetCmd){
+    fPrimaryAction->SetBeamOnTarget(fBeamOnTargetCmd->GetNewBoolValue(val));
   }
 }
 

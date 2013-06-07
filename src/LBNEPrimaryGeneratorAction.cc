@@ -56,9 +56,9 @@ LBNEPrimaryGeneratorAction::LBNEPrimaryGeneratorAction()
 
     fTgen(-99),
     fType(-99),
-    fWeight(1.0)
-
-    
+    fWeight(1.0),
+    fBeamAngleTheta(0),
+    fBeamAnglePhi(0)
 
 {
    fLBNEData = LBNEDataInput::GetLBNEDataInput();
@@ -100,8 +100,13 @@ void LBNEPrimaryGeneratorAction::SetProtonBeam()
   fParticleGun->SetParticleDefinition(particleTable->FindParticle("proton"));
   fParticleGun->SetParticleEnergy(fLBNEData->GetProtonKineticEnergy());
   fParticleGun->SetParticlePosition(fLBNEData->GetBeamPosition());
-  fParticleGun->SetParticleMomentumDirection(fLBNEData->GetBeamDirection());
-
+  G4ThreeVector beamDirection(1,0,0);
+  beamDirection.setTheta(fBeamAngleTheta);
+  beamDirection.setPhi(fBeamAnglePhi);
+  G4cout << "Beam direction of " << beamDirection.X << " " <<
+  beamDirection.Y << " " << beamDirection.Z << endl;
+  fParticleGun->SetParticleMomentumDirection(beamDirection);
+  
   fCurrentPrimaryNo=0;
 
   G4String spaces = "   ";
@@ -298,10 +303,15 @@ void LBNEPrimaryGeneratorAction::GenerateG4ProtonBeam(G4Event* anEvent)
     }
     while(abs(dy) > fLBNEData->GetBeamMaxDy());
     
+    if(fabs(fBeamAngleTheta) > 1e-4){
+      dx += sin(fBeamAngleTheta)*cos(fBeamAnglePhi);
+      dy += sin(fBeamAngleTheta)*sin(fBeamAnglePhi);
+    }
     dz = sqrt(1.0 - (dx*dx + dy*dy));
     G4ThreeVector direction(dx, dy, dz);
-
-
+    
+    G4cout << "The direction is " << dx << " " << dy << " " << dz << G4endl;
+    
     //if(fLBNEData->beamOnTarget) 
     //{
        //G4double zDist = fLBNEData->TargetZ0[0] - z0;

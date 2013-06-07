@@ -23,8 +23,10 @@ public:
   void SetNewValue(G4UIcommand* ,G4String );
  
 private:
-  LBNEPrimaryGeneratorAction*   PrimaryAction;
-  G4ParticleTable*          particleTable;
+  LBNEPrimaryGeneratorAction*   fPrimaryAction;
+  G4UIdirectory*                fDirectory;
+  G4UIcmdWithADoubleAndUnit*    fBeamlineThetaCmd;
+  G4UIcmdWithADoubleAndUnit*    fBeamlinePhiCmd;
 
 };
 

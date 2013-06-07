@@ -53,6 +53,8 @@ class LBNEPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 
    G4int GetProtonNumber()              { return fProtonN; }
    
+   void SetBeamTheta(G4double theta) { fBeamAngleTheta = theta; }
+   void SetBeamPhi(G4double phi) { fBeamAnglePhi = phi; }
 
 private:
 
@@ -81,7 +83,8 @@ private:
    G4int    fType; 
    G4double fWeight;
    
-   
+   G4double fBeamAngleTheta;
+   G4double fBeamAnglePhi;
    
    
    //double                  DoubleRand() {return 2*G4UniformRand()-1.;}

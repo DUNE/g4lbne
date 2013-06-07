@@ -15,7 +15,7 @@
 #include "G4RunManager.hh"
 
 LBNEPrimaryMessenger::LBNEPrimaryMessenger(LBNEPrimaryGeneratorAction* RA)
-  :PrimaryAction (RA)
+  :fPrimaryAction (RA)
 {
    LBNEDataInput *LBNEData = LBNEDataInput::GetLBNEDataInput();
    
@@ -23,15 +23,26 @@ LBNEPrimaryMessenger::LBNEPrimaryMessenger(LBNEPrimaryGeneratorAction* RA)
    {
       G4cout << "LBNEPrimaryMessenger Constructor Called." << G4endl;
    }
-  
+  fDirectory = new G4UIdirectory("/LBNE/generator/");
+
+  fBeamlineThetaCmd =
+    new G4UIcmdWithADoubleAndUnit("/LBNE/generator/beamTheta",this);
+  fBeamlineThetaCmd->SetGuidance("Set the angle (theta) of the proton beam");
+  fBeamlineThetaCmd->SetUnitCategory("Angle");
+  fBeamlinePhiCmd =
+    new G4UIcmdWithADoubleAndUnit("/LBNE/generator/beamPhi",this);
+  fBeamlinePhiCmd->SetGuidance("Set the angle (phi) of the proton beam.");
+  fBeamlinePhiCmd->SetUnitCategory("Angle");
 }
 
 LBNEPrimaryMessenger::~LBNEPrimaryMessenger()
 {
-
+  delete fBeamlinePhiCmd;
+  delete fBeamlineThetaCmd;
+  delete fDirectory;
 }
 
-void LBNEPrimaryMessenger::SetNewValue(G4UIcommand* /*command*/,G4String /*newValues*/)
+void LBNEPrimaryMessenger::SetNewValue(G4UIcommand* cmd, G4String val)
 {
    LBNEDataInput *LBNEData = LBNEDataInput::GetLBNEDataInput();
 
@@ -46,5 +57,11 @@ void LBNEPrimaryMessenger::SetNewValue(G4UIcommand* /*command*/,G4String /*newVa
       G4cout << "LBNEPrimaryMessenger::SetNewValue - Done Setting parameter value." << G4endl;
    }
 
+  if(cmd == fBeamlineThetaCmd){
+    fPrimaryAction->SetBeamTheta(fBeamlineThetaCmd->GetNewDoubleValue(val));   
+  }
+  if(cmd == fBeamlinePhiCmd){
+    fPrimaryAction->SetBeamPhi(fBeamlinePhiCmd->GetNewDoubleValue(val));   
+  }
 }
 

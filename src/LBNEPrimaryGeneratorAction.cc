@@ -58,7 +58,7 @@ LBNEPrimaryGeneratorAction::LBNEPrimaryGeneratorAction()
     fType(-99),
     fWeight(1.0),
     fCorrectForAngle(true),
-    fBeamOnTarget(true),
+    fBeamOnTarget(false),
     fBeamOffsetX(0.0),
     fBeamOffsetY(0.0),
     fBeamAngleTheta(0.0),

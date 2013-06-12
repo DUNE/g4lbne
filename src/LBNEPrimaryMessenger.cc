@@ -68,7 +68,7 @@ LBNEPrimaryMessenger::~LBNEPrimaryMessenger()
   delete fBeamPhiCmd;
   delete fBeamThetaCmd;
   delete fCorrectForAngleCmd;
-  delete fBeamThetaCmd;
+  delete fBeamOnTargetCmd;
   delete fDirectory;
 }
 

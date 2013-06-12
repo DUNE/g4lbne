@@ -28,21 +28,25 @@ LBNEPrimaryMessenger::LBNEPrimaryMessenger(LBNEPrimaryGeneratorAction* RA)
   fBeamOffsetXCmd = 
     new G4UIcmdWithADoubleAndUnit("/LBNE/generator/beamOffsetX",this);
   fBeamOffsetXCmd->SetGuidance("Set the X offset of the proton beam");
+  fBeamOffsetXCmd->SetParameterName("beamOffsetX", false);
   fBeamOffsetXCmd->SetUnitCategory("Length");
   
   fBeamOffsetYCmd = 
     new G4UIcmdWithADoubleAndUnit("/LBNE/generator/beamOffsetY",this);
   fBeamOffsetYCmd->SetGuidance("Set the Y offset of the proton beam");
+  fBeamOffsetYCmd->SetParameterName("beamOffsetY", false);
   fBeamOffsetYCmd->SetUnitCategory("Length");
   
   fBeamThetaCmd =
     new G4UIcmdWithADoubleAndUnit("/LBNE/generator/beamTheta",this);
   fBeamThetaCmd->SetGuidance("Set the angle (theta) of the proton beam");
+  fBeamThetaCmd->SetParameterName("beamTheta", false);
   fBeamThetaCmd->SetUnitCategory("Angle");
   
   fBeamPhiCmd =
     new G4UIcmdWithADoubleAndUnit("/LBNE/generator/beamPhi",this);
   fBeamPhiCmd->SetGuidance("Set the angle (phi) of the proton beam.");
+  fBeamPhiCmd->SetParameterName("beamPhi", false);
   fBeamPhiCmd->SetUnitCategory("Angle");
 
   fCorrectForAngleCmd = 
@@ -68,7 +72,7 @@ LBNEPrimaryMessenger::~LBNEPrimaryMessenger()
   delete fBeamPhiCmd;
   delete fBeamThetaCmd;
   delete fCorrectForAngleCmd;
-  delete fBeamThetaCmd;
+  delete fBeamOnTargetCmd;
   delete fDirectory;
 }
 

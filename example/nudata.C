@@ -3,6 +3,7 @@
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
+#include <TGaxis.h>
 #include <iomanip>
 #include <iostream>
 #include <fstream>
@@ -130,7 +131,7 @@ void nudata::Loop()
 
       ++iread;
       
-      if(iread % 10000 == 0)
+      if(iread % 1000 == 0)
       {
 	 std::cout << "Reading Entry " << iread << std::endl;
       }
@@ -212,7 +213,7 @@ void nudata::Loop()
       detvec.push_back(detz);
 
       //this function computes the dectector weight and neutrino energy at detx,y,z
-      nudata::GetWeight(detvec, detectorwghtatsomedet, nuenergyatsomedet);
+      GetWeight(detvec, detectorwghtatsomedet, nuenergyatsomedet);
 
       //
       //Note that for off-axis locations this function, nudata::GetWeight, 
@@ -567,9 +568,9 @@ double nudata::GetWeight(const std::vector<double> xdet,
       cout <<"nudata::GetWeight - Wrong parent type!! "<< ptype << " = "
 	   << ptype << " Decay code = " << Ndecay <<endl;
       
-     return;
+     return -999;
    }
-   
+
    double parent_energy = sqrt(pdPx*pdPx +
 			       pdPy*pdPy +
 			       pdPz*pdPz + 

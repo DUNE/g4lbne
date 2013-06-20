@@ -175,7 +175,7 @@ public :
 		  const std::string &xtitle = "", 
 		  const std::string &ytitle = "");
    
-   double nudata::GetWeight(const std::vector<double> xdet,
+   double GetWeight(const std::vector<double> xdet,
 			    double& nu_wght, 
 			    double& nu_energy);
 

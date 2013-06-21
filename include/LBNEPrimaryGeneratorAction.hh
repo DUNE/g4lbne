@@ -56,7 +56,7 @@ class LBNEPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
   void SetCorrectForAngle(G4bool aBool) { fCorrectForAngle = aBool; }
   void SetBeamOnTarget(G4bool aBool) { fBeamOnTarget = aBool; }
   void SetBeamOffsetX(G4double x) { fBeamOffsetX = x; }
-  void SetBeamOffsetY(G4double y) { fBeamOffsetX = y; }
+  void SetBeamOffsetY(G4double y) { fBeamOffsetY = y; }
   void SetBeamTheta(G4double theta) { fBeamAngleTheta = theta; }
   void SetBeamPhi(G4double phi) { fBeamAnglePhi = phi; }
 

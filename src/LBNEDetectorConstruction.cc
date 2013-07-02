@@ -1,6 +1,6 @@
-//----------------------------------------------------------------------
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.6 2013/06/03 18:55:37 robj137 Exp $
-//----------------------------------------------------------------------
+//---------------------------------------------------------------------------// 
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.7 2013/07/02 13:12:21 robj137 Exp $
+//---------------------------------------------------------------------------// 
 
 #include <fstream>
 
@@ -46,7 +46,7 @@
 
 #include "G4VisExtent.hh"
 
-//-------------------------------------------------------------------------
+//---------------------------------------------------------------------------// 
 // Constructor, Destructor, and Initialization
 //---------------------------------------------------------------------------// 
 
@@ -56,6 +56,7 @@ LBNEDetectorConstruction::LBNEDetectorConstruction()
   InitializeMaterials();
   Initialize();
   fDetectorMessenger = new LBNEDetectorMessenger(this);
+  fPlacementHandler = new LBNEVolumePlacement();
 }
 
 
@@ -63,9 +64,9 @@ LBNEDetectorConstruction::~LBNEDetectorConstruction()
 {
   for(unsigned int i = 0; i < fHornBFieldVec.size(); ++i)
   {
-     delete fHornBFieldVec[i];
-     delete fHornICBFieldVec[i];
-     delete fHornOCBFieldVec[i];
+    delete fHornBFieldVec[i];
+    delete fHornICBFieldVec[i];
+    delete fHornOCBFieldVec[i];
   }
 
 
@@ -80,6 +81,7 @@ LBNEDetectorConstruction::~LBNEDetectorConstruction()
   //}
 
   delete fDetectorMessenger;
+  delete fPlacementHandler;
 }
 
 void LBNEDetectorConstruction::InitializeSubVolumes()
@@ -257,7 +259,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
             new G4LogicalVolume(ROCK_solid,
                                 G4Material::GetMaterial("Concrete"),
                                 "RockLogical",0,0,0); 
-  RockLogical->SetVisAttributes(G4VisAttributes::Invisible);
+  //RockLogical->SetVisAttributes(G4VisAttributes::Invisible);
   ROCK = new G4PVPlacement(0,G4ThreeVector(),RockLogical,"ROCK",0,false,0);
   
   // First create the Target Hall, Pipe Hall, and Absorber Hall, and then
@@ -272,6 +274,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   fDecayPipeLength = fDecayPipe->GetDecayPipeLength();
   fDecayPipeRadius = fDecayPipe->GetDecayPipeRadius();
   fDecayHallZ = fDecayPipeLength;
+  fPlacementHandler->SetDecayHallZ(fDecayPipeLenth);
   fAbsorberHallX = 10*m;
   fAbsorberHallY = 22*m;
   fAbsorberHallZ = 14*m;
@@ -298,8 +301,10 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   DecayHallPreSolid, AbsorberHallSolid, DecayHallXform);
   G4ThreeVector targetHallPosition(0,0,-fDecayHallZ/2 - fTargetHallZ/2-eps);
   G4ThreeVector decayHallPosition(0,0,5*m);
-  G4ThreeVector absorberHallPosition(0,3*m,fDecayHallZ/2 +
-  fAbsorberHallZ/2+eps+5*m);
+  G4double offset = 6*m;
+  G4ThreeVector
+  absorberHallPosition(0,offset*cos(fBeamlineAngle),fDecayHallZ/2 +
+  fAbsorberHallZ/2+eps+5*m + offset*sin(fBeamlineAngle));
   
   G4ThreeVector
   AbsorberTranslation(0,0,fAbsorberHallZ/2+fDecayHallZ+fTargetHallZ/2);
@@ -309,7 +314,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   G4LogicalVolume *targetHallLogical = 
       new G4LogicalVolume(TargetHallSolid, G4Material::GetMaterial("Air"), 
                           "targetHallLogical", 0,0,0);
-  
+
   G4LogicalVolume *decayHallLogical = 
       new G4LogicalVolume(DecayHallSolid, G4Material::GetMaterial("Air"), 
                           "decayHallLogical", 0,0,0);
@@ -317,6 +322,12 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   G4LogicalVolume *absorberHallLogical = 
       new G4LogicalVolume(AbsorberHallSolid, G4Material::GetMaterial("Air"), 
                           "absorberHallLogical", 0,0,0);
+  
+  // Register the mother hall logical volumes with the placement handler
+  fPlacementHandler->SetTargetHallLogical(targetHallLogical);
+  fPlacementHandler->SetDecayHallLogical(targetHallLogical);
+  fPlacementHandler->SetAbsorberHallLogical(targetHallLogical);
+  
   
   G4PVPlacement* targetHallPhysical = 
       new G4PVPlacement(0, targetHallPosition, targetHallLogical,
@@ -336,12 +347,11 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   G4double hallLength = fTargetHallZ + fDecayHallZ + fAbsorberHallZ;
   G4cout << " Total hall length is " << hallLength/m << " m long" << G4endl;
   G4double decayPipePosition = 0.5*fTargetHallZ + fDecayHallZ/2;
-  fDecayPipe->SetPlacement(0,0,decayPipePosition);
   fHadronAbsorber->SetRotation(0,-fBeamlineAngle, 0);
-  fHadronAbsorber->SetPlacement(0,0,0.5*(fTargetHallZ+2*fDecayHallZ+fAbsorberHallZ));
-  fStandardPerson->SetPlacement(0,
-                                0.9*m-fAbsorberHallY/2,
-                                0.5*fTargetHallZ + fDecayHallZ + 0.5*fAbsorberHallZ + 5*m);
+  //fHadronAbsorber->SetPlacement(0,0,0.5*(fTargetHallZ+2*fDecayHallZ+fAbsorberHallZ));
+  //fStandardPerson->SetPlacement(0,
+  //                              0.9*m-fAbsorberHallY/2,
+   //                             0.5*fTargetHallZ + fDecayHallZ + 0.5*fAbsorberHallZ + 5*m);
   fStandardPerson->SetRotation(0,-fBeamlineAngle+90*deg,0);
     // Individual geometries within all halls:
     // baffle
@@ -433,12 +443,14 @@ LBNEDetectorMessenger::LBNEDetectorMessenger( LBNEDetectorConstruction* LBNEDet)
    
    
    ConstructTarget = new G4UIcmdWithABool("/LBNE/det/constructTarget",this); 
+   ConstructTarget->SetParameterName("constructTarget", false);
    ConstructTarget->SetGuidance("Target construction on/off"); 
    ConstructTarget->SetParameterName("constructTarget",true); 
    ConstructTarget->AvailableForStates(G4State_PreInit,G4State_Idle);
    
    SetBeamlineAngle = new
    G4UIcmdWithADoubleAndUnit("/LBNE/det/setBeamlineAngle",this);
+   SetBeamlineAngle->SetParameterName("angle", false);
    SetBeamlineAngle->SetGuidance("Set the angle of the beamline");
    
    //UpdateCmd = new G4UIcmdWithoutParameter("/LBNE/det/update",this);

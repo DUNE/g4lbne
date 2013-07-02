@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.hh,v 1.5.2.7 2013/06/03 18:51:02 robj137 Exp $
+// $Id: LBNEDetectorConstruction.hh,v 1.5.2.8 2013/07/02 13:12:21 robj137 Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEDetectorConstruction_H
@@ -20,6 +20,7 @@
 #include "LBNEStandardPerson.hh"
 //#include "LBNEDetectorMessenger.hh"
 #include "LBNESubVolume.hh"
+#include "LBNEVolumePlacement.hh"
 
 class G4VSolid;
 class G4LogicalVolume;
@@ -71,15 +72,16 @@ public:
 private:
 
   // Geometric instantiations
+  LBNEVolumePlacement*                  fPlacementHandler;
 
   std::vector<LBNESubVolume*>        fSubVolumes;
 
   //LBNETarget                            *fTarget;
   //LBNEBaffle                            *fBaffle;
   //LBNEHornAssembly                      *fHornAssembly;
-  LBNEDecayPipe                         *fDecayPipe;
-  LBNEHadronAbsorber                    *fHadronAbsorber;
-  LBNEStandardPerson                    *fStandardPerson;
+  LBNEDecayPipe*                        fDecayPipe;
+  LBNEHadronAbsorber*                   fHadronAbsorber;
+  LBNEStandardPerson*                   fStandardPerson;
   
   std::vector<LBNEMagneticField*>       fHornBFieldVec;
   std::vector<LBNEMagneticFieldIC*>     fHornICBFieldVec;

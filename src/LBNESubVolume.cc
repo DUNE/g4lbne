@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNESubVolume.cc,v 1.1.2.2 2013/06/03 18:55:37 robj137 Exp $
+// $Id: LBNESubVolume.cc,v 1.1.2.3 2013/07/02 13:12:21 robj137 Exp $
 //---------------------------------------------------------------------------// 
 
 #include "LBNESubVolume.hh"
@@ -36,7 +36,9 @@ LBNESubVolumeMessenger::LBNESubVolumeMessenger(LBNESubVolume *subVolume)
 }
 
 LBNESubVolumeMessenger::~LBNESubVolumeMessenger()
-{;}
+{
+  delete fDirectory;
+}
 
 void LBNESubVolumeMessenger::SetNewValue(G4UIcommand *cmd, G4String val){
 ; // for G4UIcommands that are common to all subvolumes

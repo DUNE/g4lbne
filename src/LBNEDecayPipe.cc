@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDecayPipe.cc,v 1.1.1.1.2.5 2013/06/03 18:55:37 robj137 Exp $
+// $Id: LBNEDecayPipe.cc,v 1.1.1.1.2.6 2013/07/02 13:12:21 robj137 Exp $
 //---------------------------------------------------------------------------// 
 
 //C++
@@ -83,23 +83,27 @@ LBNEDecayPipeMessenger::LBNEDecayPipeMessenger(LBNESubVolume *subVolume)
   fDecayPipeLengthCmd = 
     new G4UIcmdWithADoubleAndUnit(G4String(fDirectoryName+"pipeLength"),this);
   fDecayPipeLengthCmd->SetGuidance("Set the length of the decay pipe");
+  fDecayPipeLengthCmd->SetParameterName("pipeLength", false);
   fDecayPipeLengthCmd->SetUnitCategory("Length");
 
   fDecayPipeRadiusCmd = 
     new G4UIcmdWithADoubleAndUnit(G4String(fDirectoryName+"pipeRadius"),this);
   fDecayPipeRadiusCmd->SetGuidance("Set the length of the decay pipe");
-  fDecayPipeRadiusCmd->SetUnitCategory("Radius");
+  fDecayPipeRadiusCmd->SetParameterName("pipeRadius", false);
+  fDecayPipeRadiusCmd->SetUnitCategory("Length");
 
   fDecayPipeWindowThicknessCmd = 
     new
     G4UIcmdWithADoubleAndUnit(G4String(fDirectoryName+"pipeWindowThickness"),this);
   fDecayPipeWindowThicknessCmd->SetGuidance("Set the length of the decay pipe");
-  fDecayPipeWindowThicknessCmd->SetUnitCategory("WindowThickness");
+  fDecayPipeWindowThicknessCmd->SetParameterName("pipeWindowThickness", false);
+  fDecayPipeWindowThicknessCmd->SetUnitCategory("Length");
 
   fDecayPipeWallThicknessCmd = 
     new G4UIcmdWithADoubleAndUnit(G4String(fDirectoryName+"pipeWallThickness"),this);
   fDecayPipeWallThicknessCmd->SetGuidance("Set the length of the decay pipe");
-  fDecayPipeWallThicknessCmd->SetUnitCategory("WallThickness");
+  fDecayPipeWallThicknessCmd->SetParameterName("pipeWallThickness", false);
+  fDecayPipeWallThicknessCmd->SetUnitCategory("Length");
 
 }
 

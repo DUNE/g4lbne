@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.1 2013/07/12 17:52:44 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.2 2013/07/12 20:28:26 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -32,9 +32,10 @@
 // Thus, for a given subVolume, we might have two placements, two entries in the 
 // in the map.  
 //
-// Benefits of this class are (i) a central repository of all nominal placement data. 
+// Benefits of this class are (i) a central repository of all 
+//   nominal and tried placements data. 
 //  (ii) interface to the messenger to get nominal data from User's cards.  
-//  (iii) interface with the Surveyor data class.
+//  (iii) interface with the Surveyor data class, in case misalignment are studied
 //
 // The Dectetor construction handles the list of materials, and will use this repository 
 // of placement 
@@ -54,10 +55,13 @@
 // First, one more container to avoid the search through the map more then once 
 //
 struct LBNEVolumePlacementData {
+  bool isNominal;
+  bool isPlaced;
   G4String detName;
   G4ThreeVector position;
   G4RotationMatrix rotation;
-  const G4LogicalVolume*; // not owned. G4 maintain this pointer.  Do not delete upon destructor of this class. 
+  const G4LogicalVolume* mother; // Owned. But G4 maintain this pointer.  Do not delete in the destructor of this class. 
+  const G4LogicalVolume* current; 
 };
 
 class LBNEVolumePlacements
@@ -71,22 +75,29 @@ private:
 
 public:
   
+  enum AlignmentAlgo {eNominal, eRandom, eFixed}; 
+  
   static LBNEVolumePlacements* Instance(); 
   
-  void Initialize();
+  void Initialize(const G4LogicalVolume* matriarch); // Define only the 
+  
+  // By Locate, we mean that a definite G4PVPlacement occurs if and only if the alingment is simply nominal  
+  G4PVPlacement*  CreateLogicalAndLocate(const G4String &name,  G4PVPlacement *inPlaceMother, AlignmentAlgo model);
+  
+  G4PVPlacement* PlaceFinal(const G4String &name, bool nominal=false );
 
-  G4ThreeVector GetDetectorPlacement(G4String detName, bool nominal);
-  G4RotationMatrix GetDetectorRotation(G4String detName, bool nominal);
-  G4RotationMatrix GetMotherVolumeName(G4String detName, bool nominal);
+  const LBNEVolumePlacementData* GetDetectorPlacementData(const G4String &name, bool nominal=true);
 
-  void SetTargetHallLogical(G4LogicalVolume* vol) { fTargetHallLogical = vol; }
-  void SetDecayHallLogical(G4LogicalVolume* vol) { fDecayHallLogical = vol; }
-  void SetAbsorberHallLogical(G4LogicalVolume* vol) { fAbsorberHallLogical = vol; }
-
-  void SetTargetHallZ(G4double val) { fTargetHallZ = val; }
-  void SetDecayHallZ(G4double val) { fDecayHallZ = val; }
-  void SetAbsorberHallZ(G4double val) { fAbsorberHallZ = val; }
-
+  inline double GetTargetHallZ() { return fTargetHallZ; }
+  inline double GetDecayHallZ() { return fDecayHallZ; }
+  inline double GetDecayPipeLength() { return fDecayPipeLength; }
+  inline double GetAbsorberHallZ() { return fAbsorberHallZ; }
+ 
+ // Interface to the Messenger command 
+ 
+  inline void SetDecayPipeLength(double l) {fDecayPipeLength=l;}
+  inline void SetWaterLayerThickInHorns(double l) { fWaterLayerThickInHorns = l;}
+  
 private:
 
   // maps, to map the name of the detector to its placement, rotation, and the
@@ -99,26 +110,9 @@ private:
   G4double fTargetHallZ;
   G4double fAbsorberHallZ;
   G4double fDecayHallZ;
-
-
-  // Pointers to the mother logical volume halls
-
-  G4LogicalVolume* fTargetHallLogical;
-  G4LogicalVolume* fDecayHallLogical;
-  G4LogicalVolume* fAbsorberHallLogical;
-  // General (required) parameters
-
-  // Placements of subvolumes (within relevant Hall coordinates)
-  // Target Hall
-
-  // Decay Hall
-  G4ThreeVector fDecayPipePlacement;
-  
-  // Absorber Hall
-  G4ThreeVector fHadronAbsorberPlacement;
-
-  
-  
+  G4double fDecayPipeLength; // equal the above for now.. 
+  G4double fDecayPipeRadius;
+  G4double fWaterLayerThickInHorns;
   
   // Messenger
   G4UImessenger *fPlacementMessenger;
@@ -129,16 +123,18 @@ private:
 class LBNEPlacementMessenger: public G4UImessenger {
 
 public:
-  LBNEPlacementMessenger(LBNEVolumePlacements* );
+  LBNEPlacementMessenger();
   ~LBNEPlacementMessenger();
-  void SetNewValue(G4UIcommand*, G4String);
+  void SetNewValue(G4UIcommand*, G4String); // Will set data in the singleton LBNEVolumePlacements
      
 private:
-  LBNEVolumePlacements* LBNEDetector;
      
   G4UIdirectory*                LBNEDir;
   G4UIdirectory*                detDir;
 
+  G4UICommand* WaterLayerThickInHorn;
+  G4UICommand* DecayPipeLength;
+  
       
   };
 

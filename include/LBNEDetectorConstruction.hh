@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.hh,v 1.5.2.9 2013/07/12 17:52:44 lebrun Exp $
+// $Id: LBNEDetectorConstruction.hh,v 1.5.2.10 2013/07/12 20:28:26 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEDetectorConstruction_H
@@ -20,7 +20,7 @@
 #include "LBNEStandardPerson.hh"
 //#include "LBNEDetectorMessenger.hh"
 #include "LBNESubVolume.hh"
-#include "LBNEVolumePlacement.hh"
+#include "LBNEVolumePlacements.hh"
 
 class G4VSolid;
 class G4LogicalVolume;
@@ -72,7 +72,7 @@ public:
 private:
 
   // Geometric instantiations
-  LBNEVolumePlacement*                  fPlacementHandler;
+  LBNEVolumePlacements*                  fPlacementHandler;
 
   std::vector<LBNESubVolume*>        fSubVolumes;
 
@@ -98,8 +98,6 @@ private:
   G4double fRockY;
   G4double fRockZ;
   G4double fBeamlineAngle;
-  G4double fDecayPipeLength;
-  G4double fDecayPipeRadius;
   G4double fDecayPipeWallThickness;
   G4double fTargetHallX;
   G4double fTargetHallY;
@@ -112,7 +110,7 @@ private:
   G4double fAbsorberHallY;
   G4double fAbsorberHallZ;
   // Flags that can be set by messenger
-  bool fCheckOverlaps;
+  bool fCheckOverlaps; // Obsolete, handled in LBNEVolumePlacements
   bool fConstructTarget;
   G4String fSimulationType;
   
@@ -281,8 +279,8 @@ class LBNEDetectorMessenger: public G4UImessenger {
 public:
   LBNEDetectorMessenger(LBNEDetectorConstruction* );
   ~LBNEDetectorMessenger();
-  void SetNewValue(G4UIcommand*, G4String);
-  double GetCurrentValueDble(G4UIcommand*, G4String);
+  void SetNewValue(G4UIcommand*, G4String); // will set data in LBNEDetector 
+//  double GetCurrentValueDble(G4UIcommand*); // time 
      
 private:
   LBNEDetectorConstruction* LBNEDetector;

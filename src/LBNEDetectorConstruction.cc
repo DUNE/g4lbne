@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.7 2013/07/02 13:12:21 robj137 Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.8 2013/07/12 20:22:56 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -52,11 +52,16 @@
 
 LBNEDetectorConstruction::LBNEDetectorConstruction()
 {
-  InitializeSubVolumes();
+  fPlacementHandler = LBNEVolumePlacements::Instance(); // Minimal setup for the Placement algorithm. 
+  fDetectorMessenger = new LBNEDetectorMessenger(this);
+  
+  // temporary.. Need a better place. 
+  fBeamlineAngle = -101*mrad;
+
+//  InitializeSubVolumes();  Obsolete. 
   InitializeMaterials();
   Initialize();
-  fDetectorMessenger = new LBNEDetectorMessenger(this);
-  fPlacementHandler = new LBNEVolumePlacement();
+  Construct();
 }
 
 
@@ -84,11 +89,12 @@ LBNEDetectorConstruction::~LBNEDetectorConstruction()
   delete fPlacementHandler;
 }
 
+ // Obsolete.
 void LBNEDetectorConstruction::InitializeSubVolumes()
 {
-  fDecayPipe = new LBNEDecayPipe("DecayPipe");
-  fHadronAbsorber = new LBNEHadronAbsorber("HadronAbsorber");
-  fStandardPerson = new LBNEStandardPerson("StandardPerson");
+//  fDecayPipe = new LBNEDecayPipe("DecayPipe");
+// fHadronAbsorber = new LBNEHadronAbsorber("HadronAbsorber");
+//  fStandardPerson = new LBNEStandardPerson("StandardPerson");
   /*
   fTarget = new LBNETarget();
   fBaffle = new LBNEBaffle();
@@ -100,8 +106,7 @@ void LBNEDetectorConstruction::InitializeSubVolumes()
   fDecayPipe->SetDefaults();
   fHadronAbsorber->SetDefaults();
   */
-  fSubVolumes.clear();
-  fBeamlineAngle = -101*mrad;
+ // fSubVolumes.clear();
 }
 
 void LBNEDetectorConstruction::Initialize()
@@ -251,9 +256,11 @@ void LBNEDetectorConstruction::DestroyMaterials()
 }
 
 G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
+
+  double decayPipeLength = fPlacementHandler->GetDecayPipeLength();  
   fRockX = 60.0*m;
   fRockY = 60.0*m;
-  fRockLength = 300.0*m;
+  fRockLength = (decayPipeLength + 50.)*m;
   G4Box* ROCK_solid = new G4Box("ROCK_solid",fRockX/2, fRockY/2, fRockLength/2);
   G4LogicalVolume *RockLogical = 
             new G4LogicalVolume(ROCK_solid,
@@ -264,12 +271,18 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   
   // First create the Target Hall, Pipe Hall, and Absorber Hall, and then
   // connect them together.
-
+  // We now use the place volumes
+  
+  fPlacementHandler->CreateLogicalAndLocate(G4String("TargetHallAndHorn1"), ROCK, 
+                                             LBNEVolumePlacements::eNominal);
+  
+  // ???????????????????? Everything downstream of this need to be adapted. 					     
+  
   G4double eps = 1e-7*m; // 0.1 micron
 
   fTargetHallX = 7.671*m;
   fTargetHallY = 11.862*m;
-  fTargetHallZ = 28.2*m;
+  fTargetHallZ = GetTargetHallZ28.2*m;
 
   fDecayPipeLength = fDecayPipe->GetDecayPipeLength();
   fDecayPipeRadius = fDecayPipe->GetDecayPipeRadius();
@@ -496,6 +509,8 @@ void LBNEDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
   if (command == SetBeamlineAngle){
     LBNEDetector->SetBeamlineAngle(SetBeamlineAngle->GetNewDoubleValue(newValue));
   }
+  
+  if (
    /*
    if ( command == UpdateCmd ) 
    {

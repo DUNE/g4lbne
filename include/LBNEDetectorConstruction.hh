@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.hh,v 1.5.2.8 2013/07/02 13:12:21 robj137 Exp $
+// $Id: LBNEDetectorConstruction.hh,v 1.5.2.9 2013/07/12 17:52:44 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEDetectorConstruction_H
@@ -282,6 +282,7 @@ public:
   LBNEDetectorMessenger(LBNEDetectorConstruction* );
   ~LBNEDetectorMessenger();
   void SetNewValue(G4UIcommand*, G4String);
+  double GetCurrentValueDble(G4UIcommand*, G4String);
      
 private:
   LBNEDetectorConstruction* LBNEDetector;

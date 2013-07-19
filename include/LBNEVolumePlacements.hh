@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.3 2013/07/19 12:17:18 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.4 2013/07/19 20:37:27 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -16,6 +16,7 @@
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
+#include "G4PVPlacement.hh"
 
 //---------------------------------------------------------------------------// 
 // This class controls the placement of everything within the geometry. 
@@ -172,12 +173,22 @@ private:
   G4double fTargetAndBaffleLengthApprox; 
   G4double fHorn1UpstreamPlateLength; //???????????//
   G4double fHorn1DownstreamPlateLength; //???????????//
-
+  //
+  G4double fDistMCZeroToACTRN1Pts; // See drawing 8875.112-MD-363097, with Jim Hylen annotation. 
+  // 
+  G4double fBaffleInnerRadius;
+  G4double fBaffleOuterRadius;
+  G4double fBaffleLength;
+  G4double fBaffleZPosition; // With respect to 0. of TargetHallAndHorn1 center (MCZERO) 
   //
   // Store the mother volume at top of volume hierarchy, for book-keeping/debugging purposes. 
   
   const G4LogicalVolume* fTopLogicalVolume;
+  //
+  // This method was found in G4PVPlacement. It is a clone, where we just skip 
+  // the error messages. 
   
+  bool CheckOverlaps(const G4PVPlacement *phys, G4int nres, G4double eps, G4bool verbose) const; 
 };
 
 #endif

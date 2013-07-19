@@ -115,7 +115,7 @@ LBNEVolumePlacementData*
                       + fHorn1Length + 0.5 + fTargetAndBaffleLengthApprox  ;
     G4Box* hallBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2. );
     info.fCurrent = new G4LogicalVolume(hallBox, G4Material::GetMaterial("Air"), volumeName); 
-    info.fPosition[2] = - fHorn1Length; //preliminary
+    info.fPosition[2] = 0.; // Definiing MCZERO, Drawing 8875. 112-MD-363097, annotated by jim Hylen
   
   } else if (name == G4String("UpstreamTargetHall")) {
     std::map<G4String, LBNEVolumePlacementData>::const_iterator it = 
@@ -130,7 +130,8 @@ LBNEVolumePlacementData*
     G4Box* hallBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2. );
     info.fCurrent = new G4LogicalVolume(hallBox, G4Material::GetMaterial("Air"), volumeName); 
     info.fPosition[2] = -fTargetAndBaffleLengthApprox/2.; //preliminary
-       
+    std::cerr << " LBNEVolumePlacements::Create " << name << " half length " << info.fParams[2]/2. << std::endl;
+      
   } else if (name == G4String("Horn1Hall")) {
     std::map<G4String, LBNEVolumePlacementData>::const_iterator it = 
       fSubVolumes.find(G4String("TargetHallAndHorn1"));
@@ -168,11 +169,16 @@ G4VPhysicalVolume* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhy
       exit(2);
     }  
     LBNEVolumePlacementData &info=it->second;  
-    info.fMother  =  mother;  
+    info.fMother  =  mother; 
+    std::cerr << " LBNEVolumePlacements::PlaceFinal, " << name << " half size " 
+                << info.fParams[2]/2. << " tentative position " << info.fPosition[2] << std::endl;
+    
     if (name == G4String("UpstreamTargetHall")) {
       // Special cases : not at the center of the mother volume.  It's downstream edge is the border 
       // 10 micron safety zone. 
       info.fPosition[2]=-info.fParams[2]/2. - 0.010*mm;
+      std::cerr << " LBNEVolumePlacements::PlaceFinal, " << name << " half size " 
+                << info.fParams[2]/2. << " position " << info.fPosition[2] << std::endl;
     }
     G4VPhysicalVolume *placement=0;
     G4String vpName(name); vpName += G4String("_P");
@@ -182,12 +188,14 @@ G4VPhysicalVolume* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhy
     else    
         placement=new G4PVPlacement(&info.fRotation, info.fPosition, info.fCurrent, 
 	                             vpName, vMother, false, 0);
+    info.fIsPlaced = true;				     
     return placement;			       
 }
 
 			       
 void LBNEVolumePlacements::TestVolumeOverlap(const G4String &name, G4VPhysicalVolume *mother) const {
 
+//    G4PVPlacement *pvpMother= static_cast<G4PVPlacement *>(mother);
     G4LogicalVolume *vMother=mother->GetLogicalVolume();			       
     std::map<G4String, LBNEVolumePlacementData>::const_iterator it = fSubVolumes.find(name);
     if (it == fSubVolumes.end()) {
@@ -197,7 +205,7 @@ void LBNEVolumePlacements::TestVolumeOverlap(const G4String &name, G4VPhysicalVo
     }  
     LBNEVolumePlacementData infoTmp(it->second); // deep copy 
     G4VPhysicalVolume *placement=0;
-    const int numTrialsMax = 10;
+    const int numTrialsMax = 100;
     int numTrials = 0;
     if (name == G4String("Horn1Hall")) {
      // "blind" test: shift until we are o.k. 
@@ -209,16 +217,15 @@ void LBNEVolumePlacements::TestVolumeOverlap(const G4String &name, G4VPhysicalVo
       // 10 micron safety zone. 
        infoTmp.fPosition[2]= infoTmp.fParams[2]/2. + 0.010*mm - 5.0*mm ; // last 5 mm is a mistake... 
        infoTmp.fPosition[2] += (G4RandGauss::shoot(0., 3.0))*mm; // randomly trial 
-       infoTmp.fPosition[2] += 20.*mm; // randomly trial 
        std::cerr << " ... z Offset = " << infoTmp.fPosition[2] - infoTmp.fParams[2]/2. 
                 << " mm, half size " <<  infoTmp.fParams[2]/2. << " mm, Pos " << infoTmp.fPosition[2] <<  std::endl;
        // Ignore rotations for this tests 
        std::string vpName(name); vpName += std::string("_Ptmp");
 //       std::cerr << " ... Before placing  " << vpName << " at Z = " << infoTmp.fPosition[2] << std::endl;
-       G4VPhysicalVolume *placement=new G4PVPlacement((G4RotationMatrix *) 0, infoTmp.fPosition, 
+       G4PVPlacement *placement=new G4PVPlacement((G4RotationMatrix *) 0, infoTmp.fPosition, 
                                     infoTmp.fCurrent, vpName, vMother, false, 0, false);
 //       std::cerr << " ... Physical Volume   " << placement->GetName() << " placed "  << std::endl;
-       if (!mother->CheckOverlaps(5000, 1.0e-4, false)) {
+       if (!this->CheckOverlaps(placement, 5000, 1.0e-4, false)) {
           std::cerr << " O.K., it fits ! " << std::endl;
           break;
        } else {
@@ -229,7 +236,6 @@ void LBNEVolumePlacements::TestVolumeOverlap(const G4String &name, G4VPhysicalVo
                 << vMother->GetName() << " Such a volume is undefined, fatal " << std::endl;
               exit(2);
            }  
-	   
            std::cerr << " Check Mother volume length " << itM->second.fParams[2] << " mm " << std::endl;
            mother->GetLogicalVolume()->RemoveDaughter(placement);
 	   
@@ -251,7 +257,7 @@ LBNEPlacementMessenger::~LBNEPlacementMessenger() {
 LBNEPlacementMessenger::LBNEPlacementMessenger()
  {
 
-   std::cerr << " LBNEPlacementMessenger::LBNEPlacementMessenger, contructor, starts " << std::endl;
+//   std::cerr << " LBNEPlacementMessenger::LBNEPlacementMessenger, contructor, starts " << std::endl;
    LBNEVolumePlacements* volP=LBNEVolumePlacements::Instance();
    fDecayPipeLength  = new G4UIcmdWithADoubleAndUnit("/LBNE/det/decayPipeLength",this);
    fDecayPipeLength->SetGuidance("Length of the decay Pipe");
@@ -308,5 +314,134 @@ void LBNEPlacementMessenger::SetNewValue(G4UIcommand* command,  G4String newValu
 
 }
 
+bool LBNEVolumePlacements::CheckOverlaps(const G4PVPlacement *plVol, G4int res, G4double tol, G4bool verbose) const {
+
+  if (res<=0) { return false; }
+
+  G4VSolid* solid = plVol->GetLogicalVolume()->GetSolid();
+  G4LogicalVolume* motherLog = plVol->GetMotherLogical();
+  if (!motherLog) { return false; }
+
+  G4VSolid* motherSolid = motherLog->GetSolid();
+
+  if (verbose)
+  {
+    G4cout << "Checking overlaps for volume " << plVol->GetName() << " ... ";
+  }
+
+  // Create the transformation from daughter to mother
+  //
+  G4AffineTransform Tm( plVol->GetRotation(), plVol->GetTranslation() );
+
+  for (G4int n=0; n<res; n++)
+  {
+    // Generate a random point on the solid's surface
+    //
+    G4ThreeVector point = solid->GetPointOnSurface();
+
+    // Transform the generated point to the mother's coordinate system
+    //
+    G4ThreeVector mp = Tm.TransformPoint(point);
+
+    // Checking overlaps with the mother volume
+    //
+    if (motherSolid->Inside(mp)==kOutside)
+    {
+      G4double distin = motherSolid->DistanceToIn(mp);
+      if (distin > tol)
+      {
+        if (verbose) G4cout << G4endl;
+        if (verbose) G4cout << "WARNING - G4PVPlacement::CheckOverlaps()" << G4endl
+               << "          Overlap is detected for volume "
+               << plVol->GetName() << G4endl
+               << "          with its mother volume "
+               << motherLog->GetName() << G4endl
+               << "          at mother local point " << mp << ", "
+               << "overlapping by at least: " << G4BestUnit(distin, "Length")
+               << G4endl;
+        if (verbose) G4Exception("G4PVPlacement::CheckOverlaps()", "InvalidSetup",
+                    JustWarning, "Overlap with mother volume !");
+        return true;
+      }
+    }
+
+    // Checking overlaps with each 'sister' volume
+    //
+    for (G4int i=0; i<motherLog->GetNoDaughters(); i++)
+    {
+      G4VPhysicalVolume* daughter = motherLog->GetDaughter(i);
+
+      if (daughter == plVol) { continue; }
+
+      // Create the transformation for daughter volume and transform point
+      //
+      G4AffineTransform Td( daughter->GetRotation(),
+                            daughter->GetTranslation() );
+      G4ThreeVector md = Td.Inverse().TransformPoint(mp);
+
+      G4VSolid* daughterSolid = daughter->GetLogicalVolume()->GetSolid();
+      if (daughterSolid->Inside(md)==kInside)
+      {
+        G4double distout = daughterSolid->DistanceToOut(md);
+        if (distout > tol)
+        {
+         if (verbose)  G4cout << G4endl;
+         if (verbose)  G4cout << "WARNING - G4PVPlacement::CheckOverlaps()" << G4endl
+                 << "          Overlap is detected for volume "
+                 << plVol->GetName() << G4endl
+                 << "          with " << daughter->GetName() << " volume's"
+                 << G4endl
+                 << "          local point " << md << ", "
+                 << "overlapping by at least: " << G4BestUnit(distout,"Length")
+                 << G4endl;
+         if (verbose)  G4Exception("G4PVPlacement::CheckOverlaps()", "InvalidSetup",
+                      JustWarning, "Overlap with volume already placed !");
+          return true;
+        }
+      }
+
+      // Now checking that 'sister' volume is not totally included and
+      // overlapping. Do it only once, for the first point generated
+      //
+      if (n==0)
+      {
+        // Generate a single point on the surface of the 'sister' volume
+        // and verify that the point is NOT inside the current volume
+
+        G4ThreeVector dPoint = daughterSolid->GetPointOnSurface();
+
+        // Transform the generated point to the mother's coordinate system
+        // and finally to current volume's coordinate system
+        //
+        G4ThreeVector mp2 = Td.TransformPoint(dPoint);
+        G4ThreeVector ms = Tm.Inverse().TransformPoint(mp2);
+
+        if (solid->Inside(ms)==kInside)
+        {
+          if (verbose)  G4cout << G4endl;
+          if (verbose)  G4cout << "WARNING - G4PVPlacement::CheckOverlaps()" << G4endl
+                  << "          Overlap is detected for volume "
+                  << plVol->GetName() << G4endl
+                  << "          apparently fully encapsulating volume "
+                  << daughter->GetName() << G4endl
+                  << "          at the same level !" << G4endl;
+          if (verbose)  G4Exception("G4PVPlacement::CheckOverlaps()", "InvalidSetup",
+                       JustWarning, "Overlap with volume already placed !");
+          return true;
+        }
+      }
+    }
+  }
+
+  if (verbose)
+  {
+    G4cout << "OK! " << G4endl;
+  }
+
+  return false;
+
+
+
+}
 
 

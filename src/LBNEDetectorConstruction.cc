@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.9 2013/07/19 12:17:18 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.10 2013/07/19 20:37:27 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -260,7 +260,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   double decayPipeLength = fPlacementHandler->GetDecayPipeLength();  
   fRockX = 60.0*m;
   fRockY = 60.0*m;
-  fRockLength = (decayPipeLength + 50.)*m; // Approximate and irrelevant, all rock anyways.
+  fRockLength = decayPipeLength + 50.*m; // Approximate and irrelevant, all rock anyways.
   fPlacementHandler->SetTotalLength(fRockLength);    
   G4Box* ROCK_solid = new G4Box("ROCK_solid",fRockX/2, fRockY/2, fRockLength/2);
   G4LogicalVolume *RockLogical = 
@@ -281,11 +281,13 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 // Before placing the container volume for the target region + horn1, define these two volumes, 
 // as these two are adjacent. The boundary is "coordinate zero.", respecting older convention. 
 //
-  fPlacementHandler->Create(G4String("UsptreamTargetHall"));
+  LBNEVolumePlacementData *plDat = fPlacementHandler->Create(G4String("UpstreamTargetHall"));
+  std::cerr << " Placement data for volume UpstreamTargetHall, half length  " << plDat->fParams[2]/2. << std::endl;
   fPlacementHandler->Create(G4String("Horn1Hall"));
   G4VPhysicalVolume* targethorn1Phys = fPlacementHandler->PlaceFinal(G4String("TargetHallAndHorn1"), tunnel);
   
-//  fPlacementHandler->PlaceFinal(G4String("UsptreamTargetHall"), targethorn1Phys); 
+  std::cerr << " LBNEDetectorConstruction::Construct, about to place-final UsptreamTargetHall" << std::endl;
+  fPlacementHandler->PlaceFinal(G4String("UpstreamTargetHall"), targethorn1Phys); 
   // Just test random error in positioning along the Z axis
   fPlacementHandler->TestVolumeOverlap(G4String("Horn1Hall"), targethorn1Phys);
   

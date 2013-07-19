@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.hh,v 1.5.2.10 2013/07/12 20:28:26 lebrun Exp $
+// $Id: LBNEDetectorConstruction.hh,v 1.5.2.11 2013/07/19 12:17:17 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEDetectorConstruction_H
@@ -183,7 +183,6 @@ private:
   G4VisAttributes* GetMaterialVisAttrib(G4String matName);
   void DestroyMaterials();
   
-
   // Messenger
   G4UImessenger *fDetectorMessenger;
 
@@ -257,8 +256,8 @@ private:
 
   // Physical volumes
   //
-  G4VPhysicalVolume* ROCK;
-  G4VPhysicalVolume* pvTUNE;
+  G4VPhysicalVolume* fRock;
+  G4VPhysicalVolume* fRvTUNE;
   G4VPhysicalVolume* TGAR;
   G4VPhysicalVolume* TRGT;
   G4VPhysicalVolume* PHORN[8];

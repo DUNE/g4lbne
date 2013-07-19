@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: LBNEDataInput.cc,v 1.2 2013/01/31 19:23:30 loiacono Exp $
+// $Id: LBNEDataInput.cc,v 1.2.2.1 2013/07/19 12:17:18 lebrun Exp $
 //----------------------------------------------------------------------
 
 #include "LBNEDataInput.hh"
@@ -27,7 +27,7 @@ void LBNEDataInput::setInputFile(const G4String& filename)
   fInputFileName += filename;
 }
 
-G4String LBNEDataInput::fInputFileName = "default.input";
+G4String LBNEDataInput::fInputFileName = "./inputs/lbnedocdb2161v6.input";
 LBNEDataInput* LBNEDataInput::fLBNEDataInput = 0;
 
 //-------------------------------------------------------------------------------

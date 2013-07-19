@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.8 2013/07/12 20:22:56 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.9 2013/07/19 12:17:18 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -86,7 +86,7 @@ LBNEDetectorConstruction::~LBNEDetectorConstruction()
   //}
 
   delete fDetectorMessenger;
-  delete fPlacementHandler;
+//  delete fPlacementHandler; A static struct now, no point deleting it 
 }
 
  // Obsolete.
@@ -260,29 +260,47 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   double decayPipeLength = fPlacementHandler->GetDecayPipeLength();  
   fRockX = 60.0*m;
   fRockY = 60.0*m;
-  fRockLength = (decayPipeLength + 50.)*m;
+  fRockLength = (decayPipeLength + 50.)*m; // Approximate and irrelevant, all rock anyways.
+  fPlacementHandler->SetTotalLength(fRockLength);    
   G4Box* ROCK_solid = new G4Box("ROCK_solid",fRockX/2, fRockY/2, fRockLength/2);
   G4LogicalVolume *RockLogical = 
             new G4LogicalVolume(ROCK_solid,
                                 G4Material::GetMaterial("Concrete"),
                                 "RockLogical",0,0,0); 
+  fPlacementHandler->Initialize(RockLogical); // sort of a noop for now..				
   //RockLogical->SetVisAttributes(G4VisAttributes::Invisible);
-  ROCK = new G4PVPlacement(0,G4ThreeVector(),RockLogical,"ROCK",0,false,0);
+  fRock = new G4PVPlacement(0,G4ThreeVector(),RockLogical,"ROCK",0,false,0);
   
   // First create the Target Hall, Pipe Hall, and Absorber Hall, and then
   // connect them together.
-  // We now use the place volumes
+  fPlacementHandler->SetTotalLengthOfRock(fRockLength);
+  fPlacementHandler->Create(G4String("Tunnel")); // Material is rock oversized.. 
+  G4VPhysicalVolume* tunnel = fPlacementHandler->PlaceFinal(G4String("Tunnel"), fRock ); // like Rock, oversized. Air. 
+  fPlacementHandler->Create(G4String("TargetHallAndHorn1"));
+// 
+// Before placing the container volume for the target region + horn1, define these two volumes, 
+// as these two are adjacent. The boundary is "coordinate zero.", respecting older convention. 
+//
+  fPlacementHandler->Create(G4String("UsptreamTargetHall"));
+  fPlacementHandler->Create(G4String("Horn1Hall"));
+  G4VPhysicalVolume* targethorn1Phys = fPlacementHandler->PlaceFinal(G4String("TargetHallAndHorn1"), tunnel);
   
-  fPlacementHandler->CreateLogicalAndLocate(G4String("TargetHallAndHorn1"), ROCK, 
-                                             LBNEVolumePlacements::eNominal);
+//  fPlacementHandler->PlaceFinal(G4String("UsptreamTargetHall"), targethorn1Phys); 
+  // Just test random error in positioning along the Z axis
+  fPlacementHandler->TestVolumeOverlap(G4String("Horn1Hall"), targethorn1Phys);
   
+  fPlacementHandler->PlaceFinal(G4String("Horn1Hall"), targethorn1Phys); 
+  
+
+  fPlacementHandler->Create(G4String("Horn2Hall"));
+  
+   
+/*
+
   // ???????????????????? Everything downstream of this need to be adapted. 					     
   
   G4double eps = 1e-7*m; // 0.1 micron
 
-  fTargetHallX = 7.671*m;
-  fTargetHallY = 11.862*m;
-  fTargetHallZ = GetTargetHallZ28.2*m;
 
   fDecayPipeLength = fDecayPipe->GetDecayPipeLength();
   fDecayPipeRadius = fDecayPipe->GetDecayPipeRadius();
@@ -436,6 +454,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
     }
   }
   return ROCK;
+  */
 }
 
 LBNEDetectorMessenger::LBNEDetectorMessenger( LBNEDetectorConstruction* LBNEDet):LBNEDetector(LBNEDet)
@@ -510,7 +529,6 @@ void LBNEDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     LBNEDetector->SetBeamlineAngle(SetBeamlineAngle->GetNewDoubleValue(newValue));
   }
   
-  if (
    /*
    if ( command == UpdateCmd ) 
    {

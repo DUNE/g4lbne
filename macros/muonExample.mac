@@ -1,0 +1,19 @@
+/control/suppressAbortion 2
+/LBNE/run/DebugLevel 0 
+/LBNE/run/Simulation Muon Flux Measurement
+
+/LBNE/run/useNImpWeight true
+/LBNE/output/CreateOutput true
+
+
+/LBNE/output/OutputNtpFileName MuonFluxOutput
+
+/LBNE/det/update
+
+/LBNE/rndm/setRndmSeed 3141592653589
+/LBNE/run/setRunID 3
+/LBNE/run/NEvents 10000
+
+/run/beamOn 
+
+

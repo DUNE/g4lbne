@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNEStackingAction.cc
-// $Id: LBNEStackingAction.cc,v 1.2 2012/07/25 00:38:06 loiacono Exp $
+// $Id: LBNEStackingAction.cc,v 1.2.4.1 2013/07/22 15:06:59 robj137 Exp $
 //----------------------------------------------------------------------
 
 #include "LBNEStackingAction.hh"
@@ -58,9 +58,16 @@ G4ClassificationOfNewTrack LBNEStackingAction::ClassifyNewTrack(const G4Track * 
 
 
   
-  if(LBNEData->GetSimulation() == "Standard Neutrino Beam")
-  {
+  if(LBNEData->GetSimulation() == "Standard Neutrino Beam"){
      LBNEStackingAction::KillEMParticles(classification, aTrack);
+     //LBNEStackingAction::KillltZeroPzParticles(classification, aTrack);
+     LBNEStackingAction::KillThresholdParticles(classification, aTrack);
+     LBNEStackingAction::KillOutOfWorldParticles(classification, aTrack);
+     LBNEStackingAction::KillUnimportantParticles(classification, aTrack);
+  }
+  else if(LBNEData->GetSimulation() == "Muon Flux Measurement")
+  {
+     //LBNEStackingAction::KillEMParticles(classification, aTrack);
      //LBNEStackingAction::KillltZeroPzParticles(classification, aTrack);
      LBNEStackingAction::KillThresholdParticles(classification, aTrack);
      LBNEStackingAction::KillOutOfWorldParticles(classification, aTrack);

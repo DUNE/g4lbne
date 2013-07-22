@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNETrackingAction.cc
-// $Id: LBNETrackingAction.cc,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: LBNETrackingAction.cc,v 1.1.1.1.4.1 2013/07/22 15:06:59 robj137 Exp $
 //----------------------------------------------------------------------
 
 
@@ -28,68 +28,64 @@ LBNETrackingAction::LBNETrackingAction()
   NPGA=(LBNEPrimaryGeneratorAction*)pRunManager->GetUserPrimaryGeneratorAction();
   fLBNEData=LBNEDataInput::GetLBNEDataInput();
 
-  if(fLBNEData->GetDebugLevel() > 0)
-  {
+  if(fLBNEData->GetDebugLevel() > 0){
      std::cout << "LBNETrackingAction Constructor Called." << std::endl;
   }
 }
 //--------------------------------------------------------------------------------------
 LBNETrackingAction::~LBNETrackingAction()
 {
-   if(fLBNEData->GetDebugLevel() > 0)
-   {
-      std::cout << "LBNETrackingAction Destructor Called." << std::endl;
-   }
+  if(fLBNEData->GetDebugLevel() > 0){
+    std::cout << "LBNETrackingAction Destructor Called." << std::endl;
+  }
 }
 //--------------------------------------------------------------------------------------
 void LBNETrackingAction::PreUserTrackingAction(const G4Track* aTrack)
 {
-   if(fLBNEData->GetDebugLevel() > 1)
-   {
-      G4int evtno = pRunManager->GetCurrentEvent()->GetEventID();
-      std::cout << "Event " << evtno << ": LBNETrackingAction::PreUserTrackingAction() Called." << std::endl;
-      if(fLBNEData->GetDebugLevel() > 2)
-      {
-	 LBNETrackInformation* trackinfo=new LBNETrackInformation(); 
-	 trackinfo -> Print(aTrack);
-	 delete trackinfo;
-      }
-   }
+  if(fLBNEData->GetDebugLevel() > 1){
+    G4int evtno = pRunManager->GetCurrentEvent()->GetEventID();
+    std::cout << "Event " << evtno << ": LBNETrackingAction::PreUserTrackingAction() Called." << std::endl;
+    if(fLBNEData->GetDebugLevel() > 2){
+      LBNETrackInformation* trackinfo=new LBNETrackInformation(); 
+      trackinfo -> Print(aTrack);
+      delete trackinfo;
+    }
+  }
       
 
 
 
-
-   if(fLBNEData->GetSimulation() == "Standard Neutrino Beam")
-   {
-      LBNETrackingAction::SetPreLBNETrackInformation(aTrack);
-      
-      //Store tracks in trajectory container
-      fpTrackingManager->SetStoreTrajectory(true);
-      fpTrackingManager->SetTrajectory(new LBNETrajectory(aTrack));
-      
-      LBNETrackingAction::AnalyzeIfNeutrino(aTrack);
-   }
-   else if(fLBNEData->GetSimulation() == "Target Tracking" )
-   {
-      LBNETrackingAction::SetPreLBNETrackInformation(aTrack);
-      //Store tracks in trajectory container
-      fpTrackingManager->SetStoreTrajectory(true);
-      fpTrackingManager->SetTrajectory(new LBNETrajectory(aTrack));
-   }
-   else if(fLBNEData->GetSimulation() == "Horn 1 Tracking" ||
-	   fLBNEData->GetSimulation() == "Horn 2 Tracking" )
-   {
-      LBNETrackingAction::SetPreLBNETrackInformation(aTrack);
-      //Store tracks in trajectory container
-      fpTrackingManager->SetStoreTrajectory(true);
-      fpTrackingManager->SetTrajectory(new LBNETrajectory(aTrack));
-   }
-   else
-   {
-      std::cout << "LBNETrackingAction::PreUserTrackingAction()- PROBLEM: Don't know about the \"" 
-		<< fLBNEData->GetSimulation() << "\" Simulation" << std::endl;
-   }
+    
+  if(fLBNEData->GetSimulation() == "Muon Flux Measurement"){
+    LBNETrackingAction::SetPreLBNETrackInformation(aTrack);
+    fpTrackingManager->SetStoreTrajectory(true);
+    fpTrackingManager->SetTrajectory(new LBNETrajectory(aTrack));
+  }
+  else if(fLBNEData->GetSimulation() == "Standard Neutrino Beam"){
+    LBNETrackingAction::SetPreLBNETrackInformation(aTrack);
+    
+    //Store tracks in trajectory container
+    fpTrackingManager->SetStoreTrajectory(true);
+    fpTrackingManager->SetTrajectory(new LBNETrajectory(aTrack));
+    
+    LBNETrackingAction::AnalyzeIfNeutrino(aTrack);
+  }
+  else if(fLBNEData->GetSimulation() == "Target Tracking" ){
+    LBNETrackingAction::SetPreLBNETrackInformation(aTrack);
+    //Store tracks in trajectory container
+    fpTrackingManager->SetStoreTrajectory(true);
+    fpTrackingManager->SetTrajectory(new LBNETrajectory(aTrack));
+  }
+  else if(fLBNEData->GetSimulation() == "Horn 1 Tracking" ||
+          fLBNEData->GetSimulation() == "Horn 2 Tracking" ){
+    LBNETrackingAction::SetPreLBNETrackInformation(aTrack);
+    //Store tracks in trajectory container
+    fpTrackingManager->SetStoreTrajectory(true);
+    fpTrackingManager->SetTrajectory(new LBNETrajectory(aTrack));
+  } else {
+    std::cout << "LBNETrackingAction::PreUserTrackingAction()- PROBLEM: Don't know about the \"" 
+	      << fLBNEData->GetSimulation() << "\" Simulation" << std::endl;
+  }
    
    
    
@@ -116,7 +112,8 @@ void LBNETrackingAction::PostUserTrackingAction(const G4Track* aTrack)
 
    
 
-   if(fLBNEData->GetSimulation() == "Standard Neutrino Beam")
+   if(fLBNEData->GetSimulation() == "Standard Neutrino Beam" ||
+   fLBNEData->GetSimulation() == "Muon Flux Measurement")
    {
       LBNETrackingAction::SetPostLBNETrackInformation(aTrack);
    }
@@ -235,6 +232,10 @@ void LBNETrackingAction::AnalyzeIfNeutrino(const G4Track* aTrack)
       LBNEAnalysis* analysis = LBNEAnalysis::getInstance();
       analysis->FillNeutrinoNtuple(*aTrack);
     }
+}
+
+void LBNETrackingAction::AnalyzeIfMuon(const G4Track* aTrack)
+{;
 }
 
 

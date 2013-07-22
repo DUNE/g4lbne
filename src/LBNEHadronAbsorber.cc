@@ -7,7 +7,7 @@
 // volumes are rotated. In the G4NuMI world, the beam is horizontal,
 // while all the MC elements are rotated. 
 //
-// $Id: LBNEHadronAbsorber.cc,v 1.2 2013/04/11 18:39:09 ayarritu Exp $
+// $Id: LBNEHadronAbsorber.cc,v 1.2.4.1 2013/07/22 15:06:59 robj137 Exp $
 //----------------------------------------------------------------------
 
 #include "LBNEDetectorConstruction.hh"
@@ -33,17 +33,18 @@ void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber()
 
    G4cout << "Importing hadron absorber gdml file... " << G4endl;
     
-    std::string relpathgdml("gdml/lbne_absorber_112912.gdml");
+    std::string relpathgdml("gdml/lbne_absorber_only.gdml");
     std::ifstream gdmlfile( relpathgdml.c_str() ); 
     
     if ( gdmlfile ) {
       
          
         G4double DP_end = LBNEData->DecayPipeZ0 + LBNEData->DecayPipeLength;
-        G4RotationMatrix *zrot=new G4RotationMatrix();
-        
+        G4RotationMatrix *absorberRot=new G4RotationMatrix();
+        //zrot->rotateX(-101*mrad);
+        absorberRot->rotateZ(-90*deg);
         G4double beam_angle = LBNEData->BeamAngle;
-        
+        beam_angle = 0*mrad;
          G4double in = .0254*m;
          G4double CShld_length = 72*in;
          G4double xo = DP_end + 10.25*12*in;
@@ -60,25 +61,25 @@ void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber()
          G4GDMLParser parser;
          parser.Read( GDMLfile );
          fConcShld = parser.GetVolume( "Conc_SH" ); 
-         fAHTop = parser.GetVolume( "AH_top" ); 
-         fAHBack = parser.GetVolume( "AH_back" ); 
-         fMuonAlk = parser.GetVolume( "AH_Muon_alk" ); 
+         //fAHTop = parser.GetVolume( "AH_top" ); 
+         //fAHBack = parser.GetVolume( "AH_back" ); 
+         //fMuonAlk = parser.GetVolume( "AH_Muon_alk" ); 
          
          G4ThreeVector conc = parser.GetPosition( "Conc_SH_1inTOPpos" )+shldpos;         
-         G4ThreeVector top = parser.GetPosition( "AH_top_1inTOPpos" ) +shldpos;         
-         G4ThreeVector back = parser.GetPosition( "AH_back_1inTOPpos" )+shldpos;         
-         G4ThreeVector muon = parser.GetPosition( "AH_Muon_alk_1inTOPpos" )+shldpos;         
+         //G4ThreeVector top = parser.GetPosition( "AH_top_1inTOPpos" ) +shldpos;         
+         //G4ThreeVector back = parser.GetPosition( "AH_back_1inTOPpos" )+shldpos;         
+         //G4ThreeVector muon = parser.GetPosition( "AH_Muon_alk_1inTOPpos" )+shldpos;         
 
          // rotate about beamline z-axis, zrot rotates about z-axis relative to local object 
          G4ThreeVector concRotZ( -conc.y(), conc.x(), conc.z() );
-         G4ThreeVector topRotZ( -top.y(), top.x(), top.z() );
-         G4ThreeVector backRotZ( -back.y(), back.x(), back.z() );
-         G4ThreeVector muonRotZ( -muon.y(), muon.x(), muon.z() );
+         //G4ThreeVector topRotZ( -top.y(), top.x(), top.z() );
+         //G4ThreeVector backRotZ( -back.y(), back.x(), back.z() );
+         //G4ThreeVector muonRotZ( -muon.y(), muon.x(), muon.z() );
 
-         new G4PVPlacement(zrot, concRotZ, "Conc_SH", fConcShld, pvTUNE, false, 0);
-         new G4PVPlacement(zrot, topRotZ, "AH_top", fAHTop, pvTUNE, false, 0);
-         new G4PVPlacement(zrot, backRotZ, "AH_back", fAHBack, pvTUNE, false, 0);
-         new G4PVPlacement(zrot, muonRotZ, "AH_Muon_alk", fMuonAlk, pvTUNE, false, 0);
+         new G4PVPlacement(absorberRot, concRotZ, "Conc_SH", fConcShld, pvTUNE, false, 0);
+         //new G4PVPlacement(zrot, topRotZ, "AH_top", fAHTop, pvTUNE, false, 0);
+         //new G4PVPlacement(zrot, backRotZ, "AH_back", fAHBack, pvTUNE, false, 0);
+         //new G4PVPlacement(zrot, muonRotZ, "AH_Muon_alk", fMuonAlk, pvTUNE, false, 0);
 
 
     } else

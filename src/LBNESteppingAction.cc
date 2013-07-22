@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNESteppingAction.cc
-// $Id: LBNESteppingAction.cc,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: LBNESteppingAction.cc,v 1.1.1.1.4.1 2013/07/22 15:06:59 robj137 Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -21,6 +21,7 @@
 #include "G4TouchableHistory.hh"
 #include "G4EventManager.hh"
 
+#include "LBNEDetectorConstruction.hh"
 #include "LBNETrajectory.hh"
 #include "LBNETrackInformation.hh"
 #include "LBNEDataInput.hh"
@@ -55,7 +56,6 @@ void LBNESteppingAction::UserSteppingAction(const G4Step * theStep)
 
 
 
-
    if(fLBNEData->GetSimulation() == "Standard Neutrino Beam")
    {
       LBNESteppingAction::KillNonNuThresholdParticles(theStep);
@@ -79,8 +79,25 @@ void LBNESteppingAction::UserSteppingAction(const G4Step * theStep)
       LBNESteppingAction::KillNonNuThresholdParticles(theStep);
       LBNESteppingAction::CheckDecay(theStep);
       LBNESteppingAction::CheckInHornEndPlane(theStep, 2);
-   }
-   else
+  } else if(fLBNEData->GetSimulation() == "Muon Flux Measurement"){
+    LBNESteppingAction::CheckDecay(theStep);
+   if(abs(theStep->GetTrack()->GetDefinition()->GetPDGEncoding()) != 12 &&
+   abs(theStep->GetTrack()->GetDefinition()->GetPDGEncoding()) != 14){ 
+    fDetMuonLogical = 
+      ((LBNEDetectorConstruction*)G4RunManager::GetRunManager()
+      ->GetUserDetectorConstruction())->GetMuonDetectorLogical();
+      G4StepPoint *postStep = theStep->GetPostStepPoint();
+      if(postStep->GetPhysicalVolume()){
+        G4LogicalVolume *postStepVolume =
+        postStep->GetPhysicalVolume()->GetLogicalVolume();
+        if(postStepVolume){
+          if(postStepVolume == fDetMuonLogical){
+            CheckInMuonDetectorPlane(theStep);
+          }
+        }
+      }
+    }
+   }else
    {
       std::cout << "LBNESteppingAction::UserSteppingAction() - PROBLEM: Don't know about the \"" 
 		<< fLBNEData->GetSimulation() << "\" Simulation" << std::endl;
@@ -97,8 +114,7 @@ void LBNESteppingAction::UserSteppingAction(const G4Step * theStep)
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
-void LBNESteppingAction::KillNonNuThresholdParticles(const G4Step * theStep)
-{
+void LBNESteppingAction::KillNonNuThresholdParticles(const G4Step * theStep){
 
    G4Track * theTrack = theStep->GetTrack();
    G4ParticleDefinition * particleDefinition = theTrack->GetDefinition();
@@ -324,3 +340,43 @@ void LBNESteppingAction::CheckInTgtEndPlane(const G4Step * theStep)
 
 
 }
+void LBNESteppingAction::CheckInMuonDetectorPlane(const G4Step *theStep)
+{
+  G4Track * theTrack = theStep->GetTrack();
+   
+  if(theStep->GetPreStepPoint()->GetPhysicalVolume() == NULL) return;
+
+  if(theStep->GetPreStepPoint()->GetPhysicalVolume() &&
+    theStep->GetPostStepPoint()->GetPhysicalVolume()){
+    G4LogicalVolume *preStepVolume =
+    theStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume();
+    G4LogicalVolume *postStepVolume =
+    theStep->GetPostStepPoint()->GetPhysicalVolume()->GetLogicalVolume();
+    if(postStepVolume == fDetMuonLogical){
+      if(preStepVolume != fDetMuonLogical){
+        G4VTrajectory* currTrajectory = 0;
+        currTrajectory = (G4EventManager::GetEventManager()->GetTrackingManager()->GimmeTrajectory());
+
+        if(!currTrajectory) std::cout << "Current trajectory is invalid" << std::endl;
+
+        LBNETrajectory* currLBNETrajectory = 0;
+        currLBNETrajectory = dynamic_cast<LBNETrajectory*>(currTrajectory);
+
+        if(!currLBNETrajectory) std::cout << "Cast failed"<< std::endl;
+
+        LBNETrajectory* newtrajectory = 0;
+        newtrajectory = new LBNETrajectory(*currLBNETrajectory);
+        if(!newtrajectory) std::cout << "new trajectory is invalid" << std::endl;
+            
+        newtrajectory ->AppendStep(theStep);
+
+        LBNEAnalysis* analysis = LBNEAnalysis::getInstance();
+        analysis->FillTrackingNtuple(*theTrack, newtrajectory);
+        analysis->FillMuonData(*theStep);
+      
+        delete newtrajectory;
+      }
+    }   
+  }
+}
+

@@ -47,6 +47,8 @@ void LBNEEventAction::BeginOfEventAction(const G4Event* evt)
    { 
       G4cout << "LBNEEventAction::BeginOfEventAction called...Beginning Event #" << evt-> GetEventID() << G4endl;
    }
+   LBNEAnalysis* analysis = LBNEAnalysis::getInstance();
+   analysis->ResetEvent();
       
 }
 
@@ -58,7 +60,9 @@ void LBNEEventAction::EndOfEventAction(const G4Event* evt)
     { 
       G4cout << "LBNEEventAction::EndOfEventAction called...Ending Event # " << evt-> GetEventID() << G4endl;
     }
-
+  
+  LBNEAnalysis* analysis = LBNEAnalysis::getInstance();
+  analysis->FillEvent();
 
 }
 

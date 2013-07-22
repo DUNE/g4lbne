@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: LBNEDetectorConstruction.cc,v 1.3 2013/01/31 19:23:30 loiacono Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.4.1 2013/07/22 15:06:59 robj137 Exp $
 //----------------------------------------------------------------------
 
 #include <fstream>
@@ -188,14 +188,32 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct()
 
 
 
-  if(LBNEData->GetSimulation() == "Standard Neutrino Beam")
+  if(LBNEData->GetSimulation() == "Standard Neutrino Beam" ||
+  LBNEData->GetSimulation() == "Muon Flux Measurement")
   {
 
      ConstructLBNEDecayPipe(); //temporarily swapped with ConstructTargetHall...
      ConstructLBNETargetHall();
      ConstructLBNEShielding(); //MUST call this BEFORE ConstructHorns
      ConstructLBNEHorns();
-
+    
+      G4Tubs *detSolid = new G4Tubs("detSolid", 0.0*cm,
+      LBNEData->TunnelRadius-5*cm,
+                                    1.0*cm, 0*deg, 360*deg);
+     fMuonDetectorLogical =
+      new G4LogicalVolume(detSolid, GetMaterial(LBNEData->TunnelGEANTmat),
+                          "detLogical", 0,0,0);
+      G4ThreeVector tunnel_position=G4ThreeVector(0,0,LBNEData->TunnelLength/2 +
+                                                  LBNEData->TunnelZ0);
+      G4ThreeVector detPos1 = G4ThreeVector(0,0,221.35*m) - tunnel_position;
+      G4ThreeVector detPos2 = G4ThreeVector(0,0,230.5*m) - tunnel_position;
+      
+      G4PVPlacement *pMuondet1 =  new G4PVPlacement(0, detPos1,"muonDet1", 
+                                         fMuonDetectorLogical, pvTUNE, false, 0);
+      G4PVPlacement *pMuondet2 =  new G4PVPlacement(0, detPos2,"muonDet2", 
+                                         fMuonDetectorLogical, pvTUNE, false, 0);
+     
+     
      if(LBNEData->GetConstructTarget())
      {
 	if(LBNEData->TargetShape == "NUMI" || 
@@ -215,7 +233,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct()
 	
      }
 
-     //ConstructLBNEHadronAbsorber(); 
+     ConstructLBNEHadronAbsorber(); 
      
      CheckOverlaps();
 
@@ -529,6 +547,17 @@ void LBNEDetectorConstruction::GetWorldTransformation(G4VPhysicalVolume *physvol
    WorldRotation    = theTransformationFromPhysVolToWorld.NetRotation();
    WorldTranslation = theTransformationFromPhysVolToWorld.NetTranslation();
    
+}
+
+G4LogicalVolume* LBNEDetectorConstruction::GetLogicalVolume(G4String LVname)
+{
+  G4LogicalVolumeStore* LVStore=G4LogicalVolumeStore::GetInstance();
+    for (size_t ii=0;ii<(*LVStore).size();ii++){
+      if ((*LVStore)[ii]->GetName()==LVname) return (*LVStore)[ii];
+    }
+    G4cout << "LBNEDetectorConstruction: Volume "<<LVname<< 
+    " is not in Logical Volume Store"<<G4endl;
+    return 0;
 }
 
 //-------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: LBNEDataInput.cc,v 1.2 2013/01/31 19:23:30 loiacono Exp $
+// $Id: LBNEDataInput.cc,v 1.2.4.1 2013/07/22 15:06:59 robj137 Exp $
 //----------------------------------------------------------------------
 
 #include "LBNEDataInput.hh"
@@ -172,6 +172,7 @@ void LBNEDataInput::preInit()
    //Fill Simulation Vector with the list of Possible simulations
    //
    fSimulationVec.push_back("Standard Neutrino Beam");
+   fSimulationVec.push_back("Muon Flux Measurement");
    fSimulationVec.push_back("Target Tracking");
    fSimulationVec.push_back("Horn 1 Tracking");
    fSimulationVec.push_back("Horn 2 Tracking");

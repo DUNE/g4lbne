@@ -25,6 +25,7 @@ class LBNETrackingAction : public G4UserTrackingAction
    void SetPreLBNETrackInformation(const G4Track* aTrack);
    void SetPostLBNETrackInformation(const G4Track* aTrack);
    void AnalyzeIfNeutrino(const G4Track* aTrack);
+   void AnalyzeIfMuon(const G4Track* aTrack);
 
   private:
    LBNEDataInput *fLBNEData;

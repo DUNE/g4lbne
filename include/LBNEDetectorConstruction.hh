@@ -39,6 +39,7 @@ public:
    
    G4VPhysicalVolume* Construct();
    
+   G4LogicalVolume*  GetLogicalVolume(G4String LVname);
    //void SetTargetZ0(G4double val);
    //void SetHornCurrent(G4double val);
 
@@ -49,7 +50,7 @@ public:
    G4VPhysicalVolume* GetPhysicalVolume(G4String PVname);
    G4Material* GetMaterial(G4int matcode);
 
-   
+   G4LogicalVolume* GetMuonDetectorLogical(){ return fMuonDetectorLogical; }
 private:
    
    
@@ -204,7 +205,8 @@ private:
   G4LogicalVolume* LVCPipeW[20];
   G4LogicalVolume* HadrBox_log;
   G4LogicalVolume* ShldBox_log;
-
+  G4LogicalVolume* fMuonDetectorLogical;
+  
   // Physical volumes
   //
   G4VPhysicalVolume* ROCK;

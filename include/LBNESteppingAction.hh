@@ -28,6 +28,7 @@ class LBNESteppingAction : public G4UserSteppingAction
    void CheckInHornEndPlane(const G4Step * theStep, G4int nhorn);
 
    void CheckInTgtEndPlane(const G4Step * theStep);
+   void CheckInMuonDetectorPlane(const G4Step *theStep);
    
 
 private:
@@ -36,7 +37,7 @@ private:
    LBNERunManager *pRunManager;
    G4EventManager *EvtManager;
    LBNEEventAction *LBNEEvtAct;
-
+   G4LogicalVolume *fDetMuonLogical;
   
 
 };

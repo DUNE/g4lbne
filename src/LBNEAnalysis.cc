@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 // LBNEAnalysis.cc
 //
-// $Id: LBNEAnalysis.cc,v 1.3 2012/07/25 00:38:06 loiacono Exp $
+// $Id: LBNEAnalysis.cc,v 1.3.4.1 2013/07/22 15:06:59 robj137 Exp $
 //----------------------------------------------------------------------
 
 #include <vector>
@@ -46,7 +46,8 @@ LBNEAnalysis* LBNEAnalysis::instance = 0;
 //------------------------------------------------------------------------------------
 LBNEAnalysis::LBNEAnalysis()
    :fOutFile(0),
-    fOutTree(0)
+    fOutTree(0),
+    fMuonTree(0)
 {
   LBNEData = LBNEDataInput::GetLBNEDataInput();
 
@@ -61,7 +62,7 @@ LBNEAnalysis::LBNEAnalysis()
   
   //g4data = new data_t();
   fLBNEOutNtpData = new LBNEDataNtp_t();
-  
+  fMuonData = new LBNEDataNtp_t();
   
 
   fcount = 0;
@@ -118,6 +119,7 @@ G4bool LBNEAnalysis::CreateOutput()
 
       
       if(LBNEData->GetSimulation() == "Standard Neutrino Beam" ||
+	 LBNEData->GetSimulation() == "Muon Flux Measurement" ||
 	 LBNEData->GetSimulation() == "Target Tracking"      ||
 	 LBNEData->GetSimulation() == "Horn 1 Tracking" ||
 	 LBNEData->GetSimulation() == "Horn 2 Tracking")
@@ -133,8 +135,28 @@ G4bool LBNEAnalysis::CreateOutput()
 	 //fOutTree->Branch("data","data_t",&g4data,32000,1);
          fOutTree = new TTree("nudata","g4lbne Neutrino ntuple");
 	 fOutTree->Branch("data","LBNEDataNtp_t",&fLBNEOutNtpData,32000,1);
+          fMuonTree = new TTree("muondata", "");
+          fMuonTree->Branch("num", &fNParticles, "fNParticles/I");
+          fMuonTree->Branch("trackID", &fTrackID, "fTrackID[fNParticles]/I]");
+	  fMuonTree->Branch("pdgCode", &fParticlePDG, "fParticlePDG[fNParticles]/I");
+          fMuonTree->Branch("ImpWeight", &fNImpWt, "fNImpWt[fNParticles]/D");
+          fMuonTree->Branch("positionX", &fParticleX, "fParticleX[fNParticles]/D");
+          fMuonTree->Branch("positionY", &fParticleY, "fParticleY[fNParticles]/D");
+          fMuonTree->Branch("positionZ", &fParticleZ, "fParticleZ[fNParticles]/D");
+          fMuonTree->Branch("momentumX", &fParticleDX, "fParticleDX[fNParticles]/D");
+          fMuonTree->Branch("momentumY", &fParticleDY, "fParticleDY[fNParticles]/D");
+          fMuonTree->Branch("momentumZ", &fParticleDZ, "fParticleDZ[fNParticles]/D");
+          fMuonTree->Branch("mass", &fParticleMass, "fParticleMass[fNParticles]/D");
+          fMuonTree->Branch("energy", &fParticleEnergy, "fParticleEnergy[fNParticles]/D");
+         /*     
+          Tree should include :
+            particle type
+            track ID
+            position
+            momentum
 
-	 return true;
+         */
+         return true;
 	 
       }
       else
@@ -162,6 +184,7 @@ void LBNEAnalysis::CloseOutput()
      //{
 	fOutFile->cd();
 	fOutTree->Write();
+        fMuonTree->Write();
 	fOutFile->Close();
 /*
 	if(fOutFile->IsOpen())
@@ -655,6 +678,34 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
 
 }
 
+void LBNEAnalysis::FillMuonData(const G4Step& step){
+  if(fNParticles < kMaxP){
+    G4Track *track = step.GetTrack();
+    LBNETrackInformation *info =
+    (LBNETrackInformation*)(track->GetUserInformation());
+    if(info != 0){
+      fNImpWt[fNParticles] = info->GetNImpWt();
+    }
+    G4StepPoint *point = step.GetPostStepPoint();
+    G4ThreeVector pos = point->GetPosition();
+    G4ThreeVector dir = point->GetMomentumDirection();
+    G4ParticleDefinition *def = track->GetDefinition();
+    fParticleX[fNParticles] = pos.x()/m;
+    fParticleY[fNParticles] = pos.y()/m;
+    fParticleZ[fNParticles] = pos.z()/m;
+    fParticleDX[fNParticles] = dir.x();
+    fParticleDY[fNParticles] = dir.y();
+    fParticleDZ[fNParticles] = dir.z();
+    fParticlePDG[fNParticles] = def->GetPDGEncoding();
+    fParticleMass[fNParticles] = def->GetPDGMass();
+    fParticleEnergy[fNParticles] = point->GetKineticEnergy()/GeV;
+    fTrackID[fNParticles] = track->GetTrackID();
+    fNParticles++;
+  }
+
+}
+
+
 //-----------------------------------------------------------------------------------------
 //
 void LBNEAnalysis::FillTrackingNtuple(const G4Track& track, LBNETrajectory* currTrajectory)
@@ -693,6 +744,8 @@ void LBNEAnalysis::FillTrackingNtuple(const G4Track& track, LBNETrajectory* curr
    
    fLBNEOutNtpData->nuTarZ      = LBNEData->GetTargetZ0(0);
    fLBNEOutNtpData->hornCurrent = LBNEData->GetHornCurrent()/ampere/1000.;
+   LBNETrackInformation* info = (LBNETrackInformation*)(track.GetUserInformation());
+   fLBNEOutNtpData->Nimpwt             = info->GetNImpWt();  // Importance weight
 
 
 
@@ -967,4 +1020,17 @@ LBNETrajectory* LBNEAnalysis::GetTrajectory(G4int trackID)
    G4cout << "LBNEAnalysis::GetTrajectory - PROBLEM: Failed to find track with ID = " << trackID << endl;
    
    return 0;
+}
+
+
+void LBNEAnalysis::FillEvent()
+{
+  if(fNParticles>0){
+    fMuonTree->Fill();
+  }
+}
+
+void LBNEAnalysis::ResetEvent()
+{
+  fNParticles = 0;
 }

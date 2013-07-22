@@ -111,6 +111,7 @@ void LBNERunAction::BeginOfRunAction(const G4Run* aRun)
    }
 
    if(fLBNEData->GetSimulation() == "Standard Neutrino Beam" ||
+      fLBNEData->GetSimulation() == "Muon Flux Measurement"  ||
       fLBNEData->GetSimulation() == "Target Tracking"        ||
       fLBNEData->GetSimulation() == "Horn 1 Tracking"    ||
       fLBNEData->GetSimulation() == "Horn 2 Tracking" )

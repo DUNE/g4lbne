@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.11 2013/07/22 20:36:34 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.12 2013/07/22 21:47:47 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -228,7 +228,9 @@ void LBNEDetectorConstruction::InitializeMaterials() {
   rockMat->AddElement( elO,  6); 
 
   G4Material *graphiteBaffle = new G4Material( "GraphiteBaffle", 1.785*g/cm3, 3 ); //Carbon, air (Nitrogen and oxigen) 
-  
+  graphiteBaffle->AddElement( elC,  0.99); // guess work 
+  graphiteBaffle->AddElement( elN,  0.007); // guess work 
+  graphiteBaffle->AddElement( elO,  0.003); // guess work 
 
 }
 

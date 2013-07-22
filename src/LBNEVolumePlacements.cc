@@ -63,6 +63,14 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
    fHorn1Length = 124.290*in;
    fHorn1UpstreamPlateLength = in*(5); //???????????//
    fHorn1DownstreamPlateLength = in*(5); //???????????//
+   // Details
+   fBaffleInnerRadius = 6.5*mm; // Per discussion with Jim Hylen, July 22 2013 
+   fBaffleOuterRadius = 28.3*mm; // from previous version and le010z185i_NumiDPHelium.input
+   fBaffleLength = 1474.8*mm; // Drawing 8875.000-ME-363028
+   fBaffleZPosition = fTargetAndBaffleLengthApprox/2.
+                       -1.0*(44.418*in - 1.256*in - 3.0*cm); 
+		       // With respect to the center of the mother volume UpstreamTargetHall
+ 
    //
    fWaterLayerThickInHorns = 0.; 
    
@@ -130,7 +138,7 @@ LBNEVolumePlacementData*
     G4Box* hallBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2. );
     info.fCurrent = new G4LogicalVolume(hallBox, G4Material::GetMaterial("Air"), volumeName); 
     info.fPosition[2] = -fTargetAndBaffleLengthApprox/2.; //preliminary
-    std::cerr << " LBNEVolumePlacements::Create " << name << " half length " << info.fParams[2]/2. << std::endl;
+//    std::cerr << " LBNEVolumePlacements::Create " << name << " half length " << info.fParams[2]/2. << std::endl;
       
   } else if (name == G4String("Horn1Hall")) {
     std::map<G4String, LBNEVolumePlacementData>::const_iterator it = 
@@ -151,8 +159,24 @@ LBNEVolumePlacementData*
       for (size_t k=0; k!= 3; k++)  std::cerr << info.fParams[k]/m << ", " ; std::cerr << std::endl;
     std::cerr << " Tentatively placed at x, y ,z "; 
       for (size_t k=0; k!= 3; k++)  std::cerr << info.fPosition[k]/m << ", " ; std::cerr << std::endl;
+  } else if (name == G4String("Baffle")) {
+  // more cases here... a long list.. a too long of a  list? 
+  // We now go one level down in the hierachy. Start from upstream 
+    std::map<G4String, LBNEVolumePlacementData>::const_iterator it = 
+        fSubVolumes.find(G4String("UpstreamTargetHall"));
+    if (it == fSubVolumes.end()) {
+      std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
+      exit(2);
+    } 
+    info.fParams[0] = fBaffleInnerRadius; 
+    info.fParams[1] = fBaffleOuterRadius; 
+    info.fParams[2] = fBaffleLength;
+    G4Tubs* baffleTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
+    info.fCurrent = new G4LogicalVolume(baffleTube, G4Material::GetMaterial("GraphiteBaffle"), volumeName); 
+    info.fPosition[2] = fBaffleZPosition; //preliminary
   }
-  // more cases here... a long list.. a too long of a  list?  
+  //
+   
   fSubVolumes.insert(std::pair<G4String, LBNEVolumePlacementData>(name, info));
   return &(fSubVolumes.find(name)->second);
 }
@@ -313,7 +337,10 @@ void LBNEPlacementMessenger::SetNewValue(G4UIcommand* command,  G4String newValu
    
 
 }
-
+//
+// Currently a clone of G4PVPlacement::CheckOverlaps.  But we plan to upgrade it 
+// to handle volume that interesct each other at tiny surfaces. 
+// 
 bool LBNEVolumePlacements::CheckOverlaps(const G4PVPlacement *plVol, G4int res, G4double tol, G4bool verbose) const {
 
   if (res<=0) { return false; }

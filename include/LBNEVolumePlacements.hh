@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.4 2013/07/19 20:37:27 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.5 2013/07/22 20:36:34 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -73,7 +73,10 @@ private:
   G4UIcmdWithADoubleAndUnit* fWaterLayerThickInHorn;
   G4UIcmdWithADoubleAndUnit* fDecayPipeLength;
   G4UIcmdWithADoubleAndUnit* fHorn1Length;
-  
+  G4UIcmdWithADoubleAndUnit* fBaffleLength;
+  G4UIcmdWithADoubleAndUnit* fBaffleInnerRadius;
+  G4UIcmdWithADoubleAndUnit* fBaffleZPosition;
+ 
       
   };
 
@@ -133,6 +136,9 @@ public:
   inline double GetDecayPipeLength() { return fDecayPipeLength; }
   inline double GetAbsorberHallZ() { return fAbsorberHallZ; }
   inline double GetHorn1Length() { return fHorn1Length; }
+  inline double GetBaffleLength() { return fBaffleLength; }
+  inline double GetBaffleInnerRadius() { return fBaffleInnerRadius; }
+  inline double GetBaffleZPosition() { return fBaffleZPosition; }
   
   // Interface to the Detector construction classes, or others..  
    
@@ -144,6 +150,9 @@ public:
   inline void SetTotalLength(double l) {fTotalLength=l;}
   inline void SetWaterLayerThickInHorns(double l) { fWaterLayerThickInHorns = l;}
   inline void SetHorn1Length(double l) { fHorn1Length = l;}
+  inline void SetBaffleLength(double l) { fBaffleLength = l;}
+  inline void SetBaffleInnerRadius(double r) { fBaffleInnerRadius = r;}
+  inline void SetBaffleZPosition(double z) { fBaffleZPosition = z;}
   
  // LBNEDetector construction interface.. Just a pointer.. 
  

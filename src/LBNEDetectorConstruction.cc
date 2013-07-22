@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.10 2013/07/19 20:37:27 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.11 2013/07/22 20:36:34 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -227,6 +227,9 @@ void LBNEDetectorConstruction::InitializeMaterials() {
   rockMat->AddElement( elC,  2); 
   rockMat->AddElement( elO,  6); 
 
+  G4Material *graphiteBaffle = new G4Material( "GraphiteBaffle", 1.785*g/cm3, 3 ); //Carbon, air (Nitrogen and oxigen) 
+  
+
 }
 
 
@@ -287,7 +290,8 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   G4VPhysicalVolume* targethorn1Phys = fPlacementHandler->PlaceFinal(G4String("TargetHallAndHorn1"), tunnel);
   
   std::cerr << " LBNEDetectorConstruction::Construct, about to place-final UsptreamTargetHall" << std::endl;
-  fPlacementHandler->PlaceFinal(G4String("UpstreamTargetHall"), targethorn1Phys); 
+  G4VPhysicalVolume* upstreamTargetHallPhys = 
+    fPlacementHandler->PlaceFinal(G4String("UpstreamTargetHall"), targethorn1Phys); 
   // Just test random error in positioning along the Z axis
   fPlacementHandler->TestVolumeOverlap(G4String("Horn1Hall"), targethorn1Phys);
   
@@ -295,7 +299,13 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   
 
   fPlacementHandler->Create(G4String("Horn2Hall"));
+//  fPlacementHandler->PlaceFinal(G4String("Horn2Hall"), tunnel); // to be done... 
   
+  // We now will do the details for the traget and Horn1 
+  
+   fPlacementHandler->Create(G4String("Baffle"));
+// This will be a surveyed elements, but let us skip this step for now.    
+   fPlacementHandler->PlaceFinal(G4String("Baffle"), upstreamTargetHallPhys);
    
 /*
 

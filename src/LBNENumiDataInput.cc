@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: LBNENumiDataInput.cc,v 1.1 2013/01/31 19:23:30 loiacono Exp $
+// $Id: LBNENumiDataInput.cc,v 1.2 2013/08/08 21:30:11 robj137 Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -102,7 +102,7 @@ LBNENumiDataInput::LBNENumiDataInput()
    //=======================================================================   
    //HPBaffleLength     =  1.20*m;
    HPBaffleLength     =  1.50*m; //Why was this 1.2m?!
-   HPBaffleRin        =  5.5*mm;
+   HPBaffleRin        =  6.5*mm;
    HPBaffleRout       =  3.*cm;
    HPBaffleGEANTMat   =  18;
    HPBaffleX0         =  0.00;

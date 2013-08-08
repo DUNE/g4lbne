@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: LBNENumiTarget.cc,v 1.1 2013/01/31 19:23:30 loiacono Exp $
+// $Id: LBNENumiTarget.cc,v 1.2 2013/08/08 21:31:28 robj137 Exp $
 //----------------------------------------------------------------------
 
 #include "LBNEDetectorConstruction.hh"
@@ -282,6 +282,10 @@ void LBNEDetectorConstruction::ConstructNUMIBaffle()
 					     LBNENumiData->HPBaffleY0,
 					     LBNENumiData->HPBaffleZ0+HPBlength/2.)-targetHallPosition;
    G4PVPlacement* pvbaffle = new G4PVPlacement(0,bafflePos,"pvBaffleMother",lvBaffle,TGAR,false,0);
+
+   G4VisAttributes * BaffleAtt=new G4VisAttributes(G4Colour(1.,1.,0.)); 
+   lvBaffle->SetVisAttributes(BaffleAtt);
+
 //   pvbaffle -> CheckOverlaps();
    
 /*

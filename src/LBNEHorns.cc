@@ -121,7 +121,8 @@ void LBNEDetectorConstruction::ConstructLBNEHorn(G4int nhorn, G4int nparts, G4in
       Horn_PM_lv[jj]=new G4LogicalVolume(Horn_PM[jj],Air,vol_name,0,0,0);      
 
       vol_name = phHornName.str() + "_mother";
-      PHORN[jj]=new G4PVPlacement(0,G4ThreeVector(0,0,LBNEData->PhornZ0[jj]+LBNEData->PhornZ1[jj])-target_hall_position, 
+      // changed from hardcoded zeros to translate horns in X and Y: 7/3/13
+      PHORN[jj]=new G4PVPlacement(0,G4ThreeVector(LBNEData->PhornX0[jj],LBNEData->PhornY0[jj],LBNEData->PhornZ0[jj]+LBNEData->PhornZ1[jj])-target_hall_position, 
 				  vol_name,Horn_PM_lv[jj],TGAR,false,0);
       
 

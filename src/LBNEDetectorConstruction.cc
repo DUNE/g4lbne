@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.12 2013/07/22 21:47:47 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.13 2013/08/09 22:43:58 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -41,6 +41,8 @@
 #include "G4SolidStore.hh"
 #include "G4GeometryManager.hh"
 #include "G4FieldManager.hh"
+#include "LBNEVolumePlacements.hh"
+#include "LBNEDetectorMessenger.hh"
 
 #include "G4RunManager.hh"
 
@@ -162,6 +164,7 @@ void LBNEDetectorConstruction::InitializeMaterials() {
   G4Element* elNi = new G4Element("Nickel"  ,"Ni" , 28., 58.6934*g/mole); 
   G4Element* elCu = new G4Element("Copper"  ,"Cu" , 29., 63.546*g/mole); 
   G4Element* elHg = new G4Element("Mercury"  ,"Hg" , 80., 200.59*g/mole); 
+  G4Element* elMo = new G4Element("Molybdenum"  ,"Mo" , 42., 95.96*g/mole); 
 
 
   Air = new G4Material("Air"  , 1.290*mg/cm3, 2);
@@ -180,7 +183,21 @@ void LBNEDetectorConstruction::InitializeMaterials() {
   CT852->AddElement(elNi, 0.006); 
   CT852->AddElement(elFe, 0.84145); 
 
-  // ASTM836 steel
+  Steel316 = new G4Material("Steel316", 8.0*g/cm3, 10); 
+  // Reference: Google search, found Anderson Schumake company.  
+  Steel316->AddElement(elC,  0.015); 
+  Steel316->AddElement(elSi, 0.005); 
+  Steel316->AddElement(elMn, 0.008); 
+  Steel316->AddElement(elMo, 0.01); 
+  Steel316->AddElement(elCr, 0.17); 
+  Steel316->AddElement(elS,  0.00015); 
+  Steel316->AddElement(elP,  0.0003); 
+  Steel316->AddElement(elNi, 0.12); 
+  Steel316->AddElement(elFe, 0.6716); 
+  
+  Titanium = new G4Material("Titanium", 22, 47.867*g/mole, 4.506*g/cm3);
+  
+ // ASTM836 steel
   Slab_Stl = new G4Material("Slab_Stl", 7.8416*g/cm3, 6);
   Slab_Stl->AddElement(elC,  0.001);
   Slab_Stl->AddElement(elSi, 0.001);
@@ -202,6 +219,9 @@ void LBNEDetectorConstruction::InitializeMaterials() {
 
   G4Material* Helium = new G4Material("Helium", 2, 4.0026*g/mole, 0.1785*kg/m3, kStateGas,
                           300*kelvin, 2.55*atmosphere);
+  G4Material* HeliumTarget = new G4Material("HeliumTarget", 2, 4.0026*g/mole, 1.7436*0.1785*kg/m3, kStateGas,
+                          350*kelvin, 1.36*atmosphere); //20 psi.  The factor of 1.7436 assume perfect gas. 
+			  // density proportional to temperature and pression.  
 
   G4Material* Aluminum = new G4Material("Aluminum", 13, 26.98*g/mole, 2.7*g/cm3);
   G4Material* Argon = new G4Material("Argon", 18, 39.948*g/mole, 1.784*kg/m3, kStateGas,
@@ -227,11 +247,18 @@ void LBNEDetectorConstruction::InitializeMaterials() {
   rockMat->AddElement( elC,  2); 
   rockMat->AddElement( elO,  6); 
 
-  G4Material *graphiteBaffle = new G4Material( "GraphiteBaffle", 1.785*g/cm3, 3 ); //Carbon, air (Nitrogen and oxigen) 
-  graphiteBaffle->AddElement( elC,  0.99); // guess work 
-  graphiteBaffle->AddElement( elN,  0.007); // guess work 
-  graphiteBaffle->AddElement( elO,  0.003); // guess work 
+  G4Material *graphiteBaffle = new G4Material( "GraphiteBaffle", 1.78*g/cm3, 3 ); //Carbon, air (Nitrogen and oxigen) 
+  graphiteBaffle->AddElement( elC,  0.99); // 
+  graphiteBaffle->AddElement( elN,  0.007); //  
+  graphiteBaffle->AddElement( elO,  0.003); // 
 
+  G4Material *Target = new G4Material( "Target", 1.78*g/cm3, 3 ); //Carbon, air (Nitrogen and oxigen),
+                                                                  // Assume density of POCO ZXF-5Q  
+  graphiteBaffle->AddElement( elC,  0.99); 
+  graphiteBaffle->AddElement( elN,  0.007); 
+  graphiteBaffle->AddElement( elO,  0.003);
+  G4Material *Beryllium = new G4Material("Beryllium", 4, 9.0122*g/mole, 1.85*g/cm3); 
+  
 }
 
 
@@ -286,14 +313,21 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 // Before placing the container volume for the target region + horn1, define these two volumes, 
 // as these two are adjacent. The boundary is "coordinate zero.", respecting older convention. 
 //
-  LBNEVolumePlacementData *plDat = fPlacementHandler->Create(G4String("UpstreamTargetHall"));
-  std::cerr << " Placement data for volume UpstreamTargetHall, half length  " << plDat->fParams[2]/2. << std::endl;
+  LBNEVolumePlacementData *plDat = fPlacementHandler->Create(G4String("UpstreamTargetAssembly"));
+  std::cerr << " Placement data for volume UpstreamTargetAssembly, half length  " << plDat->fParams[2]/2. << std::endl;
+//   
   fPlacementHandler->Create(G4String("Horn1Hall"));
   G4VPhysicalVolume* targethorn1Phys = fPlacementHandler->PlaceFinal(G4String("TargetHallAndHorn1"), tunnel);
-  
-  std::cerr << " LBNEDetectorConstruction::Construct, about to place-final UsptreamTargetHall" << std::endl;
-  G4VPhysicalVolume* upstreamTargetHallPhys = 
-    fPlacementHandler->PlaceFinal(G4String("UpstreamTargetHall"), targethorn1Phys); 
+//
+//   
+  std::cerr << " LBNEDetectorConstruction::Construct, about to place-final UsptreamTargetAssembly" << std::endl;
+  G4PVPlacement* upstreamTargetAssPhys = 
+    fPlacementHandler->PlaceFinal(G4String("UpstreamTargetAssembly"), targethorn1Phys); 
+
+//
+  this->ConstructUpstreamTarget(upstreamTargetAssPhys);
+
+
   // Just test random error in positioning along the Z axis
   fPlacementHandler->TestVolumeOverlap(G4String("Horn1Hall"), targethorn1Phys);
   
@@ -307,7 +341,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   
    fPlacementHandler->Create(G4String("Baffle"));
 // This will be a surveyed elements, but let us skip this step for now.    
-   fPlacementHandler->PlaceFinal(G4String("Baffle"), upstreamTargetHallPhys);
+   fPlacementHandler->PlaceFinal(G4String("Baffle"), upstreamTargetAssPhys);
    
 /*
 
@@ -467,9 +501,26 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
       (*lvStore)[ii]->SetVisAttributes(GetMaterialVisAttrib(mName));
     }
   }
-  return ROCK;
   */
+  return fRock;
 }
+
+void LBNEDetectorConstruction::ConstructUpstreamTarget(const G4PVPlacement *phys) { 
+
+   //Start by defining the top level of the target container volume, which includes the canister (TargetUpstrM0) 
+   // and the target section which is outside Horn1 (TargetUpstrM1)
+
+  LBNEVolumePlacementData *uVolTop = fPlacementHandler->Create(G4String("TargetUpstrMTop"));
+  //
+  // Figure our it is aligned or nominal 
+
+//   LBNEVolumePlacements_AlignmentAlgo model
+//   G4PVPlacement *physUpstr = fPlacementHandler->PlaceFinalUpstrTarget(phys, model);
+
+   /// ?????fPlacementHandler->PlaceFinal(phys ); // Could include misalignment here. 
+
+
+} 
 
 LBNEDetectorMessenger::LBNEDetectorMessenger( LBNEDetectorConstruction* LBNEDet):LBNEDetector(LBNEDet)
 {

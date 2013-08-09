@@ -82,7 +82,7 @@ fName(""),
 fPositionSetByTolerance(false),
 fTolerance(1.0e-6, 1.0e-6, 1.0e-6),
 fPosition(0., 0., 0.) // messenger undefined if point is not named. 
-{ } 
+{} 
 
 LBNESurveyedPt::LBNESurveyedPt(const std::string &aName):
 fName(aName),
@@ -104,9 +104,10 @@ fPosition(0., 0., 0.)
 
 void LBNESurveyedPt::defineMessenger() {
 
-  std::string descr("");
+  std::string descr("Surveyed Position of the ");
   std::string fullName("/LBNE/Surveyor/"); 
   fullName += fName;
+  descr += fName;
   if (fName.find("Horn1") != std::string::npos) {
     if (fName.find("UpstreamLeftPin") != std::string::npos) 
       descr += std::string(" Surveyed Position of the upstream, left side alignment pin for Horn1 ") ;
@@ -115,6 +116,15 @@ void LBNESurveyedPt::defineMessenger() {
     if (fName.find("DowstreamAnchor") != std::string::npos) 
       descr += std::string(" Surveyed Position downstream fixed point for Horn1 ") ;
   }
+  if (fName.find("TargetCanister") != std::string::npos) {
+    descr += std::string(", "); 
+    if (fName.find("Upstream") != std::string::npos) descr += " Upstream, ";
+    else if (fName.find("ownstream") != std::string::npos) descr += " Downstream, ";
+    if (fName.find("Left") != std::string::npos) descr += " left side ";
+    else if (fName.find("Right") != std::string::npos) descr += " right side ";
+    descr += std::string("alignment pin for the target canister ") ;
+  }
+  
   fMessenger = LBNESurveyorMessenger(this, fullName, descr); 
 }
 
@@ -140,20 +150,25 @@ LBNESurveyor::LBNESurveyor()
 void LBNESurveyor::SetIt() { // Randomize again, if need be. 
 
   for(std::vector<LBNESurveyedPt>::iterator itPt=fData.begin(); itPt != fData.end(); ++itPt) {
-    if (itPt->IsPositionSetByTolerance()) itPt->SetPositionByTolerance(true);
+    if (itPt->IsPositionSetByTolerance()) itPt->SetPositionByTolerance(false);
   }
   SetThings(); // a place holder for now.. 
   const double toleranceTarget= 0.1; // This parameter will most likely have a G4Messenger associated to it. 
-  TieTargetSegments(toleranceTarget);
+//  TieTargetSegments(toleranceTarget);
 }
 void LBNESurveyor::SetThings() { 
- // blank for now. 
 
-}
-bool  LBNESurveyor::TieTargetSegments(double toleranceTarget) {
+//
+// Setting real aligned placements by tolerance, i.e. assign random position of objects, was 
+// viewed as "strange and not really needed" by Jim Hylen and Tom Junk. So, leave on the back burner
+// and install a few points for only for the target, and Horn1 
+//
+   AddPoint(std::string("UpstreamLeftPinTargetCanister"));
+   AddPoint(std::string("UpstreamRightPinTargetCanister"));
+   AddPoint(std::string("DownstreamLeftPinTargetCanister"));
+   AddPoint(std::string("DownstreamRightPinTargetCanister"));
+//
 
- // standlone check on the surveyed geometry, prior to implement the G4 geometry. 
 
- return false; // Assume problematic for now..
 }
 

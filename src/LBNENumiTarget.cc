@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// $Id: LBNENumiTarget.cc,v 1.1 2013/01/31 19:23:30 loiacono Exp $
+// $Id: LBNENumiTarget.cc,v 1.1.2.1 2013/08/09 22:43:58 lebrun Exp $
 //----------------------------------------------------------------------
 
 #include "LBNEDetectorConstruction.hh"
@@ -23,6 +23,9 @@
 
 void LBNEDetectorConstruction::ConstructNUMITarget()
 {
+
+//
+// All obsolete stuff. Keep here temporarely for documentation.. 
 
    LBNENumiDataInput *LBNENumiData = LBNENumiDataInput::GetLBNENumiDataInput();
    
@@ -54,17 +57,17 @@ void LBNEDetectorConstruction::ConstructNUMITarget()
    }    
    G4ThreeVector TargetMotherVolPosition=TargetMVOrigin-target_hall_position+targetPosition;
    //G4LogicalVolume* lvTargetMotherVol=new G4LogicalVolume(sTargetMotherVol,He,"lvTargetMother",0,0,0);
-   G4LogicalVolume* lvTargetMotherVol=new G4LogicalVolume(sTargetMotherVol,NumiTargetHelium,"lvTargetMother",0,0,0);
-   
-   G4VPhysicalVolume* pvTargetMotherVol=new G4PVPlacement(0,TargetMotherVolPosition,"pvTargetMother",lvTargetMotherVol,TGAR,false,0);
-   pvTargetMotherVol -> CheckOverlaps();
+//   G4LogicalVolume* lvTargetMotherVol=new G4LogicalVolume(sTargetMotherVol,NumiTargetHelium,"lvTargetMother",0,0,0);
+//   
+//   G4VPhysicalVolume* pvTargetMotherVol=new G4PVPlacement(0,TargetMotherVolPosition,"pvTargetMother",lvTargetMotherVol,TGAR,false,0);
+//   pvTargetMotherVol -> CheckOverlaps();
    
 //   if(LBNENumiData->GetPrintGeometry())
 //   {
       G4cout << "Z Position of target mother volume = " << TargetMotherVolPosition.z()/m << " m " << G4endl;
 //   }
    
-     
+/*     
   //------------------------------------------------------------------------------------------------
   //Target
   //------------------------------------------------------------------------------------------------
@@ -226,6 +229,7 @@ void LBNEDetectorConstruction::ConstructNUMITarget()
         //so use this to visualize it; should be fixed in 4.7.x
       }
       */
+/*
       CPipe_tor=new G4Torus(Sname,LBNENumiData->CPipeRadiusOut[ii]-LBNENumiData->CPipeWallThick[ii],LBNENumiData->CPipeRadiusOut[ii],LBNENumiData->CPipeCurvRad[ii],LBNENumiData->CPipeOpenAng[ii],dPhi);
       LVCPipe[ii]=new G4LogicalVolume(CPipe_tor,GetMaterial(LBNENumiData->CPGeantMat[ii]),LVname,0,0,0);
 
@@ -250,7 +254,7 @@ void LBNEDetectorConstruction::ConstructNUMITarget()
     }
   }
 
-
+*/
 
   G4cout << "Target Constructed" << G4endl;  
 

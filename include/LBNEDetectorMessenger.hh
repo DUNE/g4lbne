@@ -35,6 +35,10 @@ private:
    
    G4UIcmdWithADoubleAndUnit*         WaterLayerThickInHorn;
 
+      
+   G4UIcmdWithADoubleAndUnit*    SetBeamlineAngle;
+
+
 };
 
 #endif

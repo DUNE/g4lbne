@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.hh,v 1.5.2.11 2013/07/19 12:17:17 lebrun Exp $
+// $Id: LBNEDetectorConstruction.hh,v 1.5.2.12 2013/08/09 22:43:57 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEDetectorConstruction_H
@@ -124,6 +124,10 @@ private:
            const G4LogicalVolume *logvol,
            G4RotationMatrix &WorldRotation,
            G4ThreeVector    &WorldTranslation);
+//
+// New v3.x construction.
+//	   
+  void ConstructUpstreamTarget(const G4PVPlacement *phys); 
 
 //
 //LBNE stuff
@@ -207,18 +211,20 @@ private:
   G4Material* Air;
   G4Material* Water;
   G4Material* He;
-  G4Material* Be;
+  G4Material* Beryllium;
   G4Material* C;
   G4Material* Al;
   G4Material* Ar;
   G4Material* Pb;
   G4Material* Fe;
   G4Material* CT852;
+  G4Material* Steel316;
+  G4Material* Titanium;
   G4Material* Concrete;
   G4Material* Shotcrete;
   G4Material* Rebar_Concrete;
   G4Material* Target;
-  G4Material* NumiTargetHelium;
+  G4Material* HeliumTarget;
   G4Material* DolomiteRock;
   G4Material* DoloStone;
   G4Material* MaqShale;
@@ -236,6 +242,7 @@ private:
   G4Material* HeGas;
   G4Material* Drywall;
   G4Material* Paraffin;
+  G4Material* graphiteBaffle;
   G4Material* DefaultMaterial;
 
 
@@ -272,27 +279,5 @@ private:
   G4VSolid* CShld_solid[16];
   G4VSolid* Horn_PM[8];
 };
-
-class LBNEDetectorMessenger: public G4UImessenger {
-
-public:
-  LBNEDetectorMessenger(LBNEDetectorConstruction* );
-  ~LBNEDetectorMessenger();
-  void SetNewValue(G4UIcommand*, G4String); // will set data in LBNEDetector 
-//  double GetCurrentValueDble(G4UIcommand*); // time 
-     
-private:
-  LBNEDetectorConstruction* LBNEDetector;
-     
-  G4UIdirectory*                LBNEDir;
-  G4UIdirectory*                detDir;
-
-      
-  G4UIcmdWithABool*             ConstructTarget;
-  G4UIcmdWithADoubleAndUnit*    SetBeamlineAngle;
-
-     //G4UIcmdWithoutParameter*    UpdateCmd;
-  };
-
 #endif
 

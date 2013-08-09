@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.5 2013/07/22 20:36:34 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.6 2013/08/09 22:43:58 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -56,31 +56,6 @@
 
 enum LBNEVolumePlacements_AlignmentAlgo {eNominal, eFixed, eRandom}; 
 //
-// Geant User Interface utility. 
-//
-class LBNEPlacementMessenger: public G4UImessenger {
-
-public:
-  LBNEPlacementMessenger();
-  ~LBNEPlacementMessenger();
-  void SetNewValue(G4UIcommand* command, G4String cmd); // Will set data in the singleton LBNEVolumePlacements
-     
-private:
-     
-//  G4UIdirectory*                fLBNEDir;
-//  G4UIdirectory*                fdetDir;
-
-  G4UIcmdWithADoubleAndUnit* fWaterLayerThickInHorn;
-  G4UIcmdWithADoubleAndUnit* fDecayPipeLength;
-  G4UIcmdWithADoubleAndUnit* fHorn1Length;
-  G4UIcmdWithADoubleAndUnit* fBaffleLength;
-  G4UIcmdWithADoubleAndUnit* fBaffleInnerRadius;
-  G4UIcmdWithADoubleAndUnit* fBaffleZPosition;
- 
-      
-  };
-
-//
 // First, one more container to avoid the search through the map more then once 
 //
 class LBNEVolumePlacements;
@@ -122,7 +97,10 @@ public:
  
   LBNEVolumePlacementData* Create(const G4String &name);     											    
   
-  G4VPhysicalVolume* PlaceFinal(const G4String &name, G4VPhysicalVolume *mother,
+  G4PVPlacement* PlaceFinal(const G4String &name, G4VPhysicalVolume *mother,
+                               LBNEVolumePlacements_AlignmentAlgo model=eNominal);
+			       
+  G4PVPlacement* PlaceFinalUpstrTarget(G4VPhysicalVolume *mother,
                                LBNEVolumePlacements_AlignmentAlgo model=eNominal);
 			       
   // No change to either this data or the establish Geant4 geometry. 
@@ -131,14 +109,14 @@ public:
 
   const LBNEVolumePlacementData* GetDetectorPlacementData(const G4String &name);
 
-  inline double GetTargetHallZ() { return fTargetHallZ; }
-  inline double GetDecayHallZ() { return fDecayHallZ; }
-  inline double GetDecayPipeLength() { return fDecayPipeLength; }
-  inline double GetAbsorberHallZ() { return fAbsorberHallZ; }
-  inline double GetHorn1Length() { return fHorn1Length; }
-  inline double GetBaffleLength() { return fBaffleLength; }
-  inline double GetBaffleInnerRadius() { return fBaffleInnerRadius; }
-  inline double GetBaffleZPosition() { return fBaffleZPosition; }
+  inline double GetTargetHallZ() const { return fTargetHallZ; }
+  inline double GetDecayHallZ()  const { return fDecayHallZ; }
+  inline double GetDecayPipeLength()  const { return fDecayPipeLength; }
+  inline double GetAbsorberHallZ()  const { return fAbsorberHallZ; }
+  inline double GetHorn1Length()  const { return fHorn1Length; }
+  inline double GetBaffleLength() const  { return fBaffleLength; }
+  inline double GetBaffleInnerRadius() const  { return fBaffleInnerRadius; }
+  inline double GetBaffleZPosition()  const { return fBaffleZPosition; }
   
   // Interface to the Detector construction classes, or others..  
    
@@ -153,10 +131,16 @@ public:
   inline void SetBaffleLength(double l) { fBaffleLength = l;}
   inline void SetBaffleInnerRadius(double r) { fBaffleInnerRadius = r;}
   inline void SetBaffleZPosition(double z) { fBaffleZPosition = z;}
-  
- // LBNEDetector construction interface.. Just a pointer.. 
- 
+//
+// Interface to the Messenger, Target stuff. 
+
+  inline double GetTargetSLengthGraphite() const { return fTargetSLengthGraphite; }
+  inline void SetTargetSLengthGraphite(double l) { fTargetSLengthGraphite = l; }
+  inline double GetTargetLengthIntoHorn() const { return fTargetLengthIntoHorn; }
+  inline void SetTargetLengthIntoHorn(double l) { fTargetLengthIntoHorn = l; }
    
+  void SegmentTarget(); // Check the target segmentation. Assume fixed Fin size. 
+ 
   
 private:
   // GUI Interface  
@@ -190,6 +174,83 @@ private:
   G4double fBaffleLength;
   G4double fBaffleZPosition; // With respect to 0. of TargetHallAndHorn1 center (MCZERO) 
   //
+  // Target description.  Variable name 
+  // borrowed (inspired, actually) from LBNENumiDataInput, when applicable. 
+  //
+  G4double fTargetSLength; // total length from first fin Beryllium window end cap. 
+  G4double fTargetSLengthGraphite;// total length for the graphite target per-se. **Settable via Messenger. 
+  G4double fTargetLengthIntoHorn;
+                       // offset with respecto MCZERO, and/or the transition between UpstreamTarget Hall and Horn1 Hall
+		       // **Settable via Messenger. 
+  G4double fTargetLengthOutsideHorn; // defined from the above.
+  G4double fTargetSLengthDownstrEnd; 
+  // No fTargetX0, Y0:  These would be surveyed point, part of the alignement 
+  // realm, i.e. handled in the Surveyor class.
+  G4double fTargetFinWidth;
+  G4double fTargetFinHeight;
+  G4double fTargetFinLength; // 
+  G4int fTargetNumFins;
+  G4int fTargetNumFinsUpstr;
+  G4int fTargetNumFinsInHorn;
+  G4double fTargetFinLengthSplitUpstr; // 
+  G4double fTargetFinLengthSplitDwnstr; // 
+  G4String fTargetFinMaterial; // 
+  G4double fTargetFinSpacingLength; // Averaged over the whole length
+  G4double fTargetDowstreamBendLength;
+  G4double fTargetUpstrUpstrMargin; 
+  G4double fTargetUpstrDwnstrMargin; 
+  G4String fTargetUpstrPlateMaterial;
+  G4double fTargetUpstrPlateHoleRadius;
+  G4double fTargetUpstrPlateOuterRadius;
+  G4double fTargetUpstrPlateThick;
+  G4String fTargetCanMaterial;
+  G4double fTargetCanInnerRadius;
+  G4double fTargetCanOuterRadius;
+  G4double fTargetCanLength;
+  G4double fTargetCanEndPlateThickness;
+  G4String fTargetDownstrCanFlangeMaterial;
+  G4double fTargetDownstrCanFlangeOuterRadius;
+  G4double fTargetDownstrCanFlangeInnerRadius;
+  G4double fTargetDownstrCanFlangeThick;
+  G4String fTargetFlangeMaterial;
+  G4double fTargetFlangeInnerRadius;
+  G4double fTargetFlangeOuterRadius;
+  G4double fTargetFlangeThick;
+  G4String fTargetCTubeMaterial;
+  G4double fTargetCTubeOuterRadius;
+  G4double fTargetCTubeInnerRadius;
+  G4double fTargetCTubeUpstrLength;
+  G4double fTargetCTubeUpstrOffset;
+  G4double fTargetCTubeUpstrRadCurve;
+  G4double fTargetCTubeReturnLengthUpstr;
+  G4int fTargetCTubeUpstrNumSegCurve;
+  G4double fTargetCTubeReturnHOffset;
+  G4double fTargetCTubeReturnLengthDownstr;
+  G4double fTargetCTubeReturnLengthUstr;
+  G4double fTargetCTubeReturnLengthUpstrEnd;
+  G4double fTargetDistFlangeToTargetStart;
+  G4double fTargetAlignRingThick;
+  G4double fTargetAlignRingInnerRadius;
+  G4double fTargetAlignRingOuterRadius;
+  G4String fTargetAlignRingMaterial;
+  G4double fTargetBerylDownstrWindowThick;
+  G4double fTargetBerylDownstrWindowRadius;
+  G4double fTargetBerylUpstrWindowThick;
+  G4double fTargetBerylUpstrWindowRadius;
+  G4double fTargetHeContTubeThickness;
+  G4double fTargetHeContTubeInnerRadius;
+  G4double fTargetHeContTubeLengthUpstr;
+  G4double fTargetHeContTubeLengthInHorn;
+  //
+  // derived quantities
+  G4double fTargetZ0; // offset with respecto MCZERO 
+  G4double fTargetSWidth;
+  G4double fTargetSHeight;
+   
+  
+  
+
+ 
   // Store the mother volume at top of volume hierarchy, for book-keeping/debugging purposes. 
   
   const G4LogicalVolume* fTopLogicalVolume;

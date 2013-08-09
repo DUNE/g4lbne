@@ -147,12 +147,14 @@ public:
     }
   }
   void setPointPositionWithinTolerance(const std::string &aName);
-  void SetTargetSegments(bool upstreamSegment, int model);  // Based on prescribed tolerances, and perhaps a model on how 
+//  void SetTargetSegments(bool upstreamSegment, int model);  // Based on prescribed tolerances, and perhaps a model on how 
                                                               // the target alignment get modified as it heats up, 
+							      // Now done in VolumePlacement. 
   void MoveTargetInOutHorn(double deltaZ); // To adjust the longitudinal position of the target. 
 
 private:
-  void SetThings(); // Update and implement constraints.     			     
+  void SetThings(); // Update and implement constraints.    
+  // This one should perhaps move to the VolumePlacements class.  			     
   bool TieTargetSegments(double maxRadialMove=50.); // Very specific to the LBNE beam secondary (pions) beam layout, where the upstream and 
                             // downstream target segments, which are implemented in two distinct subvolumes, (targetHall and Horn1, respectively), 
 			    // must be, part of one continuous 3D object. The paramter maxRadialMove is the maximum allowed to adjust the

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.6 2013/08/09 22:43:58 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.7 2013/08/12 22:47:08 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -97,15 +97,14 @@ public:
  
   LBNEVolumePlacementData* Create(const G4String &name);     											    
   
-  G4PVPlacement* PlaceFinal(const G4String &name, G4VPhysicalVolume *mother,
-                               LBNEVolumePlacements_AlignmentAlgo model=eNominal);
+  G4PVPlacement* PlaceFinal(const G4String &name, G4VPhysicalVolume *mother);
 			       
-  G4PVPlacement* PlaceFinalUpstrTarget(G4VPhysicalVolume *mother,
-                               LBNEVolumePlacements_AlignmentAlgo model=eNominal);
+  void PlaceFinalUpstrTarget(G4VPhysicalVolume *mother);
 			       
   // No change to either this data or the establish Geant4 geometry. 
   // 
   void TestVolumeOverlap(const G4String &name, G4VPhysicalVolume *mother) const;
+  void PrintAll() const;
 
   const LBNEVolumePlacementData* GetDetectorPlacementData(const G4String &name);
 
@@ -232,6 +231,7 @@ private:
   G4double fTargetAlignRingThick;
   G4double fTargetAlignRingInnerRadius;
   G4double fTargetAlignRingOuterRadius;
+  G4double fTargetAlignRingCutAngle;
   G4String fTargetAlignRingMaterial;
   G4double fTargetBerylDownstrWindowThick;
   G4double fTargetBerylDownstrWindowRadius;
@@ -244,6 +244,8 @@ private:
   //
   // derived quantities
   G4double fTargetZ0; // offset with respecto MCZERO 
+  G4double fTargetZ0Upstr; // For the two sections of the target. 
+  G4double fTargetZ0Downstr; // For the two sections of the target. 
   G4double fTargetSWidth;
   G4double fTargetSHeight;
    

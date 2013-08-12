@@ -139,22 +139,24 @@ void LBNESurveyedPt::SetPositionByTolerance(bool t) {
 }  
 
 LBNESurveyor* LBNESurveyor::fInstance = 0;
-LBNESurveyor* LBNESurveyor::GetInstance() {
+LBNESurveyor* LBNESurveyor::Instance() {
   if (fInstance == 0) fInstance = new LBNESurveyor();
   return fInstance;
 }
 
 LBNESurveyor::LBNESurveyor()
 {
+  SetThings();
 }
-void LBNESurveyor::SetIt() { // Randomize again, if need be. 
-
+void LBNESurveyor::SetIt() { // Randomize, perhaps.. Not commissioned.. 
+/*
   for(std::vector<LBNESurveyedPt>::iterator itPt=fData.begin(); itPt != fData.end(); ++itPt) {
     if (itPt->IsPositionSetByTolerance()) itPt->SetPositionByTolerance(false);
   }
   SetThings(); // a place holder for now.. 
   const double toleranceTarget= 0.1; // This parameter will most likely have a G4Messenger associated to it. 
 //  TieTargetSegments(toleranceTarget);
+*/
 }
 void LBNESurveyor::SetThings() { 
 

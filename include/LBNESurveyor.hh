@@ -123,11 +123,14 @@ private:
   std::vector<LBNESurveyedPt> fData;
 
 public:
-  LBNESurveyor* GetInstance();
+  static LBNESurveyor* Instance();
   LBNESurveyor(LBNESurveyor const &); // not implemented 
   LBNESurveyor& operator=(LBNESurveyor const&); // not implemented 
   inline void AddPoint(const std::string &aName) { fData.push_back(LBNESurveyedPt(aName)); }
   inline void AddPoint(const std::string &aName, const G4ThreeVector tolerance) { fData.push_back(LBNESurveyedPt(aName, tolerance)); }
+  inline std::vector<LBNESurveyedPt>::const_iterator begin() const { return fData.begin();}
+  inline std::vector<LBNESurveyedPt>::const_iterator end() const { return fData.end();}
+  inline size_t size() const { return fData.size();}
    
   void SetIt(); // Compute all position by tolerance, when applicable, 
   inline std::vector<LBNESurveyedPt>::const_iterator GetPoint(const std::string &aName) const {

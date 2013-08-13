@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.7 2013/08/12 22:47:08 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.8 2013/08/13 21:34:34 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -182,7 +182,8 @@ private:
                        // offset with respecto MCZERO, and/or the transition between UpstreamTarget Hall and Horn1 Hall
 		       // **Settable via Messenger. 
   G4double fTargetLengthOutsideHorn; // defined from the above.
-  G4double fTargetSLengthDownstrEnd; 
+  G4double fTargetSLengthDownstrEnd;
+  G4double fTargetZOffsetStart; 
   // No fTargetX0, Y0:  These would be surveyed point, part of the alignement 
   // realm, i.e. handled in the Surveyor class.
   G4double fTargetFinWidth;
@@ -233,6 +234,7 @@ private:
   G4double fTargetAlignRingOuterRadius;
   G4double fTargetAlignRingCutAngle;
   G4String fTargetAlignRingMaterial;
+  G4double fTargetAlignRingSpacing;
   G4double fTargetBerylDownstrWindowThick;
   G4double fTargetBerylDownstrWindowRadius;
   G4double fTargetBerylUpstrWindowThick;
@@ -248,11 +250,16 @@ private:
   G4double fTargetZ0Downstr; // For the two sections of the target. 
   G4double fTargetSWidth;
   G4double fTargetSHeight;
-   
+  //
+  // Variables that are part physicall part of Horn1 but located logically in G4, in UpstreamTargetAssembly. 
+  // We decompose the Inner to Outer conductor transition into 5 section of cones. 
+  //
+  std::vector<G4double> fTargetHorn1InnerRadsUpstr;
+  std::vector<G4double> fTargetHorn1InnerRadsDownstr;
+  std::vector<G4double> fTargetHorn1TransThick;
+  std::vector<G4double> fTargetHorn1Lengths;
+  std::vector<G4double> fTargetHorn1ZPositions;
   
-  
-
- 
   // Store the mother volume at top of volume hierarchy, for book-keeping/debugging purposes. 
   
   const G4LogicalVolume* fTopLogicalVolume;

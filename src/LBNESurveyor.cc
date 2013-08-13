@@ -170,6 +170,10 @@ void LBNESurveyor::SetThings() {
    AddPoint(std::string("DownstreamLeftPinTargetCanister"));
    AddPoint(std::string("DownstreamRightPinTargetCanister"));
 //
+   AddPoint(std::string("UpstreamLeftPinTargetHeTube"));
+   AddPoint(std::string("UpstreamRightPinTargetHeTube"));
+   AddPoint(std::string("DownstreamLeftPinTargetHeTube"));
+   AddPoint(std::string("DownstreamRightPinTargetHeTube"));
 
 
 }

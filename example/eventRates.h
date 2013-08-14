@@ -18,6 +18,7 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+#include <TRandom3.h>
 
 class eventRates {
 public :
@@ -32,6 +33,8 @@ public :
    double detx;     // detector location
    double dety;
    double detz;
+
+   TRandom3 *rand3;
 
    // Declaration of leaf types
  //LBNEDataNtp_t   *data;
@@ -165,7 +168,8 @@ public :
    TBranch        *b_data_tptype;   //!
    TBranch        *b_data_tgen;   //!
 
-   eventRates(TTree *tree=0);
+   eventRates(std::string simulation = "G4PBeam", std::string geometry = "CD1-CDR_Geo", std::string location = "LBNEFD", std::string physics_list = "QGSP_BERT", int n_files = 250, double pot_per_file = 100000);
+
    virtual ~eventRates();
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
@@ -189,6 +193,9 @@ public :
 		    std::string current);
 
    void ReadXSecsFromFiles(  );
+   
+   double GetOscillatedNeutrinoType(double E);
+
 
  private:
 
@@ -203,8 +210,9 @@ public :
 #endif
 
 #ifdef eventRates_cxx
-eventRates::eventRates(TTree *tree)
+eventRates::eventRates(std::string simulation, std::string geometry, std::string location, std::string physics_list, int n_files, double potperfile)
 {
+  //simulation = G4PBeam or Fluka
 
   // Read the cross-sections from files
   ReadXSecsFromFiles();
@@ -218,74 +226,85 @@ eventRates::eventRates(TTree *tree)
    //
   std::vector<std::string> fFileVec;
 
-  std::string simulation = "G4PBeam";
-  //std::string simulation = "Fluka";
-  std::string geometry = "CD1-CDR_GeoRHC_Mod2";
+  detectorname = location;
+  if(location=="LBNEND") {
+    detx = 0.0;
+    dety = 0.0;
+    detz = 47915.0;
+  }
   
-  //detectorname = "LBNEND";
-  //detx = 0.0;
-  //dety = 0.0;
-  //detz = 47915.0;
+  if(location=="LBNEFD") {
+    detx = 0.0;
+    dety = 0.0;
+    detz = 129700000.0;
+  }
 
-
-  detectorname  = "LBNEFD";
-  detx = 0.0;
-  dety = 0.0;
-  detz = 129700000.0;
-   
-  //detectorname  = "LBNEFD_XSHIFT21";
-  // detx = 2100.0;
-  // dety = 0.0;
-  //detz = 129700000.0; 
-
-   //detectorname  = "LBNEFD_XSHIFT500";
-   //detx = 50000.0;
-   //dety = 0.0;
-   //detz = 129700000.0; 
-
-   //detectorname  = "LBNEFD_XSHIFT2000";
-   //detx = 200000.0;
-   //dety = 0.0;
-   //detz = 129700000.0; 
-
-  std::string physics_list = "QGSP";
+  if(location=="LBNEFD_XSHIFT+21") {
+    detx = 2100.0;
+    dety = 0.0;
+    detz = 129700000.0; 
+  }
+  if(location=="LBNEFD_XSHIFT-21") {
+    detx = -2100.0;
+    dety = 0.0;
+    detz = 129700000.0; 
+  }
+  if(location=="LBNEFD_YSHIFT+21") {
+    detx = 0.0;
+    dety = 2100.0;
+    detz = 129700000.0; 
+  }
+  if(location=="LBNEFD_YSHIFT-21") {
+    detx = 0.0;
+    dety = -2100.0;
+    detz = 129700000.0; 
+  }
+  if(location == "LBNEFD_XSHIFT500") {
+    detx = 50000.0;
+    dety = 0.0;
+    detz = 129700000.0; 
+  }
+  if(location == "LBNEFD_XSHIFT2000") {
+    detx = 200000.0;
+    dety = 0.0;
+    detz = 129700000.0; 
+  }
   
   std::string physics_list_file_path1 = "";
   std::string physics_list_file_path2 = "";
 
-    physics_list_file_path1 = "/"+physics_list;
-    physics_list_file_path2 = "_"+physics_list;
-
-    std::string flux_dir = "/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+"/"+physics_list+"/nubeam-"+simulation+"-stdnubeam/flux/";
+  physics_list_file_path1 = "/"+physics_list;
+  physics_list_file_path2 = "_"+physics_list;
+  
+  std::string flux_dir = "/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+"/"+physics_list+"/nubeam-"+simulation+"-stdnubeam/flux/";
+  
+  int start_index = 1;
+  int end_index = n_files;
+  
+  for(int i = start_index; i<= end_index; i++) {
     
-    int start_index = 1;
-    int end_index = 250;
+    // convert index into zero-padded string
+    std::ostringstream ss;
+    ss << std::setw( 3 ) << std::setfill( '0' ) << i;
+    std::string index_string = ss.str();
+    
+    std::string flux_file = flux_dir + geometry+"_"+physics_list+"_nubeam-"+simulation+"-stdnubeam_"+index_string+".root";
+    
+    // check that the file exists and is a valid root file
+    TFile f(flux_file.c_str());
+    if (!f.IsZombie())
+      fFileVec.push_back(flux_file.c_str());
+  }
 
-    for(int i = start_index; i<= end_index; i++) {
+  //set number of pot per file !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  //
+  fTotalPOT  = potperfile*(double)fFileVec.size();
 
-      // convert index into zero-padded string
-      std::ostringstream ss;
-      ss << std::setw( 3 ) << std::setfill( '0' ) << i;
-      std::string index_string = ss.str();
-
-      std::string flux_file = flux_dir + geometry+"_"+physics_list+"_nubeam-"+simulation+"-stdnubeam_"+index_string+".root";
-      
-      // check that the file exists and is a valid root file
-      TFile f(flux_file.c_str());
-      if (!f.IsZombie())
-	fFileVec.push_back(flux_file.c_str());
-    }
-
-   //set number of pot per file !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   //
-   double potperfile = 100000.0;
-   fTotalPOT  = potperfile*(double)fFileVec.size();
-
-   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   //set the filename prefix for saving histogram plots 
-   //
-   ffilename = "g4lbne_"+geometry+"_"+physics_list;
-   if(simulation=="Fluka")
+  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  //set the filename prefix for saving histogram plots 
+  //
+  ffilename = "g4lbne_"+geometry+"_"+physics_list;
+  if(simulation=="Fluka")
      ffilename = "fluka_"+geometry+"_"+physics_list;
    
    //
@@ -299,28 +318,11 @@ eventRates::eventRates(TTree *tree)
    }
 
    Init(fChain);
-   
-   
 
+   // initialize random numbers used for oscillation calculations
+   rand3 = new TRandom3(0); 
 
 }
-/*
-eventRates::eventRates(TTree *tree)
-{
-// if parameter tree is not specified (or zero), connect the file
-// used to generate this class and read the Tree.
-   if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("g4lbne_example_le010z185i_NumiDPHelium_110.root");");
-      if (!f) {
-         f = new TFile("g4lbne_example_le010z185i_NumiDPHelium_110.root");
-      }
-      tree = (TTree*)gDirectory->Get("nudata");
-
-   }
-   Init(tree);
-}
-*/
-
 
 eventRates::~eventRates()
 {

@@ -27,6 +27,9 @@
 #include "LBNETrackingAction.hh"
 #include "LBNERunAction.hh"
 #include "LBNERunManager.hh"
+#include "LBNESurveyor.hh"
+#include "LBNEVolumePlacements.hh"
+#include "LBNEPlacementMessenger.hh"
 
 
 #include "LBNEDataInput.hh"
@@ -110,8 +113,19 @@ int main(int argc,char** argv)
     LBNEDataInput::setInputFile(inputFileName);
   }
 
+  // Invoke both the Surveoyr class and the Volume placement 
+  // such the internal variable are define and the messenger are set 
+  // prior to declare a run 
+  
+  LBNESurveyor::Instance();
+//  std::cerr << " LBNESurveyor created  " << std::endl;
+  
+  LBNEVolumePlacements::Instance();
+  LBNEPlacementMessenger::Instance();
+
   // Construct the default run manager
   G4RunManager* runManager = new LBNERunManager();
+
 
   // set mandatory initialization classes
   runManager->SetUserInitialization(new LBNEDetectorConstruction);

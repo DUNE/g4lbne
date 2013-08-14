@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.hh,v 1.5.2.12 2013/08/09 22:43:57 lebrun Exp $
+// $Id: LBNEDetectorConstruction.hh,v 1.5.2.13 2013/08/14 22:26:05 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEDetectorConstruction_H
@@ -127,7 +127,7 @@ private:
 //
 // New v3.x construction.
 //	   
-  void ConstructUpstreamTarget(const G4PVPlacement *phys); 
+  void ConstructUpstreamTarget(G4PVPlacement *phys); 
 
 //
 //LBNE stuff

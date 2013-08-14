@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.8 2013/08/13 21:34:34 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.9 2013/08/14 22:26:05 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -67,6 +67,7 @@ struct LBNEVolumePlacementData {
   G4RotationMatrix fRotation;
   bool fRotationIsUnitMatrix;
   std::vector<double> fParams; // sizes, or others.. 
+  G4String fTypeName; // Box, tube, etc...
   G4VPhysicalVolume *fMother; // Not Owned. G4 maintain this pointer.  Do not delete in the destructor of this class. 
   G4LogicalVolume* fCurrent; // Same 
 };
@@ -99,7 +100,8 @@ public:
   
   G4PVPlacement* PlaceFinal(const G4String &name, G4VPhysicalVolume *mother);
 			       
-  void PlaceFinalUpstrTarget(G4VPhysicalVolume *mother);
+  void PlaceFinalUpstrTarget(G4PVPlacement *mother);
+  void PlaceFinalDownstrTarget(G4PVPlacement *mother);
 			       
   // No change to either this data or the establish Geant4 geometry. 
   // 
@@ -207,7 +209,6 @@ private:
   G4double fTargetCanInnerRadius;
   G4double fTargetCanOuterRadius;
   G4double fTargetCanLength;
-  G4double fTargetCanEndPlateThickness;
   G4String fTargetDownstrCanFlangeMaterial;
   G4double fTargetDownstrCanFlangeOuterRadius;
   G4double fTargetDownstrCanFlangeInnerRadius;

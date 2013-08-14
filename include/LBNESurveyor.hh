@@ -68,10 +68,14 @@ class LBNESurveyorMessenger: public G4UImessenger {
   public:
     LBNESurveyorMessenger();
     LBNESurveyorMessenger(LBNESurveyedPt* aPts, const G4String &aName, const G4String &description);
+    // This class has pointers, so the rule of three applies. Needs a copy constructor and assignmenr 
+    LBNESurveyorMessenger(LBNESurveyorMessenger const &other);
+    LBNESurveyorMessenger& operator= (LBNESurveyorMessenger const &other);
     ~LBNESurveyorMessenger();
     void SetNewValue(G4UIcommand *cmd, G4String val);
+//
+// Make them public to avoid code bloat with accessors. 
 
-  private:
     std::string fFullName;
     LBNESurveyedPt* fPoint; // back pointer to the point in question... Could be null is this messenger is blank. 
     G4UIcmdWithABool*  fSetPositionFromToleranceCmd;
@@ -126,8 +130,12 @@ public:
   static LBNESurveyor* Instance();
   LBNESurveyor(LBNESurveyor const &); // not implemented 
   LBNESurveyor& operator=(LBNESurveyor const&); // not implemented 
-  inline void AddPoint(const std::string &aName) { fData.push_back(LBNESurveyedPt(aName)); }
-  inline void AddPoint(const std::string &aName, const G4ThreeVector tolerance) { fData.push_back(LBNESurveyedPt(aName, tolerance)); }
+  inline void AddPoint(const std::string &aName) { 
+     fData.push_back(LBNESurveyedPt(aName)); 
+   }
+  inline void AddPoint(const std::string &aName, const G4ThreeVector tolerance) { 
+    fData.push_back(LBNESurveyedPt(aName, tolerance)); 
+  }
   inline std::vector<LBNESurveyedPt>::const_iterator begin() const { return fData.begin();}
   inline std::vector<LBNESurveyedPt>::const_iterator end() const { return fData.end();}
   inline size_t size() const { return fData.size();}

@@ -19,6 +19,8 @@ fSetPositionFromToleranceCmd(0),
 fToleranceCmd(0),
 fPositionCmd(0)
 {
+
+//  std::cerr << " LBNESurveyorMessenger::LBNESurveyorMessenger for " << aName <<  std::endl;
   std::string cmdPathTop=std::string(fFullName) + std::string("/");
 
   std::string cmdPathLTol(cmdPathTop); cmdPathLTol += std::string("SetByTolerance");   
@@ -48,16 +50,36 @@ fPositionCmd(0)
   if (aName.find("UpstreamRightPin") != std::string::npos) 
     fToleranceCmd->SetGuidance(
     " The elevation (Y) coordinate is not very accurate, however, the horizontal (X) was defined to 20 microns " ); 
+    
+//   std::cerr << " LBNESurveyorMessenger::LBNESurveyorMessenger for " << aName <<  " done " <<  std::endl;
   
 }
+LBNESurveyorMessenger::LBNESurveyorMessenger(LBNESurveyorMessenger const &other) {
+  fFullName = other.fFullName;
+  fPoint = other.fPoint; // back pointer to the point in question... Could be null is this messenger is blank. 
+  fSetPositionFromToleranceCmd = other.fSetPositionFromToleranceCmd;
+  fToleranceCmd = other.fToleranceCmd;
+  fPositionCmd = other.fPositionCmd;
+}
+LBNESurveyorMessenger& LBNESurveyorMessenger::operator= (LBNESurveyorMessenger const &other) {
+  fFullName = other.fFullName;
+  fPoint = other.fPoint; // back pointer to the point in question... Could be null is this messenger is blank. 
+  fSetPositionFromToleranceCmd = other.fSetPositionFromToleranceCmd;
+  fToleranceCmd = other.fToleranceCmd;
+  fPositionCmd = other.fPositionCmd;
+  return *this;
+}
+
+
 LBNESurveyorMessenger::~LBNESurveyorMessenger() {
 
   //
   // The pointer to the Surveyed point is not owned by this messenger! 
   //
-  delete fSetPositionFromToleranceCmd;
-  delete fToleranceCmd;
-  delete fPositionCmd;
+//  delete fSetPositionFromToleranceCmd;
+//  delete fToleranceCmd;
+//  delete fPositionCmd;
+// Can't delete them, these are not smart pointers. 
 
 }
 
@@ -104,6 +126,7 @@ fPosition(0., 0., 0.)
 
 void LBNESurveyedPt::defineMessenger() {
 
+  
   std::string descr("Surveyed Position of the ");
   std::string fullName("/LBNE/Surveyor/"); 
   fullName += fName;
@@ -146,6 +169,7 @@ LBNESurveyor* LBNESurveyor::Instance() {
 
 LBNESurveyor::LBNESurveyor()
 {
+//  std::cerr << " LBNESurveyor::LBNESurveyor, start ... " << std::endl;
   SetThings();
 }
 void LBNESurveyor::SetIt() { // Randomize, perhaps.. Not commissioned.. 
@@ -165,6 +189,7 @@ void LBNESurveyor::SetThings() {
 // viewed as "strange and not really needed" by Jim Hylen and Tom Junk. So, leave on the back burner
 // and install a few points for only for the target, and Horn1 
 //
+
    AddPoint(std::string("UpstreamLeftPinTargetCanister"));
    AddPoint(std::string("UpstreamRightPinTargetCanister"));
    AddPoint(std::string("DownstreamLeftPinTargetCanister"));

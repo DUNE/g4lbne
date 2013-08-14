@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.13 2013/08/09 22:43:58 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.14 2013/08/14 22:26:05 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -252,11 +252,13 @@ void LBNEDetectorConstruction::InitializeMaterials() {
   graphiteBaffle->AddElement( elN,  0.007); //  
   graphiteBaffle->AddElement( elO,  0.003); // 
 
+  // In case they are different.. 
+
   G4Material *Target = new G4Material( "Target", 1.78*g/cm3, 3 ); //Carbon, air (Nitrogen and oxigen),
                                                                   // Assume density of POCO ZXF-5Q  
-  graphiteBaffle->AddElement( elC,  0.99); 
-  graphiteBaffle->AddElement( elN,  0.007); 
-  graphiteBaffle->AddElement( elO,  0.003);
+  Target->AddElement( elC,  0.99); 
+  Target->AddElement( elN,  0.007); 
+  Target->AddElement( elO,  0.003);
   G4Material *Beryllium = new G4Material("Beryllium", 4, 9.0122*g/mole, 1.85*g/cm3); 
   
 }
@@ -289,6 +291,8 @@ void LBNEDetectorConstruction::DestroyMaterials()
 
 G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 
+
+  std::cerr << " LBNEDetectorConstruction::Construct, Start !!! " << std::endl;
   double decayPipeLength = fPlacementHandler->GetDecayPipeLength();  
   fRockX = 60.0*m;
   fRockY = 60.0*m;
@@ -321,15 +325,17 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 //
 //   
   std::cerr << " LBNEDetectorConstruction::Construct, about to place-final UsptreamTargetAssembly" << std::endl;
+  std::cerr << " Dump of the volume placements so far " << std::endl;
+//  fPlacementHandler->PrintAll();
+  
   G4PVPlacement* upstreamTargetAssPhys = 
     fPlacementHandler->PlaceFinal(G4String("UpstreamTargetAssembly"), targethorn1Phys); 
-
 //
   this->ConstructUpstreamTarget(upstreamTargetAssPhys);
 
 
   // Just test random error in positioning along the Z axis
-  fPlacementHandler->TestVolumeOverlap(G4String("Horn1Hall"), targethorn1Phys);
+//  fPlacementHandler->TestVolumeOverlap(G4String("Horn1Hall"), targethorn1Phys);
   
   fPlacementHandler->PlaceFinal(G4String("Horn1Hall"), targethorn1Phys); 
   
@@ -505,21 +511,12 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   return fRock;
 }
 
-void LBNEDetectorConstruction::ConstructUpstreamTarget(const G4PVPlacement *phys) { 
+void LBNEDetectorConstruction::ConstructUpstreamTarget(G4PVPlacement *phys) { 
 
-   //Start by defining the top level of the target container volume, which includes the canister (TargetUpstrM0) 
-   // and the target section which is outside Horn1 (TargetUpstrM1)
-
-  LBNEVolumePlacementData *uVolTop = fPlacementHandler->Create(G4String("TargetUpstrMTop"));
-  //
-  // Figure our it is aligned or nominal 
-
-//   LBNEVolumePlacements_AlignmentAlgo model
-//   G4PVPlacement *physUpstr = fPlacementHandler->PlaceFinalUpstrTarget(phys, model);
-
-   /// ?????fPlacementHandler->PlaceFinal(phys ); // Could include misalignment here. 
-
-
+   // Attempting to split the code between this class and the VolumePlacement Handler. 
+  std::cerr << " Ready to construct the upstream segment of the target " << std::endl;
+  fPlacementHandler->PlaceFinalUpstrTarget(phys);
+  std::cerr << " Done with Upstream Target " << std::endl;
 } 
 
 LBNEDetectorMessenger::LBNEDetectorMessenger( LBNEDetectorConstruction* LBNEDet):LBNEDetector(LBNEDet)

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.9 2013/08/14 22:26:05 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.10 2013/08/15 22:29:44 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -260,6 +260,10 @@ private:
   std::vector<G4double> fTargetHorn1TransThick;
   std::vector<G4double> fTargetHorn1Lengths;
   std::vector<G4double> fTargetHorn1ZPositions;
+  
+  // a flag to check the geometry as it is constructed. 
+  
+  bool fCheckVolumeOverLapWC;
   
   // Store the mother volume at top of volume hierarchy, for book-keeping/debugging purposes. 
   

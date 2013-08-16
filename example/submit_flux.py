@@ -26,11 +26,11 @@ usage = "usage: %prog [options]"
 parser = OptionParser(usage=usage)
 
 parser.add_option("-g", "--g4lbne_dir", dest="g4lbne_dir",
-                  help="g4lbne directory", default="/lbne/app/users/$USER/lbne-beamsim/g4lbne")
+                  help="g4lbne directory", default=os.getenv("G4WORKDIR"))
 parser.add_option("-p", "--physics_list", dest="physics_list",
-                  help="Geant4 Physics List", default="QGSP");
+                  help="Geant4 Physics List", default="QGSP_BERT");
 parser.add_option("-i", "--input", dest="input",
-                  help="Input Card", default="lbnedocdb2161v6")
+                  help="Input Card", default="CD1-CDR_Geo")
 parser.add_option("-m", "--macro", dest="macro",
                   help="Template Macro", default="nubeam-G4PBeam-stdnubeam")
 parser.add_option("-n", "--n_events", dest="n_events",
@@ -82,6 +82,17 @@ print "Using GEANT4 physics list",physics_list
 
 ###################################################
 #
+# Determine G4LBNE Version
+#
+###################################################
+f = open(options.g4lbne_dir+"/CVS/Tag")
+lines = f.readlines();
+f.close()
+
+version = lines[0].strip()[1:]
+
+###################################################
+#
 # Print options
 #
 ###################################################
@@ -89,6 +100,7 @@ if options.interactive:
     print "Running",str(int(options.last_job)-int(options.first_job)+1),"jobs starting with JobID",options.first_job,"."
     print "Submitting",str(int(options.last_job)-int(options.first_job)+1),"jobs starting with JobID",options.first_job,"."
 print "Using the g4lbne installed at",options.g4lbne_dir
+print "G4lbne version:",version
 print "Each job will have",options.n_events,"protons on target."
 print "Using macro template:",macro_template
 print "Using input card:",input_card
@@ -99,9 +111,9 @@ print "Output will be written to:",options.output_dir
 # Create Directories
 #
 ###################################################
-macro_dir = options.output_dir+"/"+options.input+"/"+"/"+physics_list+"/"+options.macro+"/macros/"
-flux_dir = options.output_dir+"/"+options.input+"/"+physics_list+"/"+options.macro+"/flux/"
-log_dir = options.output_dir+"/"+options.input+"/"+physics_list+"/"+options.macro+"/logfiles/"
+macro_dir = options.output_dir+"/"+version+"/"+options.input+"/"+"/"+physics_list+"/"+options.macro+"/macros/"
+flux_dir = options.output_dir+"/"+version+"/"+options.input+"/"+physics_list+"/"+options.macro+"/flux/"
+log_dir = options.output_dir+"/"+version+"/"+options.input+"/"+physics_list+"/"+options.macro+"/logfiles/"
 
 # executables have to go on /app
 macro_dir = macro_dir.replace("lbne/data","lbne/app")
@@ -119,6 +131,8 @@ if not os.path.exists(log_dir):
 os.chmod(macro_dir,0777)
 os.chmod(flux_dir,0777)
 os.chmod(log_dir,0777)
+
+sys.exit()
     
 temp_dir = " "
 if not options.interactive:

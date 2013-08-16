@@ -18,7 +18,7 @@ int iread = 0;
 void nudata::Loop()
 {
 //   In a ROOT session, you can do:
-//      Root > .L nudata.C
+//      Root > .L nudata.C++
 //      Root > nudata t
 //      Root > t.GetEntry(12); // Fill t data members with entry number 12
 //      Root > t.Show();       // Show values of entry 12
@@ -229,7 +229,6 @@ void nudata::Loop()
 
       //Nimpwt is the same no matter what detector you are referring to
       double fluxwghtsomedet = (detectorwghtatsomedet*Nimpwt/3.1415)*(refpot/fTotalPOT);
-
       ///
       //Now fill the histograms
       //
@@ -286,7 +285,8 @@ void nudata::Loop()
    //drawing for MINOSND histograms
    //
    {
-      
+
+
      c1->cd();
      fhTotalFluxMINOSND->Draw();
 
@@ -330,7 +330,7 @@ void nudata::Loop()
    //drawing for SOMEDETECTOR histograms
    //
    {
-      
+
      c6->cd();
      fhTotalFluxSOMEDETECTOR->Draw();
 
@@ -366,7 +366,7 @@ void nudata::Loop()
      cpath2 = ffilename + "_" + fhNuEBarFluxSOMEDETECTOR->GetName() + ".png";
      c10->SaveAs(cpath1.c_str());
      c10->SaveAs(cpath2.c_str());      
-
+     
    }
 
 // Save histograms to a root file
@@ -382,7 +382,7 @@ void nudata::Loop()
    fhNuEFluxSOMEDETECTOR->Write();
    fhNuEBarFluxSOMEDETECTOR->Write();
    f.Close();
-      
+
 }
 
 //-------------------------------------------------------------------------------------

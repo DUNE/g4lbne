@@ -196,8 +196,8 @@ nudata::nudata(TTree *tree)
    //Add files here
    //
   std::vector<std::string> fFileVec;
-  fFileVec.push_back("g4lbne_example_lbnedocdb2161v6_010.root");
-  fFileVec.push_back("g4lbne_example_lbnedocdb2161v6_011.root");
+  fFileVec.push_back("g4lbne_example_010.root");
+  fFileVec.push_back("g4lbne_example_011.root");
   
    //
    //set number of pot per file !!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -208,7 +208,7 @@ nudata::nudata(TTree *tree)
    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    //set the filename prefix for saving histogram plots 
    //
-   ffilename = "g4lbne_fluxexample_le010z185i_NumiDPHelium";
+   ffilename = "g4lbne_fluxexample_";
   
 
 //

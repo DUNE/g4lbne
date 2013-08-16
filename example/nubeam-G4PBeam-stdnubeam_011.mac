@@ -43,7 +43,7 @@
 #Directory and filename (with out the .root) to write output ntuple
 #the code will append the runID (see below) to the end of the file name
 #
-/LBNE/output/OutputNtpFileName ./example/g4lbne_example_lbnedocdb2161v6
+/LBNE/output/OutputNtpFileName ./example/g4lbne_example
 
 
 #########################################

@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: LBNENumiDataInput.cc,v 1.2 2013/08/08 21:30:11 robj137 Exp $
+// $Id: LBNENumiDataInput.cc,v 1.3 2013/08/17 17:25:31 ljf26 Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -64,7 +64,7 @@ LBNENumiDataInput::LBNENumiDataInput()
    TargetDxdz         = 0.0; // doesn't
    TargetDydz         = 0.0; // work properly yet
    TargetSLength      = 20.*mm;
-   TargetSWidth       = 6.40E-03*m;
+   TargetSWidth       = 7.40E-03*m;
    TargetSHeight      = 18.0E-03*m;
    TargetCPGRadius    = 3.2*mm; // Cooling pipe groove
    TargetCPGPosition  = 10.7*mm;

@@ -75,8 +75,17 @@ if [ -z "${G4LBNE_IS_SETUP}" ]; then
     echo "setup ${SETUP_G4PHOTON}"
 
 ##!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    export G4WORKDIR="SET YOUR WORKING DIRECTORY e.g /lbne/app/users/loiacono/lbne-beamsim/g4lbne_work"
+##
+## Set G4WORKDIR to g4lbne directory, if not already set
+##
 ##!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    if [ -z "$G4WORKDIR" ]; then
+	SETUPDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+	export G4WORKDIR=`dirname $SETUPDIR`
+	echo "G4WORKDIR is not set... Setting it to "$G4WORKDIR 
+    fi
+
 
     export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:$G4LIB/Linux-g++"
 

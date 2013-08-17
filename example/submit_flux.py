@@ -18,6 +18,15 @@ import sys, os, subprocess, shutil
 
 ###################################################
 #
+# Determine default g4lbne directory
+# (the directory this script is in)
+#
+###################################################
+scriptdir = os.path.abspath(sys.argv[0]+"/../..")
+print "default g4lbne directory:",scriptdir
+
+###################################################
+#
 # Setup parser that reads in options
 #
 ###################################################
@@ -26,7 +35,7 @@ usage = "usage: %prog [options]"
 parser = OptionParser(usage=usage)
 
 parser.add_option("-g", "--g4lbne_dir", dest="g4lbne_dir",
-                  help="g4lbne directory", default=os.getenv("G4WORKDIR"))
+                  help="g4lbne directory", default=scriptdir)
 parser.add_option("-p", "--physics_list", dest="physics_list",
                   help="Geant4 Physics List", default="QGSP_BERT");
 parser.add_option("-i", "--input", dest="input",
@@ -132,8 +141,6 @@ os.chmod(macro_dir,0777)
 os.chmod(flux_dir,0777)
 os.chmod(log_dir,0777)
 
-sys.exit()
-    
 temp_dir = " "
 if not options.interactive:
     temp_dir = "$_CONDOR_SCRATCH_DIR/"

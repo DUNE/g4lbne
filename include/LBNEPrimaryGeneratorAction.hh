@@ -26,6 +26,7 @@ class LBNEPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
   void GeneratePrimaries(G4Event* anEvent);
   void GenerateG4ProtonBeam(G4Event* anEvent);
   void GenerateBeamFromInput(G4Event* anEvent);
+  void Geantino(G4Event* anEvent);
 
   G4ParticleGun* GetParticleGun() {return fParticleGun;};
   void SetProtonBeam();
@@ -94,9 +95,22 @@ private:
   G4double fBeamAngleTheta;
   G4double fBeamAnglePhi;
  
+  G4bool fUseGeantino;
+  G4bool fUseMuonGeantino;
+  G4double fZOriginGeantino;
+  G4double fPolarAngleGeantino;
    
    //double                  DoubleRand() {return 2*G4UniformRand()-1.;}
+public: 
 
+   inline void SetPolarAngleGeantino(double r) {fPolarAngleGeantino=r;}
+   inline void SetUseGeantino(bool t) {fUseGeantino=t;}
+   inline void SetUseMuonGeantino(bool t) {fUseMuonGeantino=t;}
+   inline void SetZOriginGeantino(double v) {fZOriginGeantino=v;}
+   
+   inline bool GetUseMuonGeantino() const { return fUseMuonGeantino; }
+   inline bool GetUseGeantino() const { return fUseGeantino; }
+ 
    
 };
 

@@ -17,6 +17,7 @@
 LBNEPrimaryMessenger::LBNEPrimaryMessenger(LBNEPrimaryGeneratorAction* RA)
   :fPrimaryAction (RA)
 {
+   
    LBNEDataInput *LBNEData = LBNEDataInput::GetLBNEDataInput();
    
    if(LBNEData->GetDebugLevel() > 0)
@@ -61,6 +62,30 @@ LBNEPrimaryMessenger::LBNEPrimaryMessenger(LBNEPrimaryGeneratorAction* RA)
   fBeamOnTargetCmd->SetGuidance("If true, forces beam to hit the center");
   fBeamOnTargetCmd->SetGuidance("of target. Any x or y offsets supplied");
   fBeamOnTargetCmd->SetGuidance("via messenger are ignored");
+    
+  fUseGeantino  = new G4UIcmdWithoutParameter("/LBNE/primary/useGeantino",this);
+  fUseGeantino->SetGuidance("Using a Geantino at the Primary, to study absorption");
+  fUseGeantino->AvailableForStates(G4State_Idle);
+    
+  fUseMuonGeantino  = new G4UIcmdWithoutParameter("/LBNE/primary/useMuonGeantino",this);
+  fUseMuonGeantino->SetGuidance("Using a muon at the Primary, to study absorption, with magnetic field effect ");
+  fUseMuonGeantino->AvailableForStates(G4State_Idle);
+  
+  fGeantinoOpeningAngle  = new G4UIcmdWithADoubleAndUnit("/LBNE/primary/geantinoOpeningAngle",this);
+  fGeantinoOpeningAngle->SetGuidance("Polar angle generating the geantino (or mu geantino)  ");
+  fGeantinoOpeningAngle->SetParameterName("GeantinoOpeningAngle",true);
+  fGeantinoOpeningAngle->SetDefaultValue (0.005*radian);
+  fGeantinoOpeningAngle->SetDefaultUnit("radian");
+  fGeantinoOpeningAngle->SetUnitCandidates("radian");
+  fGeantinoOpeningAngle->AvailableForStates(G4State_Idle);
+   
+  fGeantinoZOrigin  = new G4UIcmdWithADoubleAndUnit("/LBNE/primary/geantinoZOrigin",this);
+  fGeantinoZOrigin->SetGuidance("Z origin  generating the geantino (or mu geantino) (in mm) ");
+  fGeantinoZOrigin->SetParameterName("GeantinoOpeningAngle",true);
+  fGeantinoZOrigin->SetDefaultValue (-515.);
+  fGeantinoZOrigin->SetDefaultUnit ("mm");
+  fGeantinoZOrigin->SetUnitCandidates ("mm cm m");
+  fGeantinoZOrigin->AvailableForStates(G4State_Idle);
   
 
 }
@@ -74,6 +99,10 @@ LBNEPrimaryMessenger::~LBNEPrimaryMessenger()
   delete fCorrectForAngleCmd;
   delete fBeamOnTargetCmd;
   delete fDirectory;
+  delete fUseGeantino;
+  delete fUseMuonGeantino;
+  delete fGeantinoOpeningAngle;
+  delete fGeantinoZOrigin;
 }
 
 void LBNEPrimaryMessenger::SetNewValue(G4UIcommand* cmd, G4String val)
@@ -109,5 +138,24 @@ void LBNEPrimaryMessenger::SetNewValue(G4UIcommand* cmd, G4String val)
   if(cmd == fBeamOnTargetCmd){
     fPrimaryAction->SetBeamOnTarget(fBeamOnTargetCmd->GetNewBoolValue(val));
   }
+  if (cmd == fGeantinoOpeningAngle) {
+      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (cmd);
+      fPrimaryAction->SetPolarAngleGeantino(cmdWD->GetNewDoubleValue(val));
+  } else if (cmd ==  fGeantinoZOrigin ) {
+      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (cmd);
+      fPrimaryAction->SetZOriginGeantino( cmdWD->GetNewDoubleValue(val));   
+   } else if (cmd ==  fUseGeantino ) {
+      if (fPrimaryAction->GetUseMuonGeantino()) {
+        G4Exception("LBNEPrimaryMessenger", "Inconsistency in particle choice ", FatalException,
+	              "Can't use both a muon geantino, and a geantino ");
+      }
+      fPrimaryAction->SetUseGeantino(true);
+   } else if (cmd ==  fUseMuonGeantino ) {
+      if (fPrimaryAction->GetUseGeantino()) {
+        G4Exception("LBNEPrimaryMessenger", "Inconsistency in particle choice ", FatalException,
+	              "Can't use both a muon geantino, and a geantino ");
+      }
+      fPrimaryAction->SetUseMuonGeantino(true);
+   }
 }
 

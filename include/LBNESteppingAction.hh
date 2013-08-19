@@ -7,7 +7,6 @@
 
 #include "globals.hh"
 #include "G4UserSteppingAction.hh"
-#include "LBNEDataInput.hh"
 
 class G4EventManager;
 class LBNEEventAction;
@@ -32,7 +31,6 @@ class LBNESteppingAction : public G4UserSteppingAction
 
 private:
    
-   LBNEDataInput *fLBNEData;
    LBNERunManager *pRunManager;
    G4EventManager *EvtManager;
    LBNEEventAction *LBNEEvtAct;

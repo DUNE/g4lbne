@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNEStackingAction.cc
-// $Id: LBNEStackingAction.cc,v 1.2 2012/07/25 00:38:06 loiacono Exp $
+// $Id: LBNEStackingAction.cc,v 1.2.2.1 2013/08/19 22:32:14 lebrun Exp $
 //----------------------------------------------------------------------
 
 #include "LBNEStackingAction.hh"
@@ -15,7 +15,6 @@
 #include "G4ios.hh"
 #include "LBNEImpWeight.hh"
 #include "LBNETrackInformation.hh"
-#include "LBNEDataInput.hh"
 #include "LBNETrajectory.hh"
 #include "LBNEAnalysis.hh"
 #include "LBNERunManager.hh"
@@ -23,20 +22,16 @@
 //----------------------------------------------------------------------------------
 LBNEStackingAction::LBNEStackingAction()
 { 
-  LBNEData = LBNEDataInput::GetLBNEDataInput();
   pRunManager=(LBNERunManager*)LBNERunManager::GetRunManager();
 
-  if(LBNEData->GetDebugLevel() > 0)
-  {
-     std::cout << "LBNEStackingAction Constructor Called." << std::endl;
-  }
+  std::cout << "LBNEStackingAction Constructor Called." << std::endl;
 }
 
 //----------------------------------------------------------------------------------
 LBNEStackingAction::~LBNEStackingAction()
 {
-
-   if(LBNEData->GetDebugLevel() > 0)
+   int verboseLevel = G4EventManager::GetEventManager()->GetTrackingManager()->GetVerboseLevel();
+   if(verboseLevel > 0)
    {
       std::cout << "LBNEStackingAction Destructor Called." << std::endl;
    }
@@ -49,7 +44,8 @@ G4ClassificationOfNewTrack LBNEStackingAction::ClassifyNewTrack(const G4Track * 
   G4ClassificationOfNewTrack classification = fUrgent;
   G4ParticleDefinition * particleType = aTrack->GetDefinition();
 
-  if(LBNEData->GetDebugLevel() > 2)
+   int verboseLevel = G4EventManager::GetEventManager()->GetTrackingManager()->GetVerboseLevel();
+  if(verboseLevel > 2)
   {
      G4int evtno = pRunManager->GetCurrentEvent()->GetEventID();
      std::cout << "Event " << evtno << ": LBNEStackingAction::ClassifyNewTrack for Particle " 
@@ -58,46 +54,19 @@ G4ClassificationOfNewTrack LBNEStackingAction::ClassifyNewTrack(const G4Track * 
 
 
   
-  if(LBNEData->GetSimulation() == "Standard Neutrino Beam")
-  {
-     LBNEStackingAction::KillEMParticles(classification, aTrack);
+   LBNEStackingAction::KillEMParticles(classification, aTrack);
      //LBNEStackingAction::KillltZeroPzParticles(classification, aTrack);
-     LBNEStackingAction::KillThresholdParticles(classification, aTrack);
-     LBNEStackingAction::KillOutOfWorldParticles(classification, aTrack);
-     LBNEStackingAction::KillUnimportantParticles(classification, aTrack);
-  }
-  else if(LBNEData->GetSimulation() == "Target Tracking")
-  {
-     LBNEStackingAction::KillEMParticles(classification, aTrack);
-     //LBNEStackingAction::KillltZeroPzParticles(classification, aTrack);
-     LBNEStackingAction::KillThresholdParticles(classification, aTrack);
-     LBNEStackingAction::KillOutOfWorldParticles(classification, aTrack);
-     LBNEStackingAction::KillUnimportantParticles(classification, aTrack);
-  }
-  else if(LBNEData->GetSimulation() == "Horn 1 Tracking" ||
-	  LBNEData->GetSimulation() == "Horn 2 Tracking" )
-  {
-     LBNEStackingAction::KillEMParticles(classification, aTrack);
-     //LBNEStackingAction::KillltZeroPzParticles(classification, aTrack);
-     LBNEStackingAction::KillThresholdParticles(classification, aTrack);
-     LBNEStackingAction::KillOutOfWorldParticles(classification, aTrack);
-     LBNEStackingAction::KillUnimportantParticles(classification, aTrack);
-  }
-  else
-  {
-     std::cout << "LBNEStackingAction::ClassifyNewTrack() - PROBLEM: Don't know about the \"" 
-	       << LBNEData->GetSimulation() << "\" Simulation" << std::endl;
-  }
-  
-  
-  
-  
+   LBNEStackingAction::KillThresholdParticles(classification, aTrack);
+   LBNEStackingAction::KillOutOfWorldParticles(classification, aTrack);
+   LBNEStackingAction::KillUnimportantParticles(classification, aTrack);
+   
   return classification;
 }
 //----------------------------------------------------------------------------------
 void LBNEStackingAction::NewStage() 
 {
-   if(LBNEData->GetDebugLevel() > 1)
+   int verboseLevel = G4EventManager::GetEventManager()->GetTrackingManager()->GetVerboseLevel();
+   if(verboseLevel > 1)
    {
       G4int evtno = pRunManager->GetCurrentEvent()->GetEventID();
       std::cout << "Event " << evtno << ": LBNEStackingAction::NewStage Called." << std::endl;
@@ -110,7 +79,8 @@ void LBNEStackingAction::NewStage()
 //----------------------------------------------------------------------------------  
 void LBNEStackingAction::PrepareNewEvent()
 {
-   if(LBNEData->GetDebugLevel() > 1)
+   int verboseLevel = G4EventManager::GetEventManager()->GetTrackingManager()->GetVerboseLevel();
+   if(verboseLevel > 1)
    {
       G4int evtno = pRunManager->GetCurrentEvent()->GetEventID();
       std::cout << "Event " << evtno << ": LBNEStackingAction::PrepareNewEvent Called." << std::endl;
@@ -161,9 +131,11 @@ void LBNEStackingAction::KillThresholdParticles(G4ClassificationOfNewTrack& clas
        (particleType!=G4AntiNeutrinoTau::AntiNeutrinoTauDefinition()))
    {
       G4double energy = aTrack->GetKineticEnergy();
-      if (( LBNEData->GetKillTracking() && energy < LBNEData->GetKillTrackingThreshold() ) &&
-	  (classification != fKill))
-      {classification = fKill;} 
+//
+// We hard code this cut, as the LBNEDataInput obsolete.. Could become a data card 
+//      
+      if ((energy < 0.05*GeV ) && (classification != fKill))
+          {classification = fKill;} 
    }
    
    
@@ -177,12 +149,17 @@ void LBNEStackingAction::KillOutOfWorldParticles(G4ClassificationOfNewTrack& cla
 
    //check if track is inside world (some neutral particles make huge jumps from horns (field part) and
    // end up decaying in ~infinity which occasionaly causes g4numi to crash
-   G4ThreeVector position=aTrack->GetPosition();
+   /* 
+   ** Hopefully obsolete.. 
+   
+   int verboseLevel = G4TrackingManager::GetVerboseLevel()();
+   
+  G4ThreeVector position=aTrack->GetPosition();
    if ((classification != fKill) &&
        ((sqrt(position[0]*position[0]+position[1]*position[1])>LBNEData->GetRockRadius())||
 	position[2]>LBNEData->GetRockHalfLen()))
    {
-      if (LBNEData->GetDebugLevel() > 2)
+      if (verboseLevel > 2)
       {
 	 G4cout <<"LBNEStackingAction: Killing Out of World Particle" <<G4endl;
 	 G4cout << "   Particle type: "<<aTrack->GetDefinition()->GetParticleName()
@@ -193,7 +170,7 @@ void LBNEStackingAction::KillOutOfWorldParticles(G4ClassificationOfNewTrack& cla
       classification =fKill;
    }
    
-   
+   */
 }
 
 //----------------------------------------------------------------------------------
@@ -202,7 +179,7 @@ void LBNEStackingAction::KillUnimportantParticles(G4ClassificationOfNewTrack& cl
 {
 
   //If importance weighting is on:
-  if (LBNEData->GetImpWeightOn() && (classification != fKill))
+  if ((classification != fKill))
   {
     LBNETrackInformation* trackInfo=(LBNETrackInformation*)(aTrack->GetUserInformation());  
     if (trackInfo!=0) 

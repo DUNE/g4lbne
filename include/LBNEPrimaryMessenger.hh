@@ -31,6 +31,10 @@ private:
   G4UIcmdWithADoubleAndUnit*    fBeamPhiCmd;
   G4UIcmdWithABool*             fCorrectForAngleCmd;
   G4UIcmdWithABool*             fBeamOnTargetCmd;
+  G4UIcmdWithoutParameter*      fUseGeantino;
+  G4UIcmdWithoutParameter*      fUseMuonGeantino;
+  G4UIcmdWithADoubleAndUnit*    fGeantinoOpeningAngle;
+  G4UIcmdWithADoubleAndUnit*    fGeantinoZOrigin;
 };
 
 #endif

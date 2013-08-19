@@ -63,16 +63,9 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
     // declaration of some constant which should not impact the physics at all, 
     // but are needed to build the G4 geometry. 
    fDecayPipeLength=250.0*m;
-   fTargetAndBaffleLengthApprox = in*(98.167 + 44.418); // NUMI Drawing 8875.000-ME-363028 
    fHorn1Length = 124.290*in;
    fHorn1UpstreamPlateLength = in*(5); //???????????//
    fHorn1DownstreamPlateLength = in*(5); //???????????//
-   // Details
-   fBaffleInnerRadius = 6.5*mm; // Per discussion with Jim Hylen, July 22 2013 
-   fBaffleOuterRadius = 28.3*mm; // from previous version and le010z185i_NumiDPHelium.input
-   fBaffleLength = 1474.8*mm; // Drawing 8875.000-ME-363028
-   fBaffleZPosition = fTargetAndBaffleLengthApprox/2.
-                       -1.0*(44.418*in - 1.256*in - 3.0*cm); 
 		       // With respect to the center of the mother volume UpstreamTargetAssembly
 //
 // Target The first quantity is the target length as far as the beam is concerned 
@@ -158,34 +151,44 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
   fTargetHorn1TransThick.resize(5);
   fTargetHorn1Lengths.resize(5);
   fTargetHorn1ZPositions.resize(5);
-  fTargetHorn1InnerRadsUpstr[0] = 1.76*in;
-  fTargetHorn1InnerRadsUpstr[1] = 2.75*in;
-  fTargetHorn1InnerRadsUpstr[2] = 2.76*in; // It will a G4tubs, not G4Cons
-  fTargetHorn1InnerRadsUpstr[3] = 4.46*in;
-  fTargetHorn1InnerRadsUpstr[4] = 5.35*in;
-  fTargetHorn1InnerRadsDownstr[0] = 1.38*in;
-  fTargetHorn1InnerRadsDownstr[1] = 1.80*in;
-  fTargetHorn1InnerRadsDownstr[2] = 4.47*in; // It will a G4tubs, not G4Cons
-  fTargetHorn1InnerRadsDownstr[3] = 5.33*in;
-  fTargetHorn1InnerRadsDownstr[4] = 5.75*in;
-  fTargetHorn1TransThick[0] = (0.25*in)/std::cos(M_PI*30./180.);
-  fTargetHorn1TransThick[4] = (0.25*in)/std::cos(M_PI*30./180.);
-  fTargetHorn1TransThick[1] = (0.25*in)/std::cos(M_PI*45./180.);
-  fTargetHorn1TransThick[3] = (0.25*in)/std::cos(M_PI*45./180.);
+  fTargetHorn1InnerRadsUpstr[0] = 1.88*in;
+  fTargetHorn1InnerRadsUpstr[1] = 2.28*in;
+  fTargetHorn1InnerRadsUpstr[2] = 2.78*in; // It will a G4tubs, not G4Cons
+  fTargetHorn1InnerRadsUpstr[3] = 4.49*in;
+  fTargetHorn1InnerRadsUpstr[4] = 5.10*in;
+  fTargetHorn1InnerRadsDownstr[0] = 1.573*in;
+  fTargetHorn1InnerRadsDownstr[1] = 1.88*in;
+  fTargetHorn1InnerRadsDownstr[2] = 4.49*in; // It will a G4tubs, not G4Cons This is the outer radius 
+  fTargetHorn1InnerRadsDownstr[3] = 5.10*in;
+  fTargetHorn1InnerRadsDownstr[4] = 5.53*in;
+  fTargetHorn1TransThick[0] = (0.25*in)/std::cos(M_PI*45./180.);
+  fTargetHorn1TransThick[4] = (0.25*in)/std::cos(M_PI*45./180.);
+  fTargetHorn1TransThick[1] = (0.25*in)/std::cos(M_PI*60./180.);
+  fTargetHorn1TransThick[3] = (0.25*in)/std::cos(M_PI*60./180.);
   fTargetHorn1TransThick[2] = fTargetHorn1InnerRadsDownstr[2] -   fTargetHorn1InnerRadsUpstr[2];
-  fTargetHorn1Lengths[0] = 0.945*in;
+  fTargetHorn1Lengths[0] = 0.457*in;
   fTargetHorn1Lengths[4] = fTargetHorn1Lengths[0];
-  fTargetHorn1Lengths[1] = 0.625*in;
+  fTargetHorn1Lengths[1] = 0.355*in;
   fTargetHorn1Lengths[3] = fTargetHorn1Lengths[1];
-  fTargetHorn1Lengths[2] = 0.25*in; // 
-  fTargetHorn1ZPositions[0] = (-0.945*in)/2. ; // With respect to MCZero, or the dowstream end of Upstream Target Assembly
+  fTargetHorn1Lengths[2] = 0.30*in; // Increase thickness  
+  fTargetHorn1ZPositions[0] = -fTargetHorn1Lengths[0]/2.  - 2.5*mm ; // With respect to MCZero, or the dowstream end of Upstream Target Assembly
+                                                          // push them bacward a bit to avoid overlaps 
   fTargetHorn1ZPositions[4] = fTargetHorn1ZPositions[0];
-  fTargetHorn1ZPositions[1] = -1.315*in;
+  fTargetHorn1ZPositions[1] = -1.0*(fTargetHorn1Lengths[0]  + fTargetHorn1Lengths[1]/2.) - 2.5*mm;
   fTargetHorn1ZPositions[3] = fTargetHorn1ZPositions[1];
-  fTargetHorn1ZPositions[2] = -1.72*in; // 
+  fTargetHorn1ZPositions[2] = -1.0*(fTargetHorn1Lengths[0]  + fTargetHorn1Lengths[1] + fTargetHorn1Lengths[2]/2.) - 5.0*mm; // 
    //
    // Basic algorithm to determine position of the target main daughter volumes 
    //
+   // Details about the baffle 
+   fBaffleInnerRadius = 6.5*mm; // Per discussion with Jim Hylen, July 22 2013 
+   fBaffleOuterRadius = 28.3*mm; // from previous version and le010z185i_NumiDPHelium.input
+   fBaffleLength = 1474.8*mm; // Drawing 8875.000-ME-363028
+   fTargetAndBaffleLengthApprox = fBaffleLength + fTargetUpstrUpstrMargin  + fTargetUpstrPlateThick + fTargetCanLength 
+	                   + fTargetDownstrCanFlangeThick + fTargetFlangeThick + 0.2*mm + 44.18*in + 
+			   fTargetUpstrDwnstrMargin  +  fTargetDistFlangeToTargetStart + fTargetLengthOutsideHorn + 2.0*mm;
+			    // NUMI Drawing 8875.000-ME-363028 with 2 mm margin of error. 
+  fBaffleZPosition = -1.0e19; // to be determined one the Target Usptream segment is installed 
   fTargetZ0Upstr = (-1.0* (fTargetSLength - fTargetLengthIntoHorn))/2. ;
         // offset with respecto MCZERO of the center of target mother volume,  
   fTargetZ0Downstr = fTargetLengthIntoHorn/2. ;
@@ -276,18 +279,25 @@ LBNEVolumePlacementData*
 //    std::cerr << " LBNEVolumePlacements::Create " << name << " half length " << info.fParams[2]/2. << std::endl;
       
   } else if (name == G4String("Horn1Hall")) {
-    std::map<G4String, LBNEVolumePlacementData>::const_iterator it = 
+    std::map<G4String, LBNEVolumePlacementData>::const_iterator itMother = 
       fSubVolumes.find(G4String("TargetHallAndHorn1"));
-    if (it == fSubVolumes.end()) {
+    if (itMother == fSubVolumes.end()) {
+      std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
+      exit(2);
+    }  
+    std::map<G4String, LBNEVolumePlacementData>::const_iterator itTargetAssembly = 
+      fSubVolumes.find(G4String("UpstreamTargetAssembly"));
+    if (itTargetAssembly == fSubVolumes.end()) {
       std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
       exit(2);
     }  
     for (size_t k=0; k != 2; ++k) 
-      info.fParams[k] = it->second.fParams[k] - 0.5*cm; 
+      info.fParams[k] = itMother->second.fParams[k] - 0.5*cm; 
     info.fParams[2] = fHorn1UpstreamPlateLength + fHorn1Length + fHorn1DownstreamPlateLength;
     G4Box* hallBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2. );
     info.fCurrent = new G4LogicalVolume(hallBox, G4Material::GetMaterial("Air"), volumeName); 
-    info.fPosition[2] = fHorn1UpstreamPlateLength + fHorn1Length/2.; // preliminary. 
+    info.fPosition[2] = -1.0*itMother->second.fParams[2]/2. + itTargetAssembly->second.fParams[2] + info.fParams[2]/2. + 0.020*mm;
+/*
     std::cerr << " Checking stuff for " << name << " Mother volume size, x, y ,z "; 
       for (size_t k=0; k!= 3; k++)  std::cerr << it->second.fParams[k]/m << ", " ; std::cerr << std::endl;
     std::cerr << " This volume size, x, y ,z "; 
@@ -295,6 +305,7 @@ LBNEVolumePlacementData*
     std::cerr << " Tentatively placed at x, y ,z "; 
       for (size_t k=0; k!= 3; k++)  std::cerr << info.fPosition[k]/m << ", " ; std::cerr << std::endl;
     info.fTypeName = G4String("Box");
+*/
   } else if (name == G4String("Baffle")) {
   // more cases here... a long list.. a too long of a  list? 
   // We now go one level down in the hierachy. Start from upstream 
@@ -309,7 +320,7 @@ LBNEVolumePlacementData*
     info.fParams[2] = fBaffleLength;
     G4Tubs* baffleTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
     info.fCurrent = new G4LogicalVolume(baffleTube, G4Material::GetMaterial("GraphiteBaffle"), volumeName); 
-    info.fPosition[2] = fBaffleZPosition; //preliminary
+    info.fPosition[2] = -it->second.fParams[2]/2. + fBaffleLength/2.0 + 0.5*mm; 
   } 
   //
   // Target stuff.. Lots of it
@@ -325,7 +336,7 @@ LBNEVolumePlacementData*
       if (name == G4String("TargetUpstrMTop")) { 
          // Complete container the target Canister and the portion of the target outside the horn 
 	 // Subject to misalignment!!!
-         info.fParams[1] =  fTargetDownstrCanFlangeOuterRadius + 1.0*cm; // mother volume, safety factor of 2 cm mm transversely   
+         info.fParams[1] =  10.*in; // mother volume, must hold the Inner/Outer Horn1 transition. 
          info.fParams[2] = fTargetUpstrUpstrMargin  + fTargetUpstrPlateThick + fTargetCanLength 
 	                   + fTargetDownstrCanFlangeThick + fTargetFlangeThick + 0.2*mm +
 			   fTargetUpstrDwnstrMargin  +  fTargetDistFlangeToTargetStart + fTargetLengthOutsideHorn;
@@ -513,7 +524,15 @@ LBNEVolumePlacementData*
        if (name == G4String("TargetUpstrM1")) { // Complete container volume in the upstream target hall 
                                                 // to contain whatever if dowstream of the above flange 
 						// and upstream of the Horn. 
-         info.fParams[1] = fTargetHeContTubeInnerRadius + fTargetHeContTubeThickness+ 1.0*cm;
+	 // The out radius is set by the components of the Horn1 that infringe upstream of MCZERO.
+	 // That is, the Inner to Outer transition piece 
+	 double maxRadIOHorn1 = -1.0;
+	 for (size_t iR = 0; iR != fTargetHorn1InnerRadsDownstr.size(); iR++) 
+	     if (fTargetHorn1InnerRadsDownstr[iR] > maxRadIOHorn1) maxRadIOHorn1 = fTargetHorn1InnerRadsDownstr[iR];
+	 for (size_t iR = 0; iR != fTargetHorn1InnerRadsUpstr.size(); iR++) 
+	     if (fTargetHorn1InnerRadsUpstr[iR] > maxRadIOHorn1) maxRadIOHorn1 = fTargetHorn1InnerRadsUpstr[iR];
+	 maxRadIOHorn1 += 2.0*cm;    
+         info.fParams[1] = std::max(maxRadIOHorn1, (fTargetHeContTubeInnerRadius + fTargetHeContTubeThickness+ 1.0*cm));
 	        // mother volume, safety factor of 1. 0 cm  
          info.fParams[2] = fTargetUpstrDwnstrMargin  +  fTargetDistFlangeToTargetStart + fTargetLengthOutsideHorn; 
          G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
@@ -631,7 +650,7 @@ LBNEVolumePlacementData*
     if (name == G4String("TargetFinVertUpstrLast")) { // 
             info.fParams[0] = fTargetFinWidth; 
             info.fParams[1] = fTargetFinHeight - 2.0*fTargetCTubeOuterRadius - 0.1*mm; 
-            info.fParams[2] = fTargetFinLengthSplitUpstr ;
+            info.fParams[2] = fTargetFinLengthSplitUpstr  - 0.02*mm; // 20 micron safety. 
             G4Box* aBox = new G4Box(volumeName, info.fParams[0]/2, info.fParams[1]/2, info.fParams[2]/2.);
             info.fCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("Target")), volumeName);
             info.fTypeName = G4String("Box");
@@ -668,14 +687,14 @@ LBNEVolumePlacementData*
   // These volumes are surrounding the 
    if (name == G4String("TargetHorn1TransInnerOuterCont")) { // Approximate!... 
             info.fParams[0] = fTargetHorn1InnerRadsDownstr[0] - 0.2*mm;
-            info.fParams[1] = fTargetHorn1InnerRadsDownstr[4] + 1.0*cm; 
-            info.fParams[2] = -1.0*fTargetHorn1ZPositions[2] + 0.1*mm;
+            info.fParams[1] = fTargetHorn1InnerRadsDownstr[4] + fTargetHorn1TransThick[4] + 1.*mm; 
+            info.fParams[2] = -1.0*fTargetHorn1ZPositions[2] + 0.3*in + 5.0*mm; // few mm safety... 
             G4Tubs* aTubs = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2.,
 	                           0., 360.0*deg);
             info.fCurrent = new G4LogicalVolume(aTubs, G4Material::GetMaterial(std::string("Air")), volumeName);
 	    // Pick volume Upstream TargetAssembly. 
             std::map<G4String, LBNEVolumePlacementData>::const_iterator it = 
-                                    fSubVolumes.find(G4String("UpstreamTargetAssembly"));
+                                    fSubVolumes.find(G4String("TargetUpstrM1"));
             if (it == fSubVolumes.end()) {
               std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
               exit(2);
@@ -715,7 +734,7 @@ LBNEVolumePlacementData*
               std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
               exit(2);
 	    }
-	    info.fPosition[2] = 1.0*it->second.fParams[2]/2.0  + fTargetHorn1ZPositions[2]; // Position were given with respect to MCZero
+	    info.fPosition[2] = 1.0*it->second.fParams[2]/2.0  + fTargetHorn1ZPositions[iPart]; // Position were given with respect to MCZero
     }
   } // End of Target declarations 
   //
@@ -1026,7 +1045,6 @@ void LBNEVolumePlacements::PlaceFinalUpstrTarget(G4PVPlacement *mother) {
 	                            posTmp, plTargetCoolingTubeWaterLast->fCurrent, 
 				    nameTgtUpDownSeg+G4String("CoolingTubeWater_P"), 
 				          vTubeUp->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
-      
     vTargetFin = new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, plTargetFinLast->fCurrent, G4String("TargetFinVertLast_P"), 
 				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);

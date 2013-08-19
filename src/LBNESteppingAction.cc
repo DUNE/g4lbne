@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNESteppingAction.cc
-// $Id: LBNESteppingAction.cc,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.1 2013/08/19 22:32:14 lebrun Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -20,10 +20,10 @@
 #include "G4VTouchable.hh"
 #include "G4TouchableHistory.hh"
 #include "G4EventManager.hh"
+#include "G4TrackingManager.hh"
 
 #include "LBNETrajectory.hh"
 #include "LBNETrackInformation.hh"
-#include "LBNEDataInput.hh"
 #include "LBNEAnalysis.hh"
 #include "LBNEEventAction.hh"
 #include "LBNERunManager.hh"
@@ -32,7 +32,6 @@
 //----------------------------------------------------------------------
 LBNESteppingAction::LBNESteppingAction()
 {
-  fLBNEData = LBNEDataInput::GetLBNEDataInput();
   pRunManager=(LBNERunManager*)LBNERunManager::GetRunManager();
 
   
@@ -45,48 +44,18 @@ LBNESteppingAction::~LBNESteppingAction()
 //----------------------------------------------------------------------
 void LBNESteppingAction::UserSteppingAction(const G4Step * theStep)
 {
-
-   if(fLBNEData->GetDebugLevel() > 3)
+   int verboseLevel = 
+   G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager()->GetverboseLevel();
+   if(verboseLevel > 3)
    {
       G4int evtno = pRunManager->GetCurrentEvent()->GetEventID();
       std::cout << "Event " << evtno << ": LBNESteppingAction::UserSteppingAction() Called." << std::endl;
    }
 
 
-
-
-
-   if(fLBNEData->GetSimulation() == "Standard Neutrino Beam")
-   {
-      LBNESteppingAction::KillNonNuThresholdParticles(theStep);
+   LBNESteppingAction::KillNonNuThresholdParticles(theStep);
       
-      LBNESteppingAction::CheckDecay(theStep);
-   }
-   else if(fLBNEData->GetSimulation() == "Target Tracking" )
-   {
-      LBNESteppingAction::KillNonNuThresholdParticles(theStep);
-      LBNESteppingAction::CheckDecay(theStep);
-      LBNESteppingAction::CheckInTgtEndPlane(theStep);
-   }
-   else if(fLBNEData->GetSimulation() == "Horn 1 Tracking" )
-   {
-      LBNESteppingAction::KillNonNuThresholdParticles(theStep);
-      LBNESteppingAction::CheckDecay(theStep);
-      LBNESteppingAction::CheckInHornEndPlane(theStep, 1);
-   }
-   else if(fLBNEData->GetSimulation() == "Horn 2 Tracking" )
-   {
-      LBNESteppingAction::KillNonNuThresholdParticles(theStep);
-      LBNESteppingAction::CheckDecay(theStep);
-      LBNESteppingAction::CheckInHornEndPlane(theStep, 2);
-   }
-   else
-   {
-      std::cout << "LBNESteppingAction::UserSteppingAction() - PROBLEM: Don't know about the \"" 
-		<< fLBNEData->GetSimulation() << "\" Simulation" << std::endl;
-   }
-
-   
+   LBNESteppingAction::CheckDecay(theStep);
 }
 
 
@@ -105,8 +74,7 @@ void LBNESteppingAction::KillNonNuThresholdParticles(const G4Step * theStep)
    //
    //kill the track if it is below the kill tracking threshold and it is NOT a neutrino
    //
-   if (( fLBNEData->GetKillTracking() && 
-	 theTrack->GetKineticEnergy() < fLBNEData->GetKillTrackingThreshold() ) &&
+   if ( (theTrack->GetKineticEnergy() < (0.050*GeV)) &&
        (particleDefinition != G4NeutrinoE::NeutrinoEDefinition())&&
        (particleDefinition != G4NeutrinoMu::NeutrinoMuDefinition()) &&
        (particleDefinition != G4NeutrinoTau::NeutrinoTauDefinition()) &&

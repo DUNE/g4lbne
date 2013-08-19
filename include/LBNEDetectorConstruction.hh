@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.hh,v 1.5.2.13 2013/08/14 22:26:05 lebrun Exp $
+// $Id: LBNEDetectorConstruction.hh,v 1.5.2.14 2013/08/19 22:32:14 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEDetectorConstruction_H
@@ -57,7 +57,7 @@ public:
 
   void CheckOverlaps();
     
-  void UpdateGeometry();
+  void UpdateGeometry(); // Obsolete..
 
   G4VPhysicalVolume* GetPhysicalVolume(G4String PVname);
   G4Material* GetMaterial(G4int matcode);
@@ -68,8 +68,11 @@ public:
   void SetSimulationType(G4String val) { fSimulationType = val; }
   void SetBeamlineAngle(G4double angle) { fBeamlineAngle = angle; }
 
+  bool HasBeenConstructed() const {return fHasBeenConstructed; }
 
 private:
+
+   bool fHasBeenConstructed; // The construct method has been called (only once per run...) 
 
   // Geometric instantiations
   LBNEVolumePlacements*                  fPlacementHandler;

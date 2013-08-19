@@ -62,13 +62,16 @@ LBNEPrimaryGeneratorAction::LBNEPrimaryGeneratorAction()
     fBeamOffsetX(0.0),
     fBeamOffsetY(0.0),
     fBeamAngleTheta(0.0),
-    fBeamAnglePhi(0.0)
+    fBeamAnglePhi(0.0),
 
+    fUseGeantino(false),
+    fUseMuonGeantino(false),
+    fZOriginGeantino(-515.), // Upstream of target.
+    fPolarAngleGeantino(.005)
 {
    fLBNEData = LBNEDataInput::GetLBNEDataInput();
    fRunManager       =(LBNERunManager*)LBNERunManager::GetRunManager();
    fPrimaryMessenger = new LBNEPrimaryMessenger(this);
-  
    G4int n_particle = 1;
    fParticleGun = new G4ParticleGun(n_particle);
    
@@ -101,7 +104,13 @@ void LBNEPrimaryGeneratorAction::SetProtonBeam()
 
    G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
  
-  fParticleGun->SetParticleDefinition(particleTable->FindParticle("proton"));
+  if (fUseGeantino) {
+    fParticleGun->SetParticleDefinition(particleTable->FindParticle("geantino"));
+  }
+  else if (fUseMuonGeantino) {
+    fParticleGun->SetParticleDefinition(particleTable->FindParticle("mu+"));
+  }
+  else fParticleGun->SetParticleDefinition(particleTable->FindParticle("proton"));
   fParticleGun->SetParticleEnergy(fLBNEData->GetProtonKineticEnergy());
   fParticleGun->SetParticlePosition(fLBNEData->GetBeamPosition());
   G4ThreeVector beamDirection(1,0,0);
@@ -126,25 +135,6 @@ void LBNEPrimaryGeneratorAction::SetProtonBeam()
 	    << spaces << "   BeamSigMaxDx   = " << fLBNEData->GetBeamMaxDx()/mm << " mm" << std::endl
 	    << spaces << "   BeamSigMaxDy   = " << fLBNEData->GetBeamMaxDy()/mm << " mm" << std::endl;
 
-/*
-  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
- 
-  fParticleGun->SetParticleDefinition(particleTable->FindParticle("proton"));
-  fParticleGun->SetParticleEnergy(fND->GetProtonKineticEnergy());
-  fParticleGun->SetParticlePosition(fND->GetBeamPosition());
-  fParticleGun->SetParticleMomentumDirection(fND->GetBeamDirection());
-
-  fCurrentPrimaryNo=0;
-
-  G4String spaces = "   ";
-  std::cout << spaces << "Configuring the Proton beam..." << std::endl
-	    << spaces << "   Momentum       = " << fParticleGun->GetParticleMomentum()/GeV << " GeV/c" << std::endl
-	    << spaces << "   Kinetic Energy = " << fParticleGun->GetParticleEnergy()/GeV << " GeV" << std::endl
-	    << spaces << "   Position       = " << fParticleGun->GetParticlePosition()/m << " m" << std::endl
-	    << spaces << "   Direction      = " << fParticleGun->GetParticleMomentumDirection() << std::endl
-	    << spaces << "   SigmaX         = " << fND->GetBeamSigmaX()/mm << " mm" << std::endl
-	    << spaces << "   SigmaY         = " << fND->GetBeamSigmaY()/mm << " mm" << std::endl;
-*/
 }
 
 
@@ -229,8 +219,8 @@ void LBNEPrimaryGeneratorAction::CloseNtuple()
 //---------------------------------------------------------------------------------------
 void LBNEPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
-   
-   if(fLBNEData->GetDebugLevel() > 1)
+   int verboseLevel = G4EventManager::GetEventManager()->GetVerboseLevel();
+   if(verboseLevel > 1)
    {
       std::cout << "Event " << anEvent->GetEventID() << ": LBNEPrimaryGeneratorAction::GeneratePrimaries() Called." << std::endl;
    }
@@ -244,27 +234,20 @@ void LBNEPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	       <<fCurrentPrimaryNo<<" to "<< fCurrentPrimaryNo+(totNoPrim/20) <<G4endl;
    }
    
-   if(fLBNEData->GetSimulation() == "Standard Neutrino Beam" ||
-      fLBNEData->GetSimulation() == "Target Tracking"        ||
-      fLBNEData->GetSimulation() == "Horn 1 Tracking"    ||
-      fLBNEData->GetSimulation() == "Horn 2 Tracking" )
    {
       if (fLBNEData->GetUseFlukaInput() || fLBNEData->GetUseMarsInput()) 
       {
 	 LBNEPrimaryGeneratorAction::GenerateBeamFromInput(anEvent);
+      }
+      else if (fUseGeantino || fUseMuonGeantino ) {
+        LBNEPrimaryGeneratorAction::Geantino(anEvent);
       }
       else
       {
 	 LBNEPrimaryGeneratorAction::GenerateG4ProtonBeam(anEvent);
       }
       
-   }
-   else
-   {
-      std::cout << "LBNEPrimaryGeneratorAction::GeneratePrimaries()- PROBLEM: Don't know how to run the \"" 
-		<< fLBNEData->GetSimulation() << "\" Simulation" << std::endl;
-   }
-   
+   }   
    
    //fCurrentPrimaryNo++;
    ++fCurrentPrimaryNo;
@@ -420,6 +403,34 @@ void LBNEPrimaryGeneratorAction::GenerateG4ProtonBeam(G4Event* anEvent)
     fParticleGun->SetParticleMomentumDirection(direction);
     fParticleGun->GeneratePrimaryVertex(anEvent);
 */
+}
+//
+// Used to begug geometry, and/or, Radiography of the detector. 
+//
+void LBNEPrimaryGeneratorAction::Geantino(G4Event* anEvent)
+{
+
+   
+    
+// If nothing else is set, use a proton beam
+    
+    const double dr = fPolarAngleGeantino*G4RandFlat::shoot();
+    const double dPhi = 2.0*M_PI*G4RandFlat::shoot();
+    const double dx = dr*std::cos(dPhi);
+    const double dy = dr*std::sin(dPhi);
+    const double dz = sqrt(1.0 - (dx*dx + dy*dy));
+    G4ThreeVector direction(dx, dy, dz);
+
+//
+// Store it a proton internally to lbne d/s  ... Messy: 
+    fProtonN = fCurrentPrimaryNo;
+    
+    fTgen=0;
+         
+    fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., fZOriginGeantino));
+    fParticleGun->SetParticleMomentumDirection(direction);
+    if (fUseMuonGeantino) fParticleGun->SetParticleEnergy(20*GeV);
+    fParticleGun->GeneratePrimaryVertex(anEvent);
 }
 
 

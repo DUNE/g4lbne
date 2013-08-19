@@ -10,7 +10,6 @@
 //#include "G4ThreeVector.hh"
 
 class G4Track;
-class LBNEDataInput;
 class LBNERunManager;
 
 class LBNEStackingAction : public G4UserStackingAction
@@ -36,7 +35,6 @@ class LBNEStackingAction : public G4UserStackingAction
 				 const G4Track * aTrack);
 
   private:
-  LBNEDataInput * LBNEData;
    LBNERunManager * pRunManager; 
 };
 

@@ -32,6 +32,7 @@ private:
 
 
    G4UIcmdWithoutParameter*    UpdateCmd;
+   G4UIcmdWithoutParameter*    ConstructCmd;
    
    G4UIcmdWithADoubleAndUnit*         WaterLayerThickInHorn;
 

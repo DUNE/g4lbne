@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.14 2013/08/14 22:26:05 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.15 2013/08/19 22:32:14 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -43,6 +43,7 @@
 #include "G4FieldManager.hh"
 #include "LBNEVolumePlacements.hh"
 #include "LBNEDetectorMessenger.hh"
+#include "LBNERunManager.hh"
 
 #include "G4RunManager.hh"
 
@@ -56,14 +57,15 @@ LBNEDetectorConstruction::LBNEDetectorConstruction()
 {
   fPlacementHandler = LBNEVolumePlacements::Instance(); // Minimal setup for the Placement algorithm. 
   fDetectorMessenger = new LBNEDetectorMessenger(this);
-  
+//
   // temporary.. Need a better place. 
   fBeamlineAngle = -101*mrad;
 
 //  InitializeSubVolumes();  Obsolete. 
   InitializeMaterials();
   Initialize();
-  Construct();
+  fHasBeenConstructed = false; 
+//  Construct(); Not yet!  Need to read the data card first... 
 }
 
 
@@ -183,7 +185,7 @@ void LBNEDetectorConstruction::InitializeMaterials() {
   CT852->AddElement(elNi, 0.006); 
   CT852->AddElement(elFe, 0.84145); 
 
-  Steel316 = new G4Material("Steel316", 8.0*g/cm3, 10); 
+  Steel316 = new G4Material("Steel316", 8.0*g/cm3, 9); 
   // Reference: Google search, found Anderson Schumake company.  
   Steel316->AddElement(elC,  0.015); 
   Steel316->AddElement(elSi, 0.005); 
@@ -292,7 +294,13 @@ void LBNEDetectorConstruction::DestroyMaterials()
 G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 
 
+  if (fHasBeenConstructed) {
+     std::cerr << " WARNING: LBNEDetectorConstruction::Construct, already done, skip " << std::endl;
+     return fRock;
+  }
+  std::cout << " LBNEDetectorConstruction::Construct, Start !!! " << std::endl;
   std::cerr << " LBNEDetectorConstruction::Construct, Start !!! " << std::endl;
+  
   double decayPipeLength = fPlacementHandler->GetDecayPipeLength();  
   fRockX = 60.0*m;
   fRockY = 60.0*m;
@@ -349,6 +357,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 // This will be a surveyed elements, but let us skip this step for now.    
    fPlacementHandler->PlaceFinal(G4String("Baffle"), upstreamTargetAssPhys);
    
+//   std::cerr << " And quit for now .. " << std::endl; exit(2);
 /*
 
   // ???????????????????? Everything downstream of this need to be adapted. 					     
@@ -508,6 +517,15 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
     }
   }
   */
+  //
+  // Invoking here the G4RunManager Initialize method. 
+  //
+  
+  fHasBeenConstructed = true;
+  
+//  LBNERunManager *aRunManager=(LBNERunManager*)LBNERunManager::GetRunManager();
+//  aRunManager->Initialize();
+  
   return fRock;
 }
 
@@ -547,14 +565,19 @@ LBNEDetectorMessenger::LBNEDetectorMessenger( LBNEDetectorConstruction* LBNEDet)
    SetBeamlineAngle->SetParameterName("angle", false);
    SetBeamlineAngle->SetGuidance("Set the angle of the beamline");
    
-   //UpdateCmd = new G4UIcmdWithoutParameter("/LBNE/det/update",this);
-   //UpdateCmd->SetGuidance("Update LBNE geometry.");
-   //UpdateCmd->SetGuidance("This command MUST be applied before \"beamOn\" ");
-   //UpdateCmd->SetGuidance("if you changed geometrical value(s).");
-   //UpdateCmd->AvailableForStates(G4State_Idle);
+   UpdateCmd = new G4UIcmdWithoutParameter("/LBNE/det/update",this);
+   UpdateCmd->SetGuidance("Update or Construct LBNE geometry. Same difference ");
+   UpdateCmd->SetGuidance("This command MUST be applied before \"beamOn\" ");
+   UpdateCmd->SetGuidance("if you changed geometrical value(s).");
+   UpdateCmd->AvailableForStates(G4State_PreInit);
    
-   
-	new G4UnitDefinition("kiloampere" , "kA", "Electric current", 1000.*ampere);
+   ConstructCmd = new G4UIcmdWithoutParameter("/LBNE/det/construct",this);
+   ConstructCmd->SetGuidance("Construct LBNE geometry. Should be one and only time ");
+   ConstructCmd->SetGuidance("This command MUST be applied before \"beamOn\" ");
+   ConstructCmd->SetGuidance("if you changed geometrical value(s).");
+   ConstructCmd->AvailableForStates(G4State_PreInit);
+  
+   new G4UnitDefinition("kiloampere" , "kA", "Electric current", 1000.*ampere);
         
         
 
@@ -569,7 +592,8 @@ LBNEDetectorMessenger::~LBNEDetectorMessenger()
    delete LBNEDir;
    delete ConstructTarget;
    delete SetBeamlineAngle;
-   //delete UpdateCmd;
+   delete UpdateCmd;
+   delete ConstructCmd;
 }
 
 
@@ -591,13 +615,16 @@ void LBNEDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     LBNEDetector->SetBeamlineAngle(SetBeamlineAngle->GetNewDoubleValue(newValue));
   }
   
-   /*
-   if ( command == UpdateCmd ) 
+  if ( command == UpdateCmd ) 
    {
-      LBNEDetector->UpdateGeometry();
+      LBNEDetector->Construct();
       return;
    }
-   */
+  if ( command == ConstructCmd ) 
+   {
+      LBNEDetector->Construct();
+      return;
+   }
 }
 	
 	

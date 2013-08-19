@@ -57,13 +57,13 @@ void LBNERunAction::BeginOfRunAction(const G4Run* aRun)
    //
 
    //check the simulation
-   LBNERunAction::CheckOKToRun();
+  //  LBNERunAction::CheckOKToRun();
 
-   if(!(fLBNEData -> GetOKToRun())) 
-   {
-      std::cout << "LBNERunAction::BeginOfRunAction() - 1. NOT OK TO RUN...returning " << std::endl; 
-      return;
-   }
+  // if(!(fLBNEData -> GetOKToRun())) 
+  // {
+  //    std::cout << "LBNERunAction::BeginOfRunAction() - 1. NOT OK TO RUN...returning " << std::endl; 
+  //    return;
+  // }
 
   //
   //It should now be decided if it is ok to run or not
@@ -71,11 +71,11 @@ void LBNERunAction::BeginOfRunAction(const G4Run* aRun)
   //if it is still ok to run...
 
    G4String spaces = "   ";
-   std::cout << std::endl;
+   //std::cout << std::endl;
    std::cout << "LBNERunAction::BeginOfRunAction() - Initializing Run " 
 	     << aRun->GetRunID() << "..." << std::endl;
    
-   std::cout << spaces << "Preparing \"" <<  fLBNEData -> GetSimulation() << "\" Simulation." << std::endl;
+   //std::cout << spaces << "Preparing \"" <<  fLBNEData -> GetSimulation() << "\" Simulation." << std::endl;
 
    //
    //Random number generator
@@ -106,31 +106,31 @@ void LBNERunAction::BeginOfRunAction(const G4Run* aRun)
    if(!primaryGeneratorAction)
    {
       std::cout << spaces << "PROBLEM: INVALID LBNEPrimaryGeneratorAction POINTER" << std::endl;
-      fLBNEData -> SetOKToRun(false);
+//      fLBNEData -> SetOKToRun(false);
       return;
    }
 
-   if(fLBNEData->GetSimulation() == "Standard Neutrino Beam" ||
-      fLBNEData->GetSimulation() == "Target Tracking"        ||
-      fLBNEData->GetSimulation() == "Horn 1 Tracking"    ||
-      fLBNEData->GetSimulation() == "Horn 2 Tracking" )
+//   if(fLBNEData->GetSimulation() == "Standard Neutrino Beam" ||
+//      fLBNEData->GetSimulation() == "Target Tracking"        ||
+//      fLBNEData->GetSimulation() == "Horn 1 Tracking"    ||
+//      fLBNEData->GetSimulation() == "Horn 2 Tracking" )
    {
       if (fLBNEData->GetUseFlukaInput() || fLBNEData->GetUseMarsInput()) 
       {
-	 G4bool ntpOpen = primaryGeneratorAction->OpenNtuple(fLBNEData->GetInputNtpFileName());
-	 
-	 if(!ntpOpen)
-	 {
-	    std::cout << spaces << "PROBLEM: FAILED TO OPEN INPUT NTUPLE." << std::endl;
-	    fLBNEData -> SetOKToRun(false);
-	    return;
-	 } 
-	 
+//	 G4bool ntpOpen = primaryGeneratorAction->OpenNtuple(fLBNEData->GetInputNtpFileName());
+//	 
+//	 if(!ntpOpen)
+//	 {
+//	    std::cout << spaces << "PROBLEM: FAILED TO OPEN INPUT NTUPLE." << std::endl;
+//	    fLBNEData -> SetOKToRun(false);
+//	    return;
+//	 } 
+//	 
 	 std::cout << spaces << "Successfully opened input ntuple \"" 
 		   << fLBNEData->GetInputNtpFileName() << "\"" << std::endl;
-	 
+//	 
 	 fLBNEData->SetNEvents(primaryGeneratorAction->GetNoOfPrimaries());
-	 
+//	 
       }
       else
       {

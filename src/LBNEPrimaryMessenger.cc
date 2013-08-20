@@ -1,5 +1,4 @@
 #include "LBNEPrimaryMessenger.hh"
-#include "LBNEDataInput.hh"
 
 #include "LBNEPrimaryGeneratorAction.hh"
 #include "G4UIdirectory.hh"
@@ -12,15 +11,14 @@
 #include "G4ios.hh"
 #include "globals.hh"
 #include "Randomize.hh"
-#include "G4RunManager.hh"
+#include "LBNERunManager.hh"
 
 LBNEPrimaryMessenger::LBNEPrimaryMessenger(LBNEPrimaryGeneratorAction* RA)
   :fPrimaryAction (RA)
 {
+   LBNERunManager* theRunManager = dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
    
-   LBNEDataInput *LBNEData = LBNEDataInput::GetLBNEDataInput();
-   
-   if(LBNEData->GetDebugLevel() > 0)
+   if(theRunManager->GetVerboseLevel() > 0)
    {
       G4cout << "LBNEPrimaryMessenger Constructor Called." << G4endl;
    }
@@ -107,15 +105,15 @@ LBNEPrimaryMessenger::~LBNEPrimaryMessenger()
 
 void LBNEPrimaryMessenger::SetNewValue(G4UIcommand* cmd, G4String val)
 {
-   LBNEDataInput *LBNEData = LBNEDataInput::GetLBNEDataInput();
+   LBNERunManager* theRunManager = dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
 
-   if(LBNEData->GetDebugLevel() > 1)
+   if(theRunManager->GetVerboseLevel() > 1)
    {
       G4cout << "LBNEPrimaryMessenger::SetNewValue - Setting Parameter value from input macro." << G4endl;
    }
 
 
-   if(LBNEData->GetDebugLevel() > 1)
+   if(theRunManager->GetVerboseLevel() > 1)
    {
       G4cout << "LBNEPrimaryMessenger::SetNewValue - Done Setting parameter value." << G4endl;
    }

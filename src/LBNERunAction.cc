@@ -9,17 +9,17 @@
 #include "LBNERunActionMessenger.hh"
 #include "LBNEAnalysis.hh"
 #include "LBNETrajectory.hh"
-#include "LBNEDataInput.hh"
 #include "Randomize.hh"
 #include "LBNERunManager.hh"
 #include "LBNEPrimaryGeneratorAction.hh"
 #include "G4ProcessTable.hh"
 
 //------------------------------------------------------------------------------
-LBNERunAction::LBNERunAction()
+LBNERunAction::LBNERunAction():
+fVerboseLevel(1)
 {
-   fLBNEData = LBNEDataInput::GetLBNEDataInput();
-   if(fLBNEData->GetDebugLevel() > 0)
+   
+   if(fVerboseLevel > 0)
    {
       std::cout << "LBNERunAction Constructor Called." << std::endl;
    }
@@ -31,7 +31,7 @@ LBNERunAction::LBNERunAction()
 //------------------------------------------------------------------------------
 LBNERunAction::~LBNERunAction()
 { 
-   if(fLBNEData->GetDebugLevel() > 0)
+   if(fVerboseLevel > 0)
    {
       std::cout << "LBNERunAction Destructor Called." << std::endl;
    }
@@ -42,33 +42,13 @@ LBNERunAction::~LBNERunAction()
 //------------------------------------------------------------------------------
 void LBNERunAction::BeginOfRunAction(const G4Run* aRun)
 {
-   if(fLBNEData->GetDebugLevel() > 0)
+    if(fVerboseLevel > 0)
    {
       std::cout << "LBNERunAction::BeginOfRunAction() Called." << std::endl;
    }
 
    
    LBNERunManager *pRunManager = (LBNERunManager*)LBNERunManager::GetRunManager();
-
-   //
-   //Check that the user has set up the simulation the way 
-   //he/she really wants it.
-   //If he/she hasn't, don't let him/her run.
-   //
-
-   //check the simulation
-  //  LBNERunAction::CheckOKToRun();
-
-  // if(!(fLBNEData -> GetOKToRun())) 
-  // {
-  //    std::cout << "LBNERunAction::BeginOfRunAction() - 1. NOT OK TO RUN...returning " << std::endl; 
-  //    return;
-  // }
-
-  //
-  //It should now be decided if it is ok to run or not
-  //If yes, continue to open ntuples etc and check again 
-  //if it is still ok to run...
 
    G4String spaces = "   ";
    //std::cout << std::endl;
@@ -115,21 +95,24 @@ void LBNERunAction::BeginOfRunAction(const G4Run* aRun)
 //      fLBNEData->GetSimulation() == "Horn 1 Tracking"    ||
 //      fLBNEData->GetSimulation() == "Horn 2 Tracking" )
    {
-      if (fLBNEData->GetUseFlukaInput() || fLBNEData->GetUseMarsInput()) 
+
+    LBNERunManager* theRunManager = dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
+      if (theRunManager->GetUseFlukaInput() || theRunManager->GetUseMarsInput()) 
       {
-//	 G4bool ntpOpen = primaryGeneratorAction->OpenNtuple(fLBNEData->GetInputNtpFileName());
+	 G4bool ntpOpen = primaryGeneratorAction->OpenNtuple(theRunManager->GetNptInputFileName());
 //	 
-//	 if(!ntpOpen)
-//	 {
-//	    std::cout << spaces << "PROBLEM: FAILED TO OPEN INPUT NTUPLE." << std::endl;
-//	    fLBNEData -> SetOKToRun(false);
-//	    return;
-//	 } 
+	 if(!ntpOpen)
+	 {
+	    std::cout << spaces << "PROBLEM: FAILED TO OPEN INPUT NTUPLE. Fatal " << std::endl;
+	    exit(2);
+	    return;
+	 } 
 //	 
 	 std::cout << spaces << "Successfully opened input ntuple \"" 
-		   << fLBNEData->GetInputNtpFileName() << "\"" << std::endl;
+		   << theRunManager->GetNptInputFileName() << "\"" << std::endl;
 //	 
-	 fLBNEData->SetNEvents(primaryGeneratorAction->GetNoOfPrimaries());
+	theRunManager->SetNumberOfEventsLBNE(primaryGeneratorAction->GetNoOfPrimaries());
+	// Note there are public accessors in geant4 v4.9.6 inside the G4RunManager... but not in v4.9.3... 
 //	 
       }
       else
@@ -141,30 +124,18 @@ void LBNERunAction::BeginOfRunAction(const G4Run* aRun)
    }
    //
 
-
-   if(!(fLBNEData -> GetOKToRun())) 
-   {
-      std::cout << "LBNERunAction::BeginOfRunAction() - 2. NOT OK TO RUN...returning " << std::endl; 
-      return;
-   }
-
    //
    //If still ok to run open output file
    //
 
    LBNEAnalysis* analysis = LBNEAnalysis::getInstance();
-   if(fLBNEData -> GetCreateOutput()) 
-      if(!(analysis->CreateOutput())) fLBNEData -> SetOKToRun(false);
-   
-   if(!(fLBNEData -> GetOKToRun())) 
-   {
-      std::cout << "LBNERunAction::BeginOfRunAction() - 3. NOT OK TO RUN...returning " << std::endl; 
-      return;
-   }
-
-   
-   std::cout << spaces << "Running with parameters set in LBNEDataInput..." << std::endl;
-   fLBNEData -> PrintSetup();
+   LBNERunManager* theRunManager = dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
+   if(theRunManager -> GetCreateOutput()) 
+      if(!(analysis->CreateOutput())) {
+	    std::cout << spaces << "PROBLEM: FAILED TO OPEN OUTPUT NTUPLE. Fatal " << std::endl;
+	    exit(2);
+      } 
+      
    std::cout << std::endl;
    
    std::cout << "LBNERunAction::BeginOfRunAction() - ...completed run initializtion. " << std::endl;
@@ -177,7 +148,8 @@ void LBNERunAction::BeginOfRunAction(const G4Run* aRun)
 void LBNERunAction::EndOfRunAction(const G4Run* aRun)
 {
 
-   if(fLBNEData->GetDebugLevel() > 0)
+   LBNERunManager* theRunManager = dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
+    if(theRunManager->GetVerboseLevel() > 0)
    {
       std::cout << "LBNERunAction::EndOfRunAction() Called." << std::endl;
    }
@@ -215,7 +187,7 @@ void LBNERunAction::EndOfRunAction(const G4Run* aRun)
       primaryGeneratorAction->CloseNtuple();
    }
    
-   if(fLBNEData -> GetCreateOutput()) 
+   if(theRunManager -> GetCreateOutput()) 
    {
       std::cout << spaces << "Closing Output File... " << std::endl;
       LBNEAnalysis* analysis = LBNEAnalysis::getInstance();
@@ -265,6 +237,8 @@ void LBNERunAction::EndOfRunAction(const G4Run* aRun)
 void LBNERunAction::CheckOKToRun()
 {
    //check the simulation
+   // Obsolte..
+   /*
    G4bool knownSim = false;
    const vstring_t simvec = fLBNEData -> GetListOfSimulations();
    const G4String simulation = fLBNEData -> GetSimulation();
@@ -289,6 +263,7 @@ void LBNERunAction::CheckOKToRun()
 
       fLBNEData -> SetOKToRun(false);
    }
+   */
    //
 }
 

@@ -1,7 +1,6 @@
 //#include <fstream>
 
 #include "LBNEDetectorConstruction.hh"
-#include "LBNEDataInput.hh"
 
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"

@@ -21,7 +21,6 @@
 
 
 #include "LBNETrackInformation.hh"
-#include "LBNEDataInput.hh"
 
 G4Allocator<LBNETrajectory> myTrajectoryAllocator;
 
@@ -44,8 +43,6 @@ LBNETrajectory::LBNETrajectory()
    fNImpWt             = 1.;
    fPreStepVolume      = 0;
    fStepLength         = 0;
-
-   fLBNEData = LBNEDataInput::GetLBNEDataInput();
 
 }
 //-------------------------------------------------------------------------
@@ -83,7 +80,6 @@ LBNETrajectory::LBNETrajectory(const G4Track* aTrack)
      fNImpWt    = 1.;
    }
 
-   fLBNEData=LBNEDataInput::GetLBNEDataInput();
 }
 
 //-------------------------------------------------------------------------
@@ -129,7 +125,6 @@ LBNETrajectory::LBNETrajectory(LBNETrajectory & right)
   }
   
 
-  fLBNEData=LBNEDataInput::GetLBNEDataInput();
 }
 
 //----------------------------------------------------------------------
@@ -178,7 +173,6 @@ LBNETrajectory::LBNETrajectory(const LBNETrajectory* right)
      fStepLength->push_back(rightsteplength);
   }
   
-  fLBNEData=LBNEDataInput::GetLBNEDataInput();
 }
 
 //-------------------------------------------------------------------------

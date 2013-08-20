@@ -3,9 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "LBNERunActionMessenger.hh"
-
 #include "LBNERunAction.hh"
-#include "LBNEDataInput.hh"
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
@@ -16,12 +14,12 @@
 #include "G4ios.hh"
 #include "globals.hh"
 #include "Randomize.hh"
-#include "G4RunManager.hh"
+#include "LBNERunManager.hh"
 
 LBNERunActionMessenger::LBNERunActionMessenger(LBNERunAction* RA)
   :runAction (RA)
 {
-  LBNEData=LBNEDataInput::GetLBNEDataInput();
+//  LBNEData=LBNEDataInput::GetLBNEDataInput();
 
   //
   //LBNE/rndm
@@ -45,8 +43,6 @@ LBNERunActionMessenger::LBNERunActionMessenger(LBNERunAction* RA)
   setRndmSeedCmd->SetDefaultValue (0);
   setRndmSeedCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
   //
-
-  //
   //LBNE/run
   //
   LBNERunDir = new G4UIdirectory("/LBNE/run/");
@@ -66,19 +62,19 @@ LBNERunActionMessenger::LBNERunActionMessenger(LBNERunAction* RA)
   InputNtpFileName = new G4UIcmdWithAString("/LBNE/run/InputNtpFileName",this);
   InputNtpFileName->SetGuidance("set input (fluka/mars) ntuple file name");
   InputNtpFileName->SetParameterName("extNtupleFileName",true);
-  InputNtpFileName->SetDefaultValue (LBNEData->GetInputNtpFileName());
+  InputNtpFileName->SetDefaultValue (G4String("none"));
   InputNtpFileName->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   DebugLevel = new G4UIcmdWithAnInteger("/LBNE/run/DebugLevel",this);
   DebugLevel->SetGuidance("Output some debugging info. Level sets the importance of the information printed.");
   DebugLevel->SetParameterName("DebugLevel",true);
-  DebugLevel->SetDefaultValue (LBNEData->GetDebugLevel());
+  DebugLevel->SetDefaultValue (RA->GetDebugLevel());
   DebugLevel->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   setNEvents = new G4UIcmdWithAnInteger("/LBNE/run/NEvents",this);
   setNEvents->SetGuidance("Set the number of Events to process");
   setNEvents->SetParameterName("NEvents",true);
-  setNEvents->SetDefaultValue (LBNEData->GetNEvents());
+  setNEvents->SetDefaultValue (50000);
   setNEvents->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   setRunID = new G4UIcmdWithAnInteger("/LBNE/run/setRunID",this);
@@ -96,7 +92,7 @@ LBNERunActionMessenger::LBNERunActionMessenger(LBNERunAction* RA)
   KillTrackingThreshold = new G4UIcmdWithADoubleAndUnit("/LBNE/run/KillTrackingThreshold",this);
   KillTrackingThreshold->SetGuidance("Sets Kill Tracking on or off");
   KillTrackingThreshold->SetParameterName("KillTrackingThreshold",true);
-  KillTrackingThreshold->SetDefaultValue(LBNEData->GetKillTrackingThreshold());
+  KillTrackingThreshold->SetDefaultValue(0.050*GeV);
   KillTrackingThreshold->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   setStepLimit = new G4UIcmdWithADoubleAndUnit("/LBNE/run/setStepLimit",this);
@@ -111,25 +107,25 @@ LBNERunActionMessenger::LBNERunActionMessenger(LBNERunAction* RA)
   useNImpWeight = new G4UIcmdWithABool("/LBNE/run/useNImpWeight",this);
   useNImpWeight->SetGuidance("use importance weighting (true/false)");
   useNImpWeight->SetParameterName("NImpWeight",true);
-  useNImpWeight->SetDefaultValue (LBNEData->GetImpWeightOn());
+  useNImpWeight->SetDefaultValue (true);
   useNImpWeight->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   useFlukaInput = new G4UIcmdWithABool("/LBNE/run/useFlukaInput",this);
   useFlukaInput->SetGuidance("use fluka input ntuple");
   useFlukaInput->SetParameterName("useFlukaInput",true);
-  useFlukaInput->SetDefaultValue (LBNEData->GetUseFlukaInput());
+  useFlukaInput->SetDefaultValue (false);
   useFlukaInput->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   useMarsInput = new G4UIcmdWithABool("/LBNE/run/useMarsInput",this);
   useMarsInput->SetGuidance("use mars input ntuple");
   useMarsInput->SetParameterName("useMarsInput",true);
-  useMarsInput->SetDefaultValue (LBNEData->GetUseMarsInput());
+  useMarsInput->SetDefaultValue (false);
   useMarsInput->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   KillTracking=new G4UIcmdWithABool("/LBNE/run/KillTracking",this);
   KillTracking->SetGuidance("Sets Kill Tracking on or off");
   KillTracking->SetParameterName("KillTracking",true);
-  KillTracking->SetDefaultValue(LBNEData->GetKillTracking());
+  KillTracking->SetDefaultValue(true);
   KillTracking->AvailableForStates(G4State_PreInit,G4State_Idle);
   
   //
@@ -144,24 +140,25 @@ LBNERunActionMessenger::LBNERunActionMessenger(LBNERunAction* RA)
   setNuNtupleFile = new G4UIcmdWithAString("/LBNE/output/OutputNtpFileName",this);
   setNuNtupleFile->SetGuidance("set output ntuple file name");
   setNuNtupleFile->SetParameterName("fileName",true);
-  setNuNtupleFile->SetDefaultValue (LBNEData->GetOutputNtpFileName());
+  setNuNtupleFile->SetDefaultValue (G4String(""));
   setNuNtupleFile->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   setASCIIFile = new G4UIcmdWithAString("/LBNE/output/setASCIIFile",this);
   setASCIIFile->SetGuidance("set ASCII file name");
   setASCIIFile->SetParameterName("fileName",true);
-  setASCIIFile->SetDefaultValue (LBNEData->GetASCIIOutputFileName());
+  setASCIIFile->SetDefaultValue (G4String(""));
   setASCIIFile->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   CreateOutput = new G4UIcmdWithABool("/LBNE/output/CreateOutput",this);
   CreateOutput->SetGuidance("Create Output Ntuple (true/false)");
   CreateOutput->SetParameterName("CreateOutput",true);
+  CreateOutput->SetDefaultValue(false);
   CreateOutput->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   outputASCIIFile = new G4UIcmdWithABool("/LBNE/output/outputASCIIFile",this);
   outputASCIIFile->SetGuidance("output ASCII file (true/false)");
   outputASCIIFile->SetParameterName("outputASCIIFile",true);
-  outputASCIIFile->SetDefaultValue (LBNEData->GetCreateASCIIOutput());
+  outputASCIIFile->SetDefaultValue (false);
   outputASCIIFile->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   
@@ -206,7 +203,9 @@ LBNERunActionMessenger::~LBNERunActionMessenger()
 void LBNERunActionMessenger::SetNewValue(G4UIcommand* command,G4String newValues)
 {
 
-   LBNEDataInput *LBNEData = LBNEDataInput::GetLBNEDataInput();
+//   LBNEDataInput *LBNEData = LBNEDataInput::GetLBNEDataInput();
+   
+   LBNERunManager* runManager = dynamic_cast<LBNERunManager *>(G4RunManager::GetRunManager());
    
    //
    //LBNE/rndm
@@ -236,24 +235,27 @@ void LBNERunActionMessenger::SetNewValue(G4UIcommand* command,G4String newValues
    //
    if (command == SimulationName)
    {
-      LBNEData->SetSimulation(newValues);
+      std::cerr << " Command Simulation Name obsolete, nothing been done " << std::endl;
+//      LBNEData->SetSimulation(newValues);
    }
    if (command == InputNtpTreeName)
    {
-      LBNEData->SetInputNtpTreeName(newValues);
+      std::cerr << " Input NptTreeName not yet supported, Fatal " << std::endl;
+      exit(2);
+//      LBNEData->SetInputNtpTreeName(newValues);
    }
    if (command == InputNtpFileName)
    {
-      LBNEData->SetInputNtpFileName(newValues);
+      runManager->SetNptInputFileName(newValues);
    }
 
    if (command == DebugLevel)
-   {
-      LBNEData->SetDebugLevel(DebugLevel->GetNewIntValue(newValues));
+   { 
+      std::cerr << " Command Debug Level obsolete, Use standard Geant4 debug level  " << std::endl;      
    }
    if (command == setNEvents)
    {
-      LBNEData->SetNEvents(setNEvents->GetNewIntValue(newValues));
+      runManager->nEvents  = setNEvents->GetNewIntValue(newValues);     
    }   
    if (command == setRunID)
    {
@@ -263,32 +265,36 @@ void LBNERunActionMessenger::SetNewValue(G4UIcommand* command,G4String newValues
 
    if ( command == FlukaNumiTgtShiftCmd ) 
    {
-      LBNEData->SetExtraFlukaNumiTargetZShift(FlukaNumiTgtShiftCmd->GetNewDoubleValue(newValues));
+      std::cerr << " Command FlukaNumiTgtShiftCmd obsolete, nothing been done " << std::endl;
+//      LBNEData->SetExtraFlukaNumiTargetZShift(FlukaNumiTgtShiftCmd->GetNewDoubleValue(newValues));
    }
    if (command== KillTrackingThreshold)
    {
-      LBNEData->SetKillTrackingThreshold(KillTrackingThreshold->GetNewDoubleValue(newValues));
+       runManager->GetLBNESteppingManager()->SetKillTrackingThreshold(KillTrackingThreshold->GetNewDoubleValue(newValues));
    }
    if (command == setStepLimit)
    {
-      LBNEData->SetStepLimit(setStepLimit->GetNewDoubleValue(newValues));
+      std::cerr << " Command Step Limit probably obsolete in Geant4, do nothing...  " << std::endl;
+//      runManager->GetSteppingManager()->SetStepLimit(setStepLimit->GetNewDoubleValue(newValues));
    }  
 
    if (command == useNImpWeight)    
    { 
-      LBNEData->SetNImpWeightOn(useNImpWeight->GetNewBoolValue(newValues)); 
+      std::cerr << " use NImpWeight not yet implemented...  " << std::endl;
+//      LBNEData->SetNImpWeightOn(useNImpWeight->GetNewBoolValue(newValues)); 
    }
    if (command == useFlukaInput)         
    { 
-      LBNEData->SetUseFlukaInput(useFlukaInput->GetNewBoolValue(newValues));
+      runManager->SetUseFlukaInput(useFlukaInput->GetNewBoolValue(newValues));
    }
    if (command == useMarsInput)          
    { 
-      LBNEData->SetUseMarsInput(useMarsInput->GetNewBoolValue(newValues)); 
+      runManager->SetUseMarsInput(useMarsInput->GetNewBoolValue(newValues)); 
    }
    if (command== KillTracking)
    {
-     LBNEData->SetKillTracking(KillTracking->GetNewBoolValue(newValues));
+      std::cerr << " useKill Tracking not yet implemented... Or obsolete " << std::endl;
+//     LBNEData->SetKillTracking(KillTracking->GetNewBoolValue(newValues));
    }
   
    //
@@ -298,20 +304,20 @@ void LBNERunActionMessenger::SetNewValue(G4UIcommand* command,G4String newValues
    //
    if (command == setNuNtupleFile)
    {
-      LBNEData->SetOutputNtpFileName(newValues);
+      runManager->SetOutputNtpFileName(newValues);
    }
    if (command == setASCIIFile)
    {
-      LBNEData->SetASCIIOutputFileName(newValues);
+      runManager->SetOutputASCIIFileName(newValues);
    }
 
    if (command == CreateOutput)
    {
-      LBNEData->SetCreateOutput(CreateOutput->GetNewBoolValue(newValues));
+      runManager->SetCreateOutput(CreateOutput->GetNewBoolValue(newValues));
    }
    if (command == outputASCIIFile)
    {
-      LBNEData->SetCreateASCIIOutput(outputASCIIFile->GetNewBoolValue(newValues));
+      runManager->SetCreateASCIIOutput(outputASCIIFile->GetNewBoolValue(newValues));
    }
 
    //

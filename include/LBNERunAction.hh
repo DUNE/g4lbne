@@ -25,9 +25,12 @@ public:
    void CheckOKToRun();
   
 private:
-
-   LBNEDataInput* fLBNEData;
+   int fVerboseLevel;
    LBNERunActionMessenger* runMessenger;
+   
+public:
+   void SetDebugLevel(bool t) { fVerboseLevel = t; }  
+   bool GetDebugLevel() const { return fVerboseLevel; }  
 };
 
 #endif

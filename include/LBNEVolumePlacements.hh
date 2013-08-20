@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.10 2013/08/15 22:29:44 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.11 2013/08/20 22:57:03 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -260,6 +260,11 @@ private:
   std::vector<G4double> fTargetHorn1TransThick;
   std::vector<G4double> fTargetHorn1Lengths;
   std::vector<G4double> fTargetHorn1ZPositions;
+  std::vector<G4double> fUsptrHorn1InnerRadsUpstr;
+  std::vector<G4double> fUpstrHorn1InnerRadsDownstr;
+  std::vector<G4double> fUpstrHorn1TransThick;
+  std::vector<G4double> fUpstrHorn1Lengths;
+  std::vector<G4double> fUpstrHorn1ZPositions;
   
   // a flag to check the geometry as it is constructed. 
   

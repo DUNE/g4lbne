@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNESteppingAction.cc
-// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.1 2013/08/19 22:32:14 lebrun Exp $
+// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.2 2013/08/20 22:57:03 lebrun Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -33,12 +33,16 @@
 LBNESteppingAction::LBNESteppingAction()
 {
   pRunManager=(LBNERunManager*)LBNERunManager::GetRunManager();
-
-  
+ fKillTrackingThreshold = 0.050*GeV;
+ if (pRunManager->GetVerboseLevel() > 0) {
+   std::cerr << " LBNESteppingAction::LBNESteppingAction called ... " << std::endl;
+ }
+ pMessenger = new LBNESteppingActionMessenger(this); 
 }
 //----------------------------------------------------------------------
 LBNESteppingAction::~LBNESteppingAction()
 {
+ delete pMessenger;
 }
 
 //----------------------------------------------------------------------
@@ -56,14 +60,12 @@ void LBNESteppingAction::UserSteppingAction(const G4Step * theStep)
    LBNESteppingAction::KillNonNuThresholdParticles(theStep);
       
    LBNESteppingAction::CheckDecay(theStep);
+   if (fOutStudy.is_open()) StudyAbsorption(theStep);
 }
 
 
 
 
-//----------------------------------------------------------------------
-//----------------------------------------------------------------------
-//----------------------------------------------------------------------
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
 void LBNESteppingAction::KillNonNuThresholdParticles(const G4Step * theStep)
@@ -74,7 +76,7 @@ void LBNESteppingAction::KillNonNuThresholdParticles(const G4Step * theStep)
    //
    //kill the track if it is below the kill tracking threshold and it is NOT a neutrino
    //
-   if ( (theTrack->GetKineticEnergy() < (0.050*GeV)) &&
+   if ( (theTrack->GetKineticEnergy() < fKillTrackingThreshold) &&
        (particleDefinition != G4NeutrinoE::NeutrinoEDefinition())&&
        (particleDefinition != G4NeutrinoMu::NeutrinoMuDefinition()) &&
        (particleDefinition != G4NeutrinoTau::NeutrinoTauDefinition()) &&
@@ -291,4 +293,110 @@ void LBNESteppingAction::CheckInTgtEndPlane(const G4Step * theStep)
    }
 
 
+}
+void LBNESteppingAction::OpenAscii(const char *fname) {
+
+   fOutStudy.open(fname);
+   if (!fOutStudy.is_open()) {
+     std::string descr("Can not open output file "); 
+     descr += std::string(fname);
+     G4Exception("LBNESteppingAction::OpenAscii", "I/O Problem ", FatalException, descr.c_str());
+   }
+   fOutStudy << 
+    " id x y z ILDecayChan ILHorn1Neck ILHorn2Entr ILNCDecayChan ILNCHorn1Neck ILNCHorn2Entr ILAlHorn2Entr" << std::endl;
+}
+
+void LBNESteppingAction::StudyAbsorption(const G4Step * theStep) {
+//
+//make sure we are dealing with a geantino, or a mu, to include lengthening of step due to curling in 
+// B Field
+//
+   G4Track * theTrack = theStep->GetTrack();
+   if (((theTrack->GetParticleDefinition()->GetParticleName()).find("geantino") == std::string::npos) && (
+        ((theTrack->GetParticleDefinition()->GetParticleName()).find("mu+") == std::string::npos ))) return;
+   G4StepPoint* prePtr = theStep->GetPreStepPoint();
+   if (prePtr == 0) {
+     std::cerr << " No Pre point for step.. A ghost ???? Fatal... " << std::endl; exit(2);
+   }
+   if ( theTrack->GetNextVolume() == 0 ) {
+       fOutStudy << " " << pRunManager->GetCurrentEvent()->GetEventID(); 
+        for (size_t k=0; k!=3; k++) fOutStudy << " " << prePtr->GetPosition()[k];
+	fOutStudy << " " << totalAbsDecayChan << " " <<  totalAbsHorn1Neck 
+	          << " " << totalAbsHorn2Entr;
+	fOutStudy << " " << waterAbsDecayChan << " " <<  waterAbsHorn1Neck 
+	          << " " << waterAbsHorn2Entr << " " <<  alumAbsHorn2Entr << std::endl;
+		  return;
+   }		  
+   //
+   // I set the position of the geantino production vertex at Z=0.;
+   //
+   if ((std::abs(prePtr->GetPosition()[0]) < 1.0e-10) && (std::abs(prePtr->GetPosition()[1]) < 1.0e-10)) {
+//     std::cerr << " Starting point, z = " << prePtr->GetPosition()[2] << std::endl;
+     totalAbsDecayChan= 0.;
+     totalAbsHorn1Neck=0.;
+     totalAbsHorn2Entr=0.;
+     waterAbsDecayChan= 0.;
+     waterAbsHorn1Neck=0.;
+     waterAbsHorn2Entr=0.;
+     alumAbsHorn2Entr=0.;
+     goneThroughHorn1Neck = false;
+     goneThroughHorn2Entr = false;
+   } 
+
+   if(theStep->GetPreStepPoint()->GetPhysicalVolume() == NULL) return;
+   const double ll = theStep->GetStepLength();
+   G4StepPoint* postPtr = theStep->GetPostStepPoint();
+   if (postPtr == NULL) {
+       fOutStudy << " " << pRunManager->GetCurrentEvent()->GetEventID(); 
+        for (size_t k=0; k!=3; k++) fOutStudy << " " << prePtr->GetPosition()[k];
+	fOutStudy << " " << totalAbsDecayChan << " " <<  totalAbsHorn1Neck 
+	          << " " << totalAbsHorn2Entr;
+	fOutStudy << " " << waterAbsDecayChan << " " <<  waterAbsHorn1Neck 
+	          << " " << waterAbsHorn2Entr << " " <<  alumAbsHorn2Entr << std::endl;
+		  return;
+   }		  
+   if (postPtr->GetPosition()[2] > 830.) goneThroughHorn1Neck=true; // approximate... 
+   if (postPtr->GetPosition()[2] > 6600.) goneThroughHorn2Entr=true; //truly approximate. 
+   if (ll < 1.0e-10) return; 
+   // Just print where we are now... 
+   G4VPhysicalVolume *physVol = postPtr->GetPhysicalVolume();
+   std::string vName(physVol->GetName());
+   G4Material *material = postPtr->GetMaterial();
+    
+   if (pRunManager->GetCurrentEvent()->GetEventID() < 3) {
+      const double r = std::sqrt(postPtr->GetPosition()[0]*postPtr->GetPosition()[0] + 
+                                 postPtr->GetPosition()[1]*postPtr->GetPosition()[1]); 
+      const double t = r/std::abs(postPtr->GetPosition()[2] + 515.25); // ZOrigin = -515.25
+      // debugging only valid for Zorigin of -515.
+      std::cerr << " r = " << r << " theta " << t <<  " z = " << postPtr->GetPosition()[2] << 
+	      " In " << vName << " material " << material->GetName()
+	      << " InterLength " << material->GetNuclearInterLength() << std::endl;  
+   } 
+
+   totalAbsDecayChan += ll/material->GetNuclearInterLength(); 
+   if (vName.find("WaterLayer") != std::string::npos) waterAbsDecayChan += ll/material->GetNuclearInterLength(); 
+   if (!goneThroughHorn1Neck) {
+     totalAbsHorn1Neck += ll/material->GetNuclearInterLength(); 
+     if (vName.find("WaterLayer") != std::string::npos) waterAbsHorn1Neck += ll/material->GetNuclearInterLength(); 
+   }
+   if (!goneThroughHorn2Entr) {
+     totalAbsHorn2Entr += ll/material->GetNuclearInterLength(); 
+     if (vName.find("WaterLayer") != std::string::npos) {
+        waterAbsHorn2Entr += ll/material->GetNuclearInterLength(); 
+     } else {
+       if ((vName.find("PH01") != std::string::npos) && (material->GetName().find("Alumin") != std::string::npos))
+         alumAbsHorn2Entr += ll/material->GetNuclearInterLength(); 
+      }
+   }
+   if (vName.find("DPipe") !=  std::string::npos) {
+        fOutStudy << " " << pRunManager->GetCurrentEvent()->GetEventID(); 
+        for (size_t k=0; k!=3; k++) fOutStudy << " " << postPtr->GetPosition()[k];
+	fOutStudy << " " << totalAbsDecayChan << " " <<  totalAbsHorn1Neck 
+	          << " " << totalAbsHorn2Entr;
+	fOutStudy << " " << waterAbsDecayChan << " " <<  waterAbsHorn1Neck 
+	          << " " << waterAbsHorn2Entr << " " <<  alumAbsHorn2Entr << std::endl;
+        theTrack->SetTrackStatus(fStopAndKill);
+	return;
+   } 
+    
 }

@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNETrackingAction.cc
-// $Id: LBNETrackingAction.cc,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: LBNETrackingAction.cc,v 1.1.1.1.2.1 2013/08/20 22:57:03 lebrun Exp $
 //----------------------------------------------------------------------
 
 
@@ -16,7 +16,6 @@
 #include "LBNERunManager.hh"
 #include "LBNEAnalysis.hh"
 #include "LBNETrajectory.hh"
-#include "LBNEDataInput.hh"
 #include "LBNEPrimaryGeneratorAction.hh"
 #include "LBNEEventAction.hh"
 
@@ -26,17 +25,12 @@ LBNETrackingAction::LBNETrackingAction()
 {
   pRunManager=(LBNERunManager*)LBNERunManager::GetRunManager();
   NPGA=(LBNEPrimaryGeneratorAction*)pRunManager->GetUserPrimaryGeneratorAction();
-  fLBNEData=LBNEDataInput::GetLBNEDataInput();
-
-  if(fLBNEData->GetDebugLevel() > 0)
-  {
-     std::cout << "LBNETrackingAction Constructor Called." << std::endl;
-  }
+ // No message, fpTrackingManager pointer not set yet ..
 }
 //--------------------------------------------------------------------------------------
 LBNETrackingAction::~LBNETrackingAction()
 {
-   if(fLBNEData->GetDebugLevel() > 0)
+   if(fpTrackingManager->GetVerboseLevel() > 0)
    {
       std::cout << "LBNETrackingAction Destructor Called." << std::endl;
    }
@@ -44,11 +38,11 @@ LBNETrackingAction::~LBNETrackingAction()
 //--------------------------------------------------------------------------------------
 void LBNETrackingAction::PreUserTrackingAction(const G4Track* aTrack)
 {
-   if(fLBNEData->GetDebugLevel() > 1)
+   if(fpTrackingManager->GetVerboseLevel() > 1)
    {
       G4int evtno = pRunManager->GetCurrentEvent()->GetEventID();
       std::cout << "Event " << evtno << ": LBNETrackingAction::PreUserTrackingAction() Called." << std::endl;
-      if(fLBNEData->GetDebugLevel() > 2)
+      if(fpTrackingManager->GetVerboseLevel() > 2)
       {
 	 LBNETrackInformation* trackinfo=new LBNETrackInformation(); 
 	 trackinfo -> Print(aTrack);
@@ -60,8 +54,6 @@ void LBNETrackingAction::PreUserTrackingAction(const G4Track* aTrack)
 
 
 
-   if(fLBNEData->GetSimulation() == "Standard Neutrino Beam")
-   {
       LBNETrackingAction::SetPreLBNETrackInformation(aTrack);
       
       //Store tracks in trajectory container
@@ -69,31 +61,10 @@ void LBNETrackingAction::PreUserTrackingAction(const G4Track* aTrack)
       fpTrackingManager->SetTrajectory(new LBNETrajectory(aTrack));
       
       LBNETrackingAction::AnalyzeIfNeutrino(aTrack);
-   }
-   else if(fLBNEData->GetSimulation() == "Target Tracking" )
-   {
-      LBNETrackingAction::SetPreLBNETrackInformation(aTrack);
-      //Store tracks in trajectory container
-      fpTrackingManager->SetStoreTrajectory(true);
-      fpTrackingManager->SetTrajectory(new LBNETrajectory(aTrack));
-   }
-   else if(fLBNEData->GetSimulation() == "Horn 1 Tracking" ||
-	   fLBNEData->GetSimulation() == "Horn 2 Tracking" )
-   {
-      LBNETrackingAction::SetPreLBNETrackInformation(aTrack);
-      //Store tracks in trajectory container
-      fpTrackingManager->SetStoreTrajectory(true);
-      fpTrackingManager->SetTrajectory(new LBNETrajectory(aTrack));
-   }
-   else
-   {
-      std::cout << "LBNETrackingAction::PreUserTrackingAction()- PROBLEM: Don't know about the \"" 
-		<< fLBNEData->GetSimulation() << "\" Simulation" << std::endl;
-   }
    
    
    
-  if(fLBNEData->GetDebugLevel() > 1)
+  if(fpTrackingManager->GetVerboseLevel() > 1)
   {
      std::cout << "         LBNETrackingAction::PreUserTrackingAction() - done." << std::endl;
   }
@@ -102,11 +73,11 @@ void LBNETrackingAction::PreUserTrackingAction(const G4Track* aTrack)
 //--------------------------------------------------------------------------------------
 void LBNETrackingAction::PostUserTrackingAction(const G4Track* aTrack)
 {
-   if(fLBNEData->GetDebugLevel() > 1)
+   if(fpTrackingManager->GetVerboseLevel() > 1)
    {
       G4int evtno = pRunManager->GetCurrentEvent()->GetEventID();
       std::cout << "Event " << evtno << ": LBNETrackingAction::PostUserTrackingAction() Called." << std::endl;
-      if(fLBNEData->GetDebugLevel() > 2)
+      if(fpTrackingManager->GetVerboseLevel() > 2)
       {
 	 LBNETrackInformation* trackinfo=new LBNETrackInformation(); 
 	 trackinfo -> Print(aTrack);
@@ -116,27 +87,10 @@ void LBNETrackingAction::PostUserTrackingAction(const G4Track* aTrack)
 
    
 
-   if(fLBNEData->GetSimulation() == "Standard Neutrino Beam")
-   {
-      LBNETrackingAction::SetPostLBNETrackInformation(aTrack);
-   }
-   else if(fLBNEData->GetSimulation() == "Target Tracking" )
-   {
-      LBNETrackingAction::SetPostLBNETrackInformation(aTrack);
-   }
-   else if(fLBNEData->GetSimulation() == "Horn 1 Tracking" ||
-	   fLBNEData->GetSimulation() == "Horn 2 Tracking" )
-   {
-      LBNETrackingAction::SetPostLBNETrackInformation(aTrack);
-   }
-   else
-   {
-      std::cout << "LBNETrackingAction::PostUserTrackingAction()- PROBLEM: Don't know about the \"" 
-		<< fLBNEData->GetSimulation() << "\" Simulation" << std::endl;
-   }
+   LBNETrackingAction::SetPostLBNETrackInformation(aTrack);
 
 
-    if(fLBNEData->GetDebugLevel() > 1)
+    if(fpTrackingManager->GetVerboseLevel() > 1)
     {
        std::cout << "         LBNETrackingAction::PostUserTrackingAction() - done." << std::endl;
     }
@@ -155,7 +109,7 @@ void LBNETrackingAction::PostUserTrackingAction(const G4Track* aTrack)
 //--------------------------------------------------------------------------------------
 void LBNETrackingAction::SetPreLBNETrackInformation(const G4Track* aTrack)
 {
-   if(fLBNEData->GetDebugLevel() > 3)
+   if(fpTrackingManager->GetVerboseLevel() > 3)
    {
       G4int evtno = pRunManager->GetCurrentEvent()->GetEventID();
       std::cout << "Event " << evtno 
@@ -167,7 +121,8 @@ void LBNETrackingAction::SetPreLBNETrackInformation(const G4Track* aTrack)
    if (aTrack->GetTrackID()==1) 
    {   
       LBNETrackInformation* info = new LBNETrackInformation();
-      if (fLBNEData->GetUseFlukaInput() || fLBNEData->GetUseMarsInput())
+      LBNERunManager* theRunManager=dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
+      if (theRunManager->GetUseFlukaInput() || theRunManager->GetUseMarsInput())
       {
 	 info->SetTgen(NPGA->GetTgen());
 	 info->SetNImpWt(NPGA->GetWeight());
@@ -187,7 +142,7 @@ void LBNETrackingAction::SetPreLBNETrackInformation(const G4Track* aTrack)
 //--------------------------------------------------------------------------------------
 void LBNETrackingAction::SetPostLBNETrackInformation(const G4Track* aTrack)
 {
-   if(fLBNEData->GetDebugLevel() > 3)
+   if(fpTrackingManager->GetVerboseLevel() > 3)
    {
       G4int evtno = pRunManager->GetCurrentEvent()->GetEventID();
       std::cout << "Event " << evtno 
@@ -215,7 +170,7 @@ void LBNETrackingAction::SetPostLBNETrackInformation(const G4Track* aTrack)
 //--------------------------------------------------------------------------------------
 void LBNETrackingAction::AnalyzeIfNeutrino(const G4Track* aTrack)
 {
-   if(fLBNEData->GetDebugLevel() > 3)
+   if(fpTrackingManager->GetVerboseLevel() > 3)
    {
       G4int evtno = pRunManager->GetCurrentEvent()->GetEventID();
       std::cout << "Event " << evtno 

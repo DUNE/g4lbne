@@ -22,7 +22,6 @@
 
 class LBNETrajectory;
 class G4Polyline;
-class LBNEDataInput;
 
 typedef std::vector<G4VTrajectoryPoint*> LBNETrajectoryPointContainer;
 typedef std::vector<G4ThreeVector> LBNETrajectoryMomentumContainer;
@@ -107,7 +106,6 @@ class LBNETrajectory : public G4VTrajectory
    LBNETrajectoryVolumeName*        fPreStepVolume;
    DVec*                            fStepLength;
 
-   LBNEDataInput* fLBNEData;
 };
 extern G4Allocator<LBNETrajectory> myTrajectoryAllocator;
 

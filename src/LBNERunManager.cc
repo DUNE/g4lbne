@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNERunManager.cc
-// $Id: LBNERunManager.cc,v 1.1.1.1.2.1 2013/08/19 22:32:14 lebrun Exp $
+// $Id: LBNERunManager.cc,v 1.1.1.1.2.2 2013/08/20 22:57:03 lebrun Exp $
 //----------------------------------------------------------------------
 
 #include "LBNERunManager.hh"
@@ -28,13 +28,21 @@
 
 //------------------------------------------------------------------------------------
 LBNERunManager::LBNERunManager():
+nEvents(50000),
 fGeometryIntializedHere(false),
-fPhysicsInitializedHere(false)
+fPhysicsInitializedHere(false),
+fMarsOrFlukaInputFileName(G4String("")),
+fAsciiOutputFileName(G4String("")),
+fNptOutputFileName(G4String("")),
+fUseFluka(false),
+fUseMars(false),
+fCreateOutput(false),
+fCreateAsciiOutput(false),
+fVerboseLevel(1)
 
 //:primaryGeneratorAction(0)
 {
-   LBNEData = LBNEDataInput::GetLBNEDataInput();
-   if(LBNEData->GetDebugLevel() > 0)
+   if(fVerboseLevel > 0)
    {
       std::cout << "LBNERunManager Constructor Called." << std::endl;
    }
@@ -42,7 +50,7 @@ fPhysicsInitializedHere(false)
 //------------------------------------------------------------------------------------
 LBNERunManager::~LBNERunManager()
 {
-   if(LBNEData->GetDebugLevel() > 0)
+   if(fVerboseLevel > 0)
    {
       std::cout << "LBNERunManager Destructor Called." << std::endl;
    }
@@ -266,6 +274,8 @@ void LBNERunManager::InitializePhysics() {
   fLBNEStackingAction = new LBNEStackingAction;
   G4RunManager::SetUserAction(fLBNEStackingAction);
    
+   if (fVerboseLevel > 0) std::cerr << " All User Actions created and declared " << std::endl;
+   
   if (!G4RunManager::ConfirmBeamOnCondition()) {
      std::cerr << " Expecting to be able to turn on the beam at this stage.  Not the case ! Fatal " << std::endl;
      exit(2);
@@ -276,9 +286,6 @@ void LBNERunManager::InitializePhysics() {
 
 void LBNERunManager::BeamOn(G4int n_event,const char* macroFile,G4int n_select)
 {
-  std::cerr << " LBNERunManager::BeamOn : ! called ! n_event " << n_event << std::endl;
-	 
-  nEvents = n_event;
   G4bool runOn(true);
   G4bool cond = ConfirmBeamOnCondition();
   if(cond)
@@ -287,7 +294,8 @@ void LBNERunManager::BeamOn(G4int n_event,const char* macroFile,G4int n_select)
      {
 	TStopwatch *sWatch=new TStopwatch();
 	sWatch->Start(true);
-	numberOfEventToBeProcessed = n_event;
+	// Over write the number of events with our own
+	numberOfEventToBeProcessed = nEvents;
 	
 	//
 	//RunInitializtion() calls a lot of functions one of which is 
@@ -298,9 +306,9 @@ void LBNERunManager::BeamOn(G4int n_event,const char* macroFile,G4int n_select)
 	G4cout << G4endl;
 	std::cout << "********************************************************" << std::endl;
 	std::cout << "********************************************************" << std::endl;
-	std::cout << "*****LBNERunManager::BeamOn - Initializting Run...******" << std::endl;	 
+	std::cout << "*****LBNERunManager::BeamOn - With "<<nEvents << " Events " << std::endl;	 
 	std::cout << "********************************************************" << std::endl;
-	G4RunManager::BeamOn(n_event, macroFile, n_select);
+	G4RunManager::BeamOn(nEvents, macroFile, n_select);
 	std::cout << "********************************************************" << std::endl;
 	std::cout << "***LBNERunManager::BeamOn - ...Done ***" << std::endl;
 	std::cout << "********************************************************" << std::endl;
@@ -308,7 +316,7 @@ void LBNERunManager::BeamOn(G4int n_event,const char* macroFile,G4int n_select)
 	G4cout << G4endl;	 
 	sWatch->Stop();
 	G4cout << "LBNERunManager::BeamOn - Run Summary..." << G4endl;  	 
-	G4cout << "   Processed "<< n_event << " particles in ";
+	G4cout << "   Processed "<< nEvents << " beam particles in ";
 	G4cout.precision(3);
 	G4cout << sWatch->RealTime() << " s = " 
 	       << sWatch->RealTime()/60. << " min " 

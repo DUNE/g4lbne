@@ -20,7 +20,6 @@
 #include "G4UImanager.hh"
 
 #include "LBNEPrimaryMessenger.hh"
-#include "LBNEDataInput.hh"
 #include "LBNERunManager.hh"
 #include "LBNEParticleCode.hh"
 #include "LBNEAnalysis.hh"

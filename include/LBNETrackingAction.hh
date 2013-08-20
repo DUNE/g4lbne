@@ -7,7 +7,6 @@
 #include "G4UserTrackingAction.hh"
 #include "LBNETrajectory.hh"
 
-class LBNEDataInput;
 class LBNERunManager;
 class LBNEPrimaryGeneratorAction;
 class G4EventManager;
@@ -27,7 +26,6 @@ class LBNETrackingAction : public G4UserTrackingAction
    void AnalyzeIfNeutrino(const G4Track* aTrack);
 
   private:
-   LBNEDataInput *fLBNEData;
    LBNERunManager *pRunManager;
    LBNEPrimaryGeneratorAction *NPGA;
    G4EventManager *EvtManager;

@@ -19,41 +19,23 @@ int iread = 0;
 
 void eventRates::Loop()
 {
-//   In a ROOT session, you can do:
-//      Root > .L eventRates.C++  // The ++ is important because the code runs MUCH faster when compiled
-//      Root > eventRates t
-//      Root > t.Loop();       // Loop on all entries
-//
+  //   In a ROOT session, you can do:
+  //      Root > .L eventRates.C++  // The ++ is important because the code runs MUCH faster when compiled
+  //      Root > eventRates t
+  //      Root > t.Loop();       // Loop on all entries
+  //
 
-//     This is the loop skeleton where:
-//    jentry is the global entry number in the chain
-//    ientry is the entry number in the current Tree
-//  Note that the argument to GetEntry must be:
-//    jentry for TChain::GetEntry
-//    ientry for TTree::GetEntry and TBranch::GetEntry
-//
-//       To read only selected branches, Insert statements like:
-// METHOD1:
-//    fChain->SetBranchStatus("*",0);  // disable all branches
-//    fChain->SetBranchStatus("branchname",1);  // activate branchname
-// METHOD2: replace line
-//    fChain->GetEntry(jentry);       //read all branches
-//by  b_branchname->GetEntry(ientry); //read only this branch
-   if (fChain == 0) return;
-
-
-//????????????????????????????
-//????????????????????????????
-//
    //
-   //define the Reference pot !!!!!!!!!!!!!!!!
+   // Define the Reference pot 
    //
+
    double refpot          = 1;
    std::string potref_str = eventRates::GetPOTAsString(refpot);
 
    //
-   //make histograms 
+   // Set Histogram Binning
    //
+
    // simple binning for some alignment plots
    int nbins   = 40;
    double xmin = 0.0;
@@ -70,6 +52,10 @@ void eventRates::Loop()
   // 2.0 GeV bins up to 120 GeV
    for(int i = 0; i<(120-20)/2.0; i++)
      fastmc_bins.push_back(20.0+i*2.0);
+
+   //
+   // Declare all the histograms
+   //
 
    TH1D *fhNuMuFlux    = new TH1D("numu_flux_forplots",  
 				  "numu_flux_forplots", nbins,xmin,xmax);
@@ -236,8 +222,10 @@ void eventRates::Loop()
 					   "nutaubar_nceventrateosc", fastmc_bins.size()-1,&fastmc_bins[0]);
 
 
+   //
+   // Call Sumw2 to make sure histogram errors are propagated correctly
+   //
  
-   // make space for sumw2
    fhNuMuFlux->Sumw2();   
    fhNuMuBarFlux->Sumw2();   
    fhNuEFlux->Sumw2();   
@@ -318,80 +306,82 @@ void eventRates::Loop()
    fhNuTauNCEventRateOsc_FastMC->Sumw2();   
    fhNuTauBarNCEventRateOsc_FastMC->Sumw2();   
 
+
    //
-   //Note: the units are per GeV ONLY if you divide the weight by the binwidth, when filling, see below
-   //It is a good idea to ALWAYS make the units /GeV. Then when different people have different binning
-   // you can still compare the Y-axis this also goes for using 1e12 as your reference pot.
+   // Set histogram titles
+   //
+
    std::string fluxtitle      = "Neutrinos / GeV / m^{2} / POT";
    std::string oscfluxtitle      = "Oscillated Neutrinos / GeV / m^{2} / POT";
    std::string cceventratetitle      = "CC Events / POT";
    std::string nceventratetitle      = "CC Events / POT";
 
-   SetTitles(fhNuMuFlux,         "#nu_{#mu} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuMuBarFlux,      "#bar{#nu}_{#mu} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuEFlux,          "#nu_{e} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuEBarFlux,       "#bar{#nu}_{e} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuTauFlux,          "#nu_{tau} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuTauBarFlux,       "#bar{#nu}_{#tau} Energy (GeV)", fluxtitle);
+   SetTitles(fhNuMuFlux,         "Energy (GeV)", "Unosc #nu_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuMuBarFlux,      "Energy (GeV)", "Unosc #bar{#nu}_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuEFlux,          "#nu_{e} Energy (GeV)", "Unosc #nu_{e}s / GeV / m^{2} / POT");
+   SetTitles(fhNuEBarFlux,       "#bar{#nu}_{e} Energy (GeV)", "Unosc #bar{#nu}_{e}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauFlux,          "#nu_{tau} Energy (GeV)", "Unosc #nu_{#tau}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauBarFlux,       "#bar{#nu}_{#tau} Energy (GeV)", "Unosc #bar{#nu}_{#tau}s / GeV / m^{2} / POT");
 
-   SetTitles(fhNuMuFlux_FastMC,         "#nu_{#mu} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuMuBarFlux_FastMC,      "#bar{#nu}_{#mu} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuEFlux_FastMC,          "#nu_{e} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuEBarFlux_FastMC,       "#bar{#nu}_{e} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuTauFlux_FastMC,          "#nu_{tau} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuTauBarFlux_FastMC,       "#bar{#nu}_{#tau} Energy (GeV)", fluxtitle);
+   SetTitles(fhNuMuFlux_FastMC,         "Energy (GeV)", "Unosc #nu_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuMuBarFlux_FastMC,      "Energy (GeV)", "Unosc #bar{#nu}_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuEFlux_FastMC,          "#nu_{e} Energy (GeV)", "Unosc #nu_{e}s / GeV / m^{2} / POT");
+   SetTitles(fhNuEBarFlux_FastMC,       "#bar{#nu}_{e} Energy (GeV)", "Unosc #bar{#nu}_{e}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauFlux_FastMC,          "#nu_{tau} Energy (GeV)", "Unosc #nu_{#tau}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauBarFlux_FastMC,       "#bar{#nu}_{#tau} Energy (GeV)", "Unosc #bar{#nu}_{#tau}s / GeV / m^{2} / POT");
 
-   SetTitles(fhNuMuFluxOsc,         "#nu_{#mu} Energy (GeV)", oscfluxtitle);
-   SetTitles(fhNuMuBarFluxOsc,      "#bar{#nu}_{#mu} Energy (GeV)", oscfluxtitle);
-   SetTitles(fhNuEFluxOsc,          "#nu_{e} Energy (GeV)", oscfluxtitle);
-   SetTitles(fhNuEBarFluxOsc,       "#bar{#nu}_{e} Energy (GeV)", oscfluxtitle);
-   SetTitles(fhNuTauFluxOsc,          "#nu_{tau} Energy (GeV)", oscfluxtitle);
-   SetTitles(fhNuTauBarFluxOsc,       "#bar{#nu}_{#tau} Energy (GeV)", oscfluxtitle);
+   SetTitles(fhNuMuFluxOsc,         "Energy (GeV)", "Oscillated #nu_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuMuBarFluxOsc,      "Energy (GeV)", "Oscillated #bar{#nu}_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuEFluxOsc,          "Energy (GeV)", "Oscillated #nu_{e}s / GeV / m^{2} / POT");
+   SetTitles(fhNuEBarFluxOsc,       "Energy (GeV)", "Oscillated #bar{#nu}_{e}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauFluxOsc,          "Energy (GeV)", "Oscillated #nu_{#tau}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauBarFluxOsc,       "Energy (GeV)", "Oscillated #bar{#nu}_{#tau}s / GeV / m^{2} / POT");
 
-   SetTitles(fhNuMuFluxOsc_FastMC,         "#nu_{#mu} Energy (GeV)", oscfluxtitle);
-   SetTitles(fhNuMuBarFluxOsc_FastMC,      "#bar{#nu}_{#mu} Energy (GeV)", oscfluxtitle);
-   SetTitles(fhNuEFluxOsc_FastMC,          "#nu_{e} Energy (GeV)", oscfluxtitle);
-   SetTitles(fhNuEBarFluxOsc_FastMC,       "#bar{#nu}_{e} Energy (GeV)", oscfluxtitle);
-   SetTitles(fhNuTauFluxOsc_FastMC,          "#nu_{tau} Energy (GeV)", oscfluxtitle);
-   SetTitles(fhNuTauBarFluxOsc_FastMC,       "#bar{#nu}_{#tau} Energy (GeV)", oscfluxtitle);
-
-   SetTitles(fhNuMuCCEventRate,         "#nu_{#mu} Energy (GeV)", "#nu_{#mu} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuMuBarCCEventRate,      "#bar{#nu}_{#mu} Energy (GeV)", "#bar{#nu}_{#mu} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuECCEventRate,          "#nu_{e} Energy (GeV)", "#nu_{e} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuEBarCCEventRate,       "#bar{#nu}_{e} Energy (GeV)", "#bar{#nu}_{e} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuTauCCEventRate,          "#nu_{#tau} Energy (GeV)", "#nu_{#tau} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuTauBarCCEventRate,       "#bar{#nu}_{#tau} Energy (GeV)", "#bar{#nu}_{#tau} CC Events / GeV / kTon /  POT");
-
-   SetTitles(fhNuMuCCEventRate_FastMC,         "#nu_{#mu} Energy (GeV)", "#nu_{#mu} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuMuBarCCEventRate_FastMC,      "#bar{#nu}_{#mu} Energy (GeV)", "#bar{#nu}_{#mu} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuECCEventRate_FastMC,          "#nu_{e} Energy (GeV)", "#nu_{e} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuEBarCCEventRate_FastMC,       "#bar{#nu}_{e} Energy (GeV)", "#bar{#nu}_{e} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuTauCCEventRate_FastMC,          "#nu_{#tau} Energy (GeV)", "#nu_{#tau} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuTauBarCCEventRate_FastMC,       "#bar{#nu}_{#tau} Energy (GeV)", "#bar{#nu}_{#tau} CC Events / GeV / kTon /  POT");
-
-   SetTitles(fhNuMuCCEventRateOsc,         "#nu_{#mu} Energy (GeV)", "Oscillated #nu_{#mu} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuMuBarCCEventRateOsc,      "#bar{#nu}_{#mu} Energy (GeV)", "Oscillated #bar{#nu}_{#mu} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuECCEventRateOsc,          "#nu_{e} Energy (GeV)", "Oscillated #nu_{e} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuEBarCCEventRateOsc,       "#bar{#nu}_{e} Energy (GeV)", "Oscillated #bar{#nu}_{e} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuTauCCEventRateOsc,          "#nu_{#tau} Energy (GeV)", "Oscillated #nu_{#tau} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuTauBarCCEventRateOsc,       "#bar{#nu}_{#tau} Energy (GeV)", "Oscillated #bar{#nu}_{#tau} CC Events / GeV / kTon /  POT");
-
-   SetTitles(fhNuMuCCEventRateOsc_FastMC,         "#nu_{#mu} Energy (GeV)", "Oscillated #nu_{#mu} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuMuBarCCEventRateOsc_FastMC,      "#bar{#nu}_{#mu} Energy (GeV)", "Oscillated #bar{#nu}_{#mu} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuECCEventRateOsc_FastMC,          "#nu_{e} Energy (GeV)", "Oscillated #nu_{e} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuEBarCCEventRateOsc_FastMC,       "#bar{#nu}_{e} Energy (GeV)", "Oscillated #bar{#nu}_{e} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuTauCCEventRateOsc_FastMC,          "#nu_{#tau} Energy (GeV)", "Oscillated #nu_{#tau} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuTauBarCCEventRateOsc_FastMC,       "#bar{#nu}_{#tau} Energy (GeV)", "Oscillated #bar{#nu}_{#tau} CC Events / GeV / kTon /  POT");
+   SetTitles(fhNuMuFluxOsc_FastMC,         "Energy (GeV)", "Oscillated #nu_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuMuBarFluxOsc_FastMC,      "Energy (GeV)", "Oscillated #bar{#nu}_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuEFluxOsc_FastMC,          "Energy (GeV)", "Oscillated #nu_{e}s / GeV / m^{2} / POT");
+   SetTitles(fhNuEBarFluxOsc_FastMC,       "Energy (GeV)", "Oscillated #bar{#nu}_{e}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauFluxOsc_FastMC,          "Energy (GeV)", "Oscillated #nu_{#tau}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauBarFluxOsc_FastMC,       "Energy (GeV)", "Oscillated #bar{#nu}_{#tau}s / GeV / m^{2} / POT");
 
 
-   SetTitles(fhNuMuNCEventRate,         "#nu_{#mu} Energy (GeV)", "#nu_{#mu} NC Events / GeV / kTon / POT");
-   SetTitles(fhNuMuBarNCEventRate,      "#bar{#nu}_{#mu} Energy (GeV)","#bar{#nu}_{#mu} NC Events / GeV / kTon / POT");
-   SetTitles(fhNuENCEventRate,          "#nu_{e} Energy (GeV)", "#nu_{e} NC Events / GeV / kTon / POT");
-   SetTitles(fhNuEBarNCEventRate,       "#bar{#nu}_{e} Energy (GeV)", "#bar{#nu}_{e} NC Events / GeV / kTon / POT");
-   SetTitles(fhNuTauNCEventRate,          "#nu_{#tau} Energy (GeV)", "#nu_{#tau} NC Events / GeV / kTon / POT");
-   SetTitles(fhNuTauBarNCEventRate,       "#bar{#nu}_{#tau} Energy (GeV)", "#bar{#nu}_{#tau} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuMuCCEventRate,         "Energy (GeV)", "#nu_{#mu} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuMuBarCCEventRate,      "Energy (GeV)", "#bar{#nu}_{#mu} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuECCEventRate,          "Energy (GeV)", "#nu_{e} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuEBarCCEventRate,       "Energy (GeV)", "#bar{#nu}_{e} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauCCEventRate,          "Energy (GeV)", "#nu_{#tau} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauBarCCEventRate,       "Energy (GeV)", "#bar{#nu}_{#tau} CC Events / GeV / kTon /  POT");
 
-   SetTitles(fhNuMuNCEventRate_FastMC,         "#nu_{#mu} Energy (GeV)", "#nu_{#mu} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuMuCCEventRate_FastMC,         "Energy (GeV)", "#nu_{#mu} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuMuBarCCEventRate_FastMC,      "Energy (GeV)", "#bar{#nu}_{#mu} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuECCEventRate_FastMC,          "Energy (GeV)", "#nu_{e} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuEBarCCEventRate_FastMC,       "Energy (GeV)", "#bar{#nu}_{e} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauCCEventRate_FastMC,          "Energy (GeV)", "#nu_{#tau} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauBarCCEventRate_FastMC,       "Energy (GeV)", "#bar{#nu}_{#tau} CC Events / GeV / kTon /  POT");
+
+   SetTitles(fhNuMuCCEventRateOsc,         "Energy (GeV)", "Oscillated #nu_{#mu} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuMuBarCCEventRateOsc,      "Energy (GeV)", "Oscillated #bar{#nu}_{#mu} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuECCEventRateOsc,          "Energy (GeV)", "Oscillated #nu_{e} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuEBarCCEventRateOsc,       "Energy (GeV)", "Oscillated #bar{#nu}_{e} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauCCEventRateOsc,          "Energy (GeV)", "Oscillated #nu_{#tau} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauBarCCEventRateOsc,       "Energy (GeV)", "Oscillated #bar{#nu}_{#tau} CC Events / GeV / kTon /  POT");
+
+   SetTitles(fhNuMuCCEventRateOsc_FastMC,         "Energy (GeV)", "Oscillated #nu_{#mu} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuMuBarCCEventRateOsc_FastMC,      "Energy (GeV)", "Oscillated #bar{#nu}_{#mu} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuECCEventRateOsc_FastMC,          "Energy (GeV)", "Oscillated #nu_{e} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuEBarCCEventRateOsc_FastMC,       "Energy (GeV)", "Oscillated #bar{#nu}_{e} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauCCEventRateOsc_FastMC,          "Energy (GeV)", "Oscillated #nu_{#tau} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauBarCCEventRateOsc_FastMC,       "Energy (GeV)", "Oscillated #bar{#nu}_{#tau} CC Events / GeV / kTon /  POT");
+
+
+   SetTitles(fhNuMuNCEventRate,         "Energy (GeV)", "#nu_{#mu} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuMuBarNCEventRate,      "Energy (GeV)","#bar{#nu}_{#mu} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuENCEventRate,          "Energy (GeV)", "#nu_{e} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuEBarNCEventRate,       "Energy (GeV)", "#bar{#nu}_{e} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauNCEventRate,          "Energy (GeV)", "#nu_{#tau} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauBarNCEventRate,       "Energy (GeV)", "#bar{#nu}_{#tau} NC Events / GeV / kTon / POT");
+
+   SetTitles(fhNuMuNCEventRate_FastMC,         "Energy (GeV)", "#nu_{#mu} NC Events / GeV / kTon / POT");
    SetTitles(fhNuMuBarNCEventRate_FastMC,      "#bar{#nu}_{#mu} Energy (GeV)","#bar{#nu}_{#mu} NC Events / GeV / kTon / POT");
    SetTitles(fhNuENCEventRate_FastMC,          "#nu_{e} Energy (GeV)", "#nu_{e} NC Events / GeV / kTon / POT");
    SetTitles(fhNuEBarNCEventRate_FastMC,       "#bar{#nu}_{e} Energy (GeV)", "#bar{#nu}_{e} NC Events / GeV / kTon / POT");
@@ -413,52 +403,33 @@ void eventRates::Loop()
    SetTitles(fhNuTauBarNCEventRateOsc_FastMC,       "#bar{#nu}_{#tau} Energy (GeV)", "Oscillated #bar{#nu}_{#tau} NC Events / GeV / kTon / POT");
 
    //
-   //start loop
+   //start loop over entries in ntuple
    //
-   Long64_t nentries = fChain->GetEntries();
-   std::cout << "Total number of Entries = " << nentries << std::endl;
 
-   
+   Long64_t nentries = fChain->GetEntries();
+   std::cout << "Total number of Entries = " << nentries << std::endl;   
 
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) 
    //for (Long64_t jentry=0; jentry<1000;jentry++) //fast -- for testing
    {
       Long64_t ientry = LoadTree(jentry);
-      if (ientry < 0) break;
       nb = fChain->GetEntry(jentry);   nbytes += nb;
+      if (ientry < 0) break;
 
       ++iread;
       
-      if(iread % 100 == 0)
+      if(iread % 10000 == 0)
       {
 	 std::cout << "Reading Entry " << iread << std::endl;
       }
 
 
       //
-      // compute the flux at any detector location by
-      // specifying the detector coordinates and computing the
-      // detector weight for that location
-      //
-      //Call the reweighting function and give it the x, y and z coords
-      //of your detector location in cm with respect to the MC origin.
-      //For example the... 
-      // MINERVA Coords are (x,y,z)              = (0.0, 0.0, 103099.0) cm.
-      // MINOS Near Detector COORDS are  (x,y,z) = (0.0, 0.0, 103649.0) cm.
-      // MINOS Far  Detector COORDS are  (x,y,z) = (0.0, 0.0, 73534000.0) cm.
-      // NOVA  Far  Detector COORDS are  (x,y,z) = (1104000.0, -420000.0, 81045000.0)
-      // should confirm with nova the coords, these are pretty old numbers.
-      //
-      // LBNE  Far Detector COORDS are   (x,y,z) = (0.0, 0.0, 129700000.0) cm.
-      //                        
-
-      //
-      //note that these coords are the location of the MINOS ND 
-      //(almost, these are more up-to-date coords)
-      //So you can compare the MINOSND plots and the 
-      // PLOTS and they should be nearly identical
-      //this is a good check that the code works properly
+      // Compute the detector location weight
+      // This calculation needs to know the coordinates
+      // of the detector where you want to plot the flux
+      // which is set by the eventRates constructor 
       //
 
       double nuenergyatsomedet     = -999.0;
@@ -468,23 +439,15 @@ void eventRates::Loop()
       detvec.push_back(dety);
       detvec.push_back(detz);
 
-      //this function computes the dectector weight and neutrino energy at detx,y,z
+      //this function computes the location weight and neutrino energy at detx,y,z
       eventRates::GetWeight(detvec, detectorwghtatsomedet, nuenergyatsomedet);
+      
+      // Calculate the total weight, including location weight, importance weight
+      // and POT scale factor
 
-      //
-      //Note that for off-axis locations this function, eventRates::GetWeight, 
-      //becomes more and more of
-      //an approximation, this is because this function determines the weight
-      //at one point in space and normalizes to a fidicuial volume of 1 meter
-      //in radius around the beam axis. This works fine for on axis detectors
-      //because the flux within a cross section of 1 meter around the beam axis
-      //is reasonably flat as a function of neutrino energy
-      //However the farther off axis the detector the more the flux varies 
-      //across the cross sectional area of the detector
-      //
-
-      //Nimpwt is the same no matter what detector you are referring to
       double fluxwghtsomedet = (detectorwghtatsomedet*Nimpwt/3.1415)*(refpot/fTotalPOT);
+
+      // Multiply flux weights by cross sections to get event rate weights
 
       std::string current_string = "CC";
       double cceventratewghtsomedet       = fluxwghtsomedet * GetXSec((double)Ntype,(double)NenergyN[0],current_string);
@@ -621,7 +584,7 @@ void eventRates::Loop()
       }
    }//end loop over entries
 
-   // normalize by bin width
+   // normalize by bin width for plots but not for fastmc
    fhNuMuFlux->Scale(1.0,"width");
    fhNuMuCCEventRate->Scale(1.0,"width");
    fhNuMuNCEventRate->Scale(1.0,"width");
@@ -671,30 +634,9 @@ void eventRates::Loop()
    fhNuTauBarNCEventRateOsc->Scale(1.0,"width");
 
    //
-   //draw and save histograms
+   // Style histograms
    //
 
-   TCanvas *c1 = new TCanvas("c1","Canvas 1",1);
-   TCanvas *c2 = new TCanvas("c2","Canvas 2",1);
-   TCanvas *c3 = new TCanvas("c3","Canvas 3",1);
-   TCanvas *c4 = new TCanvas("c4","Canvas 4",1);
-   TCanvas *c5 = new TCanvas("c5","Canvas 5",1);
-
-   TCanvas *c6 = new TCanvas("c6","Canvas 6",1);
-   TCanvas *c7 = new TCanvas("c7","Canvas 7",1);
-   TCanvas *c8 = new TCanvas("c8","Canvas 8",1);
-   TCanvas *c9 = new TCanvas("c9","Canvas 9",1);
-   TCanvas *c10 = new TCanvas("c10","Canvas 10",1);
-   TCanvas *c11 = new TCanvas("c11","Canvas 11",1);
-   TCanvas *c12 = new TCanvas("c12","Canvas 12",1);
-   TCanvas *c13 = new TCanvas("c13","Canvas 13",1);
-   TCanvas *c14 = new TCanvas("c14","Canvas 14",1);
-   TCanvas *c15 = new TCanvas("c15","Canvas 15",1);
-   TCanvas *c16 = new TCanvas("c16","Canvas 16",1);
-   TCanvas *c17 = new TCanvas("c17","Canvas 17",1);
-   TCanvas *c18 = new TCanvas("c18","Canvas 18",1);
-
-   // Style
    TGaxis::SetMaxDigits(2);
    fhNuMuFlux_FastMC->GetYaxis()->SetTitleOffset(1.4);
    fhNuMuBarFlux_FastMC->GetYaxis()->SetTitleOffset(1.4);
@@ -717,139 +659,11 @@ void eventRates::Loop()
    fhNuTauNCEventRate_FastMC->GetYaxis()->SetTitleOffset(1.4);
    fhNuTauBarNCEventRate_FastMC->GetYaxis()->SetTitleOffset(1.4);
 
-   //drawing histograms
-   //
-   {
-     ffilename = ffilename + "_" + detectorname;
-      
-     c1->cd();
-     fhNuMuFlux->Draw();
-     std::string cpath1 = ffilename + "_" + fhNuMuFlux->GetName() + ".eps";
-     std::string cpath2 = ffilename + "_" + fhNuMuFlux->GetName() + ".png";
-     c1->SaveAs(cpath1.c_str());
-     c1->SaveAs(cpath2.c_str());
-
-     c2->cd();
-     fhNuMuBarFlux->Draw();
-     cpath1 = ffilename + "_" + fhNuMuBarFlux->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuMuBarFlux->GetName() + ".png";
-     c2->SaveAs(cpath1.c_str());
-     c2->SaveAs(cpath2.c_str());
-
-     c3->cd();
-     fhNuEFlux->Draw();
-     cpath1 = ffilename + "_" + fhNuEFlux->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuEFlux->GetName() + ".png";
-     c3->SaveAs(cpath1.c_str());
-     c3->SaveAs(cpath2.c_str());
+   // save histograms to file
+   ffilename = ffilename + "_" + detectorname;
      
-     c4->cd();
-     fhNuEBarFlux->Draw();
-     cpath1 = ffilename + "_" + fhNuEBarFlux->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuEBarFlux->GetName() + ".png";
-     c4->SaveAs(cpath1.c_str());
-     c4->SaveAs(cpath2.c_str());      
 
-     c5->cd();
-     fhNuTauFlux->Draw();
-     cpath1 = ffilename + "_" + fhNuTauFlux->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuTauFlux->GetName() + ".png";
-     c5->SaveAs(cpath1.c_str());
-     c5->SaveAs(cpath2.c_str());
-     
-     c6->cd();
-     fhNuTauBarFlux->Draw();
-     cpath1 = ffilename + "_" + fhNuTauBarFlux->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuTauBarFlux->GetName() + ".png";
-     c6->SaveAs(cpath1.c_str());
-     c6->SaveAs(cpath2.c_str());      
-
-     c7->cd();
-     fhNuMuCCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuMuCCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuMuCCEventRate->GetName() + ".png";
-     c7->SaveAs(cpath1.c_str());
-     c7->SaveAs(cpath2.c_str());
-
-     c8->cd();
-     fhNuMuBarCCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuMuBarCCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuMuBarCCEventRate->GetName() + ".png";
-     c8->SaveAs(cpath1.c_str());
-     c8->SaveAs(cpath2.c_str());
-
-     c9->cd();
-     fhNuECCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuECCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuECCEventRate->GetName() + ".png";
-     c9->SaveAs(cpath1.c_str());
-     c9->SaveAs(cpath2.c_str());
-     
-     c10->cd();
-     fhNuEBarCCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuEBarCCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuEBarCCEventRate->GetName() + ".png";
-     c10->SaveAs(cpath1.c_str());
-     c10->SaveAs(cpath2.c_str());      
-
-     c11->cd();
-     fhNuTauCCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuTauCCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuTauCCEventRate->GetName() + ".png";
-     c11->SaveAs(cpath1.c_str());
-     c11->SaveAs(cpath2.c_str());
-     
-     c12->cd();
-     fhNuTauBarCCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuTauBarCCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuTauBarCCEventRate->GetName() + ".png";
-     c12->SaveAs(cpath1.c_str());
-     c12->SaveAs(cpath2.c_str());      
-
-     c13->cd();
-     fhNuMuNCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuMuNCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuMuNCEventRate->GetName() + ".png";
-     c13->SaveAs(cpath1.c_str());
-     c13->SaveAs(cpath2.c_str());
-
-     c14->cd();
-     fhNuMuBarNCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuMuBarNCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuMuBarNCEventRate->GetName() + ".png";
-     c14->SaveAs(cpath1.c_str());
-     c14->SaveAs(cpath2.c_str());
-
-     c15->cd();
-     fhNuENCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuENCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuENCEventRate->GetName() + ".png";
-     c15->SaveAs(cpath1.c_str());
-     c15->SaveAs(cpath2.c_str());
-     
-     c16->cd();
-     fhNuEBarNCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuEBarNCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuEBarNCEventRate->GetName() + ".png";
-     c16->SaveAs(cpath1.c_str());
-     c16->SaveAs(cpath2.c_str());      
-
-     c17->cd();
-     fhNuTauNCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuTauNCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuTauNCEventRate->GetName() + ".png";
-     c17->SaveAs(cpath1.c_str());
-     c17->SaveAs(cpath2.c_str());
-     
-     c18->cd();
-     fhNuTauBarNCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuTauBarNCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuTauBarNCEventRate->GetName() + ".png";
-     c18->SaveAs(cpath1.c_str());
-     c18->SaveAs(cpath2.c_str());      
-   }
-
-// Save histograms to a root file
+   // Save histograms to a root file
    TFile f((ffilename+".root").c_str(),"recreate");
    fhNuMuFlux->Write();
    fhNuMuBarFlux->Write();

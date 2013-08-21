@@ -168,7 +168,7 @@ public :
    TBranch        *b_data_tptype;   //!
    TBranch        *b_data_tgen;   //!
 
-   eventRates(std::string simulation = "G4PBeam", std::string geometry = "CD1-CDR_Geo", std::string location = "LBNEFD", std::string physics_list = "QGSP_BERT", int n_files = 250, double pot_per_file = 100000);
+   eventRates(std::string simulation = "G4PBeam", std::string version = "v2r4p1", std::string geometry = "Nominal_FHC", std::string location = "LBNEFD", std::string physics_list = "QGSP_BERT", int n_files = 250, double pot_per_file = 100000);
 
    virtual ~eventRates();
    virtual Int_t    Cut(Long64_t entry);
@@ -210,27 +210,25 @@ public :
 #endif
 
 #ifdef eventRates_cxx
-eventRates::eventRates(std::string simulation, std::string geometry, std::string location, std::string physics_list, int n_files, double potperfile)
+
+eventRates::eventRates(std::string simulation, std::string version, std::string geometry, std::string location, std::string physics_list, int n_files, double potperfile)
 {
-  //simulation = G4PBeam or Fluka
+  // simulation = G4PBeam (default) or Fluka
+  // geometry = Nominal_FHC (default), Nominal_RHC, DPHelium_FHC, etc
+  // location = LBNEFD (default), LBNEND, etc 
+  // physics_list = QGSP_BERT (default), QGSP, FTFP_BERT, etc
+  // n_files = 250 (default)
+  // potperfile = 100000 (default)
 
   // Read the cross-sections from files
   ReadXSecsFromFiles();
 
-//????????????????????????????
-//????????????????????????????
-//
-   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   //
-   //Add files here
-   //
-  std::vector<std::string> fFileVec;
-
+  // Set detector coordinates based on requested detector location
   detectorname = location;
   if(location=="LBNEND") {
     detx = 0.0;
     dety = 0.0;
-    detz = 47915.0;
+    detz = 45900.0;
   }
   
   if(location=="LBNEFD") {
@@ -239,45 +237,44 @@ eventRates::eventRates(std::string simulation, std::string geometry, std::string
     detz = 129700000.0;
   }
 
-  if(location=="LBNEFD_XSHIFT+21") {
+  if(location=="LBNEFDX21") {
     detx = 2100.0;
     dety = 0.0;
     detz = 129700000.0; 
   }
-  if(location=="LBNEFD_XSHIFT-21") {
+  if(location=="LBNEFDX-21") {
     detx = -2100.0;
     dety = 0.0;
     detz = 129700000.0; 
   }
-  if(location=="LBNEFD_YSHIFT+21") {
+  if(location=="LBNEFDY21") {
     detx = 0.0;
     dety = 2100.0;
     detz = 129700000.0; 
   }
-  if(location=="LBNEFD_YSHIFT-21") {
+  if(location=="LBNEFDY-21") {
     detx = 0.0;
     dety = -2100.0;
     detz = 129700000.0; 
   }
-  if(location == "LBNEFD_XSHIFT500") {
+  if(location == "LBNEFDX500") {
     detx = 50000.0;
     dety = 0.0;
     detz = 129700000.0; 
   }
-  if(location == "LBNEFD_XSHIFT2000") {
+  if(location == "LBNEFDX2000") {
     detx = 200000.0;
     dety = 0.0;
     detz = 129700000.0; 
   }
   
-  std::string physics_list_file_path1 = "";
-  std::string physics_list_file_path2 = "";
+  // get user name from environment
+  std::string username(getenv("USER"));
 
-  physics_list_file_path1 = "/"+physics_list;
-  physics_list_file_path2 = "_"+physics_list;
-  
-  std::string flux_dir = "/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+"/"+physics_list+"/nubeam-"+simulation+"-stdnubeam/flux/";
-  
+  std::string flux_dir = "/lbne/data/users/"+username+"/fluxfiles/g4lbne/"+version+"/"+geometry+"/"+physics_list+"/nubeam-"+simulation+"-stdnubeam/flux/";
+
+  std::vector<std::string> fFileVec;
+
   int start_index = 1;
   int end_index = n_files;
   
@@ -303,9 +300,10 @@ eventRates::eventRates(std::string simulation, std::string geometry, std::string
   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   //set the filename prefix for saving histogram plots 
   //
-  ffilename = "g4lbne_"+geometry+"_"+physics_list;
+  ffilename = "histos_g4lbne_"+geometry+"_"+physics_list;
   if(simulation=="Fluka")
-     ffilename = "fluka_"+geometry+"_"+physics_list;
+     ffilename = "histos_fluka_"+geometry+"_"+physics_list;
+  ffilename = flux_dir+ffilename;
    
    //
    //????????????????????????????

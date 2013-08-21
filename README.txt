@@ -88,8 +88,8 @@ the geometry.
 Read the comments in the macros for more details.
 
 The beamline geometry is configured from input files in the /inputs directory.
-CD1-CDR_Geo.input is the current default geometry for neutrino mode running.
-CD1-CDR_GeoRHC.input is the current default for antineutrino running.  Both
+Nominal_FHC.input is the current default geometry for neutrino mode running.
+Nominal_RHC.input is the current default for antineutrino running.  Both
 of these correspond to the CD1 CDR reference design and differ only in the
 magnitude of the horn current.  le010z185i is the NuMI geometry.
 
@@ -100,7 +100,7 @@ Running and Plotting (a simple example)
 in g4lbne directory there is a directory called "example"
 once you have compiled and in the g4lbne directory run the following
 
-./g4lbne --input inputs/CD1-CDR_Geo.input example/nubeam-G4PBeam-stdnubeam_lbnedocdb2161v6_010.mac
+./g4lbne --input inputs/Nominal_FHC.input example/nubeam-G4PBeam-stdnubeam_lbnedocdb2161v6_010.mac
 
 If you examime the example/nubeam-G4PBeam-stdnubeam_010.mac macro...you 
 will see that the Run ID is 10 and the output file name will be 
@@ -109,7 +109,7 @@ in the example directory
 
 once that is finished running, try another one...
 
-./g4lbne --input inputs/CD1-CDR_Geo.input example/nubeam-G4PBeam-stdnubeam_011.mac
+./g4lbne --input inputs/Nominal_FHC.input example/nubeam-G4PBeam-stdnubeam_011.mac
 
 Once that is finished...in the g4lbne/example directory you have 2 flux files
 called 
@@ -172,12 +172,13 @@ Running and Plotting (a more complex example involving grid
                       running and oscillated event rates)
 *************************************************************
 Below is a description of the procedure for creating a set of plots
-that compare flux, oscillated and unoscillated event rates for two
-different geometry configurations using large statistics samples.
+that compare flux and oscillated and unoscillated event rates for two
+different geometry configurations using large statistics samples. You 
+will need to have Fermilab grid credentials to do this (see the wiki).
 
 1. Create a modified geometry
 
-For this example, you'll want to make some sort of change to the nominal geometry.  For example, you could change the decay pipe fill material to Helium by opening inputs/CD1-CDR_Geo.input, and changing the line
+For this example, you'll want to make some sort of change to the nominal geometry.  For example, you could change the decay pipe fill material to Helium by opening inputs/Nominal_FHC.input, and changing the line
 
 DecayPipeFillGEANTmat 15
 
@@ -185,11 +186,48 @@ to
 
 DecayPipeFillGEANTmat 27
 
-Save the fill as CD1-CDR_Geo_DPHelium.input.  Similarly, create a file called CD1-CDR_GeoRHC_DPHelium.input that is the same as CD1-CDR_GeoRHC.input with the DecayPipeFillGEANTmat again changed to 27.
+Save the fill as DPHelium_FHC.input.  Similarly, create a file called DPHelium_RHC.input that is the same as Nominal_RHC.input with the DecayPipeFillGEANTmat again changed to 27.
 
 2. Generate nominal and varied flux ntuples
 
-After obtaining credential for running on the FermiGrid (see the wiki), you can use the script example/submit_flux.py to generate a large sample of flux MC in both the nominal and varied configurations.  The various inputs and options of submit_flux.py are available by executing 
+After obtaining credentials for running on the FermiGrid, you can use the script example/submit_flux.py to generate a large sample of flux MC in both the nominal and varied configurations.  The various inputs and options of submit_flux.py are available by executing 
 
 python submit_flux.py --help
 
+The following commands will submit 250 jobs each in neutrino and anti-neutrino mode using the nominal and varied input cards.  Each job will simulate 100,000 protons on target.  You can simulate more or less POT if you want, but it's important that you remember what POT/file you requested since it will be necessary later for normalizing plots.
+
+python submit_flux.py -f 1 -l 250 -n 100000 --macro=nubeam-G4PBeam-stdnubeam  --input=Nominal_FHC
+python submit_flux.py -f 1 -l 250 -n 100000 --macro=nubeam-G4PBeam-stdnubeam  --input=Nominal_RHC
+python submit_flux.py -f 1 -l 250 -n 100000 --macro=nubeam-G4PBeam-stdnubeam  --input=DPHelium_FHC
+python submit_flux.py -f 1 -l 250 -n 100000 --macro=nubeam-G4PBeam-stdnubeam  --input=DPHelium_RHC
+
+Each job will take approximately two hours once it starts running on a grid machine.  The whole set of four samples will typically complete within a few hours.  You can see the status of your jobs by executing condor_q | grep <your_userid>.  When the jobs have completed, output files and logfiles should appear in your /lbne/data/users/<your_userid>/fluxfiles/ directory.  If they don't, check the logfiles in your $CONDOR_TMP area, which will hopefully hold clues about what went wrong.
+
+2. Make flux and event rate histograms
+
+To make flux and event rate histograms, you can use the Root macro example/makeFluxHistograms.C.  It compiles and runs code in eventRates.C that loops over the flux ntuples and plots the flux and event rates at a specified detector location.  It assumes that files are in the directory structure created by submit_flux.py and has input options to specify the g4lbne version, input card, detector location and geant4 physics list.  You can also specify the number of files you generated and the number of POT per file.  For example, to process the ntuples created above you would do:
+
+root -q -b makeFluxHistograms.C\(\"G4PBeam\",\"v2r4p1\",\"Nominal_FHC\",\"LBNEFD\", \"QGSP_BERT\",\"250\",\"100000\"\);
+root -q -b makeFluxHistograms.C\(\"G4PBeam\",\"v2r4p1\",\"Nominal_RHC\",\"LBNEFD\", \"QGSP_BERT\",\"250\",\"100000\"\);
+root -q -b makeFluxHistograms.C\(\"G4PBeam\",\"v2r4p1\",\"DPHelium_FHC\",\"LBNEFD\", \"QGSP_BERT\",\"250\",\"100000\"\);
+root -q -b makeFluxHistograms.C\(\"G4PBeam\",\"v2r4p1\",\"DPHelium_RHC\",\"LBNEFD\", \"QGSP_BERT\",\"250\",\"100000\"\);
+
+Each 25,000,000 POT job takes around 10 minutes.  You may find it useful to put the commands above in a bash script and to execute it with 'nohup' so that the jobs will continue running even if you close your terminal window.
+
+Each instance of makeFluxHistograms.C will create two histos_*.root files in the /lbne/data/users/<your_userid>/fluxfiles/ directory where your flux ntuples are stored -- one with flux/event rates histograms covering 0-20 GeV, intended for presentation plots, and one (with "_fastmc" in the file name) with fine binning meant serve as FastMC input.
+
+2. Make comparison plots and tables
+
+The root macro eventRateComparison.C can be used to make some simple plots comparing your two flux simulations.  You must specify whether you want to compare oscillated or unoscillated event rates, and the simulation, version, inputcard, location, physics list of the two simulations you want to compare.  For example:
+
+root -q -b eventRateComparison.C\(\"unoscillated\",\"G4PBeam\",\"G4PBeam\",\"v2r4p1\",\"v2r4p1\",\"Nominal_FHC\",\"DecayPipeHelium_FHC\",\"LBNEFD\",\"LBNEFD\",\"QGSP_BERT\",\"QGSP_BERT\",\"Air\",\"Helium\"\)
+root -q -b eventRateComparison.C\(\"unoscillated\",\"G4PBeam\",\"G4PBeam\",\"v2r4p1\",\"v2r4p1\",\"Nominal_RHC\",\"DecayPipeHelium_RHC\",\"LBNEFD\",\"LBNEFD\",\"QGSP_BERT\",\"QGSP_BERT\",\"Air\",\"Helium\"\)
+
+will make plots comparing unoscillated neutrino and anti-neutrino mode flux and event rates while:
+
+root -q -b eventRateComparison.C\(\"oscillated\",\"G4PBeam\",\"G4PBeam\",\"v2r4p1\",\"v2r4p1\",\"Nominal_FHC\",\"DecayPipeHelium_FHC\",\"LBNEFD\",\"LBNEFD\",\"QGSP_BERT\",\"QGSP_BERT\",\"Air\",\"Helium\"\)
+root -q -b eventRateComparison.C\(\"oscillated\",\"G4PBeam\",\"G4PBeam\",\"v2r4p1\",\"v2r4p1\",\"Nominal_RHC\",\"DecayPipeHelium_FHC\",\"LBNEFD\",\"LBNEFD\",\"QGSP_BERT\",\"QGSP_BERT\",\"Air\",\"Helium\"\)
+
+will similarly compare oscillated fluxes and event rates.  The last two input strings are meant to describe the two samples and will be used in the plot legends and file names to identify what is being compared.
+  
+Each time you run eventRateComparison.C, a set of image and text files will be written out to a folder called eventRateComparisons in your working directory.

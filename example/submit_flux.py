@@ -15,7 +15,6 @@
 from optparse import OptionParser
 import sys, os, subprocess, shutil
 
-
 ###################################################
 #
 # Determine default g4lbne directory

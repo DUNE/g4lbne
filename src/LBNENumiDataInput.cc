@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 //
 //
-// $Id: LBNENumiDataInput.cc,v 1.1 2013/01/31 19:23:30 loiacono Exp $
+// $Id: LBNENumiDataInput.cc,v 1.1.2.1 2013/08/22 08:23:20 lebrun Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -51,7 +51,7 @@ LBNENumiDataInput::LBNENumiDataInput()
 {
 
    G4cout << "LBNENumiDataInput Constructor Called" << G4endl;
-   if(fLBNENumiDataInput) G4Exception("LBNENumiDataInput constructed twice.");
+   if(fLBNENumiDataInput) G4Exception("LBNENumiDataInput constructed twice.", " ", FatalException, " ");
     
    // 
    // Target

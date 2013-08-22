@@ -2,6 +2,8 @@
 
 #include "LBNEKeyedInput.hh"
 #include <fstream>
+#include "G4ExceptionSeverity.hh"
+
 using namespace std;
 
 //Constructs object with an empty varMap. (The varMap maps variable names to
@@ -163,7 +165,7 @@ void LBNEKeyedInput::fail(cstr_t message, cstr_t key, G4int expected) {
   if(key != "") exc << "  variable: " << key << '\n';
   exc << "  message: " << message << '\n';
   if(expected >= 0) exc << "  expected: " << expected << '\n';
-  G4Exception(exc.str());
+  G4Exception(exc.str().c_str(), " " , FatalException, " " );
 }
 //-------------------------------------------------------------------------------
 //Similar to getVector, but only reads in one value instead of a vector.

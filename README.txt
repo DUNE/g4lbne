@@ -25,16 +25,8 @@ BUT WE MUST ALL USE THE SAME PRODUCT VERSIONS!!!!!!!!!!
 AT FERMILAB:
 On lbnegpvm01 (At Fermilab) ..... in the g4lbne/setups directory
 There is a setup_g4lbne_fnal.sh file. (This file will setup
-Geant4, ROOT and CLHEP )
+Geant4, ROOT and CLHEP ).  Do:
 
-IN THAT FILE DO THE FOLLOWING....
-( look for ##!!!!!!!!!!!! in the setup_g4lbne_fnal.sh file)
-You need to define a g4lbne work directory, for example
-export G4WORKDIR="path to work directory/g4lbne_work"
-this is where the binaries will be stored when compiling
-
-Now....
-source this file (in g4lbne directory do..)
 source setups/setup_g4lbne_fnal.sh
 
 

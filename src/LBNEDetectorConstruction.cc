@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.15 2013/08/19 22:32:14 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.16 2013/08/22 00:10:24 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -339,9 +339,11 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   G4PVPlacement* upstreamTargetAssPhys = 
     fPlacementHandler->PlaceFinal(G4String("UpstreamTargetAssembly"), targethorn1Phys); 
 //
-  this->ConstructUpstreamTarget(upstreamTargetAssPhys);
+  fPlacementHandler->PlaceFinalUpstrTarget(upstreamTargetAssPhys);
+  
+  fPlacementHandler->PlaceFinalDownstrTarget((G4PVPlacement*) targethorn1Phys);
 
-
+  
   // Just test random error in positioning along the Z axis
 //  fPlacementHandler->TestVolumeOverlap(G4String("Horn1Hall"), targethorn1Phys);
   
@@ -528,14 +530,6 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   
   return fRock;
 }
-
-void LBNEDetectorConstruction::ConstructUpstreamTarget(G4PVPlacement *phys) { 
-
-   // Attempting to split the code between this class and the VolumePlacement Handler. 
-  std::cerr << " Ready to construct the upstream segment of the target " << std::endl;
-  fPlacementHandler->PlaceFinalUpstrTarget(phys);
-  std::cerr << " Done with Upstream Target " << std::endl;
-} 
 
 LBNEDetectorMessenger::LBNEDetectorMessenger( LBNEDetectorConstruction* LBNEDet):LBNEDetector(LBNEDet)
 {

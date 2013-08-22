@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.11 2013/08/20 22:57:03 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.12 2013/08/22 00:10:24 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -198,7 +198,6 @@ private:
   G4double fTargetFinLengthSplitDwnstr; // 
   G4String fTargetFinMaterial; // 
   G4double fTargetFinSpacingLength; // Averaged over the whole length
-  G4double fTargetDowstreamBendLength;
   G4double fTargetUpstrUpstrMargin; 
   G4double fTargetUpstrDwnstrMargin; 
   G4String fTargetUpstrPlateMaterial;
@@ -236,6 +235,7 @@ private:
   G4double fTargetAlignRingCutAngle;
   G4String fTargetAlignRingMaterial;
   G4double fTargetAlignRingSpacing;
+  G4int fMaxNumAlignRings;
   G4double fTargetBerylDownstrWindowThick;
   G4double fTargetBerylDownstrWindowRadius;
   G4double fTargetBerylUpstrWindowThick;
@@ -260,6 +260,11 @@ private:
   std::vector<G4double> fTargetHorn1TransThick;
   std::vector<G4double> fTargetHorn1Lengths;
   std::vector<G4double> fTargetHorn1ZPositions;
+  //
+  // Horn1, specific and declared above. 
+  //
+  
+  G4double fHorn1IOTransDownstr;
   std::vector<G4double> fUsptrHorn1InnerRadsUpstr;
   std::vector<G4double> fUpstrHorn1InnerRadsDownstr;
   std::vector<G4double> fUpstrHorn1TransThick;

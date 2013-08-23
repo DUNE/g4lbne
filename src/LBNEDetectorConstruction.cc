@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.18 2013/08/23 07:36:44 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.19 2013/08/23 23:14:10 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -348,6 +348,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   G4PVPlacement *plHorn1 = fPlacementHandler->PlaceFinal(G4String("Horn1Hall"), targethorn1Phys); 
   fPlacementHandler->PlaceFinalDownstrTarget((G4PVPlacement*) plHorn1);
 
+  fPlacementHandler->PlaceFinalHorn1((G4PVPlacement*) plHorn1);
   
 
   fPlacementHandler->Create(G4String("Horn2Hall"));

@@ -82,7 +82,56 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      SetMyUnitsAndConditions(fTargetLengthIntoHorn, value);
      
    }
-   
+    {
+     fHorn1RadialRescale = new G4UIcmdWithADouble("/LBNE/det/Horn1RadialRescale", this);
+     G4String guidance("A ratio between the actual radii for this run over the nominal values for Horn1 \n  ");
+     guidance += std::string(" More specifically, all (excluding target elements in Horn1) will be rescale by  \n");
+     guidance += std::string(" that factor. Suggested value for modification: no more than 105 for a start!..   \n");
+     guidance += std::string(" FNAL Drawing number 8875. 112-ME-363xxx  " ); 
+     fHorn1RadialRescale->SetGuidance(guidance);
+     fHorn1RadialRescale->SetParameterName("Horn1RadialRescale",true);
+     fHorn1RadialRescale->SetDefaultValue(1.0);
+    }
+    { 
+     fHorn1LongRescale = new G4UIcmdWithADouble("/LBNE/det/Horn1LongRescale", this);
+     G4String guidance("A ratio between the actual lengths for this run over the nominal values for Horn1 \n  ");
+     guidance += std::string(" More specifically, all (excluding target elements in Horn1) will be rescale by  \n");
+     guidance += std::string(" that factor. Suggested value for modification: no more than 105 for a start!..   \n");
+     guidance += std::string(" FNAL Drawing number 8875. 112-ME-363xxx  " ); 
+     fHorn1LongRescale->SetGuidance(guidance);
+     fHorn1LongRescale->SetParameterName("Horn1LongRescale",true);
+     fHorn1LongRescale->SetDefaultValue(1.0);
+   }
+    {
+     fHorn2RadialRescale = new G4UIcmdWithADouble("/LBNE/det/Horn2RadialRescale", this);
+     G4String guidance("A ratio between the actual radii for this run over the nominal values for Horn2 \n  ");
+     guidance += std::string(" More specifically, all (excluding target elements in Horn2) will be rescale by  \n");
+     guidance += std::string(" that factor. Suggested value for modification: no more than 105 for a start!..   \n");
+     guidance += std::string(" FNAL Drawing number ????????? xxx  " ); 
+     fHorn2RadialRescale->SetGuidance(guidance);
+     fHorn2RadialRescale->SetParameterName("Horn2RadialRescale",true);
+     fHorn2RadialRescale->SetDefaultValue(1.0);
+    }
+    { 
+     fHorn2LongRescale = new G4UIcmdWithADouble("/LBNE/det/Horn2LongRescale", this);
+     G4String guidance("A ratio between the actual lengths for this run over the nominal values for Horn2 \n  ");
+     guidance += std::string(" More specifically, all (excluding target elements in Horn2) will be rescale by  \n");
+     guidance += std::string(" that factor. Suggested value for modification: no more than 105 for a start!..   \n");
+     guidance += std::string(" FNAL Drawing number ??????? xxx  " ); 
+     fHorn2LongRescale->SetGuidance(guidance);
+     fHorn2LongRescale->SetParameterName("Horn2LongRescale",true);
+     fHorn2LongRescale->SetDefaultValue(1.0);
+   }
+    { 
+     fHorn2LongPosition = new G4UIcmdWithADoubleAndUnit("/LBNE/det/Horn2LongPosition", this);
+     G4String guidance("The Z position of Horn2 with respect to the entrance of Horn1 (a.k.a MCZero) \n  ");
+     fHorn2LongPosition->SetGuidance(guidance);
+     fHorn2LongPosition->SetParameterName("Horn2LongPosition",true);
+     double value = volP->GetHorn2LongPosition(); //  
+     
+     SetMyUnitsAndConditions(fHorn2LongPosition, value);
+   }
+  
    
     std::cerr << " LBNEPlacementMessenger::LBNEPlacementMessenger, contructor, Ends " << std::endl;
   
@@ -123,6 +172,30 @@ void LBNEPlacementMessenger::SetNewValue(G4UIcommand* command,  G4String newValu
      volP->SetTargetSLengthGraphite(cmdWD->GetNewDoubleValue(newValue));
      volP->SegmentTarget();
    }
-   
+   if (command == fHorn1RadialRescale) {
+     G4UIcmdWithADouble* cmdWD = dynamic_cast<G4UIcmdWithADouble*> (command);
+     volP->SetHorn1RadialRescale(cmdWD->GetNewDoubleValue(newValue));
+     volP->RescaleHorn1Radially();
+   }
+   if (command == fHorn1LongRescale) {
+     G4UIcmdWithADouble* cmdWD = dynamic_cast<G4UIcmdWithADouble*> (command);
+     volP->SetHorn1LongRescale(cmdWD->GetNewDoubleValue(newValue));
+     volP->RescaleHorn1Lengthwise();
+   }
+   if (command == fHorn2RadialRescale) {
+     G4UIcmdWithADouble* cmdWD = dynamic_cast<G4UIcmdWithADouble*> (command);
+     volP->SetHorn2RadialRescale(cmdWD->GetNewDoubleValue(newValue));
+     volP->RescaleHorn2Radially();
+   }
+   if (command == fHorn2LongRescale) {
+     G4UIcmdWithADouble* cmdWD = dynamic_cast<G4UIcmdWithADouble*> (command);
+     volP->SetHorn2LongRescale(cmdWD->GetNewDoubleValue(newValue));
+     volP->RescaleHorn2Lengthwise();
+   }
+    if (command == fHorn2LongPosition) {
+     G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
+     volP->SetHorn2LongPosition(cmdWD->GetNewDoubleValue(newValue));
+   }
+  
 
 }

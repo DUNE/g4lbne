@@ -130,8 +130,8 @@ void LBNEVolumePlacements::PlaceFinalDownstrTarget(G4PVPlacement *mother) {
     }
     // Now the end 
     LBNEVolumePlacementData *plCoolingTubeReturn = Create("Horn1TargetCoolingTubeHLast");
-    posTmp[0] = plCoolingTubeReturn->fParams[0]; posTmp[1] = fTargetFinHeight/2.; 
-    posTmp[2] = plCoolingTubeReturn->fParams[2];			  
+    posTmp[0] = plCoolingTubeReturn->fPosition[0]; posTmp[1] = fTargetFinHeight/2.; 
+    posTmp[2] = plCoolingTubeReturn->fPosition[2];			  
     G4PVPlacement(&plCoolingTubeReturn->fRotation, 
 	                            posTmp, plCoolingTubeReturn->fCurrent, 
 				    G4String("Horn1TargetCoolingTubeHLast_PTop"), 
@@ -150,4 +150,156 @@ void LBNEVolumePlacements::PlaceFinalDownstrTarget(G4PVPlacement *mother) {
     PlaceFinal("Horn1TargetCoolingTubeVLastWater", vCL);					  				  
     Create("Horn1TargetDownstrHeContainerCap");
     PlaceFinal("Horn1TargetDownstrHeContainerCap", vMHe);					  				  
+}
+//
+// Horn1 calls and utilities. 
+//
+
+void LBNEVolumePlacements::RescaleHorn1Lengthwise() {
+   fHorn1IOTransLength *= fHorn1LongRescale;  
+  for (size_t k=0; k != fHorn1UsptrOuterIOTransInnerLengths.size(); ++k)
+      fHorn1UsptrOuterIOTransInnerLengths[k] *= fHorn1LongRescale; 
+      
+   for (size_t k=0; k != fHorn1UsptrOuterIOTransInnerPositions.size(); ++k)
+      fHorn1UsptrOuterIOTransInnerPositions[k] *= fHorn1LongRescale; 
+      
+  for (size_t k=0; k != fTargetHorn1Lengths.size(); ++k) 
+      fTargetHorn1Lengths[k] *= fHorn1LongRescale;
+   for (size_t k=0; k != fTargetHorn1ZPositions.size(); ++k) 
+      fTargetHorn1ZPositions[k] *= fHorn1LongRescale;  // This will be approximate...
+//   for (size_t k=0; k != fHorn1SectionLengths.size(); ++k) 
+//       fHorn1SectionLengths[k] *= fHorn1LongRescale;  
+//  fHorn1OuterTubeInnerLength  *= fHorn1LongRescale; // ??????????????///
+  fHorn1OuterConnectorLength *= fHorn1LongRescale;
+  fHorn1InnerConnectorLength *= fHorn1LongRescale;
+//  fHorn1InnerTopUpstrLength *= fHorn1LongRescale;  // ??????????? Check that all the rescale is consistently... 
+//  fHorn1InnerTopDownstrLength  *= fHorn1LongRescale;
+  
+  
+}
+
+void LBNEVolumePlacements::RescaleHorn1Radially() { // Note: not all variables are rescale here, 
+  // Some of this work will be done via the LBNEHornRadialEquation
+  fHorn1IOTransInnerRad *= fHorn1RadialRescale;
+  
+  for (size_t k=0; k != fHorn1UsptrOuterIOTransInnerRads.size(); ++k)
+      fHorn1UsptrOuterIOTransInnerRads[k] *= fHorn1RadialRescale; 
+      
+  for (size_t k=0; k != fTargetHorn1InnerRadsUpstr.size(); ++k) 
+      fTargetHorn1InnerRadsUpstr[k] *= fHorn1RadialRescale;
+  for (size_t k=0; k != fTargetHorn1InnerRadsUpstr.size(); ++k) 
+      fTargetHorn1InnerRadsUpstr[k] *= fHorn1RadialRescale;
+  for (size_t k=0; k != fTargetHorn1InnerRadsDownstr.size(); ++k) 
+      fTargetHorn1InnerRadsDownstr[k] *= fHorn1RadialRescale;
+
+  for (size_t k=0; k != fHorn1UsptrInnerRadsUpstr.size(); ++k) 
+      fHorn1UsptrInnerRadsUpstr[k] *= fHorn1RadialRescale;
+  for (size_t k=0; k != fHorn1UsptrInnerRadsUpstr.size(); ++k) 
+      fHorn1UsptrInnerRadsUpstr[k] *= fHorn1RadialRescale;
+//  for (size_t k=0; k != fHorn1UsptrOuterIOTransInnerRad.size(); ++k) 
+//      fHorn1UsptrOuterIOTransInnerRad[k] *= fHorn1RadialRescale;     ???????????????????/
+   
+  for (size_t k=0; k != fHorn1UsptrInnerRadsOuterUpstr.size(); ++k)
+    fHorn1UsptrInnerRadsOuterUpstr[k] *= fHorn1RadialRescale;
+//  for (size_t k=0; k != fHorn1UpstrInnerRadsOuterDownstr.size(); ++k)
+//    fHorn1UpstrInnerRadsOuterDownstr[k] *= fHorn1RadialRescale;
+      
+//  for (size_t k=0; k != fHorn1SectionInnerRads.size(); ++k) 
+//        fHorn1SectionInnerRads[k] *= fHorn1RadialRescale; 
+	
+	 
+//  fHorn1OuterTubeInnerRad  *= fHorn1RadialRescale; // Check variable names ... ??????????????????????
+//  fHorn1OuterConnectorRad *= fHorn1RadialRescale;
+//  fHorn1InnerConnectorRad *= fHorn1RadialRescale;
+  
+//  fHorn1InnerTopUpstrInnerRad *= fHorn1RadialRescale;
+//  fHorn1InnerTopUpstrOuterRad *= fHorn1RadialRescale;
+  
+}  
+
+void LBNEVolumePlacements::DeclareHorn1Dims() {
+  
+  const double in = 2.54*cm;
+  fHorn1IOTransLength = 3.0*cm + 3.316*in + 0.005*mm; 
+                          // Drawing 8875.112 -MD-363097 The 3 cm is the MCZERO offset, per verbal discussion 
+                              // with J. Hylen. The 5 microns if to avoid G4 volume overlaps.  
+			      
+  fHorn1RadialSafetyMargin = 2.9*mm; // per agreement between Jim H. and Alberto M., Aug. 22 2013. 
+  
+  fHorn1IOTransInnerRad = 2.520*in/2. - fHorn1RadialSafetyMargin/2. ; // last term is the 
+  fHorn1IOTransOuterRad = 16.250*in/2.;
+  
+  fHorn1UsptrInnerRadsUpstr.resize(4);
+  fHorn1UpstrInnerRadsDownstr.resize(4);
+  fHorn1UsptrInnerRadsOuterUpstr.resize(4);
+  fHorn1UpstrInnerRadsOuterDownstr.resize(4);
+  fHorn1UpstrLengths.resize(4);
+  fHorn1UpstrZPositions.resize(4);
+  
+  fHorn1UsptrInnerRadsUpstr[0] = 1.572*in; 
+  fHorn1UsptrInnerRadsOuterUpstr[0] = fHorn1UsptrInnerRadsUpstr[0] + 0.32*in; 
+  fHorn1UpstrInnerRadsDownstr[0] = 1.41*in; 
+  fHorn1UpstrInnerRadsOuterDownstr[0] = fHorn1UpstrInnerRadsDownstr[0] + 0.32*in; 
+  fHorn1UpstrLengths[0] = 0.508*in - 0.010*mm;
+  fHorn1UpstrZPositions[0] = fHorn1UpstrLengths[0]/2.; // With respect to the beginning of mother volume.  
+  
+  fHorn1UsptrInnerRadsUpstr[1] = fHorn1UpstrInnerRadsDownstr[0]; 
+  fHorn1UsptrInnerRadsOuterUpstr[1] = fHorn1UsptrInnerRadsUpstr[1] + 0.32*in; 
+  fHorn1UpstrInnerRadsDownstr[1] = 1.288*in; 
+  fHorn1UpstrInnerRadsOuterDownstr[1] = fHorn1UpstrInnerRadsDownstr[1] + 0.3*in; 
+  fHorn1UpstrLengths[1] = 0.639*in  - 0.010*mm;
+  fHorn1UpstrZPositions[1] = fHorn1UpstrZPositions[0] + 0.010*mm + fHorn1UpstrLengths[1]/2.;
+  
+  fHorn1UsptrInnerRadsUpstr[2] = fHorn1UpstrInnerRadsDownstr[1]; 
+  fHorn1UsptrInnerRadsOuterUpstr[2] = fHorn1UsptrInnerRadsUpstr[2] + 0.28*in; 
+  fHorn1UpstrInnerRadsDownstr[2] = 1.268*in; 
+  fHorn1UpstrInnerRadsOuterDownstr[2] = fHorn1UpstrInnerRadsDownstr[2] + 0.118*in; 
+  fHorn1UpstrLengths[2] = 3.323*in  - 0.010*mm;
+  fHorn1UpstrZPositions[2] = fHorn1UpstrZPositions[1] + 0.010*mm + fHorn1UpstrLengths[2]/2.;
+  
+  fHorn1UsptrInnerRadsUpstr[3] = fHorn1UpstrInnerRadsDownstr[2]; 
+  fHorn1UsptrInnerRadsOuterUpstr[2] = fHorn1UsptrInnerRadsUpstr[2] + 0.118*in; 
+  fHorn1UpstrInnerRadsDownstr[3] =  fHorn1UsptrInnerRadsUpstr[3]; 
+  fHorn1UpstrInnerRadsOuterDownstr[3] = fHorn1UpstrInnerRadsDownstr[3] + 0.20*in; 
+  fHorn1UpstrLengths[3] = 0.410*in - 0.010*mm;
+  fHorn1UpstrZPositions[3] = fHorn1UpstrZPositions[2] + 0.010*mm + fHorn1UpstrLengths[3]/2.;
+  
+  
+ //
+ // Now the top level sections. Only two of them, alignable. 
+ // 
+ // The first one goes up the downstream end of the IO transition peace 
+ // and up the downstream end of the target. If the target is completly out of the horn, 
+ // it is the part before the neck. (Drawing 8875.112-MD-363104) This is a tube, set by the 
+ // 
+ // 
+ // The 2nd top lelvel section is the remaining part of that part, up to the end of the Horn1Hall Z location. 
+ // This is just a tube. 
+ //
+ 
+ // Then, conical sections, all in a tube that has an inner radius of the neck, our radius 
+ // 
+ // To compute all that, we need to locate the target first.. 
+ // So, done at construction time. 
+ //
+  
+}
+
+
+void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother) {
+//
+// Start with upstream Inner to Out transition. This one is surveyable (as well as optionally rescaled. )
+//
+   LBNEVolumePlacementData *plTrUpst = this->Create("fHorn1IOTransCont");
+   G4PVPlacement *vTrUpst = this->PlaceFinal("fHorn1IOTransCont", mother);
+
+
+}
+void LBNEVolumePlacements::RescaleHorn2Lengthwise() {
+  
+}
+  
+void LBNEVolumePlacements::RescaleHorn2Radially() {
+  
+  
 }

@@ -10,6 +10,7 @@
 #include "G4UImessenger.hh"
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
+#include "G4UIcmdWithADouble.hh"
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4PVPlacement.hh"
@@ -39,6 +40,14 @@ private:
 //
   G4UIcmdWithADoubleAndUnit* fTargetSLengthGraphite; 
   G4UIcmdWithADoubleAndUnit* fTargetLengthIntoHorn;
+//
+  G4UIcmdWithADouble* fHorn1RadialRescale;   
+  G4UIcmdWithADouble* fHorn1LongRescale; 
+//  
+  G4UIcmdWithADouble* fHorn2RadialRescale;   
+  G4UIcmdWithADouble* fHorn2LongRescale; 
+  G4UIcmdWithADoubleAndUnit* fHorn2LongPosition;
+//
   
   void SetMyUnitsAndConditions(G4UIcmdWithADoubleAndUnit *cmd, double value);
   

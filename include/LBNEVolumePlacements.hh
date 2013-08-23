@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.12 2013/08/22 00:10:24 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.13 2013/08/23 23:14:10 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -72,6 +72,19 @@ struct LBNEVolumePlacementData {
   G4LogicalVolume* fCurrent; // Same 
 };
 
+class LBNEHornRadialEquation  {
+
+  public:
+      LBNEHornRadialEquation(double rSqrtCoefficient, double zOffset, double rOffset);
+      double GetVal(double z); 
+  
+  private:
+      double rCoeff;
+      double zOff;
+      double rOff;
+
+};
+
 class LBNEVolumePlacements
 {
 
@@ -102,7 +115,9 @@ public:
 			       
   void PlaceFinalUpstrTarget(G4PVPlacement *mother);
   void PlaceFinalDownstrTarget(G4PVPlacement *mother);
-			       
+ 
+  void PlaceFinalHorn1(G4PVPlacement *mother);
+  			       
   // No change to either this data or the establish Geant4 geometry. 
   // 
   void TestVolumeOverlap(const G4String &name, G4VPhysicalVolume *mother) const;
@@ -139,9 +154,23 @@ public:
   inline void SetTargetSLengthGraphite(double l) { fTargetSLengthGraphite = l; }
   inline double GetTargetLengthIntoHorn() const { return fTargetLengthIntoHorn; }
   inline void SetTargetLengthIntoHorn(double l) { fTargetLengthIntoHorn = l; }
-   
+//
+// Interface to the Messenger, Horn1 parameters  
+//
+  inline void SetHorn1LongRescale(double r) {fHorn1LongRescale = r;}  
+  inline void SetHorn1RadialRescale(double r) {fHorn1RadialRescale = r;}  
+  inline void SetHorn2LongRescale(double r) {fHorn2LongRescale = r;}  
+  inline void SetHorn2RadialRescale(double r) {fHorn2RadialRescale = r;}  
+  inline double GetHorn2LongPosition() const { return fHorn2LongPosition; }
+  inline void SetHorn2LongPosition(double l) { fHorn2LongPosition = l; }
+  
   void SegmentTarget(); // Check the target segmentation. Assume fixed Fin size. 
- 
+  
+  void RescaleHorn1Lengthwise();
+  void RescaleHorn2Lengthwise();
+  void RescaleHorn1Radially();
+  void RescaleHorn2Radially();
+  
   
 private:
   // GUI Interface  
@@ -261,15 +290,63 @@ private:
   std::vector<G4double> fTargetHorn1Lengths;
   std::vector<G4double> fTargetHorn1ZPositions;
   //
-  // Horn1, specific and declared above. 
+  // Horn1, excluding the target elements in side the Horn1. 
   //
+  // First, a rescaling factor with respect to current (NUMI based) design
+  //
+  G4double fHorn1RadialRescale;
+  G4double fHorn1LongRescale;
+  G4double fHorn1RadialSafetyMargin;
   
-  G4double fHorn1IOTransDownstr;
-  std::vector<G4double> fUsptrHorn1InnerRadsUpstr;
-  std::vector<G4double> fUpstrHorn1InnerRadsDownstr;
-  std::vector<G4double> fUpstrHorn1TransThick;
-  std::vector<G4double> fUpstrHorn1Lengths;
-  std::vector<G4double> fUpstrHorn1ZPositions;
+  G4double fHorn1IOTransLength; // Transition Inner to Outer conductors. A container volume (TUBS)
+  G4double fHorn1IOTransInnerRad; // Surveyable!. But physically attachached to the top level section. 
+  G4double fHorn1IOTransOuterRad;
+  
+  std::vector<G4double> fHorn1UsptrInnerRadsUpstr;
+  std::vector<G4double> fHorn1UpstrInnerRadsDownstr; 
+  std::vector<G4double> fHorn1UsptrInnerRadsOuterUpstr;
+  std::vector<G4double> fHorn1UpstrInnerRadsOuterDownstr; 
+  std::vector<G4double> fHorn1UpstrLengths;
+  std::vector<G4double> fHorn1UpstrZPositions;
+
+  std::vector<G4double> fHorn1UsptrOuterIOTransInnerRads; 
+  std::vector<G4double> fHorn1UsptrOuterIOTransInnerLengths; 
+  std::vector<G4double> fHorn1UsptrOuterIOTransInnerPositions; 
+
+  G4double fHorn1TopUpstrLength; // Upstream part of the inner conductor, container volume (TUBS), Surveyed. 
+  G4double fHorn1TopUpstrInnerRad; // This volume envelopes the target. 
+  G4double fHorn1TopUpstrOuterRad;
+
+  G4double fHorn1TopDownstrLength; // Do part of the inner conductor, container volume (TUBS), Surveyed. 
+  G4double fHorn1TopDownstrOuterRad;
+  
+  // The spider Hangers 
+//  G4double  fHorn1HangerWidth; Set internaly in ContructHorn1Elements
+//  G4double  fHorn1HangerHeight; 
+  
+                                            
+//   std::vector<G4double> fHorn1HangerPositions;
+
+  // The outer tube
+  
+  G4double fHorn1OuterTubeInnerRad; 
+   
+  G4double fHorn1OuterConnectorRad;  // rescaled radially as well. 
+  G4double fHorn1OuterConnectorThick;
+  G4double fHorn1OuterConnectorLength;
+  G4double fHorn1OuterConnectorPosition;
+
+  G4double fHorn1InnerConnectorRad; // dwonstream end connectors 
+  G4double fHorn1InnerConnectorThick;
+  G4double fHorn1InnerConnectorLength;
+  G4double fHorn1InnerConnectorPosition;
+  //
+  // Horn2 
+  //
+  G4double fHorn2RadialRescale;
+  G4double fHorn2LongRescale;
+  G4double fHorn2LongPosition;
+  
   
   // a flag to check the geometry as it is constructed. 
   
@@ -279,10 +356,17 @@ private:
   
   const G4LogicalVolume* fTopLogicalVolume;
   //
-  // This method was found in G4PVPlacement. It is a clone, where we just skip 
-  // the error messages. 
+  const LBNEVolumePlacementData* Find(const G4String &name, const char *motherName, const char *method);
   
+  //
+  // This method was found in G4PVPlacement. It is a clone, where we just skip 
+  // the error messages.   
   bool CheckOverlaps(const G4PVPlacement *phys, G4int nres, G4double eps, G4bool verbose) const; 
+  //
+  // More intialization done here (too keep the constructor code of reasonable length.. )
+  //
+  void DeclareHorn1Dims(); 
+  
 };
 
 #endif

@@ -13,7 +13,7 @@
 #include "LBNERunManager.hh"
 #include "LBNEPrimaryGeneratorAction.hh"
 #include "G4ProcessTable.hh"
-
+#include "G4ExceptionSeverity.hh"
 //------------------------------------------------------------------------------
 LBNERunAction::LBNERunAction():
 fVerboseLevel(1)
@@ -103,8 +103,11 @@ void LBNERunAction::BeginOfRunAction(const G4Run* aRun)
 //	 
 	 if(!ntpOpen)
 	 {
-	    std::cout << spaces << "PROBLEM: FAILED TO OPEN INPUT NTUPLE. Fatal " << std::endl;
-	    exit(2);
+            std::ostringstream mStrStr;
+	    mStrStr << "PROBLEM: FAILED TO OPEN INPUT NTUPLE. Fatal " << std::endl;
+            G4String mStr(mStrStr.str());
+            G4Exception("LBNERunAction::BeginOfRunAction", " ", RunMustBeAborted, mStr.c_str()); 
+	    
 	    return;
 	 } 
 //	 
@@ -132,8 +135,10 @@ void LBNERunAction::BeginOfRunAction(const G4Run* aRun)
    LBNERunManager* theRunManager = dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
    if(theRunManager -> GetCreateOutput()) 
       if(!(analysis->CreateOutput())) {
-	    std::cout << spaces << "PROBLEM: FAILED TO OPEN OUTPUT NTUPLE. Fatal " << std::endl;
-	    exit(2);
+            std::ostringstream mStrStr;
+	    mStrStr << "PROBLEM: FAILED TO OPEN OUTPUT NTUPLE. Fatal " << std::endl;
+            G4String mStr(mStrStr.str());
+            G4Exception("LBNERunAction::BeginOfRunAction", " ", RunMustBeAborted, mStr.c_str()); 
       } 
       
    std::cout << std::endl;

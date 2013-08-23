@@ -38,6 +38,7 @@
 #include "G4FieldManager.hh"
 
 #include "G4RunManager.hh"
+#include "G4ExceptionSeverity.hh"
 
 #include "G4VisExtent.hh"
 #include "LBNEPlacementMessenger.hh"
@@ -125,6 +126,7 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
   // A small correction for the tilt angle 
   fTargetCTubeReturnLengthDownstr -= fTargetCTubeReturnLengthDownstr*
                                           std::sin(fTargetCTubeReturnHOffset/fTargetCTubeReturnLengthDownstr);
+  std::cerr << " fTargetCTubeReturnLengthDownstr " << 	fTargetCTubeReturnLengthDownstr	<< " And quit ??? " << std::endl; exit(2);			  
   fTargetDistFlangeToTargetStart = 32.2*mm;
   fTargetCTubeReturnLengthUpstr = fTargetDistFlangeToTargetStart + 10.25*in; // from the upstream end of target to 
                                  // Upstr bend return 
@@ -224,8 +226,10 @@ LBNEVolumePlacementData*
 
   std::map<G4String, LBNEVolumePlacementData>::const_iterator itDupl = fSubVolumes.find(name);
   if (itDupl != fSubVolumes.end()) {
-       std::cerr << " LBNEVolumePlacements::Create, Volume named " << name << " Already defined. Fatal " << std::endl;
-      exit(2);
+      std::ostringstream mStrStr;
+      mStrStr << " Volume named " << name << " Already defined. Fatal ";
+      G4String mStr(mStrStr.str());
+      G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
     }
 
    const G4double in = 2.54*cm;
@@ -251,8 +255,10 @@ LBNEVolumePlacementData*
   if (name == G4String("TargetHallAndHorn1")) {
     std::map<G4String, LBNEVolumePlacementData>::const_iterator it = fSubVolumes.find(G4String("Tunnel"));
     if (it == fSubVolumes.end()) {
-       std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
-      exit(2);
+     std::ostringstream mStrStr;
+       mStrStr << " Internal error for " << name << " fatal " << std::endl;
+      G4String mStr(mStrStr.str());
+      G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
     }
     for (size_t k=0; k != 2; ++k) 
       info.fParams[k] = it->second.fParams[k] - 2.0*cm; 
@@ -267,8 +273,10 @@ LBNEVolumePlacementData*
     std::map<G4String, LBNEVolumePlacementData>::const_iterator it = 
         fSubVolumes.find(G4String("TargetHallAndHorn1"));
     if (it == fSubVolumes.end()) {
-      std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
-      exit(2);
+     std::ostringstream mStrStr;
+       mStrStr << " Internal error for " << name << " Volume not found " << std::endl;
+      G4String mStr(mStrStr.str());
+      G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
     }  
     for (size_t k=0; k != 2; ++k) 
       info.fParams[k] = it->second.fParams[k] - 0.5*cm; 
@@ -285,8 +293,11 @@ LBNEVolumePlacementData*
     std::map<G4String, LBNEVolumePlacementData>::const_iterator it = 
         fSubVolumes.find(G4String("UpstreamTargetAssembly"));
     if (it == fSubVolumes.end()) {
-      std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
-      exit(2);
+     std::ostringstream mStrStr;
+       mStrStr << " Internal error for " << name 
+               << " Volume UpstreamTargetAssembly not found " << std::endl;
+      G4String mStr(mStrStr.str());
+      G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
     } 
     info.fParams[0] = fBaffleInnerRadius; 
     info.fParams[1] = fBaffleOuterRadius; 
@@ -303,8 +314,10 @@ LBNEVolumePlacementData*
       std::map<G4String, LBNEVolumePlacementData>::const_iterator it = 
         fSubVolumes.find(G4String("UpstreamTargetAssembly"));
       if (it == fSubVolumes.end()) {
-        std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
-        exit(2);
+     std::ostringstream mStrStr;
+       mStrStr << " Internal error for " << name << " Mother Volume Target not found " << std::endl;
+      G4String mStr(mStrStr.str());
+      G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
       } 
       if (name == G4String("TargetUpstrMTop")) { 
          // Complete container the target Canister and the portion of the target outside the horn 
@@ -326,8 +339,10 @@ LBNEVolumePlacementData*
          info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial("HeliumTarget"), volumeName); 
          std::map<G4String, LBNEVolumePlacementData>::const_iterator itMTop = fSubVolumes.find(G4String("TargetUpstrMTop"));
          if (itMTop == fSubVolumes.end()) {
-          std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
-          exit(2);
+           std::ostringstream mStrStr;
+           mStrStr << " Internal error for " << name << " Mother Volume TargetUpstrM0 not found " << std::endl;
+           G4String mStr(mStrStr.str());
+           G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
          } 
          info.fPosition[2] = -1.0*itMTop->second.fParams[2]/2. + info.fParams[2]/2. + 0.01*mm; // 
        } 
@@ -335,8 +350,10 @@ LBNEVolumePlacementData*
           std::map<G4String, LBNEVolumePlacementData>::const_iterator it = 
           fSubVolumes.find(G4String("TargetUpstrM0"));
           if (it == fSubVolumes.end()) {
-            std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
-            exit(2);
+           std::ostringstream mStrStr;
+           mStrStr << " Internal error for " << name << " Mother Volume TargetUpstrUpstr not found " << std::endl;
+           G4String mStr(mStrStr.str());
+           G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
           } 
           if (name == G4String("TargetUpstrUpstrPlate")) { // 
             info.fParams[0] = fTargetUpstrPlateHoleRadius; 
@@ -513,7 +530,10 @@ LBNEVolumePlacementData*
          std::map<G4String, LBNEVolumePlacementData>::const_iterator itMTop = fSubVolumes.find(G4String("TargetUpstrMTop"));
          if (it == fSubVolumes.end()) {
           std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
-          exit(2);
+          std::ostringstream mStrStr;
+          mStrStr << " Internal error for " << name << " Volume TargetUpstrMTop not found " << std::endl;
+          G4String mStr(mStrStr.str());
+          G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
          } 
          info.fPosition[2] = itMTop->second.fParams[2]/2. - info.fParams[2]/2. - 0.005*mm; // in TargetUpstrMTop 
        } 
@@ -522,8 +542,10 @@ LBNEVolumePlacementData*
           fSubVolumes.find(G4String("TargetUpstrM1"));
           if (it == fSubVolumes.end()) {
             std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
-            exit(2);
-          } 
+            std::ostringstream mStrStr;
+            mStrStr << " Internal error for " << name << " Volume TargetUpstrM1 not found " << std::endl;
+            G4String mStr(mStrStr.str());
+           } 
           if (name == G4String("TargetUpstrDownstrHeContainer")) { // 
             info.fParams[0] = 0.; 
             info.fParams[1] = fTargetHeContTubeInnerRadius + fTargetHeContTubeThickness; 
@@ -560,7 +582,7 @@ LBNEVolumePlacementData*
             info.fParams[1] = fTargetFinHeight + 2.0*fTargetCTubeOuterRadius + 0.2*mm; 
             info.fParams[2] = fTargetFinLength+ 0.95*fTargetFinSpacingLength ;
             G4Box* aBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2.);
-            info.fCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("Helium")), volumeName); 
+            info.fCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("HeliumTarget")), volumeName); 
             info.fTypeName = G4String("Box");
          }
           if (name == G4String("TargetUpstrDownstrCoolingTubeLast")) { // 
@@ -583,7 +605,7 @@ LBNEVolumePlacementData*
             info.fParams[1] = fTargetFinHeight + 2.0*fTargetCTubeOuterRadius + 0.2*mm; 
             info.fParams[2] = fTargetFinLengthSplitUpstr - 0.01*mm;
             G4Box* aBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2.);
-            info.fCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("Helium")), volumeName); 
+            info.fCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("HeliumTarget")), volumeName); 
              info.fTypeName = G4String("Box");
         }
 	 // 
@@ -610,8 +632,10 @@ LBNEVolumePlacementData*
             std::map<G4String, LBNEVolumePlacementData>::const_iterator it = 
                                     fSubVolumes.find(G4String("TargetUpstrM0"));
             if (it == fSubVolumes.end()) {
-              std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
-              exit(2);
+              std::ostringstream mStrStr;
+              mStrStr << " Internal error for " << name << " Volume TargetUpstrM0 not found " << std::endl;
+              G4String mStr(mStrStr.str());
+              G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
 	    }
 	    info.fPosition[0] = -info.fParams[0]/2.0 + 10.*mm;
 	    info.fPosition[1] = 0.;
@@ -669,8 +693,10 @@ LBNEVolumePlacementData*
             std::map<G4String, LBNEVolumePlacementData>::const_iterator it = 
                                     fSubVolumes.find(G4String("TargetUpstrM1"));
             if (it == fSubVolumes.end()) {
-              std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
-              exit(2);
+              std::ostringstream mStrStr;
+              mStrStr << " Internal error for " << name << " Volume TargetUpstrM1 not found " << std::endl;
+              G4String mStr(mStrStr.str());
+              G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
 	    }
 	    info.fPosition[2] = 1.0*it->second.fParams[2]/2.0  - info.fParams[2]/2 - 0.25*mm; // Appro to a fraction of mm. 
     }
@@ -704,8 +730,11 @@ LBNEVolumePlacementData*
             std::map<G4String, LBNEVolumePlacementData>::const_iterator it = 
                                     fSubVolumes.find(G4String("TargetHorn1TransInnerOuterCont"));
             if (it == fSubVolumes.end()) {
-              std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
-              exit(2);
+              std::ostringstream mStrStr;
+              mStrStr << " Internal error for " << name 
+	              << " Volume TargetHorn1TransInnerOuterContTargetUpstrM0 not found " << std::endl;
+              G4String mStr(mStrStr.str());
+              G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
 	    }
 	    info.fPosition[2] = 1.0*it->second.fParams[2]/2.0  + fTargetHorn1ZPositions[iPart]; // Position were given with respect to MCZero
     }
@@ -719,13 +748,19 @@ LBNEVolumePlacementData*
          fSubVolumes.find(G4String("TargetHallAndHorn1"));
        if (itMother == fSubVolumes.end()) {
          std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
-         exit(2);
+              std::ostringstream mStrStr;
+              mStrStr << " Internal error for " << name << " Volume Horn1Hall not found " << std::endl;
+              G4String mStr(mStrStr.str());
+              G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
        }  
        std::map<G4String, LBNEVolumePlacementData>::const_iterator itTargetAssembly = 
          fSubVolumes.find(G4String("UpstreamTargetAssembly"));
        if (itTargetAssembly == fSubVolumes.end()) {
-         std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
-         exit(2);
+            std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
+            std::ostringstream mStrStr;
+            mStrStr << " Internal error for " << name << " Volume UpstreamTargetAssembly not found " << std::endl;
+            G4String mStr(mStrStr.str());
+            G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
        }  
        for (size_t k=0; k != 2; ++k) 
         info.fParams[k] = itMother->second.fParams[k] - 0.5*cm; 
@@ -743,8 +778,10 @@ LBNEVolumePlacementData*
         std::map<G4String, LBNEVolumePlacementData>::const_iterator itMother = 
          fSubVolumes.find(G4String("Horn1Hall"));
        if (itMother == fSubVolumes.end()) {
-         std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
-         exit(2);
+              std::ostringstream mStrStr;
+              mStrStr << " Internal error for " << name << " Horn1Hall not found " << std::endl;
+              G4String mStr(mStrStr.str());
+              G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
        }  
    
        info.fParams[0] = 0.; 
@@ -760,8 +797,11 @@ LBNEVolumePlacementData*
         std::map<G4String, LBNEVolumePlacementData>::const_iterator itMother = 
          fSubVolumes.find(G4String("Horn1TargetDownstrHeContainer"));
        if (itMother == fSubVolumes.end()) {
-         std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
-         exit(2);
+              std::ostringstream mStrStr;
+              mStrStr << " Internal error for " << name 
+	               << " Volume Horn1TargetDownstrHeContainer not found " << std::endl;
+              G4String mStr(mStrStr.str());
+              G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
        }  
    
        info.fParams[0] = 0.; 
@@ -800,25 +840,46 @@ LBNEVolumePlacementData*
             std::map<G4String, LBNEVolumePlacementData>::const_iterator itMother = 
             fSubVolumes.find(G4String("Horn1TargetDownstrHelium"));
             if (itMother == fSubVolumes.end()) {
-               std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
-               exit(2);
+              std::ostringstream mStrStr;
+              mStrStr << " Internal error for " << name 
+	              << " Volume Horn1TargetDownstrHelium not found " << std::endl;
+              G4String mStr(mStrStr.str());
+              G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
              }  
             info.fParams[0] = fTargetFinWidth + 0.2*mm; 
             info.fParams[1] = fTargetFinHeight + 2.0*fTargetCTubeOuterRadius + 0.2*mm; 
             info.fParams[2] = fTargetFinLengthSplitDwnstr - 0.01*mm;
             G4Box* aBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2.);
-            info.fCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("Helium")), volumeName); 
+            info.fCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("HeliumTarget")), volumeName); 
             info.fTypeName = G4String("Box");
-	    info.fPosition[0] = -1.0*itMother->second.fParams[2]/2. + info.fParams[2]/2. + 0.010;
+	    info.fPosition[2] = -1.0*itMother->second.fParams[2]/2. + info.fParams[2]/2. + 0.010*mm;
+    }
+    if (name == G4String("Horn1TargetSegment")) { // A duplicate of the Upstream segment.  Geatn4 does not see the daughter volume 
+            // above ???
+            info.fParams[0] = fTargetFinWidth + 0.2*mm; 
+            info.fParams[1] = fTargetFinHeight + 2.0*fTargetCTubeOuterRadius + 0.2*mm; 
+            info.fParams[2] = fTargetFinLength+ 0.95*fTargetFinSpacingLength ;
+            G4Box* aBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2.);
+            info.fCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("HeliumTarget")), volumeName); 
+            info.fTypeName = G4String("Box");
     }
     if (name == G4String("Horn1TargetCoolingTubeHLast")) { // 
+            std::map<G4String, LBNEVolumePlacementData>::const_iterator itMother = 
+            fSubVolumes.find(G4String("Horn1TargetDownstrHelium"));
+            if (itMother == fSubVolumes.end()) {
+              std::ostringstream mStrStr;
+              mStrStr << " Internal error for " << name 
+	              << " Volume Horn1TargetDownstrHelium not found " << std::endl;
+              G4String mStr(mStrStr.str());
+              G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
+             }  
             info.fParams[0] = 0.; 
             info.fParams[1] = fTargetCTubeOuterRadius; 
             info.fParams[2] = fTargetCTubeReturnLengthDownstr;
             G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
             info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Titanium")), volumeName); 
             info.fPosition[0] = fTargetCTubeReturnHOffset/2.0;
-            info.fPosition[2] = fTargetFinLengthSplitDwnstr + fTargetNumFinsInHorn*fTargetFinLength + 
+            info.fPosition[2] = -itMother->second.fParams[2]/2 + fTargetFinLengthSplitDwnstr + fTargetNumFinsInHorn*fTargetFinLength + 
 	                        info.fParams[2]/2.0; 
 	    // Two different Vetical locations (up and down) 
 	    info.fRotation.rotateY(fTargetCTubeReturnHOffset/(info.fParams[2]+2.0*mm)); // approximate.	
@@ -827,14 +888,33 @@ LBNEVolumePlacementData*
     }
     if (name == G4String("Horn1TargetCoolingTubeVLast")) { // 
           
+            std::map<G4String, LBNEVolumePlacementData>::const_iterator itMother = 
+            fSubVolumes.find(G4String("Horn1TargetDownstrHelium"));
+            if (itMother == fSubVolumes.end()) {
+              std::ostringstream mStrStr;
+              mStrStr << " Internal error for " << name 
+	              << " Volume Horn1TargetDownstrHelium not found " << std::endl;
+              G4String mStr(mStrStr.str());
+              G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
+             }  
+            std::map<G4String, LBNEVolumePlacementData>::const_iterator itH = 
+            fSubVolumes.find(G4String("Horn1TargetCoolingTubeHLast"));
+            if (itH == fSubVolumes.end()) {
+              std::ostringstream mStrStr;
+              mStrStr << " Internal error for " << name 
+	              << " Volume Horn1TargetCoolingTubeHLast not found " << std::endl;
+              G4String mStr(mStrStr.str());
+              G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
+             }  
            info.fParams[0] = 0.; 
            info.fParams[1] = fTargetCTubeOuterRadius; 
            info.fParams[2] = fTargetFinHeight;
            G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
            info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Titanium")), volumeName); 
            info.fPosition[0] = fTargetCTubeReturnHOffset;
-           info.fPosition[2] = fTargetFinLengthSplitDwnstr + fTargetNumFinsInHorn*fTargetFinLength + 
-	                        info.fParams[2] + 0.5*mm; // for safety...  
+           info.fPosition[2] =  -itMother->second.fParams[2]/2 + fTargetFinLengthSplitDwnstr + 
+	                        fTargetNumFinsInHorn*fTargetFinLength + itH->second.fParams[2] + 
+	                        fTargetCTubeOuterRadius + 0.5*mm; // for safety...  
 	    // Two different Vetical locations (up and down) 
 	   info.fRotation.rotateX(M_PI/2.); 	info.fRotationIsUnitMatrix = false;
 	        ; // possibly tweak for the margin... 
@@ -843,8 +923,11 @@ LBNEVolumePlacementData*
           std::map<G4String, LBNEVolumePlacementData>::const_iterator itMother = 
           fSubVolumes.find(G4String("Horn1TargetCoolingTubeHLast"));
           if (itMother == fSubVolumes.end()) {
-             std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
-              exit(2);
+              std::ostringstream mStrStr;
+              mStrStr << " Internal error for " << name 
+	              << " Horn1TargetCoolingTubeHLast not found " << std::endl;
+              G4String mStr(mStrStr.str());
+              G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
            }  
            info.fParams[0] = 0.; 
            info.fParams[1] = fTargetCTubeInnerRadius; 
@@ -856,8 +939,11 @@ LBNEVolumePlacementData*
           std::map<G4String, LBNEVolumePlacementData>::const_iterator itMother = 
           fSubVolumes.find(G4String("Horn1TargetCoolingTubeVLast"));
           if (itMother == fSubVolumes.end()) {
-             std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
-              exit(2);
+              std::ostringstream mStrStr;
+              mStrStr << " Internal error for " << name 
+	              << " Volume Horn1TargetCoolingTubeVLast not found " << std::endl;
+              G4String mStr(mStrStr.str());
+              G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
            }  
            info.fParams[0] = 0.; 
            info.fParams[1] = fTargetCTubeInnerRadius; 
@@ -867,11 +953,21 @@ LBNEVolumePlacementData*
     }
     
      if (name == G4String("Horn1TargetDownstrHeContainerCap")) { // 
-           info.fParams[0] = 0.; 
+             std::map<G4String, LBNEVolumePlacementData>::const_iterator itMother = 
+            fSubVolumes.find(G4String("Horn1TargetDownstrHelium"));
+            if (itMother == fSubVolumes.end()) {
+              std::ostringstream mStrStr;
+              mStrStr << " Internal error for " << name 
+	              << " Volume Horn1TargetDownstrHelium not found " << std::endl;
+              G4String mStr(mStrStr.str());
+              G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
+             }  
+          info.fParams[0] = 0.; 
            info.fParams[1] = fTargetHeContTubeInnerRadius-0.010*mm; 
            info.fParams[2] = 0.5*mm; // Docdb 6100
            G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
            info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Beryllium")), volumeName); 
+	   info.fPosition[2] = itMother->second.fParams[2]/2 - info.fParams[2] - 0.5*mm;
     }
    
     
@@ -887,10 +983,10 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
     G4LogicalVolume *lMother=mother->GetLogicalVolume();			       
     std::map<G4String, LBNEVolumePlacementData>::iterator it = fSubVolumes.find(name);
     if (it == fSubVolumes.end()) {
-      std::cerr << " LBNEVolumePlacements::PlaceFinal, internal error for " 
-                << name << " in mother volume " << lMother->GetName() << std::endl;
-      std::cerr << " Such a daughter volume is undefined.  Fatal.  " << std::endl;
-      exit(2);
+      std::ostringstream mStrStr;
+      mStrStr << " Internal error for " << name << " Mother Volume not found " << std::endl;
+      G4String mStr(mStrStr.str());
+      G4Exception("LBNEVolumePlacements::PlaceFinal", " ", FatalErrorInArgument, mStr.c_str()); 
     }  
     std::string surveyedPtName(name);
     // Special case, nomenclature confusion.. Otherwise, name Surveyed point would get too long. 
@@ -1239,9 +1335,10 @@ void LBNEVolumePlacements::TestVolumeOverlap(const G4String &name, G4VPhysicalVo
     G4LogicalVolume *vMother=mother->GetLogicalVolume();			       
     std::map<G4String, LBNEVolumePlacementData>::const_iterator it = fSubVolumes.find(name);
     if (it == fSubVolumes.end()) {
-      std::cerr << " LBNEVolumePlacements::TestVolumeOverlap, internal error for " 
-                << name << " Such a volume is undefined, fatal " << std::endl;
-      exit(2);
+      std::ostringstream mStrStr;
+      mStrStr << " Internal error for " << name << " Volume not found " << std::endl;
+      G4String mStr(mStrStr.str());
+      G4Exception("LBNEVolumePlacements::TestVolumeOverlap", " ", FatalErrorInArgument, mStr.c_str()); 
     }  
     LBNEVolumePlacementData infoTmp(it->second); // deep copy 
     G4VPhysicalVolume *placement=0;
@@ -1274,8 +1371,11 @@ void LBNEVolumePlacements::TestVolumeOverlap(const G4String &name, G4VPhysicalVo
            if (itM == fSubVolumes.end()) {
               std::cerr << " LBNEVolumePlacements::TestVolumeOverlap, internal error for " 
                 << vMother->GetName() << " Such a volume is undefined, fatal " << std::endl;
-              exit(2);
-           }  
+              std::ostringstream mStrStr;
+              mStrStr << " Internal error for " << name << " Volume not found " << std::endl;
+              G4String mStr(mStrStr.str());
+              G4Exception("LBNEVolumePlacements::TestVolumeOverlap", " ", FatalErrorInArgument, mStr.c_str()); 
+          }  
            std::cerr << " Check Mother volume length " << itM->second.fParams[2] << " mm " << std::endl;
            mother->GetLogicalVolume()->RemoveDaughter(placement);
 	   
@@ -1296,10 +1396,10 @@ void LBNEVolumePlacements::SegmentTarget() {
   double  targetNumFinsNominal = fTargetSLengthGraphite/(fTargetFinLength + fTargetFinSpacingLength); 
   fTargetNumFins = (int) (targetNumFinsNominal + 0.5);
   double deltaNumFins =  targetNumFinsNominal - (double) fTargetNumFins; 
-  std::cerr << " LBNEVolumePlacements::SegmentTarget, total number of segments " << fTargetNumFins << 
-               " Delta Num fins " << deltaNumFins << std::endl;
   if (deltaNumFins > 0.5) fTargetNumFins++;
   if (deltaNumFins < -0.5) fTargetNumFins--;
+//  std::cout << " LBNEVolumePlacements::SegmentTarget, total number of segments " << fTargetNumFins << 
+//               " Delta Num fins " << deltaNumFins << std::endl;
   const double oldLength = fTargetSLengthGraphite;
   fTargetSLengthGraphite = fTargetNumFins*fTargetFinLength + (fTargetNumFins-1)*fTargetFinSpacingLength; 
   fTargetFinSpacingLength = (fTargetSLengthGraphite  - fTargetNumFins*fTargetFinLength)/(fTargetNumFins - 1); //   
@@ -1310,7 +1410,8 @@ void LBNEVolumePlacements::SegmentTarget() {
    
   double tempNFins = (fTargetLengthOutsideHorn - fTargetFinSpacingLength) /(fTargetFinLength + fTargetFinSpacingLength);
   fTargetNumFinsUpstr = (int) tempNFins;
-  fTargetNumFinsInHorn = fTargetNumFins - fTargetNumFinsUpstr - 1; // exclude the fin on the split Downstream/upstream 	
+  fTargetNumFinsInHorn = fTargetNumFins - fTargetNumFinsUpstr; //Note one fin will be split...  	
+//  std::cerr << "  Num Fins Ups /Downstr " << fTargetNumFinsUpstr << " / " << fTargetNumFinsInHorn << std::endl;
   fTargetFinLengthSplitUpstr = fTargetLengthOutsideHorn - fTargetFinSpacingLength - 
                                fTargetNumFinsUpstr*(fTargetFinLength + fTargetFinSpacingLength);
   fTargetFinLengthSplitDwnstr = fTargetFinLength - fTargetFinLengthSplitUpstr;			       

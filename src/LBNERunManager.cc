@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNERunManager.cc
-// $Id: LBNERunManager.cc,v 1.1.1.1.2.2 2013/08/20 22:57:03 lebrun Exp $
+// $Id: LBNERunManager.cc,v 1.1.1.1.2.3 2013/08/23 06:09:13 lebrun Exp $
 //----------------------------------------------------------------------
 
 #include "LBNERunManager.hh"
@@ -106,8 +106,10 @@ void LBNERunManager::InitializePhysics() {
   
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   if (!particleTable->contains("kaon0L")) {
-    std::cerr << " The Particle table does not know about kaon Long.. Something not initialized " << std::endl;
-    exit(2);
+    std::ostringstream mStrStr;
+    mStrStr << " The Particle table does not know about kaon Long.. Something not initialized ";
+    G4String mStr(mStrStr.str());
+    G4Exception("LBNERunManager::InitializePhysics", " ", FatalException, mStr.c_str()); 
   }
   G4cout<<G4endl;
   G4cout << "Setting correct branching fractions and form factors for "
@@ -277,8 +279,10 @@ void LBNERunManager::InitializePhysics() {
    if (fVerboseLevel > 0) std::cerr << " All User Actions created and declared " << std::endl;
    
   if (!G4RunManager::ConfirmBeamOnCondition()) {
-     std::cerr << " Expecting to be able to turn on the beam at this stage.  Not the case ! Fatal " << std::endl;
-     exit(2);
+     std::ostringstream mStrStr;
+     mStrStr << " Expecting to be able to turn on the beam at this stage.  Not the case ! Fatal  ";
+     G4String mStr(mStrStr.str());
+     G4Exception("LBNERunManager::InitializePhysics", " ", FatalException, mStr.c_str()); 
    } else {
      std::cout << " Expecting to be able to turn on the beam at this stage " << std::endl;
    } 

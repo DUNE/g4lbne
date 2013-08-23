@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.16 2013/08/22 00:10:24 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.17 2013/08/23 06:09:13 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -341,13 +341,13 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 //
   fPlacementHandler->PlaceFinalUpstrTarget(upstreamTargetAssPhys);
   
-  fPlacementHandler->PlaceFinalDownstrTarget((G4PVPlacement*) targethorn1Phys);
-
   
   // Just test random error in positioning along the Z axis
 //  fPlacementHandler->TestVolumeOverlap(G4String("Horn1Hall"), targethorn1Phys);
   
-  fPlacementHandler->PlaceFinal(G4String("Horn1Hall"), targethorn1Phys); 
+  G4PVPlacement *plHorn1 = fPlacementHandler->PlaceFinal(G4String("Horn1Hall"), targethorn1Phys); 
+  fPlacementHandler->PlaceFinalDownstrTarget((G4PVPlacement*) plHorn1);
+
   
 
   fPlacementHandler->Create(G4String("Horn2Hall"));

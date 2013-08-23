@@ -56,19 +56,26 @@ void LBNEVolumePlacements::PlaceFinalDownstrTarget(G4PVPlacement *mother) {
     LBNEVolumePlacementData &infoTmpRLeft = itTmpRLeft->second;
     std::map<G4String, LBNEVolumePlacementData>::iterator itTmpRRight = fSubVolumes.find(G4String("TargetAlignmentRingRight"));
     LBNEVolumePlacementData &infoTmpRRight = itTmpRRight->second;
-    std::map<G4String, LBNEVolumePlacementData>::iterator itTargetUpstrM1 = fSubVolumes.find(G4String("TargetUpstrM1"));
-    LBNEVolumePlacementData *plM1 = &itTargetUpstrM1 ->second;
+    std::map<G4String, LBNEVolumePlacementData>::iterator itM1 = fSubVolumes.find(G4String("TargetUpstrDownstrHelium"));
+    LBNEVolumePlacementData *plM1 = &itM1 ->second;
+    std::map<G4String, LBNEVolumePlacementData>::iterator itMother = fSubVolumes.find(G4String("Horn1TargetDownstrHelium"));
+    LBNEVolumePlacementData *plMother = &itMother ->second;
     G4ThreeVector posTmp;
     posTmp[0] = 0.; // The alignment rings are always centered.. 
     posTmp[1] = 0.; // We start upstream to keep the separation among rings. 
     posTmp[2] = -1.0*plM1->fParams[2]/2.0 + infoTmpRLeft.fParams[2]/2. + 1.0*mm; // 1 mm spacing Left and right have the same thickness. 
     int copyNumber = 0;
     int copyNumberHere = 0;
+    bool transitionDone = false;
     while (true) {
-      if ( posTmp[2] < (plM1->fParams[2]/2.0 - 1.0*mm)) {
+      if (!transitionDone) {
          posTmp[2] += fTargetAlignRingSpacing;      
          copyNumber++;
-	 
+	 if (posTmp[2] > plM1->fParams[2]/2.0) {
+	   transitionDone = true;
+	   const double offset = posTmp[2] - plM1->fParams[2]/2.0;
+	   posTmp[2] =  -1.0*plMother->fParams[2]/2.0 + infoTmpRLeft.fParams[2]/2. + offset ;
+	 }
       } else {
         std::ostringstream cNumStrStr; cNumStrStr << "_P" << copyNumber;
         G4PVPlacement((G4RotationMatrix *) 0, 
@@ -79,7 +86,7 @@ void LBNEVolumePlacements::PlaceFinalDownstrTarget(G4PVPlacement *mother) {
 				          vMHe->GetLogicalVolume(), false, copyNumberHere, fCheckVolumeOverLapWC);
         posTmp[2] += fTargetAlignRingSpacing;      
         copyNumber++; copyNumberHere++; 
-        if ( copyNumber == (fMaxNumAlignRings-1)) break;
+        if ( copyNumber == fMaxNumAlignRings) break;
       }
     }
     // Deal with the first, split, target segment. 				  
@@ -104,6 +111,7 @@ void LBNEVolumePlacements::PlaceFinalDownstrTarget(G4PVPlacement *mother) {
     PlaceFinal("Horn1TargetFinVertFirst", vTargSegFirst);
     // Now place the reviously defined standard target segment. Note: they already contain their cooling and 
     // real target. 
+//    LBNEVolumePlacementData  *plHorn1TargetSegment = Create("Horn1TargetSegment");
     std::map<G4String, LBNEVolumePlacementData>::iterator itTargSeg = fSubVolumes.find(G4String("TargetUpstrDownstrSegment"));
     LBNEVolumePlacementData  *plTargetUpstrDownstrSegment= &itTargSeg->second;    
     
@@ -111,19 +119,19 @@ void LBNEVolumePlacements::PlaceFinalDownstrTarget(G4PVPlacement *mother) {
                        plTargetUpstrDownstrSegment->fParams[2]/2. + 0.002*mm;	       
     for (int iSeg=0; iSeg != fTargetNumFinsInHorn; iSeg++) { // Place with no misalignment
       posTmp[0] = 0.; posTmp[1] = 0.;
-      posTmp[2] += (fTargetFinLength + fTargetFinSpacingLength);
       posTmp[2] =  zCoordTmp;
+      std::cerr << " In Horn1, Positioning target segment " << iSeg  << " at Z = zCoord " << zCoordTmp << std::endl;
       std::ostringstream cNumStrStr; cNumStrStr << "_P" << iSeg;
-//      G4PVPlacement *vSeg = new G4PVPlacement((G4RotationMatrix *) 0, 
-      G4PVPlacement((G4RotationMatrix *) 0, 
-	                            posTmp, plTargetUpstrDownstrSegment->fCurrent, 
-				      G4String("Horn1TargetSegment")+cNumStrStr.str(), 
-				          vMHe->GetLogicalVolume(), false, iSeg, fCheckVolumeOverLapWC);
+         new G4PVPlacement((G4RotationMatrix *) 0, 
+				  posTmp, plTargetUpstrDownstrSegment->fCurrent, 
+				    G4String("Horn1TargetSegment")+cNumStrStr.str(), 
+					vMHe->GetLogicalVolume(), false, iSeg+100, fCheckVolumeOverLapWC);
       zCoordTmp += (fTargetFinLength + fTargetFinSpacingLength);
     }
     // Now the end 
     LBNEVolumePlacementData *plCoolingTubeReturn = Create("Horn1TargetCoolingTubeHLast");
-    posTmp[0] = 0.; posTmp[1] = fTargetFinHeight/2.; posTmp[2] = 0.;			  
+    posTmp[0] = plCoolingTubeReturn->fParams[0]; posTmp[1] = fTargetFinHeight/2.; 
+    posTmp[2] = plCoolingTubeReturn->fParams[2];			  
     G4PVPlacement(&plCoolingTubeReturn->fRotation, 
 	                            posTmp, plCoolingTubeReturn->fCurrent, 
 				    G4String("Horn1TargetCoolingTubeHLast_PTop"), 
@@ -134,8 +142,12 @@ void LBNEVolumePlacements::PlaceFinalDownstrTarget(G4PVPlacement *mother) {
 				    G4String("Horn1TargetCoolingTubeHLast_PTop"), 
 				          vMHe->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
     
+    Create("Horn1TargetCoolingTubeHLastWater");
     PlaceFinal("Horn1TargetCoolingTubeHLastWater", vTubeDown);
+    Create("Horn1TargetCoolingTubeVLast");
     G4PVPlacement *vCL = PlaceFinal("Horn1TargetCoolingTubeVLast", vMHe);					  				  
+    Create("Horn1TargetCoolingTubeVLastWater");
     PlaceFinal("Horn1TargetCoolingTubeVLastWater", vCL);					  				  
+    Create("Horn1TargetDownstrHeContainerCap");
     PlaceFinal("Horn1TargetDownstrHeContainerCap", vMHe);					  				  
 }

@@ -240,8 +240,10 @@ void LBNERunActionMessenger::SetNewValue(G4UIcommand* command,G4String newValues
    }
    if (command == InputNtpTreeName)
    {
-      std::cerr << " Input NptTreeName not yet supported, Fatal " << std::endl;
-      exit(2);
+      std::ostringstream mStrStr;
+      mStrStr << " Input NptTreeName not yet supported, Fatal ";
+      G4String mStr(mStrStr.str());
+      G4Exception("LBNERunActionMessenger::SetNewValue", " ", FatalErrorInArgument, mStr.c_str()); 
 //      LBNEData->SetInputNtpTreeName(newValues);
    }
    if (command == InputNtpFileName)

@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNESteppingAction.cc
-// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.2 2013/08/20 22:57:03 lebrun Exp $
+// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.3 2013/08/23 06:09:13 lebrun Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -315,9 +315,7 @@ void LBNESteppingAction::StudyAbsorption(const G4Step * theStep) {
    if (((theTrack->GetParticleDefinition()->GetParticleName()).find("geantino") == std::string::npos) && (
         ((theTrack->GetParticleDefinition()->GetParticleName()).find("mu+") == std::string::npos ))) return;
    G4StepPoint* prePtr = theStep->GetPreStepPoint();
-   if (prePtr == 0) {
-     std::cerr << " No Pre point for step.. A ghost ???? Fatal... " << std::endl; exit(2);
-   }
+   if (prePtr == 0) return;
    if ( theTrack->GetNextVolume() == 0 ) {
        fOutStudy << " " << pRunManager->GetCurrentEvent()->GetEventID(); 
         for (size_t k=0; k!=3; k++) fOutStudy << " " << prePtr->GetPosition()[k];
@@ -354,11 +352,7 @@ void LBNESteppingAction::StudyAbsorption(const G4Step * theStep) {
 	fOutStudy << " " << waterAbsDecayChan << " " <<  waterAbsHorn1Neck 
 	          << " " << waterAbsHorn2Entr << " " <<  alumAbsHorn2Entr << std::endl;
 		  return;
-   }		  
-   if (postPtr->GetPosition()[2] > 830.) goneThroughHorn1Neck=true; // approximate... 
-   if (postPtr->GetPosition()[2] > 6600.) goneThroughHorn2Entr=true; //truly approximate. 
-   if (ll < 1.0e-10) return; 
-   // Just print where we are now... 
+   } 		  
    G4VPhysicalVolume *physVol = postPtr->GetPhysicalVolume();
    std::string vName(physVol->GetName());
    G4Material *material = postPtr->GetMaterial();
@@ -372,6 +366,10 @@ void LBNESteppingAction::StudyAbsorption(const G4Step * theStep) {
 	      " In " << vName << " material " << material->GetName()
 	      << " InterLength " << material->GetNuclearInterLength() << std::endl;  
    } 
+   if (postPtr->GetPosition()[2] > 830.) goneThroughHorn1Neck=true; // approximate... 
+   if (postPtr->GetPosition()[2] > 6600.) goneThroughHorn2Entr=true; //truly approximate. 
+   if (ll < 1.0e-10) return; 
+   // Just print where we are now... 
 
    totalAbsDecayChan += ll/material->GetNuclearInterLength(); 
    if (vName.find("WaterLayer") != std::string::npos) waterAbsDecayChan += ll/material->GetNuclearInterLength(); 

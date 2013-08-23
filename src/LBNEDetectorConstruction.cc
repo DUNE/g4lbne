@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.17 2013/08/23 06:09:13 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.18 2013/08/23 07:36:44 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -619,6 +619,18 @@ void LBNEDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
       LBNEDetector->Construct();
       return;
    }
+}
+G4VPhysicalVolume* LBNEDetectorConstruction::GetPhysicalVolume(G4String name) {
+       std::ostringstream mStrStr;
+      mStrStr << " Obsolete Call  for Volume named " << name << "Please let us use stadard G4 call here and there...  ";
+      G4String mStr(mStrStr.str());
+      G4Exception("LBNEDetectorConstruction::GetPhysicalVolume", " ", FatalErrorInArgument, mStr.c_str()); 
+}
+G4Material* LBNEDetectorConstruction::GetMaterial(G4int iMat) {
+       std::ostringstream mStrStr;
+      mStrStr << " Obsolete Call  for Material Number " << iMat << "Please let us use stadard G4 call here and there...  ";
+      G4String mStr(mStrStr.str());
+      G4Exception("LBNEDetectorConstruction::GetMaterial", " ", FatalErrorInArgument, mStr.c_str()); 
 }
 	
 	

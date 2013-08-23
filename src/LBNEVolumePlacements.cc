@@ -79,9 +79,7 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
 // The following quantity can be changed via messenger command. 
 // 
   fTargetLengthIntoHorn = 50.0*cm; //  LBNE Doc 6100, page 7 
-  fTargetLengthOutsideHorn = fTargetSLength - fTargetLengthIntoHorn; 
-  
-  
+ 
   // No fTargetX0, Y0:  These would be surveyed point, part of the alignement 
   // realm, i.e. handled in the Surveyor class.
   fTargetFinHeight = 21.4*mm; // It includes half of the cooling tube, which will be inside the fins
@@ -91,7 +89,10 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
   fTargetFinWidth = 7.4*mm; // 6.4 -> 7.4 Per discussion with Jim and Alberto, July 25 2013. 
   fTargetFinLength = 20*mm; // 
   fTargetFinMaterial = G4String("Target"); // Only one type of target material 
-//  fTargetNumberFins = 47; //  LBNE Doc 6100.. But we have to compute it from the graphite target length 
+  fTargetLengthOutsideHorn = fTargetSLength - fTargetLengthIntoHorn + fTargetFinLength; 
+   // We add the fin that span the Usptream target and downstream target part. 
+  
+ //  fTargetNumberFins = 47; //  LBNE Doc 6100.. But we have to compute it from the graphite target length 
   // Since fTargetSLengthGraphite can be changed..Use the same algorithm.. 
   this->SegmentTarget(); 
   fTargetZOffsetStart = 32.2*mm; // From Russian drawing 7589-00-00-00 
@@ -126,7 +127,6 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
   // A small correction for the tilt angle 
   fTargetCTubeReturnLengthDownstr -= fTargetCTubeReturnLengthDownstr*
                                           std::sin(fTargetCTubeReturnHOffset/fTargetCTubeReturnLengthDownstr);
-  std::cerr << " fTargetCTubeReturnLengthDownstr " << 	fTargetCTubeReturnLengthDownstr	<< " And quit ??? " << std::endl; exit(2);			  
   fTargetDistFlangeToTargetStart = 32.2*mm;
   fTargetCTubeReturnLengthUpstr = fTargetDistFlangeToTargetStart + 10.25*in; // from the upstream end of target to 
                                  // Upstr bend return 
@@ -524,7 +524,7 @@ LBNEVolumePlacementData*
 	 maxRadIOHorn1 += 2.0*cm;    
          info.fParams[1] = std::max(maxRadIOHorn1, (fTargetHeContTubeInnerRadius + fTargetHeContTubeThickness+ 1.0*cm));
 	        // mother volume, safety factor of 1. 0 cm  
-         info.fParams[2] = fTargetUpstrDwnstrMargin  +  fTargetDistFlangeToTargetStart + fTargetLengthOutsideHorn; 
+         info.fParams[2] = fTargetUpstrDwnstrMargin  +  fTargetDistFlangeToTargetStart + fTargetLengthOutsideHorn - fTargetFinLength; 
          G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
          info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Air")), volumeName); 
          std::map<G4String, LBNEVolumePlacementData>::const_iterator itMTop = fSubVolumes.find(G4String("TargetUpstrMTop"));
@@ -549,7 +549,7 @@ LBNEVolumePlacementData*
           if (name == G4String("TargetUpstrDownstrHeContainer")) { // 
             info.fParams[0] = 0.; 
             info.fParams[1] = fTargetHeContTubeInnerRadius + fTargetHeContTubeThickness; 
-            info.fParams[2] = fTargetUpstrDwnstrMargin/2.  +  fTargetDistFlangeToTargetStart + fTargetLengthOutsideHorn ;
+            info.fParams[2] = it->second.fParams[2]- .005*mm;
             G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
             info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Beryllium")), volumeName); 
             info.fPosition[2] = 0.; // possibly tweak for the margin... 

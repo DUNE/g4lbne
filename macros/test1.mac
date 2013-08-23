@@ -41,7 +41,7 @@
 #
 /run/beamOn 
 #
-# exit
+exit
 #
 #NOTE: To debug problems grep for "PROBLEM" in the output of the simulation
 # "PROBLEM" statements are printed when there is a problem.

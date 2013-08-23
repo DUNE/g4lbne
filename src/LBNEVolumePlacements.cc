@@ -529,7 +529,6 @@ LBNEVolumePlacementData*
          info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Air")), volumeName); 
          std::map<G4String, LBNEVolumePlacementData>::const_iterator itMTop = fSubVolumes.find(G4String("TargetUpstrMTop"));
          if (it == fSubVolumes.end()) {
-          std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
           std::ostringstream mStrStr;
           mStrStr << " Internal error for " << name << " Volume TargetUpstrMTop not found " << std::endl;
           G4String mStr(mStrStr.str());
@@ -541,10 +540,10 @@ LBNEVolumePlacementData*
           std::map<G4String, LBNEVolumePlacementData>::const_iterator it = 
           fSubVolumes.find(G4String("TargetUpstrM1"));
           if (it == fSubVolumes.end()) {
-            std::cerr << " LBNEVolumePlacements::Create, internal error for " << name << " fatal " << std::endl;
             std::ostringstream mStrStr;
             mStrStr << " Internal error for " << name << " Volume TargetUpstrM1 not found " << std::endl;
             G4String mStr(mStrStr.str());
+            G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
            } 
           if (name == G4String("TargetUpstrDownstrHeContainer")) { // 
             info.fParams[0] = 0.; 
@@ -555,9 +554,17 @@ LBNEVolumePlacementData*
             info.fPosition[2] = 0.; // possibly tweak for the margin... 
          }
           if (name == G4String("TargetUpstrDownstrHelium")) { // 
+            std::map<G4String, LBNEVolumePlacementData>::const_iterator it = 
+            fSubVolumes.find(G4String("TargetUpstrDownstrHeContainer"));
+             if (it == fSubVolumes.end()) {
+              std::ostringstream mStrStr;
+              mStrStr << " Internal error for " << name << " Volume TargetUpstrDownstrHeContainer not found " << std::endl;
+              G4String mStr(mStrStr.str());
+              G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
+            } 
             info.fParams[0] = 0.; 
             info.fParams[1] = fTargetHeContTubeInnerRadius; 
-            info.fParams[2] = fTargetUpstrDwnstrMargin/4.  +  fTargetDistFlangeToTargetStart + fTargetLengthOutsideHorn ;
+            info.fParams[2] = it->second.fParams[2]- .005*mm;
             G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
             info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("HeliumTarget")), volumeName); 
             info.fPosition[2] = 0.; // possibly tweak for the margin... 
@@ -879,8 +886,9 @@ LBNEVolumePlacementData*
             G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
             info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Titanium")), volumeName); 
             info.fPosition[0] = fTargetCTubeReturnHOffset/2.0;
-            info.fPosition[2] = -itMother->second.fParams[2]/2 + fTargetFinLengthSplitDwnstr + fTargetNumFinsInHorn*fTargetFinLength + 
-	                        info.fParams[2]/2.0; 
+            info.fPosition[2] =
+	       itMother->second.fParams[2]/2 - fTargetCTubeOuterRadius - 15.0*mm - fTargetCTubeReturnLengthDownstr/2.0;
+	       // ?????????????????????????? To be checked with  the drawing... // 
 	    // Two different Vetical locations (up and down) 
 	    info.fRotation.rotateY(fTargetCTubeReturnHOffset/(info.fParams[2]+2.0*mm)); // approximate.	
 	    info.fRotationIsUnitMatrix = false; 		 
@@ -912,9 +920,7 @@ LBNEVolumePlacementData*
            G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
            info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Titanium")), volumeName); 
            info.fPosition[0] = fTargetCTubeReturnHOffset;
-           info.fPosition[2] =  -itMother->second.fParams[2]/2 + fTargetFinLengthSplitDwnstr + 
-	                        fTargetNumFinsInHorn*fTargetFinLength + itH->second.fParams[2] + 
-	                        fTargetCTubeOuterRadius + 0.5*mm; // for safety...  
+           info.fPosition[2] = 	itMother->second.fParams[2]/2 - fTargetCTubeOuterRadius - 10.0*mm  ;
 	    // Two different Vetical locations (up and down) 
 	   info.fRotation.rotateX(M_PI/2.); 	info.fRotationIsUnitMatrix = false;
 	        ; // possibly tweak for the margin... 

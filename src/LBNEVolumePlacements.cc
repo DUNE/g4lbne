@@ -720,19 +720,19 @@ LBNEVolumePlacementData*
      
     } 
     // Note: to optimize the geometry, we place the downstream end of the target into the 
-    // horn1. Target is not a type, nor misplaced in the information flow. 
-    
-    if (name ==  G4String("Horn1TargetDownstrHeContainer")) {    
+    // horn1. Target is not a typo, nor misplaced in the information flow. 
+    if (name.find("Horn1Target") == 0) {
+      if (name ==  G4String("Horn1TargetDownstrHeContainer")) {    
         const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1Hall"), G4String("Create"));
-       info.fParams[0] = 0.; 
-       info.fParams[1] = fTargetHeContTubeInnerRadius + fTargetHeContTubeThickness; 
-       info.fParams[2] = fTargetHeContTubeLengthInHorn + 0.020*mm;
-       G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
-       info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Beryllium")), volumeName); 
-       info.fPosition[2] = -plInfoM->fParams[2]/2. + info.fParams[2]/2. + 0.002*mm; //
+        info.fParams[0] = 0.; 
+        info.fParams[1] = fTargetHeContTubeInnerRadius + fTargetHeContTubeThickness; 
+        info.fParams[2] = fTargetHeContTubeLengthInHorn + 0.020*mm;
+        G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
+        info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Beryllium")), volumeName); 
+        info.fPosition[2] = -plInfoM->fParams[2]/2. + info.fParams[2]/2. + 0.002*mm; //
        // This is a surveyed volume, tweaked in PlaceFinal  
-     }
-     if (name ==  G4String("Horn1TargetDownstrHelium")) {
+      }
+      if (name ==  G4String("Horn1TargetDownstrHelium")) {
     
  //       const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1TargetDownstrHeContainer"), G4String("Create"));
        info.fParams[0] = 0.; 
@@ -742,8 +742,8 @@ LBNEVolumePlacementData*
        info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("HeliumTarget")), volumeName); 
        info.fPosition[2] = 0.; //
        // That was is a surveyed volume, tweaked in PlaceFinal         
-    }   
-    if (name == G4String("Horn1TargetFinVertFirst")) { // 
+      }   
+      if (name == G4String("Horn1TargetFinVertFirst")) { // 
             info.fParams[0] = fTargetFinWidth; 
             info.fParams[1] = fTargetFinHeight - 2.0*fTargetCTubeOuterRadius - 0.1*mm; 
             info.fParams[2] = fTargetFinLengthSplitDwnstr  - 0.02*mm; // 20 micron safety. 
@@ -751,23 +751,23 @@ LBNEVolumePlacementData*
             info.fCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("Target")), volumeName);
             info.fTypeName = G4String("Box");
  // despite being a single copy, do the placement in a separate method. 	    
-    }
-    if (name == G4String("Horn1TargetCoolingTubeFirst")) { // 
+      }
+      if (name == G4String("Horn1TargetCoolingTubeFirst")) { // 
             info.fParams[0] = 0.; 
             info.fParams[1] = fTargetCTubeOuterRadius; 
             info.fParams[2] = fTargetFinLengthSplitDwnstr - 0.025*mm;
             G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
             info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Titanium")), volumeName); 
             info.fPosition[2] = fTargetFinHeight + 0.005*mm; // possibly tweak for the margin... 
-    }
-    if (name == G4String("Horn1TargetCoolingTubeFirstWater")) { // 
+      }
+      if (name == G4String("Horn1TargetCoolingTubeFirstWater")) { // 
             info.fParams[0] = 0.; 
             info.fParams[1] = fTargetCTubeInnerRadius; 
             info.fParams[2] = fTargetFinLengthSplitDwnstr - 0.03*mm;
             G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
             info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Water")), volumeName); 
-    }
-    if (name == G4String("Horn1TargetSegmentFirst")) { //
+      }
+      if (name == G4String("Horn1TargetSegmentFirst")) { //
           const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1TargetDownstrHelium"), G4String("Create"));
             info.fParams[0] = fTargetFinWidth + 0.2*mm; 
             info.fParams[1] = fTargetFinHeight + 2.0*fTargetCTubeOuterRadius + 0.2*mm; 
@@ -776,8 +776,8 @@ LBNEVolumePlacementData*
             info.fCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("HeliumTarget")), volumeName); 
             info.fTypeName = G4String("Box");
 	    info.fPosition[2] = -1.0*plInfoM->fParams[2]/2. + info.fParams[2]/2. + 0.010*mm;
-    }
-    if (name == G4String("Horn1TargetSegment")) { // A duplicate of the Upstream segment.  Geatn4 does not see the daughter volume 
+      }
+      if (name == G4String("Horn1TargetSegment")) { // A duplicate of the Upstream segment.  Geatn4 does not see the daughter volume 
             // above ???
             info.fParams[0] = fTargetFinWidth + 0.2*mm; 
             info.fParams[1] = fTargetFinHeight + 2.0*fTargetCTubeOuterRadius + 0.2*mm; 
@@ -785,8 +785,8 @@ LBNEVolumePlacementData*
             G4Box* aBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2.);
             info.fCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("HeliumTarget")), volumeName); 
             info.fTypeName = G4String("Box");
-    }
-    if (name == G4String("Horn1TargetCoolingTubeHLast")) { // 
+      }
+      if (name == G4String("Horn1TargetCoolingTubeHLast")) { // 
             const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1TargetDownstrHelium"), G4String("Create"));
             info.fParams[0] = 0.; 
             info.fParams[1] = fTargetCTubeOuterRadius; 
@@ -801,8 +801,8 @@ LBNEVolumePlacementData*
 	    info.fRotation.rotateY(fTargetCTubeReturnHOffset/(info.fParams[2]+2.0*mm)); // approximate.	
 	    info.fRotationIsUnitMatrix = false; 		 
 	        ; // possibly tweak for the margin... 
-    }
-    if (name == G4String("Horn1TargetCoolingTubeVLast")) { //           
+     }
+     if (name == G4String("Horn1TargetCoolingTubeVLast")) { //           
             const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1TargetDownstrHelium"), G4String("Create"));
            info.fParams[0] = 0.; 
            info.fParams[1] = fTargetCTubeOuterRadius; 
@@ -814,25 +814,25 @@ LBNEVolumePlacementData*
 	    // Two different Vetical locations (up and down) 
 	   info.fRotation.rotateX(M_PI/2.); 	info.fRotationIsUnitMatrix = false;
 	        ; // possibly tweak for the margin... 
-    }
-    if (name == G4String("Horn1TargetCoolingTubeHLastWater")) { // 
+     }
+     if (name == G4String("Horn1TargetCoolingTubeHLastWater")) { // 
             const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1TargetCoolingTubeHLast"), G4String("Create"));
            info.fParams[0] = 0.; 
            info.fParams[1] = fTargetCTubeInnerRadius; 
            info.fParams[2] = plInfoM->fParams[2] - 0.050*mm;
            G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
            info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Water")), volumeName); 
-    }
-    if (name == G4String("Horn1TargetCoolingTubeVLastWater")) { // 
+     }
+     if (name == G4String("Horn1TargetCoolingTubeVLastWater")) { // 
             const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1TargetCoolingTubeVLast"), G4String("Create"));
            info.fParams[0] = 0.; 
            info.fParams[1] = fTargetCTubeInnerRadius; 
            info.fParams[2] = plInfoM->fParams[2] - 0.050*mm;
            G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
            info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Water")), volumeName); 
-    }
+     }
     
-     if (name == G4String("Horn1TargetDownstrHeContainerCap")) { // 
+      if (name == G4String("Horn1TargetDownstrHeContainerCap")) { // 
             const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1TargetDownstrHelium"), G4String("Create"));
            info.fParams[0] = 0.; 
            info.fParams[1] = fTargetHeContTubeInnerRadius-0.010*mm; 
@@ -840,9 +840,10 @@ LBNEVolumePlacementData*
            G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
            info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Beryllium")), volumeName); 
 	   info.fPosition[2] = plInfoM->fParams[2]/2 - info.fParams[2] - 0.5*mm;
-    }
-    if (name ==  G4String("Horn1IOTransCont")) {  // Transition Inner to Outer Drawing 8875-112-MD-363097
-       // Only the section downstream    
+     }
+    } // End of Horn1 target region 
+    else if (name.find("Horn1IOTrans") == 0) { 
+      if (name ==  G4String("Horn1IOTransCont")) {  // Transition Inner to Outer Drawing 8875-112-MD-363097
         const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1Hall"), G4String("Create"));
        info.fParams[0] = fHorn1IOTransInnerRad;
        info.fParams[1] = fHorn1IOTransOuterRad;        
@@ -850,6 +851,32 @@ LBNEVolumePlacementData*
        G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
        info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Air")), volumeName); 
        info.fPosition[2] = -plInfoM->fParams[2]/2. + info.fParams[2]/2. + 0.002*mm; //
+       // This is a surveyed volume, tweaked in PlaceFinal  
+      }
+      
+    } // End of the Inner Outer Transition for Horn1 
+    else 
+      if (name ==  G4String("Horn1TopLevelUpstr")) {  // A container for the section of inner and outer conductors enveloping 
+                                                   // the target.  
+        const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1Hall"), G4String("Create"));
+        info.fParams[0] = fHorn1TopUpstrInnerRad;
+        info.fParams[1] = fHorn1TopUpstrOuterRad;        
+        info.fParams[2] = fHorn1TopUpstrLength -  0.010*mm;
+        G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
+        info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Air")), volumeName); 
+        info.fPosition[2] = -plInfoM->fParams[2]/2. + info.fParams[2]/2. + 0.005*mm; 
+       // This is a surveyed volume, tweaked in PlaceFinal  
+     }
+    if (name ==  G4String("Horn1TopLevelDownstr")) {  // A container for the section of inner and outer conductors 
+                                                      // downstream of the target 
+        const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1Hall"), G4String("Create"));
+        const LBNEVolumePlacementData *plInfoC = Find(name, G4String("Horn1TopLevelUpstr"), G4String("Create"));
+       info.fParams[0] = 0.;
+       info.fParams[1] = fHorn1TopDownstrOuterRad;        
+       info.fParams[2] = fHorn1TopDownstrLength -  0.010*mm;
+       G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
+       info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Air")), volumeName); 
+       info.fPosition[2] = -plInfoM->fParams[2]/2. + plInfoC->fParams[2]/2 + info.fParams[2]/2. + 0.005*mm;
        // This is a surveyed volume, tweaked in PlaceFinal  
      }
 
@@ -876,7 +903,9 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
     if (name == G4String("UpstreamTargetAssembly")) surveyedPtName = std::string("Canister");
     if (name == G4String("TargetUpstrDownstrHeContainer")) surveyedPtName = std::string("HeTube");
     if (name == G4String("Horn1TargetDownstrHeContainer")) surveyedPtName = std::string("HeTube");
-    if (name == G4String("fHorn1IOTransCont")) surveyedPtName = std::string("Horn1");
+    if (name == G4String("Horn1IOTransCont")) surveyedPtName = std::string("Horn1");
+    if (name.find("Horn1TopLevel") == 0) surveyedPtName = std::string("Horn1");
+    if (name.find("Horn2TopLevel") == 0) surveyedPtName = std::string("Horn2");
     
     LBNEVolumePlacementData &info=it->second;
     info.fMother  =  mother; 
@@ -938,11 +967,11 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
 		
 	        deltaSlopes[k] = (deltaDownstr[k] - deltaUpstr[k])/fTotalLength;
 	        const double offsetCenter =  0.5*(deltaUpstr[k] + deltaDownstr[k]);
-		if (name == G4String("fHorn1IOTransCont")) {
+		if (name == G4String("Horn1IOTransCont")) {
 		  info.fPosition[k] += deltaUpstr[k] + deltaSlopes[k]*fHorn1IOTransLength/2.;
-	      	} else if(name == G4String("fHorn1TopLevelUpstr")) {
+	      	} else if(name == G4String("Horn1TopLevelUpstr")) {
 		  info.fPosition[k] += deltaUpstr[k] + deltaSlopes[k]*(fHorn1IOTransLength + fHorn1TopUpstrLength/2.) ;
-	      	} else if(name == G4String("fHorn1TopLevelDownstr")) {
+	      	} else if(name == G4String("Horn1TopLevelDownstr")) {
 		  info.fPosition[k] += deltaUpstr[k] + deltaSlopes[k]*
 		              (fHorn1IOTransLength + fHorn1TopUpstrLength + fHorn1TopDownstrLength/2.) ;
 		}  
@@ -956,7 +985,13 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
       if ((std::abs(deltaSlopes[0]) > 2.0e-9) || (std::abs(deltaSlopes[1]) > 2.0e-9)) { 
         info.fRotationIsUnitMatrix = false;
         info.fRotation.rotateX(deltaSlopes[0]);	
-        info.fRotation.rotateY(deltaSlopes[1]);	
+        info.fRotation.rotateY(deltaSlopes[1]);
+	// Shift the volume longitudinally if a signficant slope exists. 
+	const double maxSlope = std::max(std::abs(deltaSlopes[0]), std::abs(deltaSlopes[1]));
+	// assume they are tubes..for now, all surveyed points are assigned to tubes..Shift everything downstream 
+	// (an convention arbitrary convention!...) 
+	info.fParams[2] += std::sin(maxSlope)*info.fParams[1];
+	// Note: position might have to revised as well.. On a case by case basis? 	
       }
     } // End of alignment. 
     std::cerr << " LBNEVolumePlacements::PlaceFinal, " << name << " half size " 

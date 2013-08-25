@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.13 2013/08/23 23:14:10 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.14 2013/08/25 15:10:30 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -75,13 +75,22 @@ struct LBNEVolumePlacementData {
 class LBNEHornRadialEquation  {
 
   public:
-      LBNEHornRadialEquation(double rSqrtCoefficient, double zOffset, double rOffset);
-      double GetVal(double z); 
+      LBNEHornRadialEquation(); // to be able to store in an stl vector. 
+      LBNEHornRadialEquation(double rSqrtCoefficient, double zCoefficient, double rOffset);
+      double GetVal(double z) const ; 
+      void test1() const; // Cross check for equation 1. Will generate G4Exception 
   
   private:
+      static double inchDef;
       double rCoeff;
-      double zOff;
+      double zCoeff;
       double rOff;
+      double rResc;
+      double zResc;
+      
+  public:    
+    inline double SetLongRescaleFactor(double r) {zResc = r;}
+    inline double SetRadialRescaleFactor(double r) {rResc = r;}
 
 };
 
@@ -170,6 +179,9 @@ public:
   void RescaleHorn2Lengthwise();
   void RescaleHorn1Radially();
   void RescaleHorn2Radially();
+  // Custom stuff for the upstream part of Horn1 
+  
+  LBNEVolumePlacementData* CreateHorn1TopLevelUpstr();
   
   
 private:
@@ -302,16 +314,17 @@ private:
   G4double fHorn1IOTransInnerRad; // Surveyable!. But physically attachached to the top level section. 
   G4double fHorn1IOTransOuterRad;
   
-  std::vector<G4double> fHorn1UsptrInnerRadsUpstr;
+  std::vector<G4double> fHorn1UpstrInnerRadsUpstr;
   std::vector<G4double> fHorn1UpstrInnerRadsDownstr; 
-  std::vector<G4double> fHorn1UsptrInnerRadsOuterUpstr;
+  std::vector<G4double> fHorn1UpstrInnerRadsOuterUpstr;
   std::vector<G4double> fHorn1UpstrInnerRadsOuterDownstr; 
   std::vector<G4double> fHorn1UpstrLengths;
   std::vector<G4double> fHorn1UpstrZPositions;
 
-  std::vector<G4double> fHorn1UsptrOuterIOTransInnerRads; 
-  std::vector<G4double> fHorn1UsptrOuterIOTransInnerLengths; 
-  std::vector<G4double> fHorn1UsptrOuterIOTransInnerPositions; 
+  std::vector<G4double> fHorn1UpstrOuterIOTransInnerRads; 
+  std::vector<G4double> fHorn1UpstrOuterIOTransThicks; 
+  std::vector<G4double> fHorn1UpstrOuterIOTransLengths; 
+  std::vector<G4double> fHorn1UpstrOuterIOTransPositions; 
 
   G4double fHorn1TopUpstrLength; // Upstream part of the inner conductor, container volume (TUBS), Surveyed. 
   G4double fHorn1TopUpstrInnerRad; // This volume envelopes the target. 
@@ -319,18 +332,14 @@ private:
 
   G4double fHorn1TopDownstrLength; // Do part of the inner conductor, container volume (TUBS), Surveyed. 
   G4double fHorn1TopDownstrOuterRad;
-  
-  // The spider Hangers 
-//  G4double  fHorn1HangerWidth; Set internaly in ContructHorn1Elements
-//  G4double  fHorn1HangerHeight; 
-  
-                                            
-//   std::vector<G4double> fHorn1HangerPositions;
-
+  G4double fHorn1NeckLength;
+  G4double fHorn1NeckZPosition; // from the start of Horn1TopLevelUpstr
+                                              
   // The outer tube
   
   G4double fHorn1OuterTubeInnerRad; 
-   
+  G4double fHorn1OuterTubeOuterRad; 
+  
   G4double fHorn1OuterConnectorRad;  // rescaled radially as well. 
   G4double fHorn1OuterConnectorThick;
   G4double fHorn1OuterConnectorLength;
@@ -340,6 +349,8 @@ private:
   G4double fHorn1InnerConnectorThick;
   G4double fHorn1InnerConnectorLength;
   G4double fHorn1InnerConnectorPosition;
+  
+  std::vector<LBNEHornRadialEquation> fHorn1Equations;
   //
   // Horn2 
   //
@@ -366,7 +377,13 @@ private:
   // More intialization done here (too keep the constructor code of reasonable length.. )
   //
   void DeclareHorn1Dims(); 
-  
+  void CheckHorn1InnerConductAndTargetRadii(); // A check prior to the CheckOverlap of Geant4.  In principle, 
+                                               // simpler and therefore more exact or reliable. 
+					       // If fail, issues a fatal G4Exception. 
+  int GetNumberOfInnerHornSubSections(size_t eqn, double z1, double z2, int nMax) const;
+   
+  void InstallHorn1SpiderHanger(const G4String &name, double z, 
+                                LBNEVolumePlacementData *plInfo,  G4PVPlacement *vMother );					       
 };
 
 #endif

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.14 2013/08/25 15:10:30 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.15 2013/08/25 22:44:37 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -382,7 +382,9 @@ private:
 					       // If fail, issues a fatal G4Exception. 
   int GetNumberOfInnerHornSubSections(size_t eqn, double z1, double z2, int nMax) const;
    
-  void InstallHorn1SpiderHanger(const G4String &name, double z, 
+  void Horn1InstallSpiderHanger(const G4String &name, double zFromStartInnerConduct, double zPos,
+                                LBNEVolumePlacementData *plInfo,  G4PVPlacement *vMother );					       
+  void Horn1PlaceAWeld(const G4String &name, double z, 
                                 LBNEVolumePlacementData *plInfo,  G4PVPlacement *vMother );					       
 };
 

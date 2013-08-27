@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.19 2013/08/23 23:14:10 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.20 2013/08/27 05:28:19 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -345,10 +345,16 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   // Just test random error in positioning along the Z axis
 //  fPlacementHandler->TestVolumeOverlap(G4String("Horn1Hall"), targethorn1Phys);
   
-  G4PVPlacement *plHorn1 = fPlacementHandler->PlaceFinal(G4String("Horn1Hall"), targethorn1Phys); 
-  fPlacementHandler->PlaceFinalDownstrTarget((G4PVPlacement*) plHorn1);
+  G4PVPlacement *vHorn1 = fPlacementHandler->PlaceFinal(G4String("Horn1Hall"), targethorn1Phys); 
+//
+// We will place the downstream part of the target in a container volume 
+//
+   LBNEVolumePlacementData *plHUpst = fPlacementHandler->CreateHorn1TopLevelUpstr();
+   G4PVPlacement *vUpstr = fPlacementHandler->PlaceFinal("Horn1TopLevelUpstr", vHorn1);
 
-  fPlacementHandler->PlaceFinalHorn1((G4PVPlacement*) plHorn1);
+  fPlacementHandler->PlaceFinalDownstrTarget((G4PVPlacement*) vUpstr);
+
+  fPlacementHandler->PlaceFinalHorn1((G4PVPlacement*) vHorn1, vUpstr);
   
 
   fPlacementHandler->Create(G4String("Horn2Hall"));

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.15 2013/08/25 22:44:37 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.16 2013/08/27 05:28:19 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -125,7 +125,7 @@ public:
   void PlaceFinalUpstrTarget(G4PVPlacement *mother);
   void PlaceFinalDownstrTarget(G4PVPlacement *mother);
  
-  void PlaceFinalHorn1(G4PVPlacement *mother);
+  void PlaceFinalHorn1(G4PVPlacement *mother,  G4PVPlacement *motherDownstrTarget);
   			       
   // No change to either this data or the establish Geant4 geometry. 
   // 
@@ -204,10 +204,9 @@ private:
   G4double fDecayPipeLength; // equal the above for now.. 
   G4double fDecayPipeRadius;
   G4double fWaterLayerThickInHorns;
-  G4double fHorn1Length;
+  G4double fHorn1Length; 
   G4double fTargetAndBaffleLengthApprox; 
-  G4double fHorn1UpstreamPlateLength; //???????????//
-  G4double fHorn1DownstreamPlateLength; //???????????//
+  G4double fHorn1DownstreamPlateLength; // Bulkhead, guess work at this point 
   //
   G4double fDistMCZeroToACTRN1Pts; // See drawing 8875.112-MD-363097, with Jim Hylen annotation. 
   // 
@@ -383,9 +382,9 @@ private:
   int GetNumberOfInnerHornSubSections(size_t eqn, double z1, double z2, int nMax) const;
    
   void Horn1InstallSpiderHanger(const G4String &name, double zFromStartInnerConduct, double zPos,
-                                LBNEVolumePlacementData *plInfo,  G4PVPlacement *vMother );					       
+                                const LBNEVolumePlacementData *plInfo,  G4PVPlacement *vMother );					       
   void Horn1PlaceAWeld(const G4String &name, double z, 
-                                LBNEVolumePlacementData *plInfo,  G4PVPlacement *vMother );					       
+                                const LBNEVolumePlacementData *plInfo,  G4PVPlacement *vMother );					       
 };
 
 #endif

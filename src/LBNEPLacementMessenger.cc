@@ -169,7 +169,7 @@ void LBNEPlacementMessenger::SetNewValue(G4UIcommand* command,  G4String newValu
    }
    if (command == fTargetLengthIntoHorn) {
      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
-     volP->SetTargetSLengthGraphite(cmdWD->GetNewDoubleValue(newValue));
+     volP->SetTargetLengthIntoHorn(cmdWD->GetNewDoubleValue(newValue));
      volP->SegmentTarget();
    }
    if (command == fHorn1RadialRescale) {

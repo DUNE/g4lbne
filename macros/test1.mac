@@ -11,7 +11,7 @@
 #
 /LBNE/det/construct
 #
-exit
+#exit
 /run/initialize
 #
 # We are at Geant4 stage "idle" 
@@ -23,7 +23,7 @@ exit
 # Primary vertex setting 
 #
 /LBNE/primary/useGeantino
-/LBNE/primary/geantinoOpeningAngle 0.0000001 radian
+/LBNE/primary/geantinoOpeningAngle 0.003 radian
 /LBNE/primary/geantinoZOrigin -5000. mm 
 #
 /LBNE/stepping/filename ./example/steppingGeantino101.txt

@@ -46,7 +46,7 @@ private:
 //  
   G4UIcmdWithADouble* fHorn2RadialRescale;   
   G4UIcmdWithADouble* fHorn2LongRescale; 
-  G4UIcmdWithADoubleAndUnit* fHorn2LongPosition;
+  G4UIcmdWithADoubleAndUnit* fHorn2LongPosition; // from the origin MCZero to the middle of Horn 2 
 //
   
   void SetMyUnitsAndConditions(G4UIcmdWithADoubleAndUnit *cmd, double value);

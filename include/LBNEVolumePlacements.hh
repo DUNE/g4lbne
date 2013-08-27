@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.16 2013/08/27 05:28:19 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.17 2013/08/27 22:46:31 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -76,12 +76,13 @@ class LBNEHornRadialEquation  {
 
   public:
       LBNEHornRadialEquation(); // to be able to store in an stl vector. 
-      LBNEHornRadialEquation(double rSqrtCoefficient, double zCoefficient, double rOffset);
+      LBNEHornRadialEquation(double rSqrtCoefficient, double zCoefficient, double rOffset, bool parabolic=true);
       double GetVal(double z) const ; 
       void test1() const; // Cross check for equation 1. Will generate G4Exception 
   
   private:
       static double inchDef;
+      bool parabolic;
       double rCoeff;
       double zCoeff;
       double rOff;
@@ -351,12 +352,56 @@ private:
   
   std::vector<LBNEHornRadialEquation> fHorn1Equations;
   //
+  // ==========================================================
+  // 
   // Horn2 
   //
   G4double fHorn2RadialRescale;
   G4double fHorn2LongRescale;
-  G4double fHorn2LongPosition;
+  G4double fHorn2LongPosition; // with data cards... 
+  //
+  G4double fHorn2Length; // Top level volume, surveyable. and rescal-able. 
+  G4double fHorn2Radius;
+  // We will subdivide Horn2 along the parts on Drawing 8875.112MD - 363383
+  //  
+  // Part 1 (index 0 in the array below) : Transition Inner to outer conductor . Drawing 363382
+  // Part2.... Up to 7. 
+  //
+  std::vector<G4double> fHorn2PartsLengths; 
+  std::vector<G4double> fHorn2PartsRadii;
   
+  G4double fHorn2LengthMargin;   
+  //
+  // We approximate the upstream inner to outer transition (part 1) as a bunch tubs 
+  //
+  std::vector<G4double> fHorn2UpstrOuterIOTransRadsOne; 
+  std::vector<G4double> fHorn2UpstrOuterIOTransRadsTwo; 
+  std::vector<G4double> fHorn2UpstrOuterIOTransLengths; 
+  std::vector<G4double> fHorn2UpstrOuterIOTransPositions; // with respect to the start of the mother volume
+  //
+  // And one cone.  
+  //
+  G4double fHorn2InnerRMinUpstr;
+  G4double fHorn2InnerRMaxUpstr;
+  G4double fHorn2InnerRMinDownstr;
+  G4double fHorn2InnerRMaxDownstr;
+  
+  std::vector<LBNEHornRadialEquation> fHorn2Equations;
+
+  // The outer tube
+  
+  G4double fHorn2OuterTubeInnerRad; 
+  G4double fHorn2OuterTubeOuterRad; 
+  
+  G4double fHorn2OuterConnectorRad;  // rescaled radially as well. 
+  G4double fHorn2OuterConnectorThick;
+  G4double fHorn2OuterConnectorLength;
+  G4double fHorn2OuterConnectorPosition;
+
+  G4double fHorn2InnerConnectorRad; // dwonstream end connectors 
+  G4double fHorn2InnerConnectorThick;
+  G4double fHorn2InnerConnectorLength;
+  G4double fHorn2InnerConnectorPosition;
   
   // a flag to check the geometry as it is constructed. 
   
@@ -385,6 +430,7 @@ private:
                                 const LBNEVolumePlacementData *plInfo,  G4PVPlacement *vMother );					       
   void Horn1PlaceAWeld(const G4String &name, double z, 
                                 const LBNEVolumePlacementData *plInfo,  G4PVPlacement *vMother );					       
+  void DeclareHorn2Dims(); 
 };
 
 #endif

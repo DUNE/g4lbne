@@ -1035,7 +1035,7 @@ void LBNEVolumePlacements::DeclareHorn2Dims() {
   
   fHorn2OuterTubeOuterRad =  33.75*in/2.0; // Drawing 8875.112-MD 363385  Need an other drawing. 
   fHorn2OuterTubeInnerRad =  29.25*in/2.0; 
-  fHorn2LongPosition = 6600.0; // Drawing received fropm Alberto M., who received from Rich Stefanek, we think. 
+  fHorn2LongPosition = 6600.0*mm; // Drawing received fropm Alberto M., who received from Rich Stefanek, we think. 
                                // From MCZero (our Zero in g4lbne ref. frame ), to the z=0. of drawing 8875.112Md 363383 
 			       
   for(size_t k=0; k!= fHorn2PartsLengths.size(); ++k) 

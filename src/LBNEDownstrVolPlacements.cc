@@ -461,7 +461,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
    // Drawing Drawing 8875.112-MD 363104
    {
      G4String nameStr("Horn1UpstrSubSect0WeldUpstr");
-     const double rTmp1 = fHorn1Equations[5].GetVal(fHorn1LongRescale*3.316*in) + 0.0015*mm + fWaterLayerThickInHorns;
+     const double rTmp1 = fHorn1Equations[5].GetVal( zACRNT1Shift + 15.0*mm) + 0.0015*mm + fWaterLayerThickInHorns;
         // place it a little more detached..Also, the weld is on top of the layer of water.. Oh well.. 
       const double rTmp2 = rTmp1 + 1.8*mm; // 
       const double length = 12.0*mm; // Make it a bit shorter, it is rounded... 
@@ -469,8 +469,8 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
 	                           length/2.   , 0., 360.0*deg);
      G4LogicalVolume *pCurrent = new G4LogicalVolume(aTubs, G4Material::GetMaterial(std::string("Aluminum")), nameStr);
      G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] = 0.;
-     posTmp[2] = -1.0*(plHUpst->fParams[2])/2. + fHorn1IOTransLength + length/2. + 1.0*mm;			      
-     new G4PVPlacement((G4RotationMatrix *) 0, posTmp, pCurrent, nameStr + std::string("_P"), 
+     posTmp[2] = -1.0*(plHUpst->fParams[2])/2. + fHorn1IOTransLength + length/2. + 15.0*mm;			      
+    new G4PVPlacement((G4RotationMatrix *) 0, posTmp, pCurrent, nameStr + std::string("_P"), 
                         vUpst->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);	
    
    }

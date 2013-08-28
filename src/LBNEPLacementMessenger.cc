@@ -107,7 +107,7 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      G4String guidance("A ratio between the actual radii for this run over the nominal values for Horn2 \n  ");
      guidance += std::string(" More specifically, all (excluding target elements in Horn2) will be rescale by  \n");
      guidance += std::string(" that factor. Suggested value for modification: no more than 105 for a start!..   \n");
-     guidance += std::string(" FNAL Drawing number ????????? xxx  " ); 
+     guidance += std::string(" FNAL Drawing number 8875.112 MD-363383 " ); 
      fHorn2RadialRescale->SetGuidance(guidance);
      fHorn2RadialRescale->SetParameterName("Horn2RadialRescale",true);
      fHorn2RadialRescale->SetDefaultValue(1.0);
@@ -117,7 +117,7 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      G4String guidance("A ratio between the actual lengths for this run over the nominal values for Horn2 \n  ");
      guidance += std::string(" More specifically, all (excluding target elements in Horn2) will be rescale by  \n");
      guidance += std::string(" that factor. Suggested value for modification: no more than 105 for a start!..   \n");
-     guidance += std::string(" FNAL Drawing number ??????? xxx  " ); 
+     guidance += std::string(" FNAL Drawing number 8875.112 MD-363383 " ); 
      fHorn2LongRescale->SetGuidance(guidance);
      fHorn2LongRescale->SetParameterName("Horn2LongRescale",true);
      fHorn2LongRescale->SetDefaultValue(1.0);

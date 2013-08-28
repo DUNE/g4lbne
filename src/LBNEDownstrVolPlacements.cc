@@ -936,14 +936,6 @@ void LBNEVolumePlacements::CheckHorn1InnerConductAndTargetRadii() {
   }  
 }
 
-void LBNEVolumePlacements::RescaleHorn2Lengthwise() {
-  
-}
-  
-void LBNEVolumePlacements::RescaleHorn2Radially() {
-  
-  
-}
 //
 // Subdivide a conical section such that the radial equations are correct within a 
 // a tolerance of 5 microns. We assume that the number of subdivisions
@@ -1041,8 +1033,8 @@ void LBNEVolumePlacements::DeclareHorn2Dims() {
   for(size_t k=0; k!= fHorn2PartsLengths.size(); ++k) 
     fHorn2PartsRadii[0] = fHorn2OuterTubeOuterRad + 1.0*in;
   
-  const double offsetIOTr1 = 1.889*in; 
-  fHorn2PartsLengths[0] = (offsetIOTr1 + 5.861)*in; // Drawing 8875.112-MD 363385
+  fHorn2OffsetIOTr1 = 1.889*in; 
+  fHorn2PartsLengths[0] = (fHorn2OffsetIOTr1 + 5.861)*in; // Drawing 8875.112-MD 363385
 
   fHorn2PartsLengths[1] = (24.061)*in; // Drawing 8875.112-MD 363386
 //  fHorn2PartsRadii[1] = (19.385 + 1.0)*in ; // Info only, take the outer Radius 
@@ -1075,7 +1067,7 @@ void LBNEVolumePlacements::DeclareHorn2Dims() {
   const double radIOTrIn = 1.869*in; 
   const double radIOTrAv = 0.5*(radIOTrOut + radIOTrIn);
   const double deltaRadIOTr = radIOTrOut - radIOTrIn;
-  const double thetaIOTRStart = std::abs(offsetIOTr1 - radIOTrOut)/radIOTrOut; // approximate.. 
+  const double thetaIOTRStart = std::abs(fHorn2OffsetIOTr1 - radIOTrOut)/radIOTrOut; // approximate.. 
   const double surfXSect = M_PI - (thetaIOTRStart)*(radIOTrOut*radIOTrOut - radIOTrIn*radIOTrIn);
   const double surfXSectPart = surfXSect/(numSctTr-2);
   const double bigRadIOTr = 12.756*in;
@@ -1091,7 +1083,7 @@ void LBNEVolumePlacements::DeclareHorn2Dims() {
   fHorn2UpstrOuterIOTransRadsOne[1] = bigRadIOTr - heightTmp1/2.;
   fHorn2UpstrOuterIOTransRadsTwo[1] = bigRadIOTr + heightTmp1/2.;
   const double zMaxElemZeroUpstr = deltaRadIOTr + 0.010*mm;
-  const double zMaxElemZeroDownstr = offsetIOTr1 - 0.010*mm;
+  const double zMaxElemZeroDownstr = fHorn2OffsetIOTr1 - 0.010*mm;
   fHorn2UpstrOuterIOTransLengths[0] = zMaxElemZeroDownstr - zMaxElemZeroUpstr;
   fHorn2UpstrOuterIOTransPositions[0] = (zMaxElemZeroDownstr + zMaxElemZeroUpstr)/2.;
   fHorn2UpstrOuterIOTransLengths[2] = fHorn2UpstrOuterIOTransLengths[0];
@@ -1140,6 +1132,28 @@ void LBNEVolumePlacements::DeclareHorn2Dims() {
  //
   
 }
+void LBNEVolumePlacements::RescaleHorn2Lengthwise() {
+  for (size_t i=0; i!= fHorn2PartsLengths.size(); i++) 
+       fHorn2PartsLengths[i] *= fHorn2LongRescale;       
+  fHorn2Length *=  fHorn2LongRescale;
+  for (size_t i=0; i!= fHorn2UpstrOuterIOTransLengths.size(); i++) 
+      fHorn2UpstrOuterIOTransLengths[i] *= fHorn2LongRescale;
+  for (size_t i=0; i!= fHorn2UpstrOuterIOTransPositions.size(); i++) 
+      fHorn2UpstrOuterIOTransPositions[i] *= fHorn2LongRescale;
+}
+  
+void LBNEVolumePlacements::RescaleHorn2Radially() {
+    for (size_t i=0; i!= fHorn2PartsRadii.size(); i++) 
+       fHorn2PartsRadii[i] *= fHorn2RadialRescale;       
+    fHorn2OuterTubeOuterRad *= fHorn2RadialRescale;
+    fHorn2OuterTubeInnerRad *= fHorn2RadialRescale;
+    for (size_t i=0; i!= fHorn2UpstrOuterIOTransRadsOne.size(); i++) 
+      fHorn2UpstrOuterIOTransRadsOne[i] *= fHorn2RadialRescale;
+    for (size_t i=0; i!= fHorn2UpstrOuterIOTransRadsTwo.size(); i++) 
+      fHorn2UpstrOuterIOTransRadsTwo[i] *= fHorn2RadialRescale;
+      
+}
+
 double LBNEHornRadialEquation::inchDef = 2.54*cm;
 
 LBNEHornRadialEquation::LBNEHornRadialEquation(double rc, double zc, double rOff, bool isParabolic):

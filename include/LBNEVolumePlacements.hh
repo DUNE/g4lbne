@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.17 2013/08/27 22:46:31 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.18 2013/08/28 06:51:19 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -362,6 +362,9 @@ private:
   //
   G4double fHorn2Length; // Top level volume, surveyable. and rescal-able. 
   G4double fHorn2Radius;
+  G4double fHorn2OffsetIOTr1; // The distance between Z=0 in Horn2 Drawing coordinate and 
+                              // the most upstream z location of the Inner Outer transition piece
+			      
   // We will subdivide Horn2 along the parts on Drawing 8875.112MD - 363383
   //  
   // Part 1 (index 0 in the array below) : Transition Inner to outer conductor . Drawing 363382

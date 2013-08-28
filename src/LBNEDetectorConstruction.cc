@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.20 2013/08/27 05:28:19 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.21 2013/08/28 06:51:19 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -358,7 +358,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   
 
   fPlacementHandler->Create(G4String("Horn2Hall"));
-//  fPlacementHandler->PlaceFinal(G4String("Horn2Hall"), tunnel); // to be done... 
+  fPlacementHandler->PlaceFinal(G4String("Horn2Hall"), tunnel); // to be done... 
   
   // We now will do the details for the traget and Horn1 
   
@@ -627,6 +627,7 @@ void LBNEDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
       return;
    }
 }
+// Obsolete, I would think..
 G4VPhysicalVolume* LBNEDetectorConstruction::GetPhysicalVolume(G4String name) {
        std::ostringstream mStrStr;
       mStrStr << " Obsolete Call  for Volume named " << name << "Please let us use stadard G4 call here and there...  ";

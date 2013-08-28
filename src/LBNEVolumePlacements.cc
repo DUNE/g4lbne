@@ -195,6 +195,7 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
    this->SegmentTarget(); 
 //
    this->DeclareHorn1Dims();  // See in file LBNEDownstrVolPlacements.cc 
+   this->DeclareHorn2Dims();  // See in file LBNEDownstrVolPlacements.cc 
  
 }
 //
@@ -707,10 +708,9 @@ LBNEVolumePlacementData*
   //
   // Beginning of Horn1 declarations 
   //
-  if (name.find("Horn1") == 0) { // Obsolete, I think.  Divided into an upstream and downstream part 
-                                 // to encompass the target.. Leave it there for hysterical purposes 
+  if (name.find("Horn1") == 0) { 
     if (name == G4String("Horn1Hall")) {
-       const LBNEVolumePlacementData *plInfoM = Find(name, G4String("TargetHallAndHorn1"), G4String("Create"));
+      const LBNEVolumePlacementData *plInfoM = Find(name, G4String("TargetHallAndHorn1"), G4String("Create"));
        const LBNEVolumePlacementData *plInfoC = Find(name, G4String("UpstreamTargetAssembly"), G4String("Create"));
        for (size_t k=0; k != 2; ++k) 
         info.fParams[k] = plInfoM->fParams[k] - 0.5*cm; 
@@ -718,7 +718,6 @@ LBNEVolumePlacementData*
         G4Box* hallBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2. );
         info.fCurrent = new G4LogicalVolume(hallBox, G4Material::GetMaterial("Air"), volumeName); 
         info.fPosition[2] = -1.0*plInfoM->fParams[2]/2. + plInfoC->fParams[2] + info.fParams[2]/2. + 0.020*mm;
-     
     } 
     // Note: to optimize the geometry, we place the downstream end of the target into the 
     // horn1. Target is not a typo, nor misplaced in the information flow. 
@@ -885,8 +884,22 @@ LBNEVolumePlacementData*
 
    
   
-  } // End of Horn1 
+  } // End of Horn1
+  if (name.find("Horn2") == 0) {
+     if (name == G4String("Horn2Hall")) { 
+       const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Tunnel"), G4String("Create"));       
+       const LBNEVolumePlacementData *plInfoC = Find(name, G4String("TargetHallAndHorn1"), G4String("Create"));
+       for (size_t k=0; k != 2; ++k) 
+        info.fParams[k] = plInfoM->fParams[k] - 0.5*cm; 
+        info.fParams[2] = fHorn2Length + 2.0*fHorn2LengthMargin; // Add extra margin 
+        G4Box* hallBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2. );
+        info.fCurrent = new G4LogicalVolume(hallBox, G4Material::GetMaterial("Air"), volumeName);
+	std::cerr << " Horn2  This is wrong , work in progress " << std::endl; exit(2); 
+        info.fPosition[2] = -1.0*plInfoM->fParams[2]/2. + plInfoC->fParams[2] + info.fParams[2]/2. + 0.020*mm;
+    } 
+  
    
+  } // End of Horn2  
   fSubVolumes.insert(std::pair<G4String, LBNEVolumePlacementData>(name, info));
   return &(fSubVolumes.find(name)->second);
 }

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.18 2013/08/28 06:51:19 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.19 2013/08/28 22:47:31 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -127,6 +127,8 @@ public:
   void PlaceFinalDownstrTarget(G4PVPlacement *mother);
  
   void PlaceFinalHorn1(G4PVPlacement *mother,  G4PVPlacement *motherDownstrTarget);
+  
+  void PlaceFinalHorn2(G4PVPlacement *mother);
   			       
   // No change to either this data or the establish Geant4 geometry. 
   // 
@@ -361,6 +363,7 @@ private:
   G4double fHorn2LongPosition; // with data cards... 
   //
   G4double fHorn2Length; // Top level volume, surveyable. and rescal-able. 
+  G4double fHorn2LengthNominal; // As found on drawing 8875.112-MD 363382, Revision E 
   G4double fHorn2Radius;
   G4double fHorn2OffsetIOTr1; // The distance between Z=0 in Horn2 Drawing coordinate and 
                               // the most upstream z location of the Inner Outer transition piece
@@ -382,12 +385,9 @@ private:
   std::vector<G4double> fHorn2UpstrOuterIOTransLengths; 
   std::vector<G4double> fHorn2UpstrOuterIOTransPositions; // with respect to the start of the mother volume
   //
-  // And one cone.  
+  // And one mulit-sections cone section, whoe raddi are set the equations..  
   //
-  G4double fHorn2InnerRMinUpstr;
-  G4double fHorn2InnerRMaxUpstr;
-  G4double fHorn2InnerRMinDownstr;
-  G4double fHorn2InnerRMaxDownstr;
+  G4double fHorn2InnerIOTransLength;
   
   std::vector<LBNEHornRadialEquation> fHorn2Equations;
 
@@ -395,16 +395,9 @@ private:
   
   G4double fHorn2OuterTubeInnerRad; 
   G4double fHorn2OuterTubeOuterRad; 
-  
-  G4double fHorn2OuterConnectorRad;  // rescaled radially as well. 
-  G4double fHorn2OuterConnectorThick;
-  G4double fHorn2OuterConnectorLength;
-  G4double fHorn2OuterConnectorPosition;
-
-  G4double fHorn2InnerConnectorRad; // dwonstream end connectors 
-  G4double fHorn2InnerConnectorThick;
-  G4double fHorn2InnerConnectorLength;
-  G4double fHorn2InnerConnectorPosition;
+  G4double fHorn2OuterTubeOuterRadMax; // include downstream flange
+//
+// Connectors and flange downstream used only once,  so we declare and rescale them as we go  
   
   // a flag to check the geometry as it is constructed. 
   
@@ -428,9 +421,11 @@ private:
                                                // simpler and therefore more exact or reliable. 
 					       // If fail, issues a fatal G4Exception. 
   int GetNumberOfInnerHornSubSections(size_t eqn, double z1, double z2, int nMax) const;
+  int GetNumberOfInnerHorn2SubSections(size_t eqn, double z1, double z2, int nMax) const;
    
   void Horn1InstallSpiderHanger(const G4String &name, double zFromStartInnerConduct, double zPos,
                                 const LBNEVolumePlacementData *plInfo,  G4PVPlacement *vMother );					       
+  void Horn2InstallSpiderHanger(const G4String &name, G4PVPlacement *vMother );					       
   void Horn1PlaceAWeld(const G4String &name, double z, 
                                 const LBNEVolumePlacementData *plInfo,  G4PVPlacement *vMother );					       
   void DeclareHorn2Dims(); 

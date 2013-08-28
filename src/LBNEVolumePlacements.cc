@@ -886,19 +886,36 @@ LBNEVolumePlacementData*
   
   } // End of Horn1
   if (name.find("Horn2") == 0) {
-     if (name == G4String("Horn2Hall")) { 
-       const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Tunnel"), G4String("Create"));       
-       const LBNEVolumePlacementData *plInfoC = Find(name, G4String("TargetHallAndHorn1"), G4String("Create"));
+     if (name == G4String("Horn2Hall")) { // not align-able. 
+       const LBNEVolumePlacementData *plInfoTunnel = Find(name, G4String("Tunnel"), G4String("Create"));       
+       const LBNEVolumePlacementData *plInfoTGH = Find(name, G4String("TargetHallAndHorn1"), G4String("Create"));
+       const LBNEVolumePlacementData *plInfoH = Find(name, G4String("Horn1Hall"), G4String("Create"));
        for (size_t k=0; k != 2; ++k) 
-        info.fParams[k] = plInfoM->fParams[k] - 0.5*cm; 
-        info.fParams[2] = fHorn2Length + 2.0*fHorn2LengthMargin; // Add extra margin 
+        info.fParams[k] = plInfoTunnel->fParams[k] - 0.5*cm; 
+        info.fParams[2] = fHorn2Length + 4.0*fHorn2LengthMargin; // Add extra margin, 2 on each side, as there will 
+	                                                         // be the container volume  
         G4Box* hallBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2. );
         info.fCurrent = new G4LogicalVolume(hallBox, G4Material::GetMaterial("Air"), volumeName);
-	std::cerr << " Horn2  This is wrong , work in progress " << std::endl; exit(2); 
-        info.fPosition[2] = -1.0*plInfoM->fParams[2]/2. + plInfoC->fParams[2] + info.fParams[2]/2. + 0.020*mm;
+// We need the coordinate of the entrance of Horn1Hall in the reference frame of the tunnel. 
+// First, the coordinate of the entrance of Horn1Hall in the reference frame of TargetHallAndHorn1
+        const double zHHinTGH = plInfoH->fPosition[2] - plInfoH->fParams[2]/2.;
+// Second, in the coordinate system of the tunnel. 
+        const double zHHinTunnel = zHHinTGH - plInfoTGH->fPosition[2];
+        info.fPosition[2] = zHHinTunnel + info.fParams[2]/2.;
     } 
-  
-   
+     if (name == G4String("Horn2TopLevel")) { //  align-able. Use survey data in PlaceFinal
+       const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn2Hall"), G4String("Create"));
+       info.fParams[0] = 0.; 
+       info.fParams[1] = fHorn2OuterTubeOuterRadMax + 2.0*in;
+       info.fParams[2] = fHorn2Length + 2.0*fHorn2LengthMargin; // Add extra margin, 2 on each side, as there will 
+	                                                         // be the container volume  
+        G4Tubs* tubs = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], 
+	                           info.fParams[2]/2., 0. , 360.0*deg );
+        info.fCurrent = new G4LogicalVolume(tubs, G4Material::GetMaterial("Air"), volumeName);
+        info.fPosition[2] = 0.;
+    }
+    // Other subvolume defined the usual way in PlaceFinalHorn2
+    
   } // End of Horn2  
   fSubVolumes.insert(std::pair<G4String, LBNEVolumePlacementData>(name, info));
   return &(fSubVolumes.find(name)->second);

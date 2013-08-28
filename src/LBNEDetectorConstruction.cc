@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.21 2013/08/28 06:51:19 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.22 2013/08/28 22:47:31 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -358,15 +358,17 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   
 
   fPlacementHandler->Create(G4String("Horn2Hall"));
-  fPlacementHandler->PlaceFinal(G4String("Horn2Hall"), tunnel); // to be done... 
-  
-  // We now will do the details for the traget and Horn1 
+  G4PVPlacement *vHorn2 = fPlacementHandler->PlaceFinal(G4String("Horn2Hall"), tunnel); // to be done... 
+
+  fPlacementHandler->PlaceFinalHorn2(vHorn2);
+
+// we forgot the baffle. 
   
    fPlacementHandler->Create(G4String("Baffle"));
 // This will be a surveyed elements, but let us skip this step for now.    
    fPlacementHandler->PlaceFinal(G4String("Baffle"), upstreamTargetAssPhys);
    
-//   std::cerr << " And quit for now .. " << std::endl; exit(2);
+   std::cerr << " And quit for now .. " << std::endl; exit(2);
 /*
 
   // ???????????????????? Everything downstream of this need to be adapted. 					     

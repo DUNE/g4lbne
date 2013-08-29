@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.22 2013/08/28 22:47:31 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.23 2013/08/29 08:13:15 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -368,7 +368,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 // This will be a surveyed elements, but let us skip this step for now.    
    fPlacementHandler->PlaceFinal(G4String("Baffle"), upstreamTargetAssPhys);
    
-   std::cerr << " And quit for now .. " << std::endl; exit(2);
+//   std::cerr << " And quit for now .. " << std::endl; exit(2);
 /*
 
   // ???????????????????? Everything downstream of this need to be adapted. 					     

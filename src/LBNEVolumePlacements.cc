@@ -901,7 +901,12 @@ LBNEVolumePlacementData*
         const double zHHinTGH = plInfoH->fPosition[2] - plInfoH->fParams[2]/2.;
 // Second, in the coordinate system of the tunnel. 
         const double zHHinTunnel = zHHinTGH - plInfoTGH->fPosition[2];
-        info.fPosition[2] = zHHinTunnel + info.fParams[2]/2.;
+        info.fPosition[2] = zHHinTunnel + info.fParams[2]/2. + fHorn2LongPosition - 2.0*fHorn2LengthMargin - fHorn2OffsetIOTr1;
+	    // next to next to last term:  with respecto the entrance of Horn1Hall
+	    // next to last term: subtract twice the margin, and 
+	    // last term : Z = 0, drawing with respect to the  entrance of Horn2TopLevel, - margin (we are placing the hall, not yet 
+	    // the container (surveyable) volume 
+	std::cerr << " Horn2Hall Placement data, zHHinTGH, " << zHHinTGH << " zHHinTunnel " << zHHinTunnel << std::endl;
     } 
      if (name == G4String("Horn2TopLevel")) { //  align-able. Use survey data in PlaceFinal
        const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn2Hall"), G4String("Create"));

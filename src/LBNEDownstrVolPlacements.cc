@@ -1045,10 +1045,9 @@ void LBNEVolumePlacements::DeclareHorn2Dims() {
   for(size_t k=0; k!= fHorn2PartsLengths.size(); ++k) 
     fHorn2PartsRadii[0] = fHorn2OuterTubeOuterRad + 1.0*in;
   
-  fHorn2OffsetIOTr1 = 1.889*in; 
-  fHorn2PartsLengths[0] = (fHorn2OffsetIOTr1 + 5.861)*in; // Drawing 8875.112-MD 363385
+  fHorn2OffsetIOTr1 = 1.889*in; // Offset between the entrance of Horn2TopLevel - margin and Z=0, drawing... 
+  fHorn2PartsLengths[0] = fHorn2OffsetIOTr1 + 5.861*in; // Drawing 8875.112-MD 363385
   fHorn2LengthNominal = 142.91*in; // Drawing 8875.112-MD 363382, Revision E
-  
   
   fHorn2PartsRadii[0] = (33.75 + 1.0)*in ; // Info only, take the outer Radius 
 
@@ -1182,12 +1181,14 @@ void LBNEVolumePlacements::RescaleHorn2Radially() {
 void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
 
   const double in = 2.54*cm;
-  LBNEVolumePlacementData *plInfoH2Hall = this->Create("Horn2TopLevel");
+  LBNEVolumePlacementData *plInfoH2Top = this->Create("Horn2TopLevel");
   G4PVPlacement *vH2 = PlaceFinal("Horn2TopLevel", vH2Hall);
-  double zPosPart = -1.0*plInfoH2Hall->fParams[2] + fHorn2LengthMargin;
+  double zPosPart = -1.0*plInfoH2Top->fParams[2]/2 + fHorn2LengthMargin;
   
   const double zShiftDrawingIOTrans = fHorn2PartsLengths[0]/2 - fHorn2InnerIOTransLength;
   double zStartDrawing =  0.; // definition of z=0 
+  std::cerr << " Horn2 Placements, zPostPart " << zPosPart << " Length of Horn2 Top level " << plInfoH2Top->fParams[2] 
+            << " zShiftDrawingIOTrans " << zShiftDrawingIOTrans << " 1rst part length " << fHorn2PartsLengths[0] << std::endl;
   for (size_t kPart=0; kPart!= fHorn2PartsLengths.size(); kPart++) {
     std::ostringstream nStrStr; nStrStr << "Horn2Part" << kPart;
     G4String nStr(nStrStr.str());

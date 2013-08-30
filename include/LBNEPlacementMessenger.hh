@@ -32,7 +32,6 @@ private:
 //  G4UIdirectory*                fdetDir;
 
   G4UIcmdWithADoubleAndUnit* fWaterLayerThickInHorn;
-  G4UIcmdWithADoubleAndUnit* fDecayPipeLength;
   G4UIcmdWithADoubleAndUnit* fHorn1Length;
   G4UIcmdWithADoubleAndUnit* fBaffleLength;
   G4UIcmdWithADoubleAndUnit* fBaffleInnerRadius;
@@ -40,6 +39,7 @@ private:
 //
   G4UIcmdWithADoubleAndUnit* fTargetSLengthGraphite; 
   G4UIcmdWithADoubleAndUnit* fTargetLengthIntoHorn;
+  G4UIcmdWithAString* fTargetMaterial;
 //
   G4UIcmdWithADouble* fHorn1RadialRescale;   
   G4UIcmdWithADouble* fHorn1LongRescale; 
@@ -48,6 +48,10 @@ private:
   G4UIcmdWithADouble* fHorn2LongRescale; 
   G4UIcmdWithADoubleAndUnit* fHorn2LongPosition; // from the origin MCZero to the middle of Horn 2 
 //
+  G4UIcmdWithADoubleAndUnit* fDecayPipeLength;
+  G4UIcmdWithADoubleAndUnit* fDecayPipeRadius;
+  G4UIcmdWithAString* fDecayPipeGas; // 
+  
   
   void SetMyUnitsAndConditions(G4UIcmdWithADoubleAndUnit *cmd, double value);
   

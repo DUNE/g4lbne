@@ -38,6 +38,23 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
    fDecayPipeLength->SetDefaultUnit ("m");
    fDecayPipeLength->SetUnitCandidates ("cm m");
    fDecayPipeLength->AvailableForStates(G4State_PreInit, G4State_Idle);
+   {
+   fDecayPipeRadius  = new G4UIcmdWithADoubleAndUnit("/LBNE/det/decayPipeRadius",this);
+   fDecayPipeRadius->SetGuidance("Radius of the decay Pipe");
+   fDecayPipeRadius->SetParameterName("decayPipeRadius",true);
+   double value = volP->GetDecayPipeRadius();
+    fDecayPipeRadius->SetDefaultValue (value);
+   fDecayPipeRadius->SetDefaultUnit ("m");
+   fDecayPipeRadius->SetUnitCandidates ("cm m");
+   fDecayPipeRadius->AvailableForStates(G4State_PreInit, G4State_Idle);
+   }
+   {
+   fDecayPipeGas  = new G4UIcmdWithAString("/LBNE/det/decayPipeGas",this);
+   fDecayPipeGas->SetGuidance("Gas inside of the decay Pipe. Only two options so far, Air or Helium ");
+   fDecayPipeGas->SetParameterName("decayPipeGas",true);
+   fDecayPipeGas->SetDefaultValue (G4String("Air"));
+   fDecayPipeGas->AvailableForStates(G4State_PreInit, G4State_Idle);
+   }
 
    fWaterLayerThickInHorn  = new G4UIcmdWithADoubleAndUnit("/LBNE/det/waterThickInHorn",this);
    fWaterLayerThickInHorn->SetGuidance("Water Thicknes on the inner conductor of the horn");
@@ -52,6 +69,7 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      guidance += std::string(" The length of the outer conductor, excludes the upstream transition inner/outer, \n");
      guidance += std::string("  and flanges with bolts. If extended by user, it is assumed that conductor are extended.. " ); 
      guidance += std::string("  NUMI Horn1, FNAL Drawing number 8875. 112-ME-363092 " ); 
+     guidance += std::string(" Obsolete data card, use /LBNE/det/Horn1LongRescale instead ");
      fHorn1Length->SetGuidance(guidance);
      fHorn1Length->SetParameterName("Horn1Length",true);
      double value = volP->GetHorn1Length(); //  
@@ -87,7 +105,7 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      G4String guidance("A ratio between the actual radii for this run over the nominal values for Horn1 \n  ");
      guidance += std::string(" More specifically, all (excluding target elements in Horn1) will be rescale by  \n");
      guidance += std::string(" that factor. Suggested value for modification: no more than 105 for a start!..   \n");
-     guidance += std::string(" FNAL Drawing number 8875. 112-ME-363xxx  " ); 
+     guidance += std::string(" FNAL Drawing number 8875. 112-ME-363096, 363097,... " ); 
      fHorn1RadialRescale->SetGuidance(guidance);
      fHorn1RadialRescale->SetParameterName("Horn1RadialRescale",true);
      fHorn1RadialRescale->SetDefaultValue(1.0);
@@ -95,9 +113,9 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
     { 
      fHorn1LongRescale = new G4UIcmdWithADouble("/LBNE/det/Horn1LongRescale", this);
      G4String guidance("A ratio between the actual lengths for this run over the nominal values for Horn1 \n  ");
+     guidance += std::string(" FNAL Drawing number 8875. 112-ME-363096, 363097,...   " ); 
      guidance += std::string(" More specifically, all (excluding target elements in Horn1) will be rescale by  \n");
-     guidance += std::string(" that factor. Suggested value for modification: no more than 105 for a start!..   \n");
-     guidance += std::string(" FNAL Drawing number 8875. 112-ME-363xxx  " ); 
+     guidance += std::string(" that factor. Suggested value for modification: no more than a few % change for start!..   \n");
      fHorn1LongRescale->SetGuidance(guidance);
      fHorn1LongRescale->SetParameterName("Horn1LongRescale",true);
      fHorn1LongRescale->SetDefaultValue(1.0);
@@ -157,8 +175,14 @@ void LBNEPlacementMessenger::SetNewValue(G4UIcommand* command,  G4String newValu
      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
      volP->SetDecayPipeLength(cmdWD->GetNewDoubleValue(newValue));
    }
+   if (command == fDecayPipeRadius) {
+     G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
+     volP->SetDecayPipeRadius(cmdWD->GetNewDoubleValue(newValue));
+   }
    if (command == fHorn1Length) {
      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
+     G4Exception("LBNEPlacementMessenger::SetNewValue ", " ", FatalErrorInArgument,
+           " Obsolete data card, use Horn1LongRescale instead ");
      volP->SetHorn1Length(cmdWD->GetNewDoubleValue(newValue));
    }
     

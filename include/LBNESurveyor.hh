@@ -161,12 +161,15 @@ public:
 //  void SetTargetSegments(bool upstreamSegment, int model);  // Based on prescribed tolerances, and perhaps a model on how 
                                                               // the target alignment get modified as it heats up, 
 							      // Now done in VolumePlacement. 
-  void MoveTargetInOutHorn(double deltaZ); // To adjust the longitudinal position of the target. 
+//  void MoveTargetInOutHorn(double deltaZ); // To adjust the longitudinal position of the target. 
+// Functionality moved to the VolumePlacement class. 
 
 private:
   void SetThings(); // Update and implement constraints.    
   // This one should perhaps move to the VolumePlacements class.  			     
-  bool TieTargetSegments(double maxRadialMove=50.); // Very specific to the LBNE beam secondary (pions) beam layout, where the upstream and 
+  // bool TieTargetSegments(double maxRadialMove=50.); 
+  // Functionality moved to the Placement clasee. 
+  // Very specific to the LBNE beam secondary (pions) beam layout, where the upstream and 
                             // downstream target segments, which are implemented in two distinct subvolumes, (targetHall and Horn1, respectively), 
 			    // must be, part of one continuous 3D object. The paramter maxRadialMove is the maximum allowed to adjust the
 			    // transverse position of the elements. Default value is extremly large (5 cm.,), meaning that volume clashes are 

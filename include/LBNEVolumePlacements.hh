@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.19 2013/08/28 22:47:31 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.20 2013/08/30 08:04:55 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -140,6 +140,7 @@ public:
   inline double GetTargetHallZ() const { return fTargetHallZ; }
   inline double GetDecayHallZ()  const { return fDecayHallZ; }
   inline double GetDecayPipeLength()  const { return fDecayPipeLength; }
+  inline double GetDecayPipeRadius()  const { return fDecayPipeRadius; }
   inline double GetAbsorberHallZ()  const { return fAbsorberHallZ; }
   inline double GetHorn1Length()  const { return fHorn1Length; }
   inline double GetBaffleLength() const  { return fBaffleLength; }
@@ -153,6 +154,7 @@ public:
  // Interface to the Messenger command 
  
   inline void SetDecayPipeLength(double l) {fDecayPipeLength=l;}
+  inline void SetDecayPipeRadius(double l) {fDecayPipeRadius=l;}
   inline void SetTotalLength(double l) {fTotalLength=l;}
   inline void SetWaterLayerThickInHorns(double l) { fWaterLayerThickInHorns = l;}
   inline void SetHorn1Length(double l) { fHorn1Length = l;}

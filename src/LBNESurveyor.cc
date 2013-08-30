@@ -132,10 +132,10 @@ void LBNESurveyedPt::defineMessenger() {
   fullName += fName;
   descr += fName;
   if (fName.find("Horn1") != std::string::npos) {
-    if (fName.find("UpstreamLeftPin") != std::string::npos) 
-      descr += std::string(" Surveyed Position of the upstream, left side alignment pin for Horn1 ") ;
-    if (fName.find("UpstreamRightPin") != std::string::npos) 
-      descr += std::string(" Surveyed Position of the upstream, side side alignment pin for Horn1 ") ;
+    if (fName.find("UpstreamLeftBall") != std::string::npos) 
+      descr += std::string(" Surveyed Position of the upstream, left side alignment Ball for Horn1 ") ;
+    if (fName.find("UpstreamRightBall") != std::string::npos) 
+      descr += std::string(" Surveyed Position of the upstream, side side alignment Ball for Horn1 ") ;
     if (fName.find("DowstreamAnchor") != std::string::npos) 
       descr += std::string(" Surveyed Position downstream fixed point for Horn1 ") ;
   }
@@ -200,6 +200,14 @@ void LBNESurveyor::SetThings() {
    AddPoint(std::string("DownstreamLeftPinTargetHeTube"));
    AddPoint(std::string("DownstreamRightPinTargetHeTube"));
 
+   AddPoint(std::string("UpstreamLeftBallHorn1"));
+   AddPoint(std::string("UpstreamRightBallHorn1"));
+   AddPoint(std::string("DownstreamLeftBallHorn1"));
+   AddPoint(std::string("DownstreamRightBallHorn1"));
 
+   AddPoint(std::string("UpstreamLeftBallHorn2"));
+   AddPoint(std::string("UpstreamRightBallHorn2"));
+   AddPoint(std::string("DownstreamLeftBallHorn2"));
+   AddPoint(std::string("DownstreamRightBallHorn2"));
 }
 

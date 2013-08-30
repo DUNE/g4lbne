@@ -23,7 +23,7 @@
 # Primary vertex setting 
 #
 /LBNE/primary/useGeantino
-/LBNE/primary/geantinoOpeningAngle 0.00000003 radian
+/LBNE/primary/geantinoOpeningAngle 0.03 radian
 /LBNE/primary/geantinoZOrigin -5000. mm 
 #
 /LBNE/stepping/filename ./example/steppingGeantino101.txt

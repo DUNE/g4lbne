@@ -988,39 +988,67 @@ void LBNEVolumePlacements::Horn1InstallSpiderHanger(const G4String &nameStrH,
   		     vMother->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);    
   
   //The connecting piece ring to the hangers.. There are three of them, at 120 degrees from each other. 
+  
+  G4String nameStr2(nameStrH); nameStr2 += G4String("Riser");
+  const double heightRiser = 0.333*in - 0.020*mm;
+  const double widthH = 1.5*in; // See drawing 8875.112-MD 363115
+  const double thickH = 0.184*2*in; 
+  G4Box *aBoxRiser = new G4Box(nameStr2, widthH/2., heightRiser/2.0, thickH/2.0);  
+  G4LogicalVolume *pCurrentRiser = 
+    new G4LogicalVolume(aBoxRiser, G4Material::GetMaterial(std::string("Aluminum")), nameStr2);
+    
+  G4String nameStr3(nameStrH); nameStr3 += G4String("Hanger");
+  const double heightH = fHorn1OuterTubeInnerRad - rTmp2 - 1.0*mm - heightRiser;
+  const double widthH2 = 1.0*in; // 363115 Note: we collapsed both hanger along the horizontal, transverse 
+                                // direction. 
+  const double thickH2 = 0.031*in; 
+  G4Box *aBoxHanger = new G4Box(nameStr3, widthH2/2., heightH/2.0, thickH2/2.0);  
+  G4LogicalVolume *pCurrentHanger = 
+    new G4LogicalVolume(aBoxHanger, G4Material::GetMaterial(std::string("Aluminum")), nameStr3);
+  
   for (int iRot=0; iRot != 3; iRot++) {
-    std::ostringstream nameStrStr2; nameStrStr2 << nameStrH << "_Riser_" << iRot;  
-    G4String nameStr2(nameStrStr2.str());
-    const double heightRiser = 0.333*in;
-    const double widthH = 1.5*in; // See drawing 8875.112-MD 363115
-    const double thickH = 0.184*2*in; 
-    G4Box *aBox = new G4Box(nameStr2, widthH/2., heightRiser/2.0, thickH/2.0);  
-    pCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("Aluminum")), nameStr2);
-    posTmp[0] = 0.; posTmp[1] = rTmp2 + 0.5*mm + heightRiser/2.;
+    std::ostringstream rnStrStr; rnStrStr << "_" << (iRot+1);
+    G4String rnStr(rnStrStr.str());
   // Same Z position as above... 
     G4RotationMatrix * rMatPr = 0;
-    if (iRot == 1) {
+     if (iRot == 1) {
       rMatPr = new G4RotationMatrix; 
       rMatPr->rotateZ(2.0*M_PI/3.);
     } else if (iRot == 2) {
       rMatPr = new G4RotationMatrix; 
       rMatPr->rotateZ(-2.0*M_PI/3.);
     }
-    new G4PVPlacement(rMatPr, posTmp, pCurrent, nameStr2 + std::string("_P"), 
-  		     vMother->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);
+    
+    const double dHRiser = rTmp2 + 0.010*mm + heightRiser/2.;
+    posTmp[0] = 0.;  posTmp[1] = dHRiser;
+    if (iRot != 0) {
+      posTmp[0] = dHRiser*rMatPr->xy();
+      posTmp[1] = dHRiser*rMatPr->yy();
+    }
+    if (iRot == 0) { 
+       new G4PVPlacement(rMatPr, posTmp, pCurrentRiser, nameStr2 + std::string("_P") + rnStr, 
+  		     vMother->GetLogicalVolume(), false, iRot, fCheckVolumeOverLapWC);
+    } else {
+       new G4PVPlacement(G4Transform3D(*rMatPr, posTmp), pCurrentRiser, nameStr2 + std::string("_P") + rnStr, 
+  		     vMother->GetLogicalVolume(), false, iRot, fCheckVolumeOverLapWC);
+    }
 // Now the hanger it self 
-    G4String nameStr3(nameStrH);nameStr3 += G4String("Hanger");
-    const double heightH = fHorn1OuterTubeInnerRad - rTmp2 - 1.0*mm - heightRiser;
-    const double widthH2 = 1.0*in; // 363115 Note: we collapsed both hanger along the horizontal, transverse 
-                                // direction. 
-    const double thickH2 = 0.031*in; 
-    aBox = new G4Box(nameStr, widthH2/2., heightH/2.0, thickH2/2.0);  
-    pCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("Aluminum")), nameStr3);
-    posTmp[0] = 0.; posTmp[1] = rTmp2 + 0.5*mm + heightRiser + heightH/2.;
+    
+    const double dHHanger = rTmp2 + 0.010*mm + 0.5*mm + heightRiser + heightH/2.;
+    posTmp[0] = 0.;  posTmp[1] = dHHanger;
+    if (iRot != 0) {
+      posTmp[0] = dHHanger*rMatPr->xy();
+      posTmp[1] = dHHanger*rMatPr->yy();
+    }
   // Same Z position as above... 
-    new G4PVPlacement(rMatPr, posTmp, pCurrent, nameStr3 + std::string("_P"), 
-  		     vMother->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);    
-  } // on the 120 degree symmetry point.
+    if (iRot == 0) { 
+       new G4PVPlacement(rMatPr, posTmp, pCurrentHanger, nameStr3 + std::string("_P") + rnStr, 
+  		     vMother->GetLogicalVolume(), false, iRot, fCheckVolumeOverLapWC);    
+     } else {
+       new G4PVPlacement(G4Transform3D(*rMatPr, posTmp), pCurrentHanger, nameStr3 + std::string("_P") + rnStr, 
+  		     vMother->GetLogicalVolume(), false, iRot, fCheckVolumeOverLapWC);
+     } 
+ } // on the 120 degree symmetry point.
 }
 //
 // The set of equations that determine the radii of the inner conductor sections
@@ -1042,14 +1070,14 @@ void LBNEVolumePlacements::DeclareHorn2Dims() {
   fHorn2LongPosition = 6600.0*mm; // Drawing received fropm Alberto M., who received from Rich Stefanek, we think. 
                                // From MCZero (our Zero in g4lbne ref. frame ), to the z=0. of drawing 8875.112Md 363383 
 			       
-  for(size_t k=0; k!= fHorn2PartsLengths.size(); ++k) 
-    fHorn2PartsRadii[0] = fHorn2OuterTubeOuterRad + 1.0*in;
+  for(size_t k=0; k!= fHorn2PartsRadii.size(); ++k) 
+    fHorn2PartsRadii[k] = fHorn2OuterTubeOuterRad + 1.0*in;
   
   fHorn2OffsetIOTr1 = 1.889*in; // Offset between the entrance of Horn2TopLevel - margin and Z=0, drawing... 
   fHorn2PartsLengths[0] = fHorn2OffsetIOTr1 + 5.861*in; // Drawing 8875.112-MD 363385
   fHorn2LengthNominal = 142.91*in; // Drawing 8875.112-MD 363382, Revision E
   
-  fHorn2PartsRadii[0] = (33.75 + 1.0)*in ; // Info only, take the outer Radius 
+  fHorn2PartsRadii[0] = (33.75 + 1.0)*in/2. ; // Info only, take the outer Radius 
 
   fHorn2PartsLengths[1] = (24.061)*in; // Drawing 8875.112-MD 363386
 //  fHorn2PartsRadii[1] = (19.385 + 1.0)*in ; // Info only, take the outer Radius 
@@ -1067,7 +1095,7 @@ void LBNEVolumePlacements::DeclareHorn2Dims() {
 //   fHorn2PartsRadii[4] = (21.341 + 1.0)*in ; // info only. 
 
   fHorn2PartsLengths[6] = (21.054)*in; // Drawing 8875.112-MD 363390
-  fHorn2PartsRadii[6] = (fHorn2OuterTubeOuterRadMax+ 1.0)*in ; // info only. 
+  fHorn2PartsRadii[6] = fHorn2OuterTubeOuterRadMax+ 1.0*in ; // info only. 
 // add 1/2 inch margin for misalignment.
  
   fHorn2LengthMargin = 0.5*in;
@@ -1086,7 +1114,7 @@ void LBNEVolumePlacements::DeclareHorn2Dims() {
   const double radIOTrAv = 0.5*(radIOTrOut + radIOTrIn);
   const double deltaRadIOTr = radIOTrOut - radIOTrIn;
   const double thetaIOTRStart = std::abs(fHorn2OffsetIOTr1 - radIOTrOut)/radIOTrOut; // approximate.. 
-  const double surfXSect = M_PI - (thetaIOTRStart)*(radIOTrOut*radIOTrOut - radIOTrIn*radIOTrIn);
+  const double surfXSect = (M_PI - thetaIOTRStart)*(radIOTrOut*radIOTrOut - radIOTrIn*radIOTrIn);
   const double surfXSectPart = surfXSect/(numSctTr-2);
   const double bigRadIOTr = 12.756*in;
   // Valid only for 
@@ -1107,10 +1135,11 @@ void LBNEVolumePlacements::DeclareHorn2Dims() {
   fHorn2UpstrOuterIOTransLengths[2] = fHorn2UpstrOuterIOTransLengths[0];
   fHorn2UpstrOuterIOTransPositions[2] = fHorn2UpstrOuterIOTransPositions[0];
   const double heightTmp0 = surfXSectPart/fHorn2UpstrOuterIOTransLengths[0];
-  fHorn2UpstrOuterIOTransRadsOne[0] = bigRadIOTr - heightTmp1/2. - radIOTrAv/sqrt(2.) ; 
-  fHorn2UpstrOuterIOTransRadsTwo[0] = bigRadIOTr + heightTmp1/2. - radIOTrAv/sqrt(2.) ;
-  fHorn2UpstrOuterIOTransRadsOne[2] = bigRadIOTr - heightTmp1/2. + radIOTrAv/sqrt(2.) ; 
-  fHorn2UpstrOuterIOTransRadsTwo[2] = bigRadIOTr + heightTmp1/2. + radIOTrAv/sqrt(2.) ;
+  std::cerr << " heightTmp0 " << heightTmp0 << " radIOTrAv " << radIOTrAv << std::endl;
+  fHorn2UpstrOuterIOTransRadsOne[0] = bigRadIOTr - heightTmp0/2. - radIOTrAv/sqrt(2.) ; 
+  fHorn2UpstrOuterIOTransRadsTwo[0] = bigRadIOTr + heightTmp0/2. - radIOTrAv/sqrt(2.) ;
+  fHorn2UpstrOuterIOTransRadsOne[2] = bigRadIOTr - heightTmp0/2. + radIOTrAv/sqrt(2.) ; 
+  fHorn2UpstrOuterIOTransRadsTwo[2] = bigRadIOTr + heightTmp0/2. + radIOTrAv/sqrt(2.) ;
   // Top part. 
   fHorn2UpstrOuterIOTransLengths[3] = 0.45*in - 0.010*mm;
   fHorn2UpstrOuterIOTransPositions[3] = radIOTrOut + fHorn2UpstrOuterIOTransLengths[3]/2. + 0.005*mm;
@@ -1118,10 +1147,10 @@ void LBNEVolumePlacements::DeclareHorn2Dims() {
   fHorn2UpstrOuterIOTransRadsTwo[3] = bigRadIOTr + radIOTrOut;
   // Fange part 
   fHorn2UpstrOuterIOTransLengths[4] = 1.30*in - 0.010*mm;
-  fHorn2UpstrOuterIOTransPositions[4] = radIOTrOut + 
+  fHorn2UpstrOuterIOTransPositions[4] = radIOTrOut +  0.0075*mm + 
                                        fHorn2UpstrOuterIOTransLengths[3] + fHorn2UpstrOuterIOTransLengths[4]/2.;
   fHorn2UpstrOuterIOTransRadsOne[4] = bigRadIOTr + fHorn2UpstrOuterIOTransLengths[3]/2. + 0.005*mm ;
-  fHorn2UpstrOuterIOTransRadsTwo[4] = 33.75*in;
+  fHorn2UpstrOuterIOTransRadsTwo[4] = 33.75*in/2;
 
 
   fHorn2InnerIOTransLength = 5.8610*in;
@@ -1198,10 +1227,10 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
     G4ThreeVector posTmp; posTmp[0] =0.; posTmp[1] =0.; 
     zPosPart += fHorn2PartsLengths[kPart]/2;
     posTmp[2] = zPosPart;
+    std::cerr << " At Horn2 big part " << kPart << "zPos before placing " << zPosPart << std::endl;
     G4PVPlacement *vPart = new G4PVPlacement((G4RotationMatrix *) 0, posTmp, tubsL, nStr + std::string("_P"), 
   		     vH2->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC); 
     zPosPart += fHorn2PartsLengths[kPart]/2;
-    std::cerr << " At Horn2 big part " << kPart <<  std::endl;
     // Sub volumes for each part. 
     switch (kPart) {
       case 0: // The Inner Outer Transition piece 
@@ -1218,10 +1247,10 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
          const double zzEnd = zzBegin + deltaZ;
          std::ostringstream nameStrStr; nameStrStr << "Horn2InnerPartIOTransSub" << iSub;
          G4String nameStr(nameStrStr.str());
-         const double rMin1 = fHorn2Equations[10].GetVal(zzBegin); // Equation 1
-         const double rMin2 = fHorn2Equations[10].GetVal(zzEnd);
-         const double rMax1 = fHorn2Equations[6].GetVal(zzBegin) + fWaterLayerThickInHorns + 0.0025; 
-         const double rMax2 = fHorn2Equations[6].GetVal(zzEnd) + fWaterLayerThickInHorns + 0.0025;     
+         const double rMin1 = fHorn2Equations[6].GetVal(zzBegin); // Equation 1
+         const double rMin2 = fHorn2Equations[6].GetVal(zzEnd);
+         const double rMax1 = fHorn2Equations[10].GetVal(zzBegin) + fWaterLayerThickInHorns + 0.0025; 
+         const double rMax2 = fHorn2Equations[10].GetVal(zzEnd) + fWaterLayerThickInHorns + 0.0025;     
          G4Cons *aCons = new G4Cons(nameStr, rMin1, rMax1,rMin2, rMax2,
 	                              (deltaZ - 0.005*mm)/2., 0., 360.0*deg);
          G4LogicalVolume *pCurrent = new G4LogicalVolume(aCons, G4Material::GetMaterial(std::string("Aluminum")), nameStr);
@@ -1251,7 +1280,7 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
 					      fHorn2UpstrOuterIOTransLengths[kOut]/2., 0., 360.0*deg);
           G4LogicalVolume *tubsL = new G4LogicalVolume(tubsPart, G4Material::GetMaterial("Aluminum"), nStr);
           G4ThreeVector posTmp; posTmp[0] =0.; posTmp[1] =0.; 
-	  posTmp[2] = - fHorn2PartsLengths[kPart]/2 * fHorn2UpstrOuterIOTransPositions[kOut];
+	  posTmp[2] = - fHorn2PartsLengths[kPart]/2 + fHorn2UpstrOuterIOTransPositions[kOut];
           new G4PVPlacement((G4RotationMatrix *) 0, posTmp, tubsL, nStr + std::string("_P"), 
   		     vPart->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC); 
        }
@@ -1260,7 +1289,7 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
           G4String nStr("Horn2IOTransWeld");
 	  const double weldLength = 0.386*in;
 	  const double zzEnd = fHorn2LongRescale*5.8610*in - weldLength - 0.050*mm;
-	  const double radius = fHorn2Equations[6].GetVal(zzEnd) + fWaterLayerThickInHorns + 0.0025; 
+	  const double radius = fHorn2Equations[10].GetVal(zzEnd) + fWaterLayerThickInHorns + 0.0025; 
 	  const double thick = 0.0775*in; 
           G4Tubs* tubsPart = new G4Tubs(nStr, radius, (radius+thick), weldLength/2., 0., 360.0*deg);
           G4LogicalVolume *tubsL = new G4LogicalVolume(tubsPart, G4Material::GetMaterial("Aluminum"), nStr);
@@ -1282,8 +1311,8 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
         // We start by the neck 
 	{
           G4String nStr("Horn2Part2Neck");
-	  const double radiusInner =  fHorn2RadialRescale*3.071*in;
-	  const double radiusOuter = fHorn2RadialRescale*3.465*in + fWaterLayerThickInHorns + 0.0025; 
+	  const double radiusInner =  fHorn2RadialRescale*3.071*in/2.;
+	  const double radiusOuter = fHorn2RadialRescale*3.465*in/2. + fWaterLayerThickInHorns + 0.0025; 
           G4Tubs* tubsPart = new G4Tubs(nStr, radiusInner, radiusOuter, lengthNeck/2., 0., 360.0*deg );
           G4LogicalVolume *tubsL = new G4LogicalVolume(tubsPart, G4Material::GetMaterial("Aluminum"), nStr);
           G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] =0.; 
@@ -1292,9 +1321,9 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
   		     vPart->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC); 
          if (fWaterLayerThickInHorns > 0.002*mm) {
            G4String nameStrW(nStr); nameStrW += std::string("Water");
-           G4Tubs* tubsPartW = new G4Tubs(nameStrW, radiusOuter+0.001*mm, 
-	                                  radiusOuter+0.001*mm + fWaterLayerThickInHorns, 
-					  lengthNeck/2. - 0.001*mm, 0., 360.0*deg);
+           G4Tubs* tubsPartW = new G4Tubs(nameStrW, radiusOuter -0.001*mm - fWaterLayerThickInHorns , 
+	                                  radiusOuter - 0.001*mm , 
+					  lengthNeck/2. - 0.002*mm, 0., 360.0*deg);
            G4LogicalVolume *pCurrent = new G4LogicalVolume(tubsPartW, G4Material::GetMaterial(std::string("Water")), nameStrW);
            G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] = 0.; posTmp[2] =0.;			      
            new G4PVPlacement((G4RotationMatrix *) 0, posTmp, pCurrent, nameStrW + std::string("_P"), 
@@ -1306,7 +1335,7 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
 	  double zStartDrawingsSubP2[] = {29.800, 36.8888, 41.0248, 43.3660}; // Note the third number is compromise, corresponding 
 	                                                                      // to the length of the neck going ~2 " to 2.41 "	   
 	  double zEndDrawingsSubP2[] = {36.8888, 38.6138, 43.3660, 49.820};
-	  size_t eqnInner[] = {6, 6, 8, 8};
+	  size_t eqnInner[] = {6, 6, 7, 7};
 	  size_t eqnOuter[] = {0, 1, 2 ,3}; 
          // Now loop on these 4 subparts.  (this gona a bit tedious...) 
 	  for (size_t kSub=0; kSub!=4; kSub++) { 
@@ -1315,7 +1344,7 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
 	    const double zShiftTmp = zStartDrawing - fHorn2LongRescale*zStartDrawingsSubP2[0]*in;
             int numSubSect = GetNumberOfInnerHorn2SubSections(eqnInner[kSub], zStartDrawing, zEndDrawing, 10);   
             const double deltaZ = (zEndDrawing - zStartDrawing)/numSubSect;
-            std::cerr << " Number of subsection for the geenric part of Horn2 index " << kPart 
+            std::cerr << " Number of subsection for the middle part of Horn2 index " << kPart 
 	          << " Upstream of the neck,  is " << numSubSect 
                   << " deltaz " << deltaZ << std::endl;
             for (int iSub = 0; iSub != numSubSect; iSub++) {					      
@@ -1328,11 +1357,13 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
               const double rMin2 = fHorn2Equations[eqnInner[kSub]].GetVal(zzEnd);
               const double rMax1 = fHorn2Equations[eqnOuter[kSub]].GetVal(zzBegin) + fWaterLayerThickInHorns + 0.0025; 
               const double rMax2 = fHorn2Equations[eqnOuter[kSub]].GetVal(zzEnd) + fWaterLayerThickInHorns + 0.0025;     
+              std::cerr << " Pre/Post Neck, zzbegin " << zzBegin << " radii " << 
+	                 rMin1 << " / " << rMax1 << " / " << rMin2 <<" / " << rMax2 << std::endl;
               G4Cons *aCons = new G4Cons(nameStr, rMin1, rMax1,rMin2, rMax2,
 	                              (deltaZ - 0.005*mm)/2., 0., 360.0*deg);
               G4LogicalVolume *pCurrent = new G4LogicalVolume(aCons, G4Material::GetMaterial(std::string("Aluminum")), nameStr);
               G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] = 0.;
-              posTmp[2] = -fHorn2PartsLengths[kPart]/2 + iSub*deltaZ + deltaZ/2. + 0.001*mm + zShiftTmp;			      
+              posTmp[2] = -fHorn2PartsLengths[kPart]/2 + iSub*deltaZ + deltaZ/2. + zShiftTmp;			      
               G4PVPlacement *vSub = new G4PVPlacement((G4RotationMatrix *) 0, posTmp, pCurrent, nameStr + std::string("_P"), 
                         vPart->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);	
 			
@@ -1356,11 +1387,11 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
 	  const double zzEndForWeld = zEndDrawingsSubP2[3] + 0.50*mm; 
 	  const double radius = fHorn2Equations[8].GetVal(zzEndForWeld) + fWaterLayerThickInHorns + 0.0025; 
 	  const double thick = 0.0775*in; 
-          G4Tubs* tubsPart = new G4Tubs(nStr, radius, (radius+thick), weldLength/2., 0., 360.0*deg);
-          G4LogicalVolume *tubsL = new G4LogicalVolume(tubsPart, G4Material::GetMaterial("Aluminum"), nStr);
+          G4Tubs* tubsPart = new G4Tubs(nameStr, radius, (radius+thick), weldLength/2., 0., 360.0*deg);
+          G4LogicalVolume *tubsL = new G4LogicalVolume(tubsPart, G4Material::GetMaterial("Aluminum"), nameStr);
           G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] =0.; 
 	  posTmp[2] =  fHorn2PartsLengths[kPart]/2 - weldLength - 0.025*mm;
-          new G4PVPlacement((G4RotationMatrix *) 0, posTmp, tubsL, nStr + std::string("_P"), 
+          new G4PVPlacement((G4RotationMatrix *) 0, posTmp, tubsL, nameStr + std::string("_P"), 
   		     vPart->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC); 
         }
         zStartDrawing =  fHorn2LongRescale*49.820*in;
@@ -1370,10 +1401,10 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
      case 6: // the downstream end piece. simple tubes. 
       {
         {
-         G4String nameStr("Horn2DownstrPart7");
+         G4String nameStr("Horn2DownstrPart6");
 	 const double length = fHorn2LongRescale*(21.054 - 1.25)*in - 0.020*mm;
-	 const double radInner = fHorn2RadialRescale*21.103*in;
-	 const double radOuter = fHorn2RadialRescale*21.853*in;
+	 const double radInner = fHorn2RadialRescale*21.103*in/2.;
+	 const double radOuter = fHorn2RadialRescale*21.853*in/2.;
          G4Tubs* tubs = new G4Tubs(nameStr, radInner, radOuter, length/2., 0., 360.0*deg);
          G4LogicalVolume *tubsL = new G4LogicalVolume(tubs, G4Material::GetMaterial("Aluminum"), nameStr);
          G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] =0.; 
@@ -1384,10 +1415,10 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
 	 // the flange/connector 
 	  
          {
-         G4String nameStr("Horn2DownstrPart7Flange");
+         G4String nameStr("Horn2DownstrPart6Flange");
 	 const double length = fHorn2LongRescale*(1.25)*in - 0.020*mm;
-	 const double radInner = fHorn2RadialRescale*21.103*in;
-	 const double radOuter = fHorn2RadialRescale*25.040*in;
+	 const double radInner = fHorn2RadialRescale*21.103*in/2.;
+	 const double radOuter = fHorn2RadialRescale*25.040*in/2.;
          G4Tubs* tubs = new G4Tubs(nameStr, radInner, radOuter, length/2., 0., 360.0*deg);
          G4LogicalVolume *tubsL = new G4LogicalVolume(tubs, G4Material::GetMaterial("Aluminum"), nameStr);
          G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] =0.; 
@@ -1395,7 +1426,8 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
          new G4PVPlacement((G4RotationMatrix *) 0, posTmp, tubsL, nameStr + std::string("_P"), 
   		     vPart->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC); 
 		     
-	}     
+	}
+	break;     
       }
       default: 
       { // One set of conical sections. + weld at the end
@@ -1418,7 +1450,7 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
         int numSubSect = GetNumberOfInnerHorn2SubSections(eqnOuter, zStartDrawing, 
                                                       zEndDrawing, 10);   
         const double deltaZ = (zEndDrawing - zStartDrawing)/numSubSect;
-        std::cerr << " Number of subsection for the geenric part of Horn2 index " << kPart << " is " << numSubSect 
+        std::cerr << " Number of subsection for the generic part of Horn2 index " << kPart << " is " << numSubSect 
                   << " deltaz " << deltaZ << std::endl;
 	double zzEndForWeld = 0.;	  
        for (int iSub = 0; iSub != numSubSect; iSub++) {					      
@@ -1435,7 +1467,7 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
 	                              (deltaZ - 0.005*mm)/2., 0., 360.0*deg);
          G4LogicalVolume *pCurrent = new G4LogicalVolume(aCons, G4Material::GetMaterial(std::string("Aluminum")), nameStr);
          G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] = 0.;
-         posTmp[2] = -fHorn2PartsLengths[kPart]/2 + iSub*deltaZ + deltaZ/2. + 0.0025*mm;			      
+         posTmp[2] = -fHorn2PartsLengths[kPart]/2 + iSub*deltaZ + deltaZ/2.;			      
          G4PVPlacement *vSub = new G4PVPlacement((G4RotationMatrix *) 0, posTmp, pCurrent, nameStr + std::string("_P"), 
                         vPart->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);	
 			
@@ -1458,13 +1490,13 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
 	  const double weldLength = 2.0 * 0.386*in; // double to include the next one.. Perhaps a bit oversized. 
 	  if (kPart == 1) zzEndForWeld -= weldLength - 0.50*mm; // oversizing a bit by moving while computing the radius
 	  else zzEndForWeld += 0.50*mm; 
-	  const double radius = fHorn2Equations[6].GetVal(zzEndForWeld) + fWaterLayerThickInHorns + 0.0025; 
+	  const double radius = fHorn2Equations[eqnOuter].GetVal(zzEndForWeld) + fWaterLayerThickInHorns + 0.0025; 
 	  const double thick = 0.0775*in; 
-          G4Tubs* tubsPart = new G4Tubs(nStr, radius, (radius+thick), weldLength/2., 0., 360.0*deg);
-          G4LogicalVolume *tubsL = new G4LogicalVolume(tubsPart, G4Material::GetMaterial("Aluminum"), nStr);
+          G4Tubs* tubsPart = new G4Tubs(nameStr, radius, (radius+thick), weldLength/2., 0., 360.0*deg);
+          G4LogicalVolume *tubsL = new G4LogicalVolume(tubsPart, G4Material::GetMaterial("Aluminum"), nameStr);
           G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] =0.; 
-	  posTmp[2] =  fHorn2PartsLengths[kPart]/2 - weldLength - 0.025*mm;
-          new G4PVPlacement((G4RotationMatrix *) 0, posTmp, tubsL, nStr + std::string("_P"), 
+	  posTmp[2] =  fHorn2PartsLengths[kPart]/2 - weldLength/2. - 0.025*mm;
+          new G4PVPlacement((G4RotationMatrix *) 0, posTmp, tubsL, nameStr + std::string("_P"), 
   		     vPart->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC); 
         }
      
@@ -1480,7 +1512,7 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
       G4LogicalVolume *tubsL = new G4LogicalVolume(tubsPart, G4Material::GetMaterial("Air"), nStr);
       G4ThreeVector posTmp; posTmp[0] =0.; posTmp[1] =0.; posTmp[2] =0.; 
       new G4PVPlacement((G4RotationMatrix *) 0, posTmp, tubsL, nStr + std::string("_P"), 
-  		     vH2->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC); 
+  		     vPart->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC); 
     }
     // Eventual Hangers. only one set 
     if (kPart == 3) this->Horn2InstallSpiderHanger(nStr, vPart);
@@ -1490,11 +1522,11 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
   // Final flange downstream flange Approximate Drawing 363382-E1  Length is still a guess.. 
   G4String nStr("Horn2DownstrOuterFlange");
   G4Tubs* tubsOF1 = new G4Tubs(nStr, fHorn2OuterTubeOuterRad + 1.0*mm, 
-                                fHorn2OuterTubeOuterRadMax, 0.75*in, 0., 360.0*deg);
+                                fHorn2OuterTubeOuterRadMax-1.0*mm, 0.50*in, 0., 360.0*deg);
   G4LogicalVolume *tubsL = new G4LogicalVolume(tubsOF1, G4Material::GetMaterial("Aluminum"), nStr);
   G4ThreeVector posTmp; posTmp[0] =0.; posTmp[1] =0.;
-  posTmp[2] = fHorn2LengthNominal/2. - fHorn2LongRescale*7.5*in; 
-  G4PVPlacement *vPart = new G4PVPlacement((G4RotationMatrix *) 0, posTmp, tubsL, nStr + std::string("_P"), 
+  posTmp[2] = plInfoH2Top->fParams[2]/2 - fHorn2LongRescale*0.6*in; // approximate location
+  new G4PVPlacement((G4RotationMatrix *) 0, posTmp, tubsL, nStr + std::string("_P"), 
   		     vH2->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);   
 }
 
@@ -1533,51 +1565,78 @@ void LBNEVolumePlacements::Horn2InstallSpiderHanger(const G4String &nameStrH, G4
   // Drawing 8875.112-MD 363388 and 363405
   const double length = 0.750*in*fHorn2LongRescale;
   const int eqnNum = 3;
-  const double zOffset = fHorn2LongRescale*9.640*in + length/2.; // from the start of the mother volume 
-  const double zLocDrawing = fHorn2LongRescale*49.682*in + zOffset;
+  const double zLocDrawing = fHorn2LongRescale*60.4681*in;
   const double rTmp1 = fHorn2Equations[eqnNum].GetVal(zLocDrawing) + 0.015*mm + fWaterLayerThickInHorns;
   const double rTmp2 = fHorn2RadialRescale*11.625*in + fWaterLayerThickInHorns + 0.015*mm; // 
   G4Tubs *aTubs = new G4Tubs(nameStr, rTmp1, rTmp2, length/2.   , 0., 360.0*deg);
   G4LogicalVolume *pCurrent = new G4LogicalVolume(aTubs, G4Material::GetMaterial(std::string("Aluminum")), nameStr);
   G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] = 0.;
-  posTmp[2] = -fHorn2LongRescale*in*10.015 + zOffset; //half length of the Part kPart = 3  			   
+  posTmp[2] = fHorn2LongRescale*in*(-0.0180); // computed from drawing 8875.112MD-363388 			   
   new G4PVPlacement((G4RotationMatrix *) 0, posTmp, pCurrent, nameStr + std::string("_P"), 
   		     vMother->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);    
   
   //The connecting piece ring to the hangers.. There are three of them, at 120 degrees from each other. 
+  
+  G4String nameStr2(nameStrH); nameStr2 += G4String("Riser");
+  const double heightRiser = 0.333*in - 0.020*mm;
+  const double widthH = 1.5*in; // See drawing 8875.112-MD 363115
+  const double thickH = 0.184*2*in; 
+  G4Box *aBoxRiser = new G4Box(nameStr2, widthH/2., heightRiser/2.0, thickH/2.0);  
+  G4LogicalVolume *pCurrentRiser = 
+    new G4LogicalVolume(aBoxRiser, G4Material::GetMaterial(std::string("Aluminum")), nameStr2);
+    
+  G4String nameStr3(nameStrH); nameStr3 += G4String("Hanger");
+  const double heightH = fHorn2OuterTubeInnerRad - rTmp2 - 1.0*mm - heightRiser;
+  const double widthH2 = 1.0*in; // 363115 Note: we collapsed both hanger along the horizontal, transverse 
+                                // direction. 
+  const double thickH2 = 0.031*in; 
+  G4Box *aBoxHanger = new G4Box(nameStr3, widthH2/2., heightH/2.0, thickH2/2.0);  
+  G4LogicalVolume *pCurrentHanger = 
+    new G4LogicalVolume(aBoxHanger, G4Material::GetMaterial(std::string("Aluminum")), nameStr3);
+  
   for (int iRot=0; iRot != 3; iRot++) {
-    std::ostringstream nameStrStr2; nameStrStr2 << nameStrH << "_Riser_" << iRot;  
-    G4String nameStr2(nameStrStr2.str());
-    const double heightRiser = 0.333*in;
-    const double widthH = 1.5*in; // See drawing 8875.112-MD 363115
-    const double thickH = 0.184*2*in; 
-    G4Box *aBox = new G4Box(nameStr2, widthH/2., heightRiser/2.0, thickH/2.0);  
-    pCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("Aluminum")), nameStr2);
-    posTmp[0] = 0.; posTmp[1] = rTmp2 + 0.5*mm + heightRiser/2.;
+    std::ostringstream rnStrStr; rnStrStr << "_" << (iRot+1);
+    G4String rnStr(rnStrStr.str());
   // Same Z position as above... 
     G4RotationMatrix * rMatPr = 0;
-    if (iRot == 1) {
+     if (iRot == 1) {
       rMatPr = new G4RotationMatrix; 
       rMatPr->rotateZ(2.0*M_PI/3.);
-    } else if (iRot == 2){
+    } else if (iRot == 2) {
       rMatPr = new G4RotationMatrix; 
       rMatPr->rotateZ(-2.0*M_PI/3.);
     }
-    new G4PVPlacement(rMatPr, posTmp, pCurrent, nameStr2 + std::string("_P"), 
-  		     vMother->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);
+    
+    const double dHRiser = rTmp2 + 0.010*mm + heightRiser/2.;
+    posTmp[0] = 0.;  posTmp[1] = dHRiser;
+    if (iRot != 0) {
+      posTmp[0] = dHRiser*rMatPr->xy();
+      posTmp[1] = dHRiser*rMatPr->yy();
+    }
+    if (iRot == 0) { 
+       new G4PVPlacement(rMatPr, posTmp, pCurrentRiser, nameStr2 + std::string("_P") + rnStr, 
+  		     vMother->GetLogicalVolume(), false, iRot, fCheckVolumeOverLapWC);
+    } else {
+       new G4PVPlacement(G4Transform3D(*rMatPr, posTmp), pCurrentRiser, nameStr2 + std::string("_P") + rnStr, 
+  		     vMother->GetLogicalVolume(), false, iRot, fCheckVolumeOverLapWC);
+    }
 // Now the hanger it self 
-    G4String nameStr3(nameStrH);nameStr3 += G4String("Hanger");
-    const double heightH = fHorn2OuterTubeInnerRad - rTmp2 - 1.0*mm - heightRiser;
-    const double widthH2 = 1.0*in; // 363115 Note: we collapsed both hanger along the horizontal, transverse 
-                                // direction. 
-    const double thickH2 = 0.031*in; 
-    aBox = new G4Box(nameStr, widthH2/2., heightH/2.0, thickH2/2.0);  
-    pCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("Aluminum")), nameStr3);
-    posTmp[0] = 0.; posTmp[1] = rTmp2 + 0.5*mm + heightRiser + heightH/2.;
+    
+    const double dHHanger = rTmp2 + 0.010*mm + 0.5*mm + heightRiser + heightH/2.;
+    posTmp[0] = 0.;  posTmp[1] = dHHanger;
+    if (iRot != 0) {
+      posTmp[0] = dHHanger*rMatPr->xy();
+      posTmp[1] = dHHanger*rMatPr->yy();
+    }
   // Same Z position as above... 
-    new G4PVPlacement(rMatPr, posTmp, pCurrent, nameStr3 + std::string("_P"), 
-  		     vMother->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);    
-  }
+    if (iRot == 0) { 
+       new G4PVPlacement(rMatPr, posTmp, pCurrentHanger, nameStr3 + std::string("_P") + rnStr, 
+  		     vMother->GetLogicalVolume(), false, iRot, fCheckVolumeOverLapWC);    
+     } else {
+       new G4PVPlacement(G4Transform3D(*rMatPr, posTmp), pCurrentHanger, nameStr3 + std::string("_P") + rnStr, 
+  		     vMother->GetLogicalVolume(), false, iRot, fCheckVolumeOverLapWC);
+     } 
+ } // on the 120 degree symmetry point.
 }
 
 double LBNEHornRadialEquation::inchDef = 2.54*cm;

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.20 2013/08/30 08:04:55 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.21 2013/08/31 09:49:18 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -90,8 +90,8 @@ class LBNEHornRadialEquation  {
       double zResc;
       
   public:    
-    inline double SetLongRescaleFactor(double r) {zResc = r;}
-    inline double SetRadialRescaleFactor(double r) {rResc = r;}
+    inline void SetLongRescaleFactor(double r) {zResc = r;}
+    inline void SetRadialRescaleFactor(double r) {rResc = r;}
 
 };
 
@@ -141,6 +141,9 @@ public:
   inline double GetDecayHallZ()  const { return fDecayHallZ; }
   inline double GetDecayPipeLength()  const { return fDecayPipeLength; }
   inline double GetDecayPipeRadius()  const { return fDecayPipeRadius; }
+  inline double GetDecayPipeUpstrWindowThick()  const { return fDecayPipeUpstrWindowThick; }
+  inline double GetDecayPipeLongPosition()  const { return fDecayPipeLongPosition; }
+  inline G4String GetDecayPipeGas() const {return fDecayPipeGas; }
   inline double GetAbsorberHallZ()  const { return fAbsorberHallZ; }
   inline double GetHorn1Length()  const { return fHorn1Length; }
   inline double GetBaffleLength() const  { return fBaffleLength; }
@@ -155,6 +158,9 @@ public:
  
   inline void SetDecayPipeLength(double l) {fDecayPipeLength=l;}
   inline void SetDecayPipeRadius(double l) {fDecayPipeRadius=l;}
+  inline void SetDecayPipeLongPosition(double l) {fDecayPipeLongPosition=l;}
+  inline void SetDecayPipeUpstrWindowThick(double l) {fDecayPipeUpstrWindowThick=l;}
+  inline void SetDecayPipeGas(G4String &name) {fDecayPipeGas = name;}
   inline void SetTotalLength(double l) {fTotalLength=l;}
   inline void SetWaterLayerThickInHorns(double l) { fWaterLayerThickInHorns = l;}
   inline void SetHorn1Length(double l) { fHorn1Length = l;}
@@ -166,6 +172,10 @@ public:
 
   inline double GetTargetSLengthGraphite() const { return fTargetSLengthGraphite; }
   inline void SetTargetSLengthGraphite(double l) { fTargetSLengthGraphite = l; }
+  inline double GetTargetDensity() const { return fTargetDensity; }
+  inline void SetTargetDensity(double l) { fTargetDensity = l; }
+  inline G4String GetTargetMaterialName() const { return fTargetMaterialName; }
+  inline void SetTargetMaterialName(G4String &aName) { fTargetMaterialName = aName; }
   inline double GetTargetLengthIntoHorn() const { return fTargetLengthIntoHorn; }
   inline void SetTargetLengthIntoHorn(double l) { fTargetLengthIntoHorn = l; }
 //
@@ -177,6 +187,9 @@ public:
   inline void SetHorn2RadialRescale(double r) {fHorn2RadialRescale = r;}  
   inline double GetHorn2LongPosition() const { return fHorn2LongPosition; }
   inline void SetHorn2LongPosition(double l) { fHorn2LongPosition = l; }
+
+  inline G4String GetAbsorberGDMLFilename() const { return fAbsorberGDMLFilename; }
+  inline void SetAbsorberGDMLFilename(G4String &name) { fAbsorberGDMLFilename=name; }
   
   void SegmentTarget(); // Check the target segmentation. Assume fixed Fin size. 
   
@@ -188,6 +201,9 @@ public:
   
   LBNEVolumePlacementData* CreateHorn1TopLevelUpstr();
   
+  const LBNEVolumePlacementData* Find(const G4String &name, const char *motherName, const char *method) const ;
+  
+
   
 private:
   // GUI Interface  
@@ -208,6 +224,11 @@ private:
   G4double fDecayHallZ;
   G4double fDecayPipeLength; // equal the above for now.. 
   G4double fDecayPipeRadius;
+  G4double fDecayPipeUpstrWindowThick;
+  G4double fDecayPipeWallThick;
+  G4double fDecayPipeLongPosition; 
+  G4String fDecayPipeGas;
+  
   G4double fWaterLayerThickInHorns;
   G4double fHorn1Length; 
   G4double fTargetAndBaffleLengthApprox; 
@@ -225,6 +246,8 @@ private:
   //
   G4double fTargetSLength; // total length from first fin Beryllium window end cap. 
   G4double fTargetSLengthGraphite;// total length for the graphite target per-se. **Settable via Messenger. 
+  G4double fTargetDensity; // Density of the target
+  G4String fTargetMaterialName;
   G4double fTargetLengthIntoHorn;
                        // offset with respecto MCZERO, and/or the transition between UpstreamTarget Hall and Horn1 Hall
 		       // **Settable via Messenger. 
@@ -241,7 +264,6 @@ private:
   G4int fTargetNumFinsInHorn;
   G4double fTargetFinLengthSplitUpstr; // 
   G4double fTargetFinLengthSplitDwnstr; // 
-  G4String fTargetFinMaterial; // 
   G4double fTargetFinSpacingLength; // Averaged over the whole length
   G4double fTargetUpstrUpstrMargin; 
   G4double fTargetUpstrDwnstrMargin; 
@@ -401,6 +423,8 @@ private:
 //
 // Connectors and flange downstream used only once,  so we declare and rescale them as we go  
   
+  G4String fAbsorberGDMLFilename; 
+   
   // a flag to check the geometry as it is constructed. 
   
   bool fCheckVolumeOverLapWC;
@@ -409,8 +433,6 @@ private:
   
   const G4LogicalVolume* fTopLogicalVolume;
   //
-  const LBNEVolumePlacementData* Find(const G4String &name, const char *motherName, const char *method);
-  
   //
   // This method was found in G4PVPlacement. It is a clone, where we just skip 
   // the error messages.   

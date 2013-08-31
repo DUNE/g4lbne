@@ -209,5 +209,10 @@ void LBNESurveyor::SetThings() {
    AddPoint(std::string("UpstreamRightBallHorn2"));
    AddPoint(std::string("DownstreamLeftBallHorn2"));
    AddPoint(std::string("DownstreamRightBallHorn2"));
+   
+   AddPoint(std::string("UpstreamLeftDecayPipe"));
+   AddPoint(std::string("UpstreamRightDecayPipe"));
+   AddPoint(std::string("DownstreamLeftDecayPipe"));
+   AddPoint(std::string("DownstreamRightDecayPipe"));
 }
 

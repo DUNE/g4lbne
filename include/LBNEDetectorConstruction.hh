@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.hh,v 1.5.2.14 2013/08/19 22:32:14 lebrun Exp $
+// $Id: LBNEDetectorConstruction.hh,v 1.5.2.15 2013/08/31 09:49:18 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEDetectorConstruction_H
@@ -21,6 +21,7 @@
 //#include "LBNEDetectorMessenger.hh"
 #include "LBNESubVolume.hh"
 #include "LBNEVolumePlacements.hh"
+#include "G4Element.hh"
 
 class G4VSolid;
 class G4LogicalVolume;
@@ -136,7 +137,7 @@ private:
 //LBNE stuff
   void ConstructLBNEBaffle();
   void ConstructLBNEDecayPipe();
-  void ConstructLBNEHadronAbsorber();
+  void ConstructLBNEHadronAbsorber(G4VPhysicalVolume* vPhys);
   void ConstructLBNEShielding();
   void LBNEDetermineTargetHallShieldingClosestApproach(G4int ii);
   G4double fTgtHallShield_closest_yplus;
@@ -170,21 +171,10 @@ private:
    void ConstructTesting();
   
 
-
+   void InitializeMaterialsPostPreIdle();
 
  
 //
-   /*
-  void ConstructTargetHall();
-  void ConstructTarget();
-  void ConstructBaffle();
-  void ConstructDecayPipe();
-  void ConstructHadronAbsorber();  
-  void ConstructHorns();  
-  void ConstructHorn1(G4ThreeVector pos, G4RotationMatrix rot);
-  void ConstructHorn2(G4ThreeVector pos, G4RotationMatrix rot);
-  void ConstructSecMonitors();
-  */
   G4int GetMaterialCode(const G4String &matName);
   G4Material* GetMaterial(G4String matName);
   G4VisAttributes* GetMaterialVisAttrib(G4String matName);
@@ -192,20 +182,10 @@ private:
   
   // Messenger
   G4UImessenger *fDetectorMessenger;
-
-  /*
-
-
-  G4double phornRgivenZ(G4double a, G4double b, G4double c, G4double z);
-  G4double PHorn2ICRin(G4double z);
-  G4double PHorn2ICRout(G4double z);
-  G4double PHorn2OCRin(G4double z);
-  G4double PHorn2OCRout(G4double z);
-  G4double PHorn1ICRin(G4double z);
-  G4double PHorn1ICRout(G4double z);
-  G4double PHorn1OCRin(G4double z);
-  G4double PHorn1OCRout(G4double z);
-  */
+  // elements pointers
+  G4Element *elC;
+  G4Element *elN;
+  G4Element *elO;
   
   // Materials
   G4Material* Vacuum;

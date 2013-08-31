@@ -60,7 +60,13 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
    const G4double in = 2.54*cm;
     // declaration of some constant which should not impact the physics at all, 
     // but are needed to build the G4 geometry. 
-   fDecayPipeLength=250.0*m;
+   fDecayPipeLength=204.0*m;
+   fDecayPipeRadius = 4.0*m;
+   fDecayPipeUpstrWindowThick = 3.0*mm; // Only used for Helium. A guess at this point. 
+   fDecayPipeWallThick = 12.5*mm; // CDR, March 2012, Vol-2, p 3.130 
+   fDecayPipeLongPosition = 22.2*m; // From the target, CDR-Vol2, March 2012, Decay pipe section, p. 3.130
+   fDecayPipeGas = G4String("Air");
+    
    fHorn1Length = 150.0*in; // Oversized.. Drawing 8875 - ME - 363093
    fHorn1DownstreamPlateLength = in*(5); // To be defined later... 
 		       // With respect to the center of the mother volume UpstreamTargetAssembly
@@ -75,7 +81,9 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
 // 
   fTargetLengthIntoHorn = 40.0*cm; //  LBNE Doc 6100, page 7  Actually, the suggested value 
                                    // of 50 cm. conflicts with the 2.9 mm tolerance on transverse position.  
- 
+  fTargetMaterialName = G4String("Graphite");
+  fTargetDensity =  1.78*g/cm3; // Assume density of POCO ZXF-5Q  graphite
+  
   // No fTargetX0, Y0:  These would be surveyed point, part of the alignement 
   // realm, i.e. handled in the Surveyor class.
   fTargetFinHeight = 21.4*mm; // It includes half of the cooling tube, which will be inside the fins
@@ -84,7 +92,6 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
 //  fTargetFinWidth = 6.4*mm;
   fTargetFinWidth = 7.4*mm; // 6.4 -> 7.4 Per discussion with Jim and Alberto, July 25 2013. 
   fTargetFinLength = 20*mm; // 
-  fTargetFinMaterial = G4String("Target"); // Only one type of target material 
    // We add the fin that span the Usptream target and downstream target part. 
   
  //  fTargetNumberFins = 47; //  LBNE Doc 6100.. But we have to compute it from the graphite target length 
@@ -909,7 +916,6 @@ LBNEVolumePlacementData*
 	std::cerr << " Horn2Hall Placement data, zHHinTGH, " << zHHinTGH << " zHHinTunnel " << zHHinTunnel << std::endl;
     } 
      if (name == G4String("Horn2TopLevel")) { //  align-able. Use survey data in PlaceFinal
-       const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn2Hall"), G4String("Create"));
        info.fParams[0] = 0.; 
        info.fParams[1] = fHorn2OuterTubeOuterRadMax + 2.0*in;
        info.fParams[2] = fHorn2Length + 2.0*fHorn2LengthMargin; // Add extra margin, 2 on each side, as there will 
@@ -920,8 +926,67 @@ LBNEVolumePlacementData*
         info.fPosition[2] = 0.;
     }
     // Other subvolume defined the usual way in PlaceFinalHorn2
-    
   } // End of Horn2  
+  if (name.find("DecayPipe") == 0) {
+    if (name == G4String("DecayPipeHall")) { // Surveyable, for ease of convenience, let us do it at this level. 
+       const LBNEVolumePlacementData *plInfoTunnel = Find(name, G4String("Tunnel"), G4String("Create"));       
+       const LBNEVolumePlacementData *plInfoTGH = Find(name, G4String("TargetHallAndHorn1"), G4String("Create"));
+       const LBNEVolumePlacementData *plInfoH = Find(name, G4String("Horn1Hall"), G4String("Create"));
+       for (size_t k=0; k != 2; ++k) 
+        info.fParams[k] = plInfoTunnel->fParams[k] - 2.0*cm; 
+        info.fParams[2] = fDecayPipeLength + 4.0*cm; // Add extra margin, 2 on each side, as there will 
+	                                                         // be the container volume  
+        G4Box* hallBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2. );
+        info.fCurrent = new G4LogicalVolume(hallBox, G4Material::GetMaterial("Air"), volumeName);
+// We need the coordinate of the entrance of Horn1Hall in the reference frame of the tunnel. 
+// First, the coordinate of the entrance of Horn1Hall in the reference frame of TargetHallAndHorn1
+        const double zHHinTGH = plInfoH->fPosition[2] - plInfoH->fParams[2]/2.;
+// Second, in the coordinate system of the tunnel. 
+        const double zHHinTunnel = zHHinTGH - plInfoTGH->fPosition[2];
+        info.fPosition[2] = zHHinTunnel + info.fParams[2]/2. +  fDecayPipeLongPosition - 2.0*cm;
+      
+    }
+    if (name == G4String("DecayPipeConcrete")) {
+       const LBNEVolumePlacementData *plInfo = Find(name, G4String("DecayPipeHall"), G4String("Create"));       
+        info.fParams[0] = fDecayPipeRadius + fDecayPipeWallThick;
+        info.fParams[1] = std::min(plInfo->fParams[0], plInfo->fParams[1]) - 1.0*cm;
+        info.fParams[2] = fDecayPipeLength + 2.0*cm; // Add extra margin, 2 on each side, as there will 
+	                                                         // be the container volume  
+        G4Tubs* tubs = new G4Tubs(volumeName, info.fParams[0], info.fParams[1],
+	                            info.fParams[2]/2., 0., 360.0*deg );
+        info.fCurrent = new G4LogicalVolume(tubs, G4Material::GetMaterial("Concrete"), volumeName);
+    }
+    if (name == G4String("DecayPipeWall")) {
+        info.fParams[0] = fDecayPipeRadius; // such that the decay pipe wall & volume 
+	  // can be surveyable. 
+        info.fParams[1] = fDecayPipeRadius + fDecayPipeWallThick;
+        info.fParams[2] = fDecayPipeLength + 1.0*cm; // Add extra margin 
+        G4Tubs* tubs = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], 
+	                         info.fParams[2]/2., 0., 360.*deg);
+        info.fCurrent = new G4LogicalVolume(tubs, G4Material::GetMaterial("Steel316"), volumeName);
+    }
+     if (name == G4String("DecayPipeVolume")) {
+        info.fParams[0] = 0.; // such that the decay pipe wall & volume 
+	  // can be surveyable. 
+        info.fParams[1] = fDecayPipeRadius - 0.010*mm;
+        info.fParams[2] = fDecayPipeLength ; 
+        G4Tubs* tubs = new G4Tubs(volumeName, info.fParams[0], info.fParams[1],
+	                         info.fParams[2]/2., 0., 360.0*deg);
+        info.fCurrent = new G4LogicalVolume(tubs, G4Material::GetMaterial("DecayPipeGas"), volumeName);
+    }
+     if (name == G4String("DecayPipeUsptrWindow")) {
+       const LBNEVolumePlacementData *plInfo = Find(name, G4String("DecayPipeHall"), G4String("Create"));       
+        info.fParams[0] = 0.; // such that the decay pipe wall & volume 
+	  // can be surveyable. 
+        info.fParams[1] = fDecayPipeRadius + 1.0*cm;
+        info.fParams[2] = fDecayPipeUpstrWindowThick ; 
+        G4Tubs* tubs = new G4Tubs(volumeName, info.fParams[0], info.fParams[1],
+	                            info.fParams[2]/2., 0., 360.*deg);
+        info.fCurrent = new G4LogicalVolume(tubs, G4Material::GetMaterial("Mylar"), volumeName);
+	info.fPosition[2] = -plInfo->fParams[2]/2. + 0.5*mm + info.fParams[2]/2.;
+    }
+   
+  } // End if decay pipe. 
   fSubVolumes.insert(std::pair<G4String, LBNEVolumePlacementData>(name, info));
   return &(fSubVolumes.find(name)->second);
 }
@@ -944,7 +1009,8 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
     if (name == G4String("Horn1IOTransCont")) surveyedPtName = std::string("Horn1");
     if (name.find("Horn1TopLevel") == 0) surveyedPtName = std::string("Horn1");
     if (name.find("Horn2TopLevel") == 0) surveyedPtName = std::string("Horn2");
-    
+    if (name.find("DecayPipeHall") == 0) surveyedPtName = std::string("DecayPipe");
+   
     LBNEVolumePlacementData &info=it->second;
     info.fMother  =  mother; 
     LBNESurveyor* theSurvey = LBNESurveyor::Instance();
@@ -1354,7 +1420,8 @@ void LBNEVolumePlacements::TestVolumeOverlap(const G4String &name, G4VPhysicalVo
 //
 
 
-const LBNEVolumePlacementData* LBNEVolumePlacements::Find(const G4String &name, const char *motherName, const char *descr) {
+const LBNEVolumePlacementData* LBNEVolumePlacements::Find(const G4String &name, 
+                                                          const char *motherName, const char *descr) const {
   std::map<G4String, LBNEVolumePlacementData>::const_iterator itM = fSubVolumes.find(G4String(motherName));
   if (itM == fSubVolumes.end()) {
       std::ostringstream mStrStr;

@@ -40,6 +40,7 @@ private:
   G4UIcmdWithADoubleAndUnit* fTargetSLengthGraphite; 
   G4UIcmdWithADoubleAndUnit* fTargetLengthIntoHorn;
   G4UIcmdWithAString* fTargetMaterial;
+  G4UIcmdWithADoubleAndUnit* fTargetDensity;
 //
   G4UIcmdWithADouble* fHorn1RadialRescale;   
   G4UIcmdWithADouble* fHorn1LongRescale; 
@@ -50,9 +51,12 @@ private:
 //
   G4UIcmdWithADoubleAndUnit* fDecayPipeLength;
   G4UIcmdWithADoubleAndUnit* fDecayPipeRadius;
-  G4UIcmdWithAString* fDecayPipeGas; // 
+  G4UIcmdWithADoubleAndUnit* fDecayPipeLongPosition; // From the target 
+  G4UIcmdWithADoubleAndUnit* fDecayPipeUpstreamWindowThickness;
+  G4UIcmdWithAString* fDecayPipeGas; // Air or Helium supported 
   
-  
+   G4UIcmdWithAString* fAbsorberGDMLFilename; // Air or Helium supported 
+ 
   void SetMyUnitsAndConditions(G4UIcmdWithADoubleAndUnit *cmd, double value);
   
 };

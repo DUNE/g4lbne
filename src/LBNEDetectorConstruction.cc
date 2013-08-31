@@ -1,11 +1,10 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.23 2013/08/29 08:13:15 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.24 2013/08/31 09:49:18 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
 
 #include "LBNEDetectorConstruction.hh"
-#include "LBNEDataInput.hh"
 
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
@@ -44,6 +43,7 @@
 #include "LBNEVolumePlacements.hh"
 #include "LBNEDetectorMessenger.hh"
 #include "LBNERunManager.hh"
+#include "G4GDMLParser.hh"
 
 #include "G4RunManager.hh"
 
@@ -58,7 +58,7 @@ LBNEDetectorConstruction::LBNEDetectorConstruction()
   fPlacementHandler = LBNEVolumePlacements::Instance(); // Minimal setup for the Placement algorithm. 
   fDetectorMessenger = new LBNEDetectorMessenger(this);
 //
-  // temporary.. Need a better place. 
+  // Used only in placing the absorber.. 
   fBeamlineAngle = -101*mrad;
 
 //  InitializeSubVolumes();  Obsolete. 
@@ -147,10 +147,10 @@ void LBNEDetectorConstruction::Initialize()
 void LBNEDetectorConstruction::InitializeMaterials() {
 
   G4Element* elH  = new G4Element("Hydrogen","H" , 1., 1.01*g/mole);
-  G4Element* elHe = new G4Element("Helium","He" , 2., 4.003*g/mole);
-  G4Element* elC  = new G4Element("Carbon","C" , 6., 12.01*g/mole);
-  G4Element* elN  = new G4Element("Nitrogen","N" , 7., 14.01*g/mole);
-  G4Element* elO  = new G4Element("Oxygen"  ,"O" , 8., 16.00*g/mole); 
+  new G4Element("Helium","He" , 2., 4.003*g/mole);
+  elC  = new G4Element("Carbon","C" , 6., 12.01*g/mole);
+  elN  = new G4Element("Nitrogen","N" , 7., 14.01*g/mole);
+  elO  = new G4Element("Oxygen"  ,"O" , 8., 16.00*g/mole); 
   G4Element* elNa = new G4Element("Sodium"  ,"Na" , 11., 22.99*g/mole); 
   G4Element* elMg = new G4Element("Magnesium"  ,"Mg" , 12., 24.305*g/mole); 
   G4Element* elAl = new G4Element("Aluminum"  ,"Al" , 13., 26.98*g/mole); 
@@ -219,17 +219,18 @@ void LBNEDetectorConstruction::InitializeMaterials() {
   Vacuum = new G4Material("Vacuum", 2.376e-15*g/cm3,1,kStateGas,300.*kelvin,2.0e-7*bar);
   Vacuum->AddMaterial(Air, 1.);
 
-  G4Material* Helium = new G4Material("Helium", 2, 4.0026*g/mole, 0.1785*kg/m3, kStateGas,
-                          300*kelvin, 2.55*atmosphere);
-  G4Material* HeliumTarget = new G4Material("HeliumTarget", 2, 4.0026*g/mole, 1.7436*0.1785*kg/m3, kStateGas,
+  new G4Material("Helium", 2, 4.0026*g/mole, 2.55*0.1785*kg/m3, kStateGas,
+                          300*kelvin, 2.55*atmosphere); // to fill the canister.For the decay pipe, see below. 
+			  
+  new G4Material("HeliumTarget", 2, 4.0026*g/mole, 1.7436*0.1785*kg/m3, kStateGas,
                           350*kelvin, 1.36*atmosphere); //20 psi.  The factor of 1.7436 assume perfect gas. 
 			  // density proportional to temperature and pression.  
 
-  G4Material* Aluminum = new G4Material("Aluminum", 13, 26.98*g/mole, 2.7*g/cm3);
-  G4Material* Argon = new G4Material("Argon", 18, 39.948*g/mole, 1.784*kg/m3, kStateGas,
+  new G4Material("Aluminum", 13, 26.98*g/mole, 2.7*g/cm3);
+  new G4Material("Argon", 18, 39.948*g/mole, 1.784*kg/m3, kStateGas,
                           300*kelvin, atmosphere);
-  G4Material* Lead = new G4Material("Lead", 82, 207.19*g/mole, 11.35*g/cm3);
-  G4Material* Iron = new G4Material("Iron", 26, 55.85*g/mole, 7.86999*g/cm3);
+  new G4Material("Lead", 82, 207.19*g/mole, 11.35*g/cm3);
+  new G4Material("Iron", 26, 55.85*g/mole, 7.86999*g/cm3);
 
   Concrete = new G4Material("Concrete", 2.03*g/cm3, 10);
   Concrete->AddElement( elH,  0.01);
@@ -253,19 +254,61 @@ void LBNEDetectorConstruction::InitializeMaterials() {
   graphiteBaffle->AddElement( elC,  0.99); // 
   graphiteBaffle->AddElement( elN,  0.007); //  
   graphiteBaffle->AddElement( elO,  0.003); // 
+  
+  new G4Material("Beryllium", 4, 9.0122*g/mole, 1.85*g/cm3); 
+  
+  G4Material *Mylar = new G4Material("Mylar", 1.397*g/cm3, 3);
+  Mylar->AddElement(elC, 10);
+  Mylar->AddElement(elH, 8);
+  Mylar->AddElement(elO, 4);
 
+}
+//
+// Declare the material for the target after the data cards have been read. 
+// 
+void LBNEDetectorConstruction::InitializeMaterialsPostPreIdle() {
   // In case they are different.. 
-
-  G4Material *Target = new G4Material( "Target", 1.78*g/cm3, 3 ); //Carbon, air (Nitrogen and oxigen),
+  G4String aNameT(fPlacementHandler->GetTargetMaterialName());
+  if ((aNameT == G4String("Graphite")) || (aNameT == G4String("graphite")) ||
+      (aNameT == G4String("Carbon")) || (aNameT == G4String("carbon"))) { 
+  
+    G4Material *Target = new G4Material( "Target", 
+             fPlacementHandler->GetTargetDensity(), 3 ); //Carbon, air (Nitrogen and oxigen),
                                                                   // Assume density of POCO ZXF-5Q  
-  Target->AddElement( elC,  0.99); 
-  Target->AddElement( elN,  0.007); 
-  Target->AddElement( elO,  0.003);
-  G4Material *Beryllium = new G4Material("Beryllium", 4, 9.0122*g/mole, 1.85*g/cm3); 
+    Target->AddElement( elC,  0.99); 
+    Target->AddElement( elN,  0.007); 
+    Target->AddElement( elO,  0.003);
+  } else if ((aNameT == G4String("Beryllium")) 
+               || (aNameT == G4String("beryllium"))) {
+     new G4Material("Target", 4, 9.0122*g/mole, 1.85*g/cm3); 
+  } else if ((aNameT == G4String("Aluminium")) 
+            || (aNameT == G4String("aluminium"))) {   
+     new G4Material("Target", 13, 26.98*g/mole, 2.7*g/cm3);
+  } else {
+    G4String mess(" Non-standard material for the target: "); 
+    mess += aNameT + G4String (" .  \n");
+    mess += G4String("... Please upgrade the code after consultation with mechanical engineers\n.");
+    G4Exception("LBNEDetectorConstruction::InitializeMaterialsPostPreIdle", 
+                " ",  FatalErrorInArgument, mess.c_str());
+  }
+  
+  G4String aNameG(fPlacementHandler->GetDecayPipeGas());
+  if ((aNameG == G4String("Air")) || (aNameG == G4String("air"))) {
+    G4Material *gas = new G4Material("DecayPipeGas" , 1.290*mg/cm3, 2);
+    gas->AddElement(elN, 0.7);
+    gas->AddElement(elO, 0.3);
+  } else if ((aNameG == G4String("Helium")) || (aNameG == G4String("helium"))) {
+      new G4Material("DecayPipeGas", 2, 4.0026*g/mole, 0.1785*kg/m3, kStateGas,
+                          300*kelvin, 1.0*atmosphere);
+  }  else {
+    G4String mess(" Non-standard gas  : "); 
+    mess += aNameG + G4String (" in the decay pipe .  \n");
+    mess += G4String("... Please upgrade the code after consultation with mechanical engineers\n. ");
+    G4Exception("LBNEDetectorConstruction::InitializeMaterialsPostPreIdle", 
+                " ",  FatalErrorInArgument, mess.c_str());
+  }
   
 }
-
-
 G4VisAttributes* LBNEDetectorConstruction::GetMaterialVisAttrib(G4String mName){
   G4VisAttributes* visAtt;
   if(mName == "Vacuum")  visAtt = new G4VisAttributes(false);
@@ -298,13 +341,15 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
      std::cerr << " WARNING: LBNEDetectorConstruction::Construct, already done, skip " << std::endl;
      return fRock;
   }
+  
+  this->InitializeMaterialsPostPreIdle(); 
+  
   std::cout << " LBNEDetectorConstruction::Construct, Start !!! " << std::endl;
   std::cerr << " LBNEDetectorConstruction::Construct, Start !!! " << std::endl;
   
-  double decayPipeLength = fPlacementHandler->GetDecayPipeLength();  
   fRockX = 60.0*m;
   fRockY = 60.0*m;
-  fRockLength = decayPipeLength + 50.*m; // Approximate and irrelevant, all rock anyways.
+  fRockLength = fPlacementHandler->GetDecayPipeLength() + 50.*m; // Approximate and irrelevant, all rock anyways.
   fPlacementHandler->SetTotalLength(fRockLength);    
   G4Box* ROCK_solid = new G4Box("ROCK_solid",fRockX/2, fRockY/2, fRockLength/2);
   G4LogicalVolume *RockLogical = 
@@ -349,7 +394,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 //
 // We will place the downstream part of the target in a container volume 
 //
-   LBNEVolumePlacementData *plHUpst = fPlacementHandler->CreateHorn1TopLevelUpstr();
+   fPlacementHandler->CreateHorn1TopLevelUpstr();
    G4PVPlacement *vUpstr = fPlacementHandler->PlaceFinal("Horn1TopLevelUpstr", vHorn1);
 
   fPlacementHandler->PlaceFinalDownstrTarget((G4PVPlacement*) vUpstr);
@@ -358,7 +403,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   
 
   fPlacementHandler->Create(G4String("Horn2Hall"));
-  G4PVPlacement *vHorn2 = fPlacementHandler->PlaceFinal(G4String("Horn2Hall"), tunnel); // to be done... 
+  G4PVPlacement *vHorn2 = fPlacementHandler->PlaceFinal(G4String("Horn2Hall"), tunnel); 
 
   fPlacementHandler->PlaceFinalHorn2(vHorn2);
 
@@ -367,171 +412,23 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
    fPlacementHandler->Create(G4String("Baffle"));
 // This will be a surveyed elements, but let us skip this step for now.    
    fPlacementHandler->PlaceFinal(G4String("Baffle"), upstreamTargetAssPhys);
+//
+// Place the decay pipe 
+//   
+   fPlacementHandler->Create(G4String("DecayPipeHall"));
+   G4PVPlacement *vDecayPipe = fPlacementHandler->PlaceFinal(G4String("DecayPipeHall"), tunnel);
+   fPlacementHandler->Create(G4String("DecayPipeConcrete"));
+   fPlacementHandler->Create(G4String("DecayPipeWall"));
+   fPlacementHandler->Create(G4String("DecayPipeVolume"));
+   fPlacementHandler->Create(G4String("DecayPipeUpstrWindow"));
    
-//   std::cerr << " And quit for now .. " << std::endl; exit(2);
-/*
-
-  // ???????????????????? Everything downstream of this need to be adapted. 					     
-  
-  G4double eps = 1e-7*m; // 0.1 micron
-
-
-  fDecayPipeLength = fDecayPipe->GetDecayPipeLength();
-  fDecayPipeRadius = fDecayPipe->GetDecayPipeRadius();
-  fDecayHallZ = fDecayPipeLength;
-  fPlacementHandler->SetDecayHallZ(fDecayPipeLenth);
-  fAbsorberHallX = 10*m;
-  fAbsorberHallY = 22*m;
-  fAbsorberHallZ = 14*m;
-  
-  G4Box *TargetHallSolid = new G4Box("TargetHallSolid", 
-                                      fTargetHallX/2,
-                                      fTargetHallY/2,
-                                      fTargetHallZ/2);
-
-  G4Tubs *DecayHallPreSolid = new G4Tubs("DecayHallPreSolid", 0,fDecayPipeRadius+eps,
-                                      fDecayPipeLength/2+5*m, 0*deg, 360*deg);
-
-  G4Box *AbsorberHallSolid = new G4Box("AbsorberHallSolid",
-                                        fAbsorberHallX/2,
-                                        fAbsorberHallY/2,
-                                        fAbsorberHallZ/2);
-  
-  G4RotationMatrix AbsorberRotation;
-  AbsorberRotation.rotateX(fBeamlineAngle);
-  G4Transform3D DecayHallXform( AbsorberRotation,
-                                G4ThreeVector(0,0,fDecayHallZ/2 +
-                                fAbsorberHallZ/2));
-  G4SubtractionSolid *DecayHallSolid = new G4SubtractionSolid("DecayHallSolid",
-  DecayHallPreSolid, AbsorberHallSolid, DecayHallXform);
-  G4ThreeVector targetHallPosition(0,0,-fDecayHallZ/2 - fTargetHallZ/2-eps);
-  G4ThreeVector decayHallPosition(0,0,5*m);
-  G4double offset = 6*m;
-  G4ThreeVector
-  absorberHallPosition(0,offset*cos(fBeamlineAngle),fDecayHallZ/2 +
-  fAbsorberHallZ/2+eps+5*m + offset*sin(fBeamlineAngle));
-  
-  G4ThreeVector
-  AbsorberTranslation(0,0,fAbsorberHallZ/2+fDecayHallZ+fTargetHallZ/2);
-  G4cout << "Rotating beamline by " << fBeamlineAngle/mrad << " mrad" << G4endl;
-  G4Transform3D transformAbsorber(AbsorberRotation,absorberHallPosition);
-  
-  G4LogicalVolume *targetHallLogical = 
-      new G4LogicalVolume(TargetHallSolid, G4Material::GetMaterial("Air"), 
-                          "targetHallLogical", 0,0,0);
-
-  G4LogicalVolume *decayHallLogical = 
-      new G4LogicalVolume(DecayHallSolid, G4Material::GetMaterial("Air"), 
-                          "decayHallLogical", 0,0,0);
-  
-  G4LogicalVolume *absorberHallLogical = 
-      new G4LogicalVolume(AbsorberHallSolid, G4Material::GetMaterial("Air"), 
-                          "absorberHallLogical", 0,0,0);
-  
-  // Register the mother hall logical volumes with the placement handler
-  fPlacementHandler->SetTargetHallLogical(targetHallLogical);
-  fPlacementHandler->SetDecayHallLogical(targetHallLogical);
-  fPlacementHandler->SetAbsorberHallLogical(targetHallLogical);
-  
-  
-  G4PVPlacement* targetHallPhysical = 
-      new G4PVPlacement(0, targetHallPosition, targetHallLogical,
-                        "targetHallPlacement", RockLogical, false, 0);
-
-  G4PVPlacement* decayHallPhysical = 
-      new G4PVPlacement(0, decayHallPosition, decayHallLogical,
-                        "decayHallPlacement", RockLogical, false, 0);
-
-  G4PVPlacement* absorberHallPhysical = 
-      new G4PVPlacement(transformAbsorber, absorberHallLogical,
-                        "absorberHallPlacement", RockLogical, false, 0);
-
-                             
-
-  // Now to calculate useful positions within the hall
-  G4double hallLength = fTargetHallZ + fDecayHallZ + fAbsorberHallZ;
-  G4cout << " Total hall length is " << hallLength/m << " m long" << G4endl;
-  G4double decayPipePosition = 0.5*fTargetHallZ + fDecayHallZ/2;
-  fHadronAbsorber->SetRotation(0,-fBeamlineAngle, 0);
-  //fHadronAbsorber->SetPlacement(0,0,0.5*(fTargetHallZ+2*fDecayHallZ+fAbsorberHallZ));
-  //fStandardPerson->SetPlacement(0,
-  //                              0.9*m-fAbsorberHallY/2,
-   //                             0.5*fTargetHallZ + fDecayHallZ + 0.5*fAbsorberHallZ + 5*m);
-  fStandardPerson->SetRotation(0,-fBeamlineAngle+90*deg,0);
-    // Individual geometries within all halls:
-    // baffle
-    // target
-    // horn 1
-    // horn 2
-    // decay pipe (with windows)
-    // absorber
-
-  // is baffle necessary????
-
-  //fSubVolumes.push_back(fTarget);
-
-  if( fSimulationType == "Standard Neutrino Beam" ||
-      fSimulationType == "Horn 1 Tracking" ||
-      fSimulationType == "Horn 2 Tracking") {
-    // Then we need everything!
-    //fSubVolumes.push_back(fBaffle);
-    //fSubVolumes.push_back(fHornAssembly);
-    //fSubVolumes.push_back(fDecayPipe);
-    //fSubVolumes.push_back(fHadronAbsorber);
-    fSubVolumes.push_back(fStandardPerson);
-  } else if(fSimulationType == "Target Tracking") {
-    // FIXME .. anyting aside from not adding everythin but the target?
-  } else { // unknown simulation type
-    if((fSimulationType).empty()){
-      std::cout << std::endl;
-      std::cout << "*******************************************" << std::endl;
-      std::cout << "LBNEDetectorConstruction::Construct() - Possible Problem: "
-	  << "Constructing the Target volume and that's it." << std::endl;
-      std::cout << "*******************************************" << std::endl;
-      std::cout << std::endl;
-      //Leaving for now, but will ditch once get the intiailize argument done
-    } else { // FIXME Unknown simulation?
-	std::cout << std::endl;
-	std::cout << "*******************************************" << std::endl;
-	std::cout << "LBNEDetectorConstruction::Construct() - Problem: "
-    	  << "Unknown Simulation \'"<< fSimulationType << "\'"
-	  << "Constructing the Target volume and that's it." << std::endl;
-	std::cout << "*******************************************" << std::endl;
-	std::cout << std::endl;
-    }
-  } 
-  G4cout << "Trying to process subvolume " << G4endl;
-  for(unsigned int i = 0; i<fSubVolumes.size(); i++){
-    
-    LBNESubVolume *subVolume = fSubVolumes[i];
-    subVolume->ConstructSubvolume();
-    G4ThreeVector detPlacement;
-    subVolume->FillPlacement(detPlacement);
-    G4RotationMatrix detRotation;
-    subVolume->FillRotation(detRotation);
-    
-    G4Transform3D transform(detRotation,detPlacement);
-    new G4PVPlacement(transform,
-                      subVolume->GetLogicalVolume(),
-                      subVolume->GetPhysicalName(),
-                      decayHallLogical,
-                      false, 0,false);
-  }
-  //Set Vis Attributes according to solid material 
-  // (only for volumes not explicitly set)
-  G4LogicalVolumeStore* lvStore=G4LogicalVolumeStore::GetInstance();
-  lvStore=G4LogicalVolumeStore::GetInstance();
-  for (size_t ii=0;ii<(*lvStore).size();ii++){   
-    if ((*lvStore)[ii]->GetVisAttributes()==0) {
-      G4String mName=(*lvStore)[ii]->GetMaterial()->GetName();
-      (*lvStore)[ii]->SetVisAttributes(GetMaterialVisAttrib(mName));
-    }
-  }
-  */
-  //
-  // Invoking here the G4RunManager Initialize method. 
-  //
-  
+   fPlacementHandler->PlaceFinal(G4String("DecayPipeConcrete"), vDecayPipe);
+   fPlacementHandler->PlaceFinal(G4String("DecayPipeWall"), vDecayPipe);
+   fPlacementHandler->PlaceFinal(G4String("DecayPipeVolume"), vDecayPipe);
+   fPlacementHandler->PlaceFinal(G4String("DecayPipeUpstrWindow"), vDecayPipe);
+   
+   this->ConstructLBNEHadronAbsorber(tunnel);
+   
   fHasBeenConstructed = true;
   
 //  LBNERunManager *aRunManager=(LBNERunManager*)LBNERunManager::GetRunManager();
@@ -539,17 +436,72 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   
   return fRock;
 }
+void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber(G4VPhysicalVolume *mother)
+{
+
+   const G4double in = 25.4*mm;
+
+   G4cout << "Importing hadron absorber gdml file... " << G4endl;
+   
+   G4String filename(fPlacementHandler->GetAbsorberGDMLFilename());
+   std::ifstream gdmlfile(filename.c_str());
+   if (!gdmlfile.is_open()) {
+      std::string mess(" AbsorberGDML file "); 
+      mess += filename + G4String(" could not be found \n");
+      G4Exception("LBNEDetectorConstruction::ConstructLBNEHadronAbsorber", " ", 
+                    FatalErrorInArgument, mess.c_str());
+      return; // perfunctory. 
+      
+    } else {
+     gdmlfile.close();
+    }
+    G4String mName(mother->GetLogicalVolume()->GetName());
+//    const LBNEVolumePlacementData *plTunnel = 
+//      fPlacementHandler->Find(mName.c_str(), "Tunnel", "ConstructLBNEHadronAbsorber");
+    const LBNEVolumePlacementData *plDecayPipe = 
+      fPlacementHandler->Find(mName.c_str(), "DecayPipeHall", "ConstructLBNEHadronAbsorber");
+   
+     G4double CShld_length = 72*in;
+     G4double zLocAbsorber = plDecayPipe->fPosition[2] + plDecayPipe->fParams[2]/2. + CShld_length + 1.0*m;
+     G4RotationMatrix *zrot=new G4RotationMatrix();
+    
+     G4double xo =  plDecayPipe->fPosition[2] + plDecayPipe->fParams[2]/2. + 10.25*12*in;
+     G4double xp = (-6.0625*12*in - CShld_length/2.0);
+     G4double yp = 0;
+     G4double yo = -1*in; 
+     G4double z_shld = xp*cos(fBeamlineAngle) - yp*sin(fBeamlineAngle) + xo;
+     G4double y_shld = xp*sin(fBeamlineAngle) + yp*cos(fBeamlineAngle) + yo;
+      
+     G4ThreeVector tunnelPos = G4ThreeVector(0,0, zLocAbsorber);
+     G4ThreeVector shldpos = G4ThreeVector(0, y_shld, z_shld) + tunnelPos; // to be checked 
+     
+     G4GDMLParser parser;
+     parser.Read( filename );
+     G4LogicalVolume *aConcShld = parser.GetVolume( "Conc_SH" ); 
+     G4LogicalVolume *aAHTop = parser.GetVolume( "AH_top" ); 
+     G4LogicalVolume *aAHBack = parser.GetVolume( "AH_back" ); 
+     G4LogicalVolume *aMuonAlk = parser.GetVolume( "AH_Muon_alk" ); 
+     
+     G4ThreeVector conc = parser.GetPosition( "Conc_SH_1inTOPpos" )+shldpos;	     
+     G4ThreeVector top = parser.GetPosition( "AH_top_1inTOPpos" ) +shldpos;	    
+     G4ThreeVector back = parser.GetPosition( "AH_back_1inTOPpos" )+shldpos;	     
+     G4ThreeVector muon = parser.GetPosition( "AH_Muon_alk_1inTOPpos" )+shldpos;	 
+
+     // rotate about beamline z-axis, zrot rotates about z-axis relative to local object 
+     G4ThreeVector concRotZ( -conc.y(), conc.x(), conc.z() );
+     G4ThreeVector topRotZ( -top.y(), top.x(), top.z() );
+     G4ThreeVector backRotZ( -back.y(), back.x(), back.z() );
+     G4ThreeVector muonRotZ( -muon.y(), muon.x(), muon.z() );
+
+     new G4PVPlacement(zrot, concRotZ, "Conc_SH", aConcShld, mother, false, 0);
+     new G4PVPlacement(zrot, topRotZ, "AH_top", aAHTop, mother, false, 0);
+     new G4PVPlacement(zrot, backRotZ, "AH_back", aAHBack, mother, false, 0);
+     new G4PVPlacement(zrot, muonRotZ, "AH_Muon_alk", aMuonAlk, mother, false, 0);
+
+}
 
 LBNEDetectorMessenger::LBNEDetectorMessenger( LBNEDetectorConstruction* LBNEDet):LBNEDetector(LBNEDet)
 {
-
-   LBNEDataInput *LBNEData = LBNEDataInput::GetLBNEDataInput();
-   
-   if(LBNEData->GetDebugLevel() > 0)
-   {
-      G4cout << "LBNEDetectorMessenger Constructor Called." << G4endl;
-   }
-   
    LBNEDir = new G4UIdirectory("/LBNE/");
    LBNEDir->SetGuidance("UI commands for detector geometry");
    
@@ -580,12 +532,7 @@ LBNEDetectorMessenger::LBNEDetectorMessenger( LBNEDetectorConstruction* LBNEDet)
    ConstructCmd->SetGuidance("if you changed geometrical value(s).");
    ConstructCmd->AvailableForStates(G4State_PreInit);
   
-   new G4UnitDefinition("kiloampere" , "kA", "Electric current", 1000.*ampere);
-        
-        
-
-        
-	
+   new G4UnitDefinition("kiloampere" , "kA", "Electric current", 1000.*ampere);	
 }
 
 LBNEDetectorMessenger::~LBNEDetectorMessenger() 
@@ -600,24 +547,9 @@ LBNEDetectorMessenger::~LBNEDetectorMessenger()
 }
 
 
-void LBNEDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
+void LBNEDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 {
 
-   LBNEDataInput *LBNEData = LBNEDataInput::GetLBNEDataInput();
-
-  if(LBNEData->GetDebugLevel() > 0){
-    G4cout << "LBNEDetectorMessenger::SetNewValue - Setting Parameter value from input macro." << G4endl;
-   }
-
-   
-  if ( command == ConstructTarget ) {
-    LBNEData->SetConstructTarget(ConstructTarget->GetNewBoolValue(newValue));
-  }
-
-  if (command == SetBeamlineAngle){
-    LBNEDetector->SetBeamlineAngle(SetBeamlineAngle->GetNewDoubleValue(newValue));
-  }
-  
   if ( command == UpdateCmd ) 
    {
       LBNEDetector->Construct();

@@ -37,7 +37,17 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
     fDecayPipeLength->SetDefaultValue (value);
    fDecayPipeLength->SetDefaultUnit ("m");
    fDecayPipeLength->SetUnitCandidates ("cm m");
-   fDecayPipeLength->AvailableForStates(G4State_PreInit, G4State_Idle);
+   fDecayPipeLength->AvailableForStates(G4State_PreInit);
+   {
+   fDecayPipeLongPosition  = new G4UIcmdWithADoubleAndUnit("/LBNE/det/decayPipeLongPosition",this);
+   fDecayPipeRadius->SetGuidance("Longitudinal Position of the entrance window of the decay pipe with respect to target");
+   fDecayPipeRadius->SetParameterName("decayPipeLongPosition",true);
+   double value = volP->GetDecayPipeLongPosition();
+    fDecayPipeRadius->SetDefaultValue (value);
+   fDecayPipeRadius->SetDefaultUnit ("m");
+   fDecayPipeRadius->SetUnitCandidates ("m");
+   fDecayPipeRadius->AvailableForStates(G4State_PreInit);
+   }
    {
    fDecayPipeRadius  = new G4UIcmdWithADoubleAndUnit("/LBNE/det/decayPipeRadius",this);
    fDecayPipeRadius->SetGuidance("Radius of the decay Pipe");
@@ -46,14 +56,24 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
     fDecayPipeRadius->SetDefaultValue (value);
    fDecayPipeRadius->SetDefaultUnit ("m");
    fDecayPipeRadius->SetUnitCandidates ("cm m");
-   fDecayPipeRadius->AvailableForStates(G4State_PreInit, G4State_Idle);
+   fDecayPipeRadius->AvailableForStates(G4State_PreInit);
+   }
+   {
+   fDecayPipeRadius  = new G4UIcmdWithADoubleAndUnit("/LBNE/det/decayPipeUsptreamWindowThickness",this);
+   fDecayPipeRadius->SetGuidance("Thickness of the upstream window of the decay pipe.");
+   fDecayPipeRadius->SetParameterName("decayPipeUpstreamWindowThickness",true);
+   double value = volP->GetDecayPipeUpstrWindowThick();
+    fDecayPipeRadius->SetDefaultValue (value);
+   fDecayPipeRadius->SetDefaultUnit ("mm");
+   fDecayPipeRadius->SetUnitCandidates ("cm");
+   fDecayPipeRadius->AvailableForStates(G4State_PreInit);
    }
    {
    fDecayPipeGas  = new G4UIcmdWithAString("/LBNE/det/decayPipeGas",this);
    fDecayPipeGas->SetGuidance("Gas inside of the decay Pipe. Only two options so far, Air or Helium ");
    fDecayPipeGas->SetParameterName("decayPipeGas",true);
    fDecayPipeGas->SetDefaultValue (G4String("Air"));
-   fDecayPipeGas->AvailableForStates(G4State_PreInit, G4State_Idle);
+   fDecayPipeGas->AvailableForStates(G4State_PreInit);
    }
 
    fWaterLayerThickInHorn  = new G4UIcmdWithADoubleAndUnit("/LBNE/det/waterThickInHorn",this);
@@ -62,7 +82,7 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
    fWaterLayerThickInHorn->SetDefaultValue (0.);
    fWaterLayerThickInHorn->SetDefaultUnit ("mm");
    fWaterLayerThickInHorn->SetUnitCandidates ("mm cm m");
-   fWaterLayerThickInHorn->AvailableForStates(G4State_PreInit, G4State_Idle);
+   fWaterLayerThickInHorn->AvailableForStates(G4State_PreInit);
    { 
      fHorn1Length  = new G4UIcmdWithADoubleAndUnit("/LBNE/det/Horn1Length",this);
      G4String guidance("Length of Horn1.\n  ");
@@ -84,9 +104,29 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      fTargetSLengthGraphite->SetGuidance(guidance);
      fTargetSLengthGraphite->SetParameterName("GraphiteTargetLength",true);
      double value = volP->GetTargetSLengthGraphite(); //  
-     
      SetMyUnitsAndConditions(fTargetSLengthGraphite, value);
-     
+   }
+   {
+     fTargetMaterial = new G4UIcmdWithAString("/LBNE/det/TargetMaterial", this);
+     G4String guidance("Material for the target \n  ");
+     guidance += std::string(" Note: Only Beryllium, Graphite and Aluminum accepted for now..   \n");
+     guidance += std::string(" The physical length of the target is left unchanged upon use of this data card. \n  " );
+     guidance += std::string(" Default value: graphite \n  " );      
+     fTargetMaterial->SetGuidance(guidance);
+     fTargetMaterial->SetParameterName("TargetMaterial",true);
+     G4String value = volP->GetTargetMaterialName(); //  
+     fTargetMaterial->SetDefaultValue(value);
+   }
+   {
+     fTargetDensity = new G4UIcmdWithADoubleAndUnit("/LBNE/det/GraphiteTargetLength", this);
+     G4String guidance("Density of the target. Only relevant for the graphite target. \n  ");
+     fTargetDensity->SetGuidance(guidance);
+     fTargetDensity->SetParameterName("GraphiteTargetLength",true);
+     double value = volP->GetTargetDensity(); //  
+     fTargetDensity->SetDefaultValue (value);
+     fTargetDensity->SetDefaultUnit ("gr/cm3");
+     fTargetDensity->SetUnitCandidates ("gr/cm3");
+     fTargetDensity->AvailableForStates(G4State_PreInit);
    }
    {
      fTargetLengthIntoHorn = new G4UIcmdWithADoubleAndUnit("/LBNE/det/TargetLengthIntoHorn", this);
@@ -96,9 +136,7 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      fTargetLengthIntoHorn->SetGuidance(guidance);
      fTargetLengthIntoHorn->SetParameterName("TargetLengthIntoHorn",true);
      double value = volP->GetTargetLengthIntoHorn(); //  
-     
      SetMyUnitsAndConditions(fTargetLengthIntoHorn, value);
-     
    }
     {
      fHorn1RadialRescale = new G4UIcmdWithADouble("/LBNE/det/Horn1RadialRescale", this);
@@ -150,6 +188,18 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      SetMyUnitsAndConditions(fHorn2LongPosition, value);
    }
   
+   {
+     fAbsorberGDMLFilename = new G4UIcmdWithAString("/LBNE/det/GDMLAbsorberFilename", this);
+     G4String guidance("File name generated by MARS/ROOT describing the Hadron absorber at the end of the beam line. \n  ");
+     guidance += std::string(" Path name can be relative, if the executable runs from the correct directory  \n");
+     guidance += std::string(" Typically .../g4lbne \n  " );
+     guidance += std::string(" Or, absolute i.e, /scratch/.../g4blne/gdml/lbne_absorber_112912.gdml \n  " );      
+     guidance += std::string(" The translation of an (eventual) Unix environment variable is currently not implement \n  " );      
+     fTargetMaterial->SetGuidance(guidance);
+     fTargetMaterial->SetParameterName("GDMLAbsorberFilename",true);
+     G4String value = volP->GetAbsorberGDMLFilename(); //  
+     fTargetMaterial->SetDefaultValue(value);
+   }
    
     std::cerr << " LBNEPlacementMessenger::LBNEPlacementMessenger, contructor, Ends " << std::endl;
   
@@ -161,7 +211,7 @@ void LBNEPlacementMessenger::SetMyUnitsAndConditions(G4UIcmdWithADoubleAndUnit *
     cmd->SetDefaultValue (value);
     cmd->SetDefaultUnit ("m");
     cmd->SetUnitCandidates ("cm m");
-    cmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+    cmd->AvailableForStates(G4State_PreInit);
 }
 void LBNEPlacementMessenger::SetNewValue(G4UIcommand* command,  G4String newValue) {
    
@@ -179,6 +229,17 @@ void LBNEPlacementMessenger::SetNewValue(G4UIcommand* command,  G4String newValu
      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
      volP->SetDecayPipeRadius(cmdWD->GetNewDoubleValue(newValue));
    }
+   if (command == fDecayPipeLongPosition) {
+     G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
+     volP->SetDecayPipeLongPosition(cmdWD->GetNewDoubleValue(newValue));
+   }
+   if (command == fDecayPipeUpstreamWindowThickness) {
+     G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
+     volP->SetDecayPipeUpstrWindowThick(cmdWD->GetNewDoubleValue(newValue));
+   }
+   if (command == fDecayPipeGas) {
+     volP->SetDecayPipeGas(newValue);
+   }
    if (command == fHorn1Length) {
      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
      G4Exception("LBNEPlacementMessenger::SetNewValue ", " ", FatalErrorInArgument,
@@ -190,6 +251,14 @@ void LBNEPlacementMessenger::SetNewValue(G4UIcommand* command,  G4String newValu
      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
      volP->SetTargetSLengthGraphite(cmdWD->GetNewDoubleValue(newValue));
      volP->SegmentTarget();
+   }
+   if (command == fTargetDensity) {
+     G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
+     volP->SetTargetDensity(cmdWD->GetNewDoubleValue(newValue));
+   }
+   if (command == fTargetMaterial) {
+     std::cout << " !!! You have chosen to use " << newValue << " as target material " << std::endl;
+     volP->SetTargetMaterialName(newValue);
    }
    if (command == fTargetLengthIntoHorn) {
      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
@@ -216,10 +285,12 @@ void LBNEPlacementMessenger::SetNewValue(G4UIcommand* command,  G4String newValu
      volP->SetHorn2LongRescale(cmdWD->GetNewDoubleValue(newValue));
      volP->RescaleHorn2Lengthwise();
    }
-    if (command == fHorn2LongPosition) {
+   if (command == fHorn2LongPosition) {
      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
      volP->SetHorn2LongPosition(cmdWD->GetNewDoubleValue(newValue));
    }
-  
+   if (command == fAbsorberGDMLFilename) {
+          volP->SetAbsorberGDMLFilename(newValue);
+   }
 
 }

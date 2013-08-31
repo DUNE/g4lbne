@@ -40,13 +40,13 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
    fDecayPipeLength->AvailableForStates(G4State_PreInit);
    {
    fDecayPipeLongPosition  = new G4UIcmdWithADoubleAndUnit("/LBNE/det/decayPipeLongPosition",this);
-   fDecayPipeRadius->SetGuidance("Longitudinal Position of the entrance window of the decay pipe with respect to target");
-   fDecayPipeRadius->SetParameterName("decayPipeLongPosition",true);
+   fDecayPipeLongPosition->SetGuidance("Longitudinal Position of the entrance window of the decay pipe with respect to target");
+   fDecayPipeLongPosition->SetParameterName("decayPipeLongPosition",true);
    double value = volP->GetDecayPipeLongPosition();
-    fDecayPipeRadius->SetDefaultValue (value);
-   fDecayPipeRadius->SetDefaultUnit ("m");
-   fDecayPipeRadius->SetUnitCandidates ("m");
-   fDecayPipeRadius->AvailableForStates(G4State_PreInit);
+    fDecayPipeLongPosition->SetDefaultValue (value);
+   fDecayPipeLongPosition->SetDefaultUnit ("m");
+   fDecayPipeLongPosition->SetUnitCandidates ("m");
+   fDecayPipeLongPosition->AvailableForStates(G4State_PreInit);
    }
    {
    fDecayPipeRadius  = new G4UIcmdWithADoubleAndUnit("/LBNE/det/decayPipeRadius",this);
@@ -59,14 +59,14 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
    fDecayPipeRadius->AvailableForStates(G4State_PreInit);
    }
    {
-   fDecayPipeRadius  = new G4UIcmdWithADoubleAndUnit("/LBNE/det/decayPipeUsptreamWindowThickness",this);
-   fDecayPipeRadius->SetGuidance("Thickness of the upstream window of the decay pipe.");
-   fDecayPipeRadius->SetParameterName("decayPipeUpstreamWindowThickness",true);
+   fDecayPipeUpstreamWindowThickness  = new G4UIcmdWithADoubleAndUnit("/LBNE/det/decayPipeUsptreamWindowThickness",this);
+   fDecayPipeUpstreamWindowThickness->SetGuidance("Thickness of the upstream window of the decay pipe.");
+   fDecayPipeUpstreamWindowThickness->SetParameterName("decayPipeUpstreamWindowThickness",true);
    double value = volP->GetDecayPipeUpstrWindowThick();
-    fDecayPipeRadius->SetDefaultValue (value);
-   fDecayPipeRadius->SetDefaultUnit ("mm");
-   fDecayPipeRadius->SetUnitCandidates ("cm");
-   fDecayPipeRadius->AvailableForStates(G4State_PreInit);
+    fDecayPipeUpstreamWindowThickness->SetDefaultValue (value);
+   fDecayPipeUpstreamWindowThickness->SetDefaultUnit ("mm");
+   fDecayPipeUpstreamWindowThickness->SetUnitCandidates ("cm");
+   fDecayPipeUpstreamWindowThickness->AvailableForStates(G4State_PreInit);
    }
    {
    fDecayPipeGas  = new G4UIcmdWithAString("/LBNE/det/decayPipeGas",this);
@@ -124,8 +124,8 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      fTargetDensity->SetParameterName("GraphiteTargetLength",true);
      double value = volP->GetTargetDensity(); //  
      fTargetDensity->SetDefaultValue (value);
-     fTargetDensity->SetDefaultUnit ("gr/cm3");
-     fTargetDensity->SetUnitCandidates ("gr/cm3");
+     fTargetDensity->SetDefaultUnit ("g/cm3");
+     fTargetDensity->SetUnitCandidates ("g/cm3");
      fTargetDensity->AvailableForStates(G4State_PreInit);
    }
    {
@@ -199,10 +199,7 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      fTargetMaterial->SetParameterName("GDMLAbsorberFilename",true);
      G4String value = volP->GetAbsorberGDMLFilename(); //  
      fTargetMaterial->SetDefaultValue(value);
-   }
-   
-    std::cerr << " LBNEPlacementMessenger::LBNEPlacementMessenger, contructor, Ends " << std::endl;
-  
+   }  
 }
 // Just to avoid code bloat.. 
 

@@ -60,8 +60,8 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
    const G4double in = 2.54*cm;
     // declaration of some constant which should not impact the physics at all, 
     // but are needed to build the G4 geometry. 
-   fDecayPipeLength=204.0*m;
-   fDecayPipeRadius = 4.0*m;
+   fDecayPipeLength=203.7*m; // CDR, Vol 2 LBNE Doc Db 4317-v25
+   fDecayPipeRadius = 4.0*m/2.;
    fDecayPipeUpstrWindowThick = 3.0*mm; // Only used for Helium. A guess at this point. 
    fDecayPipeWallThick = 12.5*mm; // CDR, March 2012, Vol-2, p 3.130 
    fDecayPipeLongPosition = 22.2*m; // From the target, CDR-Vol2, March 2012, Decay pipe section, p. 3.130
@@ -203,6 +203,10 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
 //
    this->DeclareHorn1Dims();  // See in file LBNEDownstrVolPlacements.cc 
    this->DeclareHorn2Dims();  // See in file LBNEDownstrVolPlacements.cc 
+   
+   // Default file name forthe GDML file describing the Hadron generator. 
+   
+   fAbsorberGDMLFilename = G4String("./gdml/lbne_absorber_112912.gdml");
  
 }
 //
@@ -294,8 +298,9 @@ LBNEVolumePlacementData*
   info.fTypeName = G4String("Tubs"); // most common type of volume.. 
   std::string volumeName(name); // volumeName += std::string("_solid"); Not necessary 
   if (name == G4String("Tunnel")) {
-    info.fParams[0] = 8*m - 2.0*cm;  // Note: the total volume is 60 m. wide => plenty enough rocks. 
-    info.fParams[1] = 12*m - 2.0*cm; 
+    info.fParams[0] = 8*m - 2.0*cm + 2.0*(fDecayPipeRadius - 2.0*m) + 5.0*m; 
+       // Note: the total volume is 60 m. wide => plenty enough rocks. The last term is for the Hadron Absorber cavern  
+    info.fParams[1] = 12*m - 2.0*cm + 2.0*(fDecayPipeRadius - 2.0*m) ; 
     info.fParams[2] = fTotalLength -2.0*cm;
     G4Box* hallBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2. ); 
     info.fCurrent = new G4LogicalVolume(hallBox, G4Material::GetMaterial("Air"), name); 
@@ -933,7 +938,7 @@ LBNEVolumePlacementData*
        const LBNEVolumePlacementData *plInfoTGH = Find(name, G4String("TargetHallAndHorn1"), G4String("Create"));
        const LBNEVolumePlacementData *plInfoH = Find(name, G4String("Horn1Hall"), G4String("Create"));
        for (size_t k=0; k != 2; ++k) 
-        info.fParams[k] = plInfoTunnel->fParams[k] - 2.0*cm; 
+        info.fParams[k] = plInfoTunnel->fParams[k] - 50.*cm; // 50 cm misalignement unlikely. 
         info.fParams[2] = fDecayPipeLength + 4.0*cm; // Add extra margin, 2 on each side, as there will 
 	                                                         // be the container volume  
         G4Box* hallBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2. );
@@ -948,8 +953,9 @@ LBNEVolumePlacementData*
     }
     if (name == G4String("DecayPipeConcrete")) {
        const LBNEVolumePlacementData *plInfo = Find(name, G4String("DecayPipeHall"), G4String("Create"));       
-        info.fParams[0] = fDecayPipeRadius + fDecayPipeWallThick;
-        info.fParams[1] = std::min(plInfo->fParams[0], plInfo->fParams[1]) - 1.0*cm;
+        info.fParams[0] = fDecayPipeRadius + 2.0*fDecayPipeWallThick + 20.0*cm + 2.0*cm;
+        info.fParams[1] = std::min(plInfo->fParams[0], plInfo->fParams[1])/2.0 - 1.0*m; // fill with concrete.  Rock is a bit different 
+	// from concrete, but O.K. at such last distance from beam axis. Leave one meter for misalignment..
         info.fParams[2] = fDecayPipeLength + 2.0*cm; // Add extra margin, 2 on each side, as there will 
 	                                                         // be the container volume  
         G4Tubs* tubs = new G4Tubs(volumeName, info.fParams[0], info.fParams[1],
@@ -960,6 +966,15 @@ LBNEVolumePlacementData*
         info.fParams[0] = fDecayPipeRadius; // such that the decay pipe wall & volume 
 	  // can be surveyable. 
         info.fParams[1] = fDecayPipeRadius + fDecayPipeWallThick;
+        info.fParams[2] = fDecayPipeLength + 1.0*cm; // Add extra margin 
+        G4Tubs* tubs = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], 
+	                         info.fParams[2]/2., 0., 360.*deg);
+        info.fCurrent = new G4LogicalVolume(tubs, G4Material::GetMaterial("Steel316"), volumeName);
+    }
+    if (name == G4String("DecayPipeOuterWall")) {
+        info.fParams[0] = fDecayPipeRadius + 20.0*cm + fDecayPipeWallThick; // such that the decay pipe wall & volume 
+	  // can be surveyable. 
+        info.fParams[1] = fDecayPipeRadius + 2.0*fDecayPipeWallThick + 20.0*cm ;
         info.fParams[2] = fDecayPipeLength + 1.0*cm; // Add extra margin 
         G4Tubs* tubs = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], 
 	                         info.fParams[2]/2., 0., 360.*deg);
@@ -1070,7 +1085,6 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
 	        const double fTotalLength = fHorn1TopUpstrLength + fHorn1TopDownstrLength;
 		
 	        deltaSlopes[k] = (deltaDownstr[k] - deltaUpstr[k])/fTotalLength;
-	        const double offsetCenter =  0.5*(deltaUpstr[k] + deltaDownstr[k]);
 		if (name == G4String("Horn1IOTransCont")) {
 		  info.fPosition[k] += deltaUpstr[k] + deltaSlopes[k]*fHorn1IOTransLength/2.;
 	      	} else if(name == G4String("Horn1TopLevelUpstr")) {
@@ -1088,8 +1102,8 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
       }
       if ((std::abs(deltaSlopes[0]) > 2.0e-9) || (std::abs(deltaSlopes[1]) > 2.0e-9)) { 
         info.fRotationIsUnitMatrix = false;
-        info.fRotation.rotateX(deltaSlopes[0]);	
-        info.fRotation.rotateY(deltaSlopes[1]);
+        info.fRotation.rotateY(deltaSlopes[0]);	
+        info.fRotation.rotateX(deltaSlopes[1]); // rotation in the YZ plane, axis is then X Commutative for small angles.. 
 	// Shift the volume longitudinally if a signficant slope exists. 
 	const double maxSlope = std::max(std::abs(deltaSlopes[0]), std::abs(deltaSlopes[1]));
 	// assume they are tubes..for now, all surveyed points are assigned to tubes..Shift everything downstream 
@@ -1129,7 +1143,7 @@ void LBNEVolumePlacements::PlaceFinalUpstrTarget(G4PVPlacement *mother) {
     //Start by defining the top level of the target container volume, which includes the canister (TargetUpstrM0) 
    // and the target section which is outside Horn1 (TargetUpstrM1)
    
-    LBNEVolumePlacementData *plMTop = Create("TargetUpstrMTop");
+    Create("TargetUpstrMTop");
     G4PVPlacement *vMTop = PlaceFinal(std::string("TargetUpstrMTop"), mother);
     std::cerr << " TargetUpstrMTop  created and placed ... " << std::endl;
     LBNEVolumePlacementData *plM0 = Create("TargetUpstrM0");
@@ -1196,17 +1210,17 @@ void LBNEVolumePlacements::PlaceFinalUpstrTarget(G4PVPlacement *mother) {
 	                         fTargetUpstrPlateThick + fTargetCanLength + 
 				 fTargetDownstrCanFlangeThick - infoTmp.fParams[2]/2 - 1.0*mm;
     G4String vpNameTmp10(nameTmp10);				 			 
-    G4PVPlacement *vRodTopLeft = new G4PVPlacement((G4RotationMatrix *) 0, 
+    new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, infoTmp.fCurrent, vpNameTmp10+std::string("_PTopLeft"), 
 				            vM0->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
     posTmp[0] = -15.5*mm; // Again, accurate to +- 1 mm or so. 
     posTmp[1] = -36.0*mm;
-    G4PVPlacement *vRodBottomLeft = new G4PVPlacement((G4RotationMatrix *) 0, 
+    new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, infoTmp.fCurrent, vpNameTmp10+std::string("_PBottomLeft"),
 				     vM0->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);
     posTmp[0] = 33.0*mm; // Again, accurate to +- 1 mm or so. 
     posTmp[1] = 5.0*mm;
-    G4PVPlacement *vRodRight = new G4PVPlacement((G4RotationMatrix *) 0, 
+    new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, infoTmp.fCurrent, vpNameTmp10+std::string("_PRight"), 
 				    vM0->GetLogicalVolume(), false, 2, fCheckVolumeOverLapWC);
     
@@ -1328,12 +1342,12 @@ void LBNEVolumePlacements::PlaceFinalUpstrTarget(G4PVPlacement *mother) {
     // beam line anyway. 
     G4String nameHorn1IO("TargetHorn1TransInnerOuter");
     G4String nameHorn1IOCont(nameHorn1IO + G4String("Cont"));
-    LBNEVolumePlacementData *plHorn1IOCont = Create(nameHorn1IOCont);
+    Create(nameHorn1IOCont);
     G4PVPlacement *vHorn1IOCont = PlaceFinal(nameHorn1IOCont, vM1);
     for (size_t iPartIO = 0; iPartIO != fTargetHorn1InnerRadsUpstr.size(); iPartIO++) {
       std::ostringstream nameStrStr; nameStrStr << nameHorn1IO << "Part" << iPartIO;
       G4String nameStr(nameStrStr.str());
-      LBNEVolumePlacementData *plHorn1IOCont = Create(nameStr);
+      Create(nameStr);
       PlaceFinal(nameStr, vHorn1IOCont);
     }        
 }

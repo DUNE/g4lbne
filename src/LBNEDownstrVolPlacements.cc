@@ -495,7 +495,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
 	const double zPosCenterMotherVolume = -1.0*(plHUpst->fParams[2])/2. + zLocTweakedFirstHanger + lengthHangerRing/2. ;  			   
 	const double zPosCenterDrawingCoord = zLocTweakedFirstHanger - 3.0*cm*fHorn1LongRescale; 			   
         this->Horn1InstallSpiderHanger(nameStrFirstHanger, zPosCenterDrawingCoord, 
-	                                    zPosCenterMotherVolume, plHUpst, vUpst );			       
+	                                    zPosCenterMotherVolume, vUpst );			       
    }
    // Outer tube 
    G4String nameStr("Horn1UpstrOutrTube");
@@ -605,7 +605,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
                                  + lengthToTheNeck + 0.3750*in*fHorn1LongRescale;
        const double zLocPosM = -plHDwn->fParams[2]/2 + lengthToTheNeck + 0.3750*in*fHorn1LongRescale; // with respect to the center of 
        // of the mother volume. 
-       this->Horn1InstallSpiderHanger( nameStrFirstHanger, zLocDrawing, zLocPosM,  plHDwn, vDown); 
+       this->Horn1InstallSpiderHanger( nameStrFirstHanger, zLocDrawing, zLocPosM,  vDown); 
     }
     // The first weld for this section. 
    {
@@ -753,12 +753,12 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
        double zLocDrawing = zStartDrawing + fHorn1LongRescale*1.416*in;
        double zLocPosM = zLocDrawing + zShiftDrawingDownstr + 0.375*in*fHorn1LongRescale; // with respect to the center of 
        // of the mother volume. 
-       this->Horn1InstallSpiderHanger( nameStrFirstHanger, zLocDrawing, zLocPosM,  plHDwn, vDown); 
+       this->Horn1InstallSpiderHanger( nameStrFirstHanger, zLocDrawing, zLocPosM, vDown); 
        
        G4String nameStrSecondHanger("Horn1DownstrThirdSpiderHanger");
        zLocDrawing = fHorn1LongRescale*(80.9951 + 1.791)*in;
        zLocPosM = zLocDrawing + zShiftDrawingDownstr + 0.375*in*fHorn1LongRescale;
-       this->Horn1InstallSpiderHanger( nameStrSecondHanger, zLocDrawing, zLocPosM,  plHDwn, vDown); 
+       this->Horn1InstallSpiderHanger( nameStrSecondHanger, zLocDrawing, zLocPosM, vDown); 
      }
      // now a few welds.. 
      std::vector<double> zLocWelds(4,0.); // Drawing coordinate system
@@ -968,7 +968,6 @@ int LBNEVolumePlacements::GetNumberOfInnerHornSubSections(size_t eqn, double z1,
 }
 void LBNEVolumePlacements::Horn1InstallSpiderHanger(const G4String &nameStrH, 
                                                     double zLocTweaked, double zPosMotherVolume, 
-						    const LBNEVolumePlacementData *plInfo, 
 						   G4PVPlacement *vMother ) {
 
   const double in = 2.54*cm;
@@ -1104,8 +1103,8 @@ void LBNEVolumePlacements::DeclareHorn2Dims() {
   for (size_t k=0; k!= fHorn2PartsLengths.size(); ++k) fHorn2Length +=fHorn2PartsLengths[k];
   fHorn2Length += fHorn2LengthMargin; 
 //
-  std::cout << " Check of Horn2 lengths, Sum of indivuals parts + margin " << fHorn2Length 
-            << " nominal " << fHorn2LengthNominal << std::endl;
+//  std::cout << " Check of Horn2 lengths, Sum of indivuals parts + margin " << fHorn2Length 
+//            << " nominal " << fHorn2LengthNominal << std::endl;
    
   int numSctTr = 3 + 2; // Number of tubes, otherwise. Approximate.. 
   //  Take 10 for the transition bulge, 2 for the outer flat part.
@@ -1135,7 +1134,6 @@ void LBNEVolumePlacements::DeclareHorn2Dims() {
   fHorn2UpstrOuterIOTransLengths[2] = fHorn2UpstrOuterIOTransLengths[0];
   fHorn2UpstrOuterIOTransPositions[2] = fHorn2UpstrOuterIOTransPositions[0];
   const double heightTmp0 = surfXSectPart/fHorn2UpstrOuterIOTransLengths[0];
-  std::cerr << " heightTmp0 " << heightTmp0 << " radIOTrAv " << radIOTrAv << std::endl;
   fHorn2UpstrOuterIOTransRadsOne[0] = bigRadIOTr - heightTmp0/2. - radIOTrAv/sqrt(2.) ; 
   fHorn2UpstrOuterIOTransRadsTwo[0] = bigRadIOTr + heightTmp0/2. - radIOTrAv/sqrt(2.) ;
   fHorn2UpstrOuterIOTransRadsOne[2] = bigRadIOTr - heightTmp0/2. + radIOTrAv/sqrt(2.) ; 

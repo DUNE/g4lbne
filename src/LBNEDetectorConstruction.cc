@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.24 2013/08/31 09:49:18 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.25 2013/08/31 20:41:09 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -71,17 +71,6 @@ LBNEDetectorConstruction::LBNEDetectorConstruction()
 
 LBNEDetectorConstruction::~LBNEDetectorConstruction()
 {
-  for(unsigned int i = 0; i < fHornBFieldVec.size(); ++i)
-  {
-    delete fHornBFieldVec[i];
-    delete fHornICBFieldVec[i];
-    delete fHornOCBFieldVec[i];
-  }
-
-
-  fHornBFieldVec.clear();
-  fHornICBFieldVec.clear();
-  fHornOCBFieldVec.clear();
 
   DestroyMaterials();
 
@@ -120,25 +109,6 @@ void LBNEDetectorConstruction::Initialize()
   fCheckOverlaps = false;
   fConstructTarget = true;
   
-  fHornBFieldVec.clear();
-  fHornICBFieldVec.clear();
-  fHornOCBFieldVec.clear();
-  /*
-  for(int npart = 1; npart < nhornparts+1; ++npart)
-  {
-     LBNEMagneticField* bf     = new LBNEMagneticField(); 
-     LBNEMagneticFieldIC* bfic = new LBNEMagneticFieldIC();
-     LBNEMagneticFieldOC* bfoc = new LBNEMagneticFieldOC();
-
-     bf   -> SetHornCurrent(fHornCurrents[npart-1]);
-     bfic -> SetHornCurrent(fHornCurrents[npart-1]);
-     bfoc -> SetHornCurrent(fHornCurrents[npart-1]);
-     
-     fHornBFieldVec.push_back(bf);
-     fHornICBFieldVec.push_back(bfic);
-     fHornOCBFieldVec.push_back(bfoc);
-  }
-*/
 }
 
 
@@ -312,11 +282,11 @@ void LBNEDetectorConstruction::InitializeMaterialsPostPreIdle() {
 G4VisAttributes* LBNEDetectorConstruction::GetMaterialVisAttrib(G4String mName){
   G4VisAttributes* visAtt;
   if(mName == "Vacuum")  visAtt = new G4VisAttributes(false);
-  if(mName=="Aluminum") visAtt = new G4VisAttributes(G4Color(0.2, 0.8, 1));
-  if(mName=="Air") visAtt = new G4VisAttributes(G4Color(0.6,0.7,0.8));
-  if(mName=="Iron" || mName=="Slab_Stl") visAtt=new G4VisAttributes(G4Color(0.5,0.3,0));
-  if(mName=="Concrete") visAtt = new G4VisAttributes(G4Color(0.75,0.85,0.95));
-  if(!visAtt) visAtt = new G4VisAttributes(G4Color(1,0,0));
+  else if(mName=="Aluminum") visAtt = new G4VisAttributes(G4Color(0.2, 0.8, 1));
+  else if(mName=="Air") visAtt = new G4VisAttributes(G4Color(0.6,0.7,0.8));
+  else if(mName=="Iron" || mName=="Slab_Stl") visAtt=new G4VisAttributes(G4Color(0.5,0.3,0));
+  else if(mName=="Concrete") visAtt = new G4VisAttributes(G4Color(0.75,0.85,0.95));
+  else visAtt = new G4VisAttributes(G4Color(1,0,0));
   return visAtt;
 }
 
@@ -349,7 +319,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   
   fRockX = 60.0*m;
   fRockY = 60.0*m;
-  fRockLength = fPlacementHandler->GetDecayPipeLength() + 50.*m; // Approximate and irrelevant, all rock anyways.
+  fRockLength = 2.0*(fPlacementHandler->GetDecayPipeLength() + 50.*m); // Approximate and irrelevant, all rock anyways.
   fPlacementHandler->SetTotalLength(fRockLength);    
   G4Box* ROCK_solid = new G4Box("ROCK_solid",fRockX/2, fRockY/2, fRockLength/2);
   G4LogicalVolume *RockLogical = 
@@ -372,8 +342,16 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 //
   LBNEVolumePlacementData *plDat = fPlacementHandler->Create(G4String("UpstreamTargetAssembly"));
   std::cerr << " Placement data for volume UpstreamTargetAssembly, half length  " << plDat->fParams[2]/2. << std::endl;
+  LBNEMagneticFieldHorn *fieldHorn1 = new LBNEMagneticFieldHorn(true);
+  G4FieldManager* aFieldMgr = new G4FieldManager(fieldHorn1); //create a local field		 
+  aFieldMgr->SetDetectorField(fieldHorn1); //set the field 
+  aFieldMgr->CreateChordFinder(fieldHorn1); //create the objects which calculate the trajectory
+  plDat->fCurrent->SetFieldManager(aFieldMgr,true); //attach the local field to logical volume
+ 
 //   
-  fPlacementHandler->Create(G4String("Horn1Hall"));
+  LBNEVolumePlacementData *plH1Dat = fPlacementHandler->Create(G4String("Horn1Hall"));
+  plH1Dat->fCurrent->SetFieldManager(aFieldMgr,true); //attach the local field to logical volume
+  
   G4VPhysicalVolume* targethorn1Phys = fPlacementHandler->PlaceFinal(G4String("TargetHallAndHorn1"), tunnel);
 //
 //   
@@ -399,10 +377,15 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 
   fPlacementHandler->PlaceFinalDownstrTarget((G4PVPlacement*) vUpstr);
 
-  fPlacementHandler->PlaceFinalHorn1((G4PVPlacement*) vHorn1, vUpstr);
-  
+  fPlacementHandler->PlaceFinalHorn1((G4PVPlacement*) vHorn1, vUpstr);  
 
-  fPlacementHandler->Create(G4String("Horn2Hall"));
+  LBNEVolumePlacementData *plH2Dat = fPlacementHandler->Create(G4String("Horn2Hall"));
+  LBNEMagneticFieldHorn *fieldHorn2 = new LBNEMagneticFieldHorn(false);
+  G4FieldManager* aFieldMgr2 = new G4FieldManager(fieldHorn2); //create a local field		 
+  aFieldMgr2->SetDetectorField(fieldHorn2); //set the field 
+  aFieldMgr2->CreateChordFinder(fieldHorn2); //create the objects which calculate the trajectory
+  plH2Dat->fCurrent->SetFieldManager(aFieldMgr2,true); //attach the local field to logical volume
+  
   G4PVPlacement *vHorn2 = fPlacementHandler->PlaceFinal(G4String("Horn2Hall"), tunnel); 
 
   fPlacementHandler->PlaceFinalHorn2(vHorn2);
@@ -418,11 +401,13 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
    fPlacementHandler->Create(G4String("DecayPipeHall"));
    G4PVPlacement *vDecayPipe = fPlacementHandler->PlaceFinal(G4String("DecayPipeHall"), tunnel);
    fPlacementHandler->Create(G4String("DecayPipeConcrete"));
+   fPlacementHandler->Create(G4String("DecayPipeOuterWall"));
    fPlacementHandler->Create(G4String("DecayPipeWall"));
    fPlacementHandler->Create(G4String("DecayPipeVolume"));
    fPlacementHandler->Create(G4String("DecayPipeUpstrWindow"));
    
    fPlacementHandler->PlaceFinal(G4String("DecayPipeConcrete"), vDecayPipe);
+   fPlacementHandler->PlaceFinal(G4String("DecayPipeOuterWall"), vDecayPipe);
    fPlacementHandler->PlaceFinal(G4String("DecayPipeWall"), vDecayPipe);
    fPlacementHandler->PlaceFinal(G4String("DecayPipeVolume"), vDecayPipe);
    fPlacementHandler->PlaceFinal(G4String("DecayPipeUpstrWindow"), vDecayPipe);
@@ -455,14 +440,16 @@ void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber(G4VPhysicalVolume *mo
     } else {
      gdmlfile.close();
     }
-    G4String mName(mother->GetLogicalVolume()->GetName());
-//    const LBNEVolumePlacementData *plTunnel = 
-//      fPlacementHandler->Find(mName.c_str(), "Tunnel", "ConstructLBNEHadronAbsorber");
+    const LBNEVolumePlacementData *plTunnel = 
+      fPlacementHandler->Find("HadronAbsorber", "Tunnel", "ConstructLBNEHadronAbsorber");
     const LBNEVolumePlacementData *plDecayPipe = 
-      fPlacementHandler->Find(mName.c_str(), "DecayPipeHall", "ConstructLBNEHadronAbsorber");
+      fPlacementHandler->Find("HadronAbsorber", "DecayPipeHall", "ConstructLBNEHadronAbsorber");
    
      G4double CShld_length = 72*in;
      G4double zLocAbsorber = plDecayPipe->fPosition[2] + plDecayPipe->fParams[2]/2. + CShld_length + 1.0*m;
+     std::cerr << "LBNEDetectorConstruction::ConstructLBNEHadronAbsorber zLocAbsorber " << zLocAbsorber << std::endl
+               << " .... tunnel length " << plTunnel->fParams[2] << " size , X/Y "<<
+	       plTunnel->fParams[0] << " / " << plTunnel->fParams[1] << std::endl;
      G4RotationMatrix *zrot=new G4RotationMatrix();
     
      G4double xo =  plDecayPipe->fPosition[2] + plDecayPipe->fParams[2]/2. + 10.25*12*in;
@@ -473,8 +460,8 @@ void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber(G4VPhysicalVolume *mo
      G4double y_shld = xp*sin(fBeamlineAngle) + yp*cos(fBeamlineAngle) + yo;
       
      G4ThreeVector tunnelPos = G4ThreeVector(0,0, zLocAbsorber);
-     G4ThreeVector shldpos = G4ThreeVector(0, y_shld, z_shld) + tunnelPos; // to be checked 
-     
+     G4ThreeVector shldpos = G4ThreeVector(0, y_shld, z_shld); // to be checked 
+     std::cerr << " shldpos " << shldpos << std::endl;
      G4GDMLParser parser;
      parser.Read( filename );
      G4LogicalVolume *aConcShld = parser.GetVolume( "Conc_SH" ); 
@@ -493,10 +480,10 @@ void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber(G4VPhysicalVolume *mo
      G4ThreeVector backRotZ( -back.y(), back.x(), back.z() );
      G4ThreeVector muonRotZ( -muon.y(), muon.x(), muon.z() );
 
-     new G4PVPlacement(zrot, concRotZ, "Conc_SH", aConcShld, mother, false, 0);
-     new G4PVPlacement(zrot, topRotZ, "AH_top", aAHTop, mother, false, 0);
-     new G4PVPlacement(zrot, backRotZ, "AH_back", aAHBack, mother, false, 0);
-     new G4PVPlacement(zrot, muonRotZ, "AH_Muon_alk", aMuonAlk, mother, false, 0);
+     new G4PVPlacement(zrot, concRotZ, "Conc_SH", aConcShld, mother, false, 0, true);
+     new G4PVPlacement(zrot, topRotZ, "AH_top", aAHTop, mother, false, 0, true);
+     new G4PVPlacement(zrot, backRotZ, "AH_back", aAHBack, mother, false, 0, true);
+     new G4PVPlacement(zrot, muonRotZ, "AH_Muon_alk", aMuonAlk, mother, false, 0, true);
 
 }
 
@@ -560,19 +547,9 @@ void LBNEDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
       LBNEDetector->Construct();
       return;
    }
-}
-// Obsolete, I would think..
-G4VPhysicalVolume* LBNEDetectorConstruction::GetPhysicalVolume(G4String name) {
-       std::ostringstream mStrStr;
-      mStrStr << " Obsolete Call  for Volume named " << name << "Please let us use stadard G4 call here and there...  ";
-      G4String mStr(mStrStr.str());
-      G4Exception("LBNEDetectorConstruction::GetPhysicalVolume", " ", FatalErrorInArgument, mStr.c_str()); 
-}
-G4Material* LBNEDetectorConstruction::GetMaterial(G4int iMat) {
-       std::ostringstream mStrStr;
-      mStrStr << " Obsolete Call  for Material Number " << iMat << "Please let us use stadard G4 call here and there...  ";
-      G4String mStr(mStrStr.str());
-      G4Exception("LBNEDetectorConstruction::GetMaterial", " ", FatalErrorInArgument, mStr.c_str()); 
+   if (command == SetHorn1Current) {
+     // ?????????????????
+   }
 }
 	
 	

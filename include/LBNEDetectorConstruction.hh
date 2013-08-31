@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.hh,v 1.5.2.15 2013/08/31 09:49:18 lebrun Exp $
+// $Id: LBNEDetectorConstruction.hh,v 1.5.2.16 2013/08/31 20:41:09 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEDetectorConstruction_H
@@ -60,8 +60,6 @@ public:
     
   void UpdateGeometry(); // Obsolete..
 
-  G4VPhysicalVolume* GetPhysicalVolume(G4String PVname);
-  G4Material* GetMaterial(G4int matcode);
   void InitializeSubVolumes();
   void InitializeMaterials();
   void SetCheckOverlaps(bool val){ fCheckOverlaps = val; }
@@ -86,13 +84,9 @@ private:
   LBNEDecayPipe*                        fDecayPipe;
   LBNEHadronAbsorber*                   fHadronAbsorber;
   LBNEStandardPerson*                   fStandardPerson;
-  
-  std::vector<LBNEMagneticField*>       fHornBFieldVec;
-  std::vector<LBNEMagneticFieldIC*>     fHornICBFieldVec;
-  std::vector<LBNEMagneticFieldOC*>     fHornOCBFieldVec;
- 
-  // Horn values
-  std::vector<G4double> fHornCurrents;
+   
+  // Horn current value
+  G4double fHornCurrent;
 
 
   // Dimensions of (world-volume) pertinent features

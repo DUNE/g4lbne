@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.21 2013/08/31 09:49:18 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.22 2013/08/31 20:41:09 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -182,7 +182,9 @@ public:
 // Interface to the Messenger, Horn1 parameters  
 //
   inline void SetHorn1LongRescale(double r) {fHorn1LongRescale = r;}  
+  inline double GetHorn1LongRescale() const {return fHorn1LongRescale;}  
   inline void SetHorn1RadialRescale(double r) {fHorn1RadialRescale = r;}  
+  inline double GetHorn2LongRescale() const {return fHorn2LongRescale;}  
   inline void SetHorn2LongRescale(double r) {fHorn2LongRescale = r;}  
   inline void SetHorn2RadialRescale(double r) {fHorn2RadialRescale = r;}  
   inline double GetHorn2LongPosition() const { return fHorn2LongPosition; }
@@ -448,7 +450,7 @@ private:
   int GetNumberOfInnerHorn2SubSections(size_t eqn, double z1, double z2, int nMax) const;
    
   void Horn1InstallSpiderHanger(const G4String &name, double zFromStartInnerConduct, double zPos,
-                                const LBNEVolumePlacementData *plInfo,  G4PVPlacement *vMother );					       
+                                G4PVPlacement *vMother );					       
   void Horn2InstallSpiderHanger(const G4String &name, G4PVPlacement *vMother );					       
   void Horn1PlaceAWeld(const G4String &name, double z, 
                                 const LBNEVolumePlacementData *plInfo,  G4PVPlacement *vMother );					       

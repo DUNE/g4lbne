@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.hh,v 1.5.2.16 2013/08/31 20:41:09 lebrun Exp $
+// $Id: LBNEDetectorConstruction.hh,v 1.5.2.17 2013/09/02 09:35:03 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEDetectorConstruction_H
@@ -53,9 +53,6 @@ public:
 
   G4VPhysicalVolume* Construct();
   
-  //void SetTargetZ0(G4double val);
-  //void SetHornCurrent(G4double val);
-
   void CheckOverlaps();
     
   void UpdateGeometry(); // Obsolete..
@@ -255,6 +252,12 @@ private:
   G4VSolid* BLK_solid[100];
   G4VSolid* CShld_solid[16];
   G4VSolid* Horn_PM[8];
+ 
+ public:
+ 
+  inline void SetHornCurrent(G4double val) { fHornCurrent = val; }
+
+
 };
 #endif
 

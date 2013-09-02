@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.22 2013/08/31 20:41:09 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.23 2013/09/02 09:35:03 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -192,7 +192,24 @@ public:
 
   inline G4String GetAbsorberGDMLFilename() const { return fAbsorberGDMLFilename; }
   inline void SetAbsorberGDMLFilename(G4String &name) { fAbsorberGDMLFilename=name; }
-  
+//
+// more public getter to support the Magnetic field 
+//
+  inline double GetHorn1NeckZPosition() const { return fHorn1NeckZPosition; } // in Drawing coordinate system 
+  inline double GetHorn1NeckLength() const { return fHorn1NeckLength; } //  ... but rescaled is asked for..
+  inline double GetHorn1NeckOuterRadius() const { return fHorn1NeckOuterRadius; } // same coordinate system.. 
+  inline double GetHorn1ZEndIC() const { return fHorn1ZEndIC; } // the Z end of the inner conductor, rescaled..
+  inline double GetHorn1EffectiveLength() const { return  (fHorn1TopUpstrLength + fHorn1TopDownstrLength); }
+  inline double GetHorn1DeltaZEntranceToZOrigin() const { return fZHorn1ACRNT1Shift;} // To be checked!...
+  inline double GetHorn1OuterTubeOuterRad() const {return  fHorn1OuterTubeOuterRad; }
+      //Same thing for Horn2 
+  inline double GetHorn2NeckZPosition() const { return fHorn2NeckZPosition; } // in Drawing coordinate system 
+  inline double GetHorn2NeckLength() const { return fHorn2NeckLength; } //  ... but rescaled is asked for..
+  inline double GetHorn2NeckOuterRadius() const { return fHorn2NeckOuterRadius; } // same coordinate system.. 
+  inline double GetHorn2ZEndIC() const { return fHorn2ZEndIC; } // the Z end of the inner conductor, rescaled..
+  inline double GetHorn2ZEqnChange(size_t k) const {return fHorn2ZEqnChanges[k]; } 
+  inline double GetHorn2DeltaZEntranceToZOrigin() const {return fHorn2DeltaZEntranceToZOrigin; } 
+  inline double GetHorn2OuterTubeOuterRad() const {return  fHorn2OuterTubeOuterRad; }
   void SegmentTarget(); // Check the target segmentation. Assume fixed Fin size. 
   
   void RescaleHorn1Lengthwise();
@@ -205,8 +222,15 @@ public:
   
   const LBNEVolumePlacementData* Find(const G4String &name, const char *motherName, const char *method) const ;
   
-
-  
+  inline double GetInnerConductorRadiusHorn1(double zD, size_t eqn) const {
+     if (eqn >= fHorn1Equations.size()) return -1.;
+     return fHorn1Equations[eqn].GetVal(zD);
+  }
+   inline double GetInnerConductorRadiusHorn2(double zD, size_t eqn) const {
+     if (eqn >= fHorn2Equations.size()) return -1.;
+     return fHorn2Equations[eqn].GetVal(zD);
+  }
+ 
 private:
   // GUI Interface  
   
@@ -357,11 +381,14 @@ private:
   G4double fHorn1TopUpstrLength; // Upstream part of the inner conductor, container volume (TUBS), Surveyed. 
   G4double fHorn1TopUpstrInnerRad; // This volume envelopes the target. 
   G4double fHorn1TopUpstrOuterRad;
-
+  G4double fZHorn1ACRNT1Shift;  // Z coordinate shift from the beginning of Horn1TopLevelUpstr and Z=0., drawing coordinate. 
+  
   G4double fHorn1TopDownstrLength; // Do part of the inner conductor, container volume (TUBS), Surveyed. 
   G4double fHorn1TopDownstrOuterRad;
   G4double fHorn1NeckLength;
+  G4double fHorn1NeckOuterRadius;
   G4double fHorn1NeckZPosition; // from the start of Horn1TopLevelUpstr
+  G4double fHorn1ZEndIC; // Z coordinate of the end of the inner conductor, rescaled is need be.
                                               
   // The outer tube
   
@@ -422,6 +449,15 @@ private:
   G4double fHorn2OuterTubeInnerRad; 
   G4double fHorn2OuterTubeOuterRad; 
   G4double fHorn2OuterTubeOuterRadMax; // include downstream flange
+  
+// To be used in the coordinate transform for computing the magnetic field 
+
+  std::vector<G4double> fHorn2ZEqnChanges; // Z Coordinates (Drawing ) where the equation setting the radius changes. 
+  G4double fHorn2NeckLength;
+  G4double fHorn2NeckOuterRadius;
+  G4double fHorn2NeckZPosition; // from the start of Horn1TopLevelUpstr
+  G4double fHorn2ZEndIC; // Z coordinate of the end of the inner conductor, rescaled is need be.
+  G4double fHorn2DeltaZEntranceToZOrigin;
 //
 // Connectors and flange downstream used only once,  so we declare and rescale them as we go  
   
@@ -453,7 +489,8 @@ private:
                                 G4PVPlacement *vMother );					       
   void Horn2InstallSpiderHanger(const G4String &name, G4PVPlacement *vMother );					       
   void Horn1PlaceAWeld(const G4String &name, double z, 
-                                const LBNEVolumePlacementData *plInfo,  G4PVPlacement *vMother );					       
+                                const LBNEVolumePlacementData *plInfo,  G4PVPlacement *vMother );
+									       
   void DeclareHorn2Dims(); 
 };
 

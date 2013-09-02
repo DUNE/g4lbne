@@ -38,8 +38,7 @@ private:
 
       
    G4UIcmdWithADoubleAndUnit*    SetBeamlineAngle;
-   G4UIcmdWithADoubleAndUnit*    SetHorn1Current;
-   G4UIcmdWithADoubleAndUnit*    SetHorn2Current;
+   G4UIcmdWithADoubleAndUnit*    SetHornCurrent;
 
 
 };

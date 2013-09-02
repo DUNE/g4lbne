@@ -415,7 +415,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
 // Start by checking possible radial overlap at the downstream end of the target. 
 // The size and position of Horn1TopLevelUpstr and Horn1TargetDownstrHeContainer
 
-  const double zACRNT1Shift = 3.316*in*fHorn1LongRescale; //  Drawing 8875.112-MD-363097
+  fZHorn1ACRNT1Shift = 3.316*in*fHorn1LongRescale; //  Drawing 8875.112-MD-363097
 
   this->CheckHorn1InnerConductAndTargetRadii();
    
@@ -426,7 +426,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
    const double deltaZ = lengthInnerConductUpstr/numSubSect;
    for (int iSub=0; iSub != numSubSect; iSub++) { 
      //
-      const double zzBegin = zACRNT1Shift + (iSub*deltaZ); // from the 
+      const double zzBegin = fZHorn1ACRNT1Shift + (iSub*deltaZ); // from the 
       const double zzEnd = zzBegin + deltaZ;
      std::ostringstream nameStrStr; nameStrStr << "Horn1UpstrSubSect" << iSub;
      G4String nameStr(nameStrStr.str());
@@ -462,7 +462,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
    {
      G4String nameStr("Horn1UpstrSubSect0WeldUpstr");
      const double length = 12.0*mm; // Make it a bit shorter, it is rounded... 
-     const double rTmp1 = fHorn1Equations[5].GetVal( zACRNT1Shift + 15.0*mm - length/2.) 
+     const double rTmp1 = fHorn1Equations[5].GetVal( fZHorn1ACRNT1Shift + 15.0*mm - length/2.) 
                               + 0.02*mm + fWaterLayerThickInHorns;
         // place it a little more detached..Also, the weld is on top of the layer of water.. Oh well.. 
       const double rTmp2 = rTmp1 + 1.8*mm; // 
@@ -641,6 +641,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
      const double zNeckDrawing = fHorn1LongRescale*(30.3150)*in; //start of the neck.. 
      const double rTmp1 = fHorn1RadialRescale*(0.709*in/2.); // Drawing 8875.112-MD 363105
      const double rTmp2 = fHorn1RadialRescale*(1.063*in/2.); // Drawing 8875.112-MD 363105
+     fHorn1NeckOuterRadius = rTmp2; // For use in computing the magnetic field 
      const double length = fHorn1LongRescale*1.5680*in - 0.050*mm; // last term to absord 
         // small shifts in the upstream part.. 
      G4Tubs *aTubs = new G4Tubs(nameStr, rTmp1, rTmp2, 
@@ -711,6 +712,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
   {
      const double zStartDrawing =  fHorn1LongRescale*41.108*in;
      const double zEndDrawing = fHorn1LongRescale*117.126*in;
+     fHorn1ZEndIC = zEndDrawing; // For use in the Magentic field class. 
      int numSubSect = GetNumberOfInnerHornSubSections(4, zStartDrawing, 
                                                       zEndDrawing, 10); // These Z position are from the start of the inner conductor.   
      const double deltaZ = (zEndDrawing - zStartDrawing)/numSubSect;
@@ -1212,10 +1214,14 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
   G4PVPlacement *vH2 = PlaceFinal("Horn2TopLevel", vH2Hall);
   double zPosPart = -1.0*plInfoH2Top->fParams[2]/2 + fHorn2LengthMargin;
   
+  
   const double zShiftDrawingIOTrans = fHorn2PartsLengths[0]/2 - fHorn2InnerIOTransLength;
+  fHorn2DeltaZEntranceToZOrigin = zShiftDrawingIOTrans + fHorn2LengthMargin;
+  
   double zStartDrawing =  0.; // definition of z=0 
   std::cerr << " Horn2 Placements, zPostPart " << zPosPart << " Length of Horn2 Top level " << plInfoH2Top->fParams[2] 
             << " zShiftDrawingIOTrans " << zShiftDrawingIOTrans << " 1rst part length " << fHorn2PartsLengths[0] << std::endl;
+  fHorn2ZEqnChanges.clear();
   for (size_t kPart=0; kPart!= fHorn2PartsLengths.size(); kPart++) {
     std::ostringstream nStrStr; nStrStr << "Horn2Part" << kPart;
     G4String nStr(nStrStr.str());
@@ -1235,6 +1241,7 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
       {
         //The inner part. 
         const double zEndDrawing = fHorn2InnerIOTransLength;
+	fHorn2ZEqnChanges.push_back(zEndDrawing); // To be used in the magnetic field class.
         int numSubSect = GetNumberOfInnerHorn2SubSections(6, zStartDrawing, 
                                                       zEndDrawing, 10); // These Z position are from the start of the inner conductor.   
         const double deltaZ = (zEndDrawing - zStartDrawing)/numSubSect;
@@ -1304,13 +1311,15 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
        
       {
         const double lengthNeck = fHorn2LongRescale*2.411*in - 0.020*mm; // approximate. Equation not available in usual form 
+        fHorn2NeckLength = lengthNeck; // to compute the magnetic field 
         const double zPosNeck = fHorn2LongRescale*(39.8193 - 29.800)*in; // with respect to the start of the mother volume 
-	
+	fHorn2NeckZPosition = zPosNeck;
         // We start by the neck 
 	{
           G4String nStr("Horn2Part2Neck");
 	  const double radiusInner =  fHorn2RadialRescale*3.071*in/2.;
 	  const double radiusOuter = fHorn2RadialRescale*3.465*in/2. + fWaterLayerThickInHorns + 0.0025; 
+	  fHorn2NeckOuterRadius = fHorn2RadialRescale*3.465*in/2.;
           G4Tubs* tubsPart = new G4Tubs(nStr, radiusInner, radiusOuter, lengthNeck/2., 0., 360.0*deg );
           G4LogicalVolume *tubsL = new G4LogicalVolume(tubsPart, G4Material::GetMaterial("Aluminum"), nStr);
           G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] =0.; 
@@ -1336,9 +1345,10 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
 	  size_t eqnInner[] = {6, 6, 7, 7};
 	  size_t eqnOuter[] = {0, 1, 2 ,3}; 
          // Now loop on these 4 subparts.  (this gona a bit tedious...) 
-	  for (size_t kSub=0; kSub!=4; kSub++) { 
+	  for (size_t kSub=0; kSub!=4; kSub++) {
 	    const double zStartDrawing = fHorn2LongRescale*zStartDrawingsSubP2[kSub]*in;
             const double zEndDrawing =  fHorn2LongRescale*zEndDrawingsSubP2[kSub]*in;
+            fHorn2ZEqnChanges.push_back(zStartDrawing); 
 	    const double zShiftTmp = zStartDrawing - fHorn2LongRescale*zStartDrawingsSubP2[0]*in;
             int numSubSect = GetNumberOfInnerHorn2SubSections(eqnInner[kSub], zStartDrawing, zEndDrawing, 10);   
             const double deltaZ = (zEndDrawing - zStartDrawing)/numSubSect;
@@ -1437,9 +1447,11 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
 	  eqnInner = 7;
 	} else if (kPart == 4) {
 	  eqnOuter = 4;
+	  fHorn2ZEqnChanges.push_back(zStartDrawing);
 	  eqnInner = 8;
 	} else if (kPart == 5) {
 	  eqnOuter = 5;
+	  fHorn2ZEqnChanges.push_back(zStartDrawing);
 	  eqnInner = 9;
 	} else if (kPart == 6) {
 	  eqnOuter = 5;

@@ -1,5 +1,5 @@
 
-// $Id: LBNEMagneticField.hh,v 1.2.2.1 2013/08/31 20:41:09 lebrun Exp $
+// $Id: LBNEMagneticField.hh,v 1.2.2.2 2013/09/02 09:35:03 lebrun Exp $
 // --------------------------------------------------------------
 // LBNEMagneticField.hh modified by Yuki 2004/7/16
 // modified by Yuki 8/2/04
@@ -23,26 +23,26 @@ class LBNEMagneticFieldHorn : public G4MagneticField
    G4double fHornCurrent;
    // Data for the World coordinate transform to the Horn coordinate system. 
    // We linearize the tranformation, leave Z unchanged, except for a translation.
-   G4bool coordinateSet;  
-   G4double fXShift;
-   G4double fYShift;
-   G4double fXShiftSlope;
-   G4double fYShiftSlope;
-   G4double fZShiftDrawingCoordinate;
+   mutable G4bool coordinateSet; // set when we got the first track entering the logical volume for which  the field manager is defined  
+   std::vector<double> fShift;
+   std::vector<double> fShiftSlope;
+   mutable G4double fZShiftDrawingCoordinate;
    // The outer radius of the conuctor is computed from the LBNEVolumePlacement Radial equations. 
    // in the coordinate system of the drawing 8875.112-MD-363104 and 383385
-   G4double fZShiftUpstrWorldToLocal;
-   G4double fZShiftDwnstrWorldToLocal; // Identical to one an other for Horn2, but diff is the logical volume 
-                                       // is "UpstreamTargetAssembly" or "Horn1Hall". 
+   mutable G4double fZShiftUpstrWorldToLocal; // The Zcoordinate in world system of the entrance of the volume for which the field is defined. 
+                                      // For Horn1, this volue is named "Horn1TopLevelUpstr" (or Horn1IOTransCont, which start 2 microns downstream
+				      // of it... 
+				      // For Horn2, it is Horn2TopLevel. 
+   G4double fEffectiveLength; // The length assumed to compute the coordinate change. 
+   G4double fHornNeckRadius; // Copy of the VolumePlacement Neck Outer Radius, rescaled if need be.. 				        
+   G4double fOuterRadius;
    // We now need to determine the radius where the current flows. 
    // We will call the utility meothds from the LBNEVolumePlacements class.  
-   std::vector<size_t> fEqunIndices;
+   std::vector<size_t> fEqnIndices;
    std::vector<double> fZDCBegin;
    std::vector<double> fZDCEnd;
    G4double fNeckRadius;
-   
-   void setTheCoordinates();
-   
+      
   public:
     
    inline void SetHornCurrent(G4double ihorn) {fHornCurrent = ihorn;}

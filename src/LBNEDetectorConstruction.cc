@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.25 2013/08/31 20:41:09 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.26 2013/09/02 09:35:03 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -343,6 +343,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   LBNEVolumePlacementData *plDat = fPlacementHandler->Create(G4String("UpstreamTargetAssembly"));
   std::cerr << " Placement data for volume UpstreamTargetAssembly, half length  " << plDat->fParams[2]/2. << std::endl;
   LBNEMagneticFieldHorn *fieldHorn1 = new LBNEMagneticFieldHorn(true);
+  fieldHorn1->SetHornCurrent(fHornCurrent);
   G4FieldManager* aFieldMgr = new G4FieldManager(fieldHorn1); //create a local field		 
   aFieldMgr->SetDetectorField(fieldHorn1); //set the field 
   aFieldMgr->CreateChordFinder(fieldHorn1); //create the objects which calculate the trajectory
@@ -519,7 +520,16 @@ LBNEDetectorMessenger::LBNEDetectorMessenger( LBNEDetectorConstruction* LBNEDet)
    ConstructCmd->SetGuidance("if you changed geometrical value(s).");
    ConstructCmd->AvailableForStates(G4State_PreInit);
   
-   new G4UnitDefinition("kiloampere" , "kA", "Electric current", 1000.*ampere);	
+   new G4UnitDefinition("kiloampere" , "kA", "Electric current", 1000.*ampere);   
+   SetHornCurrent = new
+     G4UIcmdWithADoubleAndUnit("/LBNE/det/seHornCurrent",this);
+   SetHornCurrent->SetParameterName("Horn Current", false);
+   SetHornCurrent->SetGuidance(" The current for the horn system. (Horn1 and Horn2 are in series.");
+   SetHornCurrent ->SetDefaultValue(200.0); // CDR, March 2012
+   SetHornCurrent->SetDefaultUnit("kA");
+   SetHornCurrent->SetUnitCandidates("kA");
+   SetHornCurrent->AvailableForStates(G4State_PreInit);
+	
 }
 
 LBNEDetectorMessenger::~LBNEDetectorMessenger() 
@@ -531,6 +541,7 @@ LBNEDetectorMessenger::~LBNEDetectorMessenger()
    delete SetBeamlineAngle;
    delete UpdateCmd;
    delete ConstructCmd;
+   delete SetHornCurrent;
 }
 
 
@@ -547,8 +558,9 @@ void LBNEDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
       LBNEDetector->Construct();
       return;
    }
-   if (command == SetHorn1Current) {
-     // ?????????????????
+   if (command == SetHornCurrent) {
+     G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
+     LBNEDetector->SetHornCurrent(cmdWD->GetNewDoubleValue(newValue));
    }
 }
 	

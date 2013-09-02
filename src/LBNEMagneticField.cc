@@ -22,8 +22,11 @@ fShiftSlope(2,0.),
 fZShiftDrawingCoordinate(-1.0e13),
 fZShiftUpstrWorldToLocal(-1.0e13),
 fEffectiveLength(0.),
-fHornNeckRadius(-1.0e13),
-fOuterRadius(1.0e9) 
+fHornNeckOuterRadius(-1.0e13),
+fHornNeckInnerRadius(-1.0e13),
+fOuterRadius(1.0e9),
+fOuterRadiusEff(1.0e9),
+fSkinDepth(4.1*mm)
 {
  // 
  // We rely on the Volume Placement utility and the surveyor data to compute the coordinate transfers. 
@@ -44,17 +47,24 @@ fOuterRadius(1.0e9)
   const LBNEVolumePlacements *aPlacementHandler = LBNEVolumePlacements::Instance();
 // Radial equation interface.  Take the outer equations..
   
-  fEqnIndices.clear();
+  fEqnIndicesInner.clear();
+  fEqnIndicesOuter.clear();
   fZDCBegin.clear();
   fZDCEnd.clear();
   if(amHorn1) { // Use the Placement data to get the relevant Z coordinate to compute the distance to the inner or outer conductor.  
      const double zCDNeckStart = aPlacementHandler->GetHorn1NeckZPosition() - aPlacementHandler->GetHorn1NeckLength()/2.;
      const double zCDNeckEnd = aPlacementHandler->GetHorn1NeckZPosition() - aPlacementHandler->GetHorn1NeckLength()/2.;
-     fZDCBegin.push_back(0.); fZDCEnd.push_back(zCDNeckStart); fEqnIndices.push_back(5);
-     fZDCBegin.push_back(zCDNeckStart); fZDCEnd.push_back(zCDNeckEnd); fEqnIndices.push_back(99); // No equations, use the radius
-     fHornNeckRadius = aPlacementHandler->GetHorn1NeckOuterRadius(); 
+     fZDCBegin.push_back(0.); fZDCEnd.push_back(zCDNeckStart); fEqnIndicesInner.push_back(0); fEqnIndicesOuter.push_back(5);
+     fZDCBegin.push_back(zCDNeckStart); fZDCEnd.push_back(zCDNeckEnd);
+     fEqnIndicesInner.push_back(99); fEqnIndicesOuter.push_back(99); // No equations, use the radius
+     fHornNeckOuterRadius = aPlacementHandler->GetHorn1NeckOuterRadius(); 
+     fHornNeckInnerRadius = aPlacementHandler->GetHorn1NeckInnerRadius(); 
+     const double zEndNR = aPlacementHandler->GetHorn1ZDEndNeckRegion();
+     fZDCBegin.push_back(zCDNeckEnd); fZDCEnd.push_back(zEndNR); 
+     fEqnIndicesInner.push_back(3); fEqnIndicesOuter.push_back(7);
      const double zEnd = aPlacementHandler->GetHorn1ZEndIC();
-     fZDCBegin.push_back(zCDNeckEnd); fZDCEnd.push_back(zEnd); fEqnIndices.push_back(7); // No equations, use the radius
+     fZDCBegin.push_back(zEndNR); fZDCEnd.push_back(zEnd);
+     fEqnIndicesInner.push_back(4); fEqnIndicesOuter.push_back(7);
      fEffectiveLength = aPlacementHandler->GetHorn1EffectiveLength();
      fOuterRadius = aPlacementHandler->GetHorn1OuterTubeOuterRad();
   } else {
@@ -62,23 +72,58 @@ fOuterRadius(1.0e9)
                             "Horn2TopLevel", "LBNEMagneticFieldHorn::LBNEMagneticFieldHorn");
      fEffectiveLength = plDat->fParams[2];
      const double z1 = 	aPlacementHandler->GetHorn2ZEqnChange(0);	    
-     fZDCBegin.push_back(0.); fZDCEnd.push_back(z1); fEqnIndices.push_back(10); //IO trasnsition
+     fZDCBegin.push_back(0.); fZDCEnd.push_back(z1); 
+     fEqnIndicesInner.push_back(6); fEqnIndicesOuter.push_back(10); //IO trasnsition, Part 1
+      
      const double z2 = 	aPlacementHandler->GetHorn2ZEqnChange(1);	    
-     fZDCBegin.push_back(z1); fZDCEnd.push_back(z2); fEqnIndices.push_back(0); // Just before the neck
+     fZDCBegin.push_back(z1); fZDCEnd.push_back(z2); 
+     fEqnIndicesInner.push_back(6);  fEqnIndicesOuter.push_back(0); // Getting to the neck region
+
      const double z3 = 	aPlacementHandler->GetHorn2ZEqnChange(2);	    
-     fZDCBegin.push_back(z2); fZDCEnd.push_back(z3); fEqnIndices.push_back(99); //The neck, fixe radius
-     fHornNeckRadius = aPlacementHandler->GetHorn2NeckOuterRadius();
+     fZDCBegin.push_back(z2); fZDCEnd.push_back(z3); 
+     fEqnIndicesInner.push_back(6);  fEqnIndicesOuter.push_back(1); // Just before the neck
+
+     const double z4 = 	aPlacementHandler->GetHorn2ZEqnChange(3);	    
+     fZDCBegin.push_back(z3); fZDCEnd.push_back(z4);     
+     fEqnIndicesInner.push_back(99); fEqnIndicesOuter.push_back(99); //The neck, fixe radius
+     fHornNeckOuterRadius = aPlacementHandler->GetHorn2NeckOuterRadius();
+     fHornNeckInnerRadius = aPlacementHandler->GetHorn2NeckInnerRadius();
+
+     const double z5 = 	aPlacementHandler->GetHorn2ZEqnChange(4);	    
+     fZDCBegin.push_back(z4); fZDCEnd.push_back(z5); 
+     fEqnIndicesInner.push_back(7);  fEqnIndicesOuter.push_back(3); // Just after the neck
+
+     const double z6 = 	aPlacementHandler->GetHorn2ZEqnChange(5);	    
+     fZDCBegin.push_back(z5); fZDCEnd.push_back(z6); 
+     fEqnIndicesInner.push_back(7);  fEqnIndicesOuter.push_back(3); // moving along positive Z 
+
+      const double z7 =  aPlacementHandler->GetHorn2ZEqnChange(6);	    
+     fZDCBegin.push_back(z6); fZDCEnd.push_back(z7); 
+     fEqnIndicesInner.push_back(8);  fEqnIndicesOuter.push_back(5);
+
+      const double z8 =  aPlacementHandler->GetHorn2ZEqnChange(7);	    
+     fZDCBegin.push_back(z7); fZDCEnd.push_back(z8); 
+     fEqnIndicesInner.push_back(9);  fEqnIndicesOuter.push_back(5);
+     
      fOuterRadius = aPlacementHandler->GetHorn2OuterTubeOuterRad();
-     double zPrev = z3;
-     double zNext = 0.;
-     for (size_t kk= 0; kk!= 4; kk++) { 
-        zNext = aPlacementHandler->GetHorn2ZEqnChange(3+kk);
-	fZDCBegin.push_back(zPrev); fZDCEnd.push_back(zNext); fEqnIndices.push_back(3+kk);	// not a bug, a stupid numerology 
-	// coindicdence     
-        zPrev = zNext;
-     }  
+
   }
-  // Z coordinate change not yet initialize, done at the first track. 
+  fOuterRadiusEff = fOuterRadius - 2.0*fSkinDepth; // skin depth at 0.43 kHz 
+  // Z coordinate change not yet initialize, done at the first track.
+  std::cerr << " Table of Z position and equations for ";
+  if (amHorn1) std::cerr << " Horn1 " ;
+  else  std::cerr << " Horn2 " ;
+  std::cerr << std::endl <<  " Z-Start      Z-End      Innner Eqn    Outer Eqn rIC thick" << std::endl;
+  for(size_t k=0; k!= fZDCBegin.size(); k++) {
+    std::cerr << " " << fZDCBegin[k] << " " << fZDCEnd[k] 
+              << " " << fEqnIndicesInner[k] << " " << fEqnIndicesOuter[k];
+    const double zMid = 0.5 *( fZDCBegin[k] + fZDCEnd[k]);     
+    const double rOut = (amHorn1)  ? aPlacementHandler->GetConductorRadiusHorn1(zMid, fEqnIndicesOuter[k]) :
+    	      aPlacementHandler->GetConductorRadiusHorn2(zMid, fEqnIndicesOuter[k]);
+    const double rIn = (amHorn1)  ? aPlacementHandler->GetConductorRadiusHorn1(zMid, fEqnIndicesInner[k]) :
+    	      aPlacementHandler->GetConductorRadiusHorn2(zMid, fEqnIndicesInner[k]);
+    std::cerr << " " << rIn << " " << rOut - rIn  << std::endl;
+  }
 //
 // Use now the survey data (simulated for now.. ) to establish the coordinate transform..  
 //
@@ -155,36 +200,47 @@ void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) 
    const double r = std::sqrt(ptTrans[0]*ptTrans[0] + ptTrans[1]*ptTrans[1]); 
    for (size_t k=0; k!=3; ++k) Bfield[k] = 0.;
    if (r > fOuterRadius) return;
-   size_t kSelZ = fEqnIndices.size();
-   const double zLocD = Point[2] - fZShiftDrawingCoordinate;
-   for (size_t k=0; k != fEqnIndices.size(); ++k) {
-     if (zLocD < fZDCBegin[k]) continue;
-     if (zLocD > fZDCEnd[k]) break; // They are Z ordered.. 
-     kSelZ = k; 
-     break;
-   }
-   if (kSelZ ==  fEqnIndices.size()) return;
-   double radIC = fHornNeckRadius;
-   if (fEqnIndices[kSelZ] != 99) {
-     radIC = (amHorn1) ? aPlacementHandler->GetInnerConductorRadiusHorn1(zLocD, kSelZ) : 
-                        aPlacementHandler->GetInnerConductorRadiusHorn2(zLocD, kSelZ);
-   }
-   if (radIC < 1.0e-3) {
-    std::ostringstream mStrStr;
-    mStrStr << " Wrong equation index at Z " << Point[2] << std::endl;
-    G4String mStr(mStrStr.str());
-    G4Exception("LBNEMagneticFieldHorn::GetFieldValue", " ",  FatalErrorInArgument, mStr.c_str()); 
-    return; 
-   }
-   if (r < radIC) return; //Is that so ???? Byron says no.....
-   const double dIn = r - radIC;
-   const double dOut = fOuterRadius - r;
+   if ( r < 1.0e-3) return; // The field should go smoothly to zero at the center of the horm 
+
    double magBField = current / (5.*r/cm)/10*tesla; //B(kG)=i(kA)/[5*r(cm)], 1T=10kG
-   const double rIn = r-dIn;
-   const double rOut = r+dOut;
-   magBField *= (1-(r*r-rIn*rIn)/(rOut*rOut-rIn*rIn)); // linear distribution of current
-   Bfield[0] = -magBField*ptTrans[1]/r;
-   Bfield[1] = magBField*ptTrans[0]/r;
    
+   if ( r > fOuterRadiusEff) {
+     const double dr = r - fOuterRadiusEff;
+     const double attLength  = std::exp(-dr/fSkinDepth);
+     magBField *= attLength;
+   } else { 
+     size_t kSelZ = fEqnIndicesInner.size();
+     const double zLocD = Point[2] - fZShiftDrawingCoordinate;
+     for (size_t k=0; k != fEqnIndicesInner.size(); ++k) {
+       if (zLocD < fZDCBegin[k]) continue;
+       if (zLocD > fZDCEnd[k]) break; // They are Z ordered.. 
+       kSelZ = k; 
+       break;
+     }
+     if (kSelZ ==  fEqnIndicesInner.size()) return;
+     double radIC = fHornNeckInnerRadius;
+     double radOC = fHornNeckOuterRadius;
+     if (fEqnIndicesInner[kSelZ] != 99) {
+       radIC = (amHorn1) ? aPlacementHandler->GetConductorRadiusHorn1(zLocD,fEqnIndicesInner[kSelZ] ) : 
+                        aPlacementHandler->GetConductorRadiusHorn2(zLocD, fEqnIndicesInner[kSelZ]);
+       radOC = (amHorn1) ? aPlacementHandler->GetConductorRadiusHorn1(zLocD,fEqnIndicesOuter[kSelZ] ) : 
+                        aPlacementHandler->GetConductorRadiusHorn2(zLocD, fEqnIndicesOuter[kSelZ]);
+     }
+     if ((radIC < 1.0e-3) || (radOC < 1.0e-3)) {
+       std::ostringstream mStrStr;
+       mStrStr << " Wrong equation index at Z " << Point[2] << std::endl;
+       G4String mStr(mStrStr.str());
+      G4Exception("LBNEMagneticFieldHorn::GetFieldValue", " ",  FatalErrorInArgument, mStr.c_str()); 
+      return; 
+     }
+     if (r < radIC) return; // zero field region (Amps law). 
+     // 
+     if ((r > radIC) && (r < radOC)) {
+      const double surfCyl = radOC*radOC - radIC*radIC;
+      magBField *= (r*r - radIC*radIC)/surfCyl; // Assume uniform current density and apply Amps law. 
+     }
+     Bfield[0] = -magBField*ptTrans[1]/r;
+     Bfield[1] = magBField*ptTrans[0]/r;
+   }
 }
 

@@ -1,5 +1,5 @@
 
-// $Id: LBNEMagneticField.hh,v 1.2.2.2 2013/09/02 09:35:03 lebrun Exp $
+// $Id: LBNEMagneticField.hh,v 1.2.2.3 2013/09/02 22:33:42 lebrun Exp $
 // --------------------------------------------------------------
 // LBNEMagneticField.hh modified by Yuki 2004/7/16
 // modified by Yuki 8/2/04
@@ -34,11 +34,15 @@ class LBNEMagneticFieldHorn : public G4MagneticField
 				      // of it... 
 				      // For Horn2, it is Horn2TopLevel. 
    G4double fEffectiveLength; // The length assumed to compute the coordinate change. 
-   G4double fHornNeckRadius; // Copy of the VolumePlacement Neck Outer Radius, rescaled if need be.. 				        
+   G4double fHornNeckOuterRadius; // Copy of the VolumePlacement Neck Outer Radius, rescaled if need be.. 				        
+   G4double fHornNeckInnerRadius; // Copy of the VolumePlacement Neck Outer Radius, rescaled if need be.. 				        
    G4double fOuterRadius;
+   G4double fOuterRadiusEff; // the effective outer radius, physical outer radius - 2.0*skindepth at 0.43 kHz 
+   G4double fSkinDepth; // at (1./(2.3 ms))
    // We now need to determine the radius where the current flows. 
    // We will call the utility meothds from the LBNEVolumePlacements class.  
-   std::vector<size_t> fEqnIndices;
+   std::vector<size_t> fEqnIndicesOuter;
+   std::vector<size_t> fEqnIndicesInner;
    std::vector<double> fZDCBegin;
    std::vector<double> fZDCEnd;
    G4double fNeckRadius;

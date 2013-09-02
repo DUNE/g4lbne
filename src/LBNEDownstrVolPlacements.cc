@@ -641,6 +641,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
      const double zNeckDrawing = fHorn1LongRescale*(30.3150)*in; //start of the neck.. 
      const double rTmp1 = fHorn1RadialRescale*(0.709*in/2.); // Drawing 8875.112-MD 363105
      const double rTmp2 = fHorn1RadialRescale*(1.063*in/2.); // Drawing 8875.112-MD 363105
+     fHorn1NeckInnerRadius = rTmp1; // For use in computing the magnetic field 
      fHorn1NeckOuterRadius = rTmp2; // For use in computing the magnetic field 
      const double length = fHorn1LongRescale*1.5680*in - 0.050*mm; // last term to absord 
         // small shifts in the upstream part.. 
@@ -656,6 +657,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
    {
      const double zStartDrawing =  fHorn1LongRescale*31.8827*in;
      const double zEndDrawing = fHorn1LongRescale*(41.0776)*in;
+     fHorn1ZDEndNeckRegion = zEndDrawing;
      int numSubSect = GetNumberOfInnerHornSubSections(3, zStartDrawing, 
                                                       zEndDrawing, 10); // These Z position are from the start of the inner conductor.   
      const double deltaZ = (zEndDrawing - zStartDrawing)/numSubSect;
@@ -664,7 +666,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
        const double zzEnd = zzBegin + deltaZ;
        std::ostringstream nameStrStr; nameStrStr << "Horn1DownstrPart1SubSect" << iSub;
        G4String nameStr(nameStrStr.str());
-       const double rMin1 = fHorn1Equations[3].GetVal(zzBegin); // Equation 1
+       const double rMin1 = fHorn1Equations[3].GetVal(zzBegin); 
        const double rMin2 = fHorn1Equations[3].GetVal(zzEnd);
        const double rMax1 = fHorn1Equations[7].GetVal(zzBegin) + fWaterLayerThickInHorns + 0.0025; 
                  // Equation 6 (Drawing 8875.112-MD 363104)
@@ -1320,6 +1322,7 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
 	  const double radiusInner =  fHorn2RadialRescale*3.071*in/2.;
 	  const double radiusOuter = fHorn2RadialRescale*3.465*in/2. + fWaterLayerThickInHorns + 0.0025; 
 	  fHorn2NeckOuterRadius = fHorn2RadialRescale*3.465*in/2.;
+	  fHorn2NeckInnerRadius = radiusInner*3.465*in/2.;
           G4Tubs* tubsPart = new G4Tubs(nStr, radiusInner, radiusOuter, lengthNeck/2., 0., 360.0*deg );
           G4LogicalVolume *tubsL = new G4LogicalVolume(tubsPart, G4Material::GetMaterial("Aluminum"), nStr);
           G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] =0.; 
@@ -1444,6 +1447,7 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
 	size_t eqnOuter = 0;
 	if (kPart == 3 ) {
 	  eqnOuter = 3;
+	  fHorn2ZEqnChanges.push_back(zStartDrawing);
 	  eqnInner = 7;
 	} else if (kPart == 4) {
 	  eqnOuter = 4;

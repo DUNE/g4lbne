@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.23 2013/09/02 09:35:03 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.24 2013/09/02 22:33:42 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -198,6 +198,8 @@ public:
   inline double GetHorn1NeckZPosition() const { return fHorn1NeckZPosition; } // in Drawing coordinate system 
   inline double GetHorn1NeckLength() const { return fHorn1NeckLength; } //  ... but rescaled is asked for..
   inline double GetHorn1NeckOuterRadius() const { return fHorn1NeckOuterRadius; } // same coordinate system.. 
+  inline double GetHorn1NeckInnerRadius() const { return fHorn1NeckInnerRadius; } // same coordinate system.. 
+  inline double GetHorn1ZDEndNeckRegion() const { return fHorn1ZDEndNeckRegion; } // same coordinate system.. 
   inline double GetHorn1ZEndIC() const { return fHorn1ZEndIC; } // the Z end of the inner conductor, rescaled..
   inline double GetHorn1EffectiveLength() const { return  (fHorn1TopUpstrLength + fHorn1TopDownstrLength); }
   inline double GetHorn1DeltaZEntranceToZOrigin() const { return fZHorn1ACRNT1Shift;} // To be checked!...
@@ -206,6 +208,7 @@ public:
   inline double GetHorn2NeckZPosition() const { return fHorn2NeckZPosition; } // in Drawing coordinate system 
   inline double GetHorn2NeckLength() const { return fHorn2NeckLength; } //  ... but rescaled is asked for..
   inline double GetHorn2NeckOuterRadius() const { return fHorn2NeckOuterRadius; } // same coordinate system.. 
+  inline double GetHorn2NeckInnerRadius() const { return fHorn2NeckInnerRadius; } // same coordinate system.. 
   inline double GetHorn2ZEndIC() const { return fHorn2ZEndIC; } // the Z end of the inner conductor, rescaled..
   inline double GetHorn2ZEqnChange(size_t k) const {return fHorn2ZEqnChanges[k]; } 
   inline double GetHorn2DeltaZEntranceToZOrigin() const {return fHorn2DeltaZEntranceToZOrigin; } 
@@ -222,11 +225,11 @@ public:
   
   const LBNEVolumePlacementData* Find(const G4String &name, const char *motherName, const char *method) const ;
   
-  inline double GetInnerConductorRadiusHorn1(double zD, size_t eqn) const {
+  inline double GetConductorRadiusHorn1(double zD, size_t eqn) const {
      if (eqn >= fHorn1Equations.size()) return -1.;
      return fHorn1Equations[eqn].GetVal(zD);
   }
-   inline double GetInnerConductorRadiusHorn2(double zD, size_t eqn) const {
+   inline double GetConductorRadiusHorn2(double zD, size_t eqn) const {
      if (eqn >= fHorn2Equations.size()) return -1.;
      return fHorn2Equations[eqn].GetVal(zD);
   }
@@ -387,6 +390,8 @@ private:
   G4double fHorn1TopDownstrOuterRad;
   G4double fHorn1NeckLength;
   G4double fHorn1NeckOuterRadius;
+  G4double fHorn1NeckInnerRadius;
+  G4double fHorn1ZDEndNeckRegion;
   G4double fHorn1NeckZPosition; // from the start of Horn1TopLevelUpstr
   G4double fHorn1ZEndIC; // Z coordinate of the end of the inner conductor, rescaled is need be.
                                               
@@ -455,6 +460,7 @@ private:
   std::vector<G4double> fHorn2ZEqnChanges; // Z Coordinates (Drawing ) where the equation setting the radius changes. 
   G4double fHorn2NeckLength;
   G4double fHorn2NeckOuterRadius;
+  G4double fHorn2NeckInnerRadius;
   G4double fHorn2NeckZPosition; // from the start of Horn1TopLevelUpstr
   G4double fHorn2ZEndIC; // Z coordinate of the end of the inner conductor, rescaled is need be.
   G4double fHorn2DeltaZEntranceToZOrigin;

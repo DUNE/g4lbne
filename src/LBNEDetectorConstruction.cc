@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.26 2013/09/02 09:35:03 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.27 2013/09/03 22:51:39 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -66,6 +66,8 @@ LBNEDetectorConstruction::LBNEDetectorConstruction()
   Initialize();
   fHasBeenConstructed = false; 
 //  Construct(); Not yet!  Need to read the data card first... 
+  fHornCurrent = 200.*ampere*1000; // in kA, defined via Detector GUImessenger if need be
+
 }
 
 
@@ -340,25 +342,14 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 // Before placing the container volume for the target region + horn1, define these two volumes, 
 // as these two are adjacent. The boundary is "coordinate zero.", respecting older convention. 
 //
-  LBNEVolumePlacementData *plDat = fPlacementHandler->Create(G4String("UpstreamTargetAssembly"));
-  std::cerr << " Placement data for volume UpstreamTargetAssembly, half length  " << plDat->fParams[2]/2. << std::endl;
-  LBNEMagneticFieldHorn *fieldHorn1 = new LBNEMagneticFieldHorn(true);
-  fieldHorn1->SetHornCurrent(fHornCurrent);
-  G4FieldManager* aFieldMgr = new G4FieldManager(fieldHorn1); //create a local field		 
-  aFieldMgr->SetDetectorField(fieldHorn1); //set the field 
-  aFieldMgr->CreateChordFinder(fieldHorn1); //create the objects which calculate the trajectory
-  plDat->fCurrent->SetFieldManager(aFieldMgr,true); //attach the local field to logical volume
+  LBNEVolumePlacementData *plDatUTA = fPlacementHandler->Create(G4String("UpstreamTargetAssembly"));
+  std::cerr << " Placement data for volume UpstreamTargetAssembly, half length  " << plDatUTA->fParams[2]/2. << std::endl;
  
 //   
   LBNEVolumePlacementData *plH1Dat = fPlacementHandler->Create(G4String("Horn1Hall"));
-  plH1Dat->fCurrent->SetFieldManager(aFieldMgr,true); //attach the local field to logical volume
   
   G4VPhysicalVolume* targethorn1Phys = fPlacementHandler->PlaceFinal(G4String("TargetHallAndHorn1"), tunnel);
 //
-//   
-  std::cerr << " LBNEDetectorConstruction::Construct, about to place-final UsptreamTargetAssembly" << std::endl;
-  std::cerr << " Dump of the volume placements so far " << std::endl;
-//  fPlacementHandler->PrintAll();
   
   G4PVPlacement* upstreamTargetAssPhys = 
     fPlacementHandler->PlaceFinal(G4String("UpstreamTargetAssembly"), targethorn1Phys); 
@@ -381,15 +372,30 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   fPlacementHandler->PlaceFinalHorn1((G4PVPlacement*) vHorn1, vUpstr);  
 
   LBNEVolumePlacementData *plH2Dat = fPlacementHandler->Create(G4String("Horn2Hall"));
-  LBNEMagneticFieldHorn *fieldHorn2 = new LBNEMagneticFieldHorn(false);
-  G4FieldManager* aFieldMgr2 = new G4FieldManager(fieldHorn2); //create a local field		 
-  aFieldMgr2->SetDetectorField(fieldHorn2); //set the field 
-  aFieldMgr2->CreateChordFinder(fieldHorn2); //create the objects which calculate the trajectory
-  plH2Dat->fCurrent->SetFieldManager(aFieldMgr2,true); //attach the local field to logical volume
   
   G4PVPlacement *vHorn2 = fPlacementHandler->PlaceFinal(G4String("Horn2Hall"), tunnel); 
 
   fPlacementHandler->PlaceFinalHorn2(vHorn2);
+  
+  // We now turn on the magentic fields 
+  
+  LBNEMagneticFieldHorn *fieldHorn1 = new LBNEMagneticFieldHorn(true);
+  fieldHorn1->SetHornCurrent(fHornCurrent);
+  G4FieldManager* aFieldMgr = new G4FieldManager(fieldHorn1); //create a local field		 
+  aFieldMgr->SetDetectorField(fieldHorn1); //set the field 
+  aFieldMgr->CreateChordFinder(fieldHorn1); //create the objects which calculate the trajectory
+  const LBNEVolumePlacementData *plH1TopDat = 
+    fPlacementHandler->Find("FieldHorn1", "Horn1TopLevelUpstr", "DetectorConstruction");
+  plH1Dat->fCurrent->SetFieldManager(aFieldMgr,true); //attach the local field to logical volume
+  plH1TopDat->fCurrent->SetFieldManager(aFieldMgr,true); // The upstream section of the horn as well 
+
+  LBNEMagneticFieldHorn *fieldHorn2 = new LBNEMagneticFieldHorn(false);
+  fieldHorn2->SetHornCurrent(fHornCurrent);
+  G4FieldManager* aFieldMgr2 = new G4FieldManager(fieldHorn2); //create a local field		 
+  aFieldMgr2->SetDetectorField(fieldHorn2); //set the field 
+  aFieldMgr2->CreateChordFinder(fieldHorn2); //create the objects which calculate the trajectory
+  plH2Dat->fCurrent->SetFieldManager(aFieldMgr2,true); //attach the local field to logical volume
+
 
 // we forgot the baffle. 
   

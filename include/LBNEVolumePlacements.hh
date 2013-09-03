@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.24 2013/09/02 22:33:42 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.25 2013/09/03 22:51:39 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -202,7 +202,7 @@ public:
   inline double GetHorn1ZDEndNeckRegion() const { return fHorn1ZDEndNeckRegion; } // same coordinate system.. 
   inline double GetHorn1ZEndIC() const { return fHorn1ZEndIC; } // the Z end of the inner conductor, rescaled..
   inline double GetHorn1EffectiveLength() const { return  (fHorn1TopUpstrLength + fHorn1TopDownstrLength); }
-  inline double GetHorn1DeltaZEntranceToZOrigin() const { return fZHorn1ACRNT1Shift;} // To be checked!...
+  inline double GetHorn1DeltaZEntranceToZOrigin() const { return -fHorn1LongRescale*3.0*cm;} // To be checked!...
   inline double GetHorn1OuterTubeOuterRad() const {return  fHorn1OuterTubeOuterRad; }
       //Same thing for Horn2 
   inline double GetHorn2NeckZPosition() const { return fHorn2NeckZPosition; } // in Drawing coordinate system 

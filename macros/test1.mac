@@ -9,6 +9,7 @@
 /LBNE/det/waterThickInHorn 2 mm
 /LBNE/det/TargetLengthIntoHorn 40 cm
 #/LBNE/det/decayPipeLength 204.55 m
+/LBNE/det/seHornCurrent 201 kA
 #
 /LBNE/det/construct
 #
@@ -23,9 +24,10 @@
 #
 # Primary vertex setting 
 #
-/LBNE/primary/useGeantino
-/LBNE/primary/geantinoOpeningAngle 0.00003 radian
+/LBNE/primary/useMuonGeantino
+/LBNE/primary/geantinoOpeningAngle 0.03 radian
 /LBNE/primary/geantinoZOrigin -5000. mm 
+/LBNE/primary/protonMomentum 5.0 GeV
 #
 /LBNE/stepping/filename ./example/steppingGeantino101.txt
 #

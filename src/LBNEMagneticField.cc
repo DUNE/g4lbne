@@ -16,7 +16,7 @@
 LBNEMagneticFieldHorn::LBNEMagneticFieldHorn(bool isOne) : 
 amHorn1(isOne),
 fHornCurrent(0.),
-coordinateSet(false),  
+fCoordinateSet(false),  
 fShift(2, 0.),
 fShiftSlope(2,0.),
 fZShiftDrawingCoordinate(-1.0e13),
@@ -43,7 +43,12 @@ fSkinDepth(4.1*mm)
  // This strategy has the drawback of the danger of making mistakes in the code below, but has 
  // has the advantage of less coordinate transforms. (inverse one done in the G4 Propagation. )
  // It is assumed here that the misalignment are small, i.e., cos^2(tilt) ~ 0.  
-
+// 
+// Having the field manager assigned to the top level of the Horn volume instead of just 
+// the conductor polycones volumes, and the volume in between the two conductors, 
+//  allows us to add fringe fields if need be, and avoid creating the volumes in between 
+// the conductors..
+//
   const LBNEVolumePlacements *aPlacementHandler = LBNEVolumePlacements::Instance();
 // Radial equation interface.  Take the outer equations..
   
@@ -53,8 +58,13 @@ fSkinDepth(4.1*mm)
   fZDCEnd.clear();
   if(amHorn1) { // Use the Placement data to get the relevant Z coordinate to compute the distance to the inner or outer conductor.  
      const double zCDNeckStart = aPlacementHandler->GetHorn1NeckZPosition() - aPlacementHandler->GetHorn1NeckLength()/2.;
-     const double zCDNeckEnd = aPlacementHandler->GetHorn1NeckZPosition() - aPlacementHandler->GetHorn1NeckLength()/2.;
-     fZDCBegin.push_back(0.); fZDCEnd.push_back(zCDNeckStart); fEqnIndicesInner.push_back(0); fEqnIndicesOuter.push_back(5);
+     const double zCDNeckEnd = aPlacementHandler->GetHorn1NeckZPosition() + aPlacementHandler->GetHorn1NeckLength()/2.;
+     const double zCDFirstRing = 0.544*zCDNeckStart; // transition from drawing equation 1 to 2 .
+                                                   // Drawing 8875.112-MD 363104
+     fZDCBegin.push_back(0.); fZDCEnd.push_back(zCDFirstRing); 
+     fEqnIndicesInner.push_back(0); fEqnIndicesOuter.push_back(5);
+     fZDCBegin.push_back(zCDFirstRing); fZDCEnd.push_back(zCDNeckStart); 
+     fEqnIndicesInner.push_back(1); fEqnIndicesOuter.push_back(5);
      fZDCBegin.push_back(zCDNeckStart); fZDCEnd.push_back(zCDNeckEnd);
      fEqnIndicesInner.push_back(99); fEqnIndicesOuter.push_back(99); // No equations, use the radius
      fHornNeckOuterRadius = aPlacementHandler->GetHorn1NeckOuterRadius(); 
@@ -99,7 +109,7 @@ fSkinDepth(4.1*mm)
 
       const double z7 =  aPlacementHandler->GetHorn2ZEqnChange(6);	    
      fZDCBegin.push_back(z6); fZDCEnd.push_back(z7); 
-     fEqnIndicesInner.push_back(8);  fEqnIndicesOuter.push_back(5);
+     fEqnIndicesInner.push_back(8);  fEqnIndicesOuter.push_back(4);
 
       const double z8 =  aPlacementHandler->GetHorn2ZEqnChange(7);	    
      fZDCBegin.push_back(z7); fZDCEnd.push_back(z8); 
@@ -117,11 +127,15 @@ fSkinDepth(4.1*mm)
   for(size_t k=0; k!= fZDCBegin.size(); k++) {
     std::cerr << " " << fZDCBegin[k] << " " << fZDCEnd[k] 
               << " " << fEqnIndicesInner[k] << " " << fEqnIndicesOuter[k];
-    const double zMid = 0.5 *( fZDCBegin[k] + fZDCEnd[k]);     
-    const double rOut = (amHorn1)  ? aPlacementHandler->GetConductorRadiusHorn1(zMid, fEqnIndicesOuter[k]) :
+    const double zMid = 0.5 *( fZDCBegin[k] + fZDCEnd[k]);
+    double rOut = fHornNeckOuterRadius; 
+    double rIn =  fHornNeckInnerRadius; 
+    if (fEqnIndicesInner[k]  != 99) {
+      rOut = (amHorn1)  ? aPlacementHandler->GetConductorRadiusHorn1(zMid, fEqnIndicesOuter[k]) :
     	      aPlacementHandler->GetConductorRadiusHorn2(zMid, fEqnIndicesOuter[k]);
-    const double rIn = (amHorn1)  ? aPlacementHandler->GetConductorRadiusHorn1(zMid, fEqnIndicesInner[k]) :
+      rIn = (amHorn1)  ? aPlacementHandler->GetConductorRadiusHorn1(zMid, fEqnIndicesInner[k]) :
     	      aPlacementHandler->GetConductorRadiusHorn2(zMid, fEqnIndicesInner[k]);
+    }
     std::cerr << " " << rIn << " " << rOut - rIn  << std::endl;
   }
 //
@@ -141,11 +155,12 @@ fSkinDepth(4.1*mm)
   std::vector<LBNESurveyedPt>::const_iterator itDwRight=
     theSurvey->GetPoint(G4String(downstrStr + rightStr + ballStr + hornIndexStr));
   const G4ThreeVector pUpLeft = itUpLeft->GetPosition();
-  const G4ThreeVector pUpRight = itUpLeft->GetPosition();
-  const G4ThreeVector pDwLeft = itUpLeft->GetPosition();
-  const G4ThreeVector pDwRight = itUpLeft->GetPosition();
+  const G4ThreeVector pUpRight = itUpRight->GetPosition();
+  const G4ThreeVector pDwLeft = itDwLeft->GetPosition();
+  const G4ThreeVector pDwRight = itDwRight->GetPosition();
   for (size_t k=0; k!=2; k++) {
-    fShift[k] = -0.25*(pUpLeft[k] + pDwLeft[k] + pUpRight[k] + pDwRight[k]); // minus sign comes from the global to local.
+    fShift[k] = -0.50*(pUpLeft[k] + pUpRight[k]); // minus sign comes from the global to local. 
+                                                  // Transverse shoft at the upstream  entrance of Horn1 
     fShiftSlope[k] = 0.5*(pUpLeft[k] + pUpRight[k] -  pDwLeft[k] - pDwRight[k])/fEffectiveLength; 
   }
   
@@ -156,9 +171,12 @@ void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) 
 
   
    G4double current = fHornCurrent/ampere/1000.;
+//   std::cerr << " LBNEMagneticFieldHorn::GetFieldValue current " << current << std::endl;
+   for (size_t k=0; k!=3; ++k) Bfield[k] = 0.;
    // Intialization of the coordinate transform. 
    const LBNEVolumePlacements *aPlacementHandler = LBNEVolumePlacements::Instance();
-   if (!coordinateSet) {
+   if (!fCoordinateSet) {
+
      G4Navigator* numinavigator=new G4Navigator(); //geometry navigator
      G4Navigator* theNavigator=G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
      numinavigator->SetWorldVolume(theNavigator->GetWorldVolume());
@@ -169,36 +187,29 @@ void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) 
      delete numinavigator;
      G4String vName = myVolume->GetLogicalVolume()->GetName();
      if (amHorn1 ) {
-       if ((vName.find("Horn1TopLevelUpstr") == std::string::npos) && 
-           (vName.find("Horn1IOTransCont") == std::string::npos)) {
-	   std::ostringstream mStrStr;
-	   mStrStr << " Z coordinate entrance confusion for horn1, fieldMGr enetrance at World Z " << Point[2] << std::endl;
-	   G4String mStr(mStrStr.str());
-	   G4Exception("LBNEMagneticFieldHorn::GetFieldValue", " ",  FatalErrorInArgument, mStr.c_str()); 
-	}
-	fZShiftUpstrWorldToLocal = Point[2] - localPosition[2]; // to correct for the misalignment, via the first coordinate transform
-        const double zDelta = aPlacementHandler->GetHorn1DeltaZEntranceToZOrigin();
-        fZShiftDrawingCoordinate = Point[2] -  localPosition[2] + zDelta; // Check the sign ! 
+       if (vName != G4String("Horn1Hall") || (localPosition[2] > 0.)) return; // not there yet.., or getting by the back side.
+	fZShiftUpstrWorldToLocal = Point[2]; // to correct for the misalignment, via the first coordinate transform
+	 // Note: because the logival Horn1 container volume is split into to of them, 
+	 // the offset for the field might a bit different than for the actual volume. This is a small correction. 
+	 // What matter most the field is the tilt, which is correct. 
+        fZShiftDrawingCoordinate = Point[2] - aPlacementHandler->GetHorn1DeltaZEntranceToZOrigin(); // Check the sign ! 
      } else {
-        if (vName.find("Horn2TopLevel") == std::string::npos) {
-	   std::ostringstream mStrStr;
-	   mStrStr << " Z coordinate entrance confusion for horn1, fieldMGr enetrance at World Z " << Point[2] << std::endl;
-	   G4String mStr(mStrStr.str());
-	   G4Exception("LBNEMagneticFieldHorn::GetFieldValue", " ",  FatalErrorInArgument, mStr.c_str()); 
-	}
- 	fZShiftUpstrWorldToLocal = Point[2] - localPosition[2]; // to correct for the misalignment, via the first coordinate transform
-        const double zDelta = aPlacementHandler->GetHorn2DeltaZEntranceToZOrigin();
-        fZShiftDrawingCoordinate = Point[2] -  localPosition[2] + zDelta;
+        if (vName != G4String("Horn2TopLevel") || (localPosition[2] > 0.)) return; 
+ 	fZShiftUpstrWorldToLocal = Point[2]; // to correct for the misalignment, via the first coordinate transform
+        fZShiftDrawingCoordinate = Point[2] - aPlacementHandler->GetHorn2DeltaZEntranceToZOrigin();
      }
-     coordinateSet = true;
+     fCoordinateSet = true;
+//     std::cerr << " Coordinate transform, Z shifts at Z World  " << Point[2] << " in  " << vName << std::endl;
+//     std::cerr << " fZShiftUpstrWorldToLocal " << 
+//                    fZShiftUpstrWorldToLocal << " fZShiftDrawingCoordinate " << fZShiftDrawingCoordinate << std::endl;
+//      if (!amHorn1) { std::cerr << " And quit  !!!! " << std::endl; exit(2); }
    } // Initialization of Z coordinate transform 
-   
+   if (!fCoordinateSet) return;
    std::vector<double> ptTrans(2,0.);
    const double zLocal = Point[2] - fZShiftUpstrWorldToLocal; // from the start of the relevant volume 
    for (size_t k=0; k != 2; k++) 
      ptTrans[k] = Point[k] + fShift[k] + zLocal*fShiftSlope[k]; 
    const double r = std::sqrt(ptTrans[0]*ptTrans[0] + ptTrans[1]*ptTrans[1]); 
-   for (size_t k=0; k!=3; ++k) Bfield[k] = 0.;
    if (r > fOuterRadius) return;
    if ( r < 1.0e-3) return; // The field should go smoothly to zero at the center of the horm 
 
@@ -241,6 +252,8 @@ void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) 
      }
      Bfield[0] = -magBField*ptTrans[1]/r;
      Bfield[1] = magBField*ptTrans[0]/r;
+     std::cerr << " Field region at Z " << Point[3] << " r = " << r 
+               << " radIC " << radIC << " radOC " << radOC << " magBField " <<  magBField/tesla << std::endl;
    }
 }
 

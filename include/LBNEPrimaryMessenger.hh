@@ -27,9 +27,14 @@ private:
   G4UIdirectory*                fDirectory;
   G4UIcmdWithADoubleAndUnit*    fBeamOffsetXCmd;
   G4UIcmdWithADoubleAndUnit*    fBeamOffsetYCmd;
+  G4UIcmdWithADoubleAndUnit*    fBeamSigmaXCmd;
+  G4UIcmdWithADoubleAndUnit*    fBeamSigmaYCmd;
+  G4UIcmdWithADoubleAndUnit*    fBeamMaxValXCmd;
+  G4UIcmdWithADoubleAndUnit*    fBeamMaxValYCmd;
   G4UIcmdWithADoubleAndUnit*    fBeamThetaCmd;
   G4UIcmdWithADoubleAndUnit*    fBeamPhiCmd;
   G4UIcmdWithABool*             fCorrectForAngleCmd;
+  G4UIcmdWithADoubleAndUnit*    fProtonMomentum;
   G4UIcmdWithABool*             fBeamOnTargetCmd;
   G4UIcmdWithoutParameter*      fUseGeantino;
   G4UIcmdWithoutParameter*      fUseMuonGeantino;

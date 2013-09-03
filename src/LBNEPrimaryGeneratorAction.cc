@@ -33,8 +33,7 @@
 
 using namespace std;
 
-LBNEPrimaryGeneratorAction::LBNEPrimaryGeneratorAction()
-   :fLBNEData(0),
+LBNEPrimaryGeneratorAction::LBNEPrimaryGeneratorAction() :
     fRunManager(0),
     fPrimaryMessenger(0),
     fParticleGun(0),
@@ -47,6 +46,7 @@ LBNEPrimaryGeneratorAction::LBNEPrimaryGeneratorAction()
     fCurrentPrimaryNo(0),
 
     //fTunnelPos(0),
+    fProtonMomentumMag(120.0*GeV),
     fProtonOrigin(0),
     fProtonMomentum(0),
     fProtonIntVertex(0),
@@ -60,6 +60,11 @@ LBNEPrimaryGeneratorAction::LBNEPrimaryGeneratorAction()
     fBeamOnTarget(false),
     fBeamOffsetX(0.0),
     fBeamOffsetY(0.0),
+    fBeamOffsetZ(-2.0*m), // beam divergence assumed to be very small...
+    fBeamMaxValX(1.0*m),  // No truncation of the beam by default. 
+    fBeamMaxValY(1.0*m), // No truncation of the beam by default. 
+    fBeamSigmaX(1.3*mm),
+    fBeamSigmaY(1.3*mm),
     fBeamAngleTheta(0.0),
     fBeamAnglePhi(0.0),
 
@@ -68,38 +73,21 @@ LBNEPrimaryGeneratorAction::LBNEPrimaryGeneratorAction()
     fZOriginGeantino(-515.), // Upstream of target.
     fPolarAngleGeantino(.005)
 {
-   fLBNEData = LBNEDataInput::GetLBNEDataInput();
    fRunManager       =(LBNERunManager*)LBNERunManager::GetRunManager();
    fPrimaryMessenger = new LBNEPrimaryMessenger(this);
    G4int n_particle = 1;
    fParticleGun = new G4ParticleGun(n_particle);
    
-   //fTunnelPos = G4ThreeVector(0,0,fND->TunnelLength/2.+fND->TunnelZ0);
-  
-
-   if(fLBNEData->GetDebugLevel() > 0)
-   {
-      std::cout << "LBNEPrimaryGeneratorAction Constructor Called." << std::endl;
-   }
-
 }
 //---------------------------------------------------------------------------------------
 LBNEPrimaryGeneratorAction::~LBNEPrimaryGeneratorAction()
 {
-   if(fLBNEData->GetDebugLevel() > 0)
-   {
-      std::cout << "LBNEPrimaryGeneratorAction Destructor Called." << std::endl;
-   }
-
   delete fPrimaryMessenger;
   delete fParticleGun;
 }
 //---------------------------------------------------------------------------------------
 void LBNEPrimaryGeneratorAction::SetProtonBeam()
 {
-   if(fLBNEData->GetDebugLevel() > 1) { G4cout << "LBNERunManager::SetProtonBeam() called." << G4endl;}
-   
-   
 
    G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
  
@@ -110,8 +98,13 @@ void LBNEPrimaryGeneratorAction::SetProtonBeam()
     fParticleGun->SetParticleDefinition(particleTable->FindParticle("mu+"));
   }
   else fParticleGun->SetParticleDefinition(particleTable->FindParticle("proton"));
-  fParticleGun->SetParticleEnergy(fLBNEData->GetProtonKineticEnergy());
-  fParticleGun->SetParticlePosition(fLBNEData->GetBeamPosition());
+  const double pEkin = 
+    std::sqrt(fProtonMomentumMag*fProtonMomentumMag + 0.938272*GeV*0.938272*GeV) - 0.938272*GeV;
+  fParticleGun->SetParticleEnergy(pEkin);
+  // This needs to be implemented via data cards!!!
+  G4ThreeVector beamPosition(0., 0., fBeamOffsetZ);
+  
+  fParticleGun->SetParticlePosition(beamPosition);
   G4ThreeVector beamDirection(1,0,0);
   beamDirection.setTheta(fBeamAngleTheta);
   beamDirection.setPhi(fBeamAnglePhi);
@@ -123,16 +116,16 @@ void LBNEPrimaryGeneratorAction::SetProtonBeam()
 
   G4String spaces = "   ";
   std::cout << spaces << "Configuring the Proton beam..." << std::endl
-	    << spaces << "   Momentum       = " << fParticleGun->GetParticleMomentum()/GeV << " GeV/c" << std::endl
-	    << spaces << "   Kinetic Energy = " << fParticleGun->GetParticleEnergy()/GeV << " GeV" << std::endl
-	    << spaces << "   Position       = " << fParticleGun->GetParticlePosition()/m << " m" << std::endl
-	    << spaces << "   Direction      = " << fParticleGun->GetParticleMomentumDirection() << std::endl
-	    << spaces << "   SigmaX         = " << fLBNEData->GetBeamSigmaX()/mm << " mm" << std::endl
-	    << spaces << "   SigmaY         = " << fLBNEData->GetBeamSigmaY()/mm << " mm" << std::endl
-	    << spaces << "   BeamSigDx      = " << fLBNEData->GetBeamSigDx()/mm << " mm" << std::endl
-	    << spaces << "   BeamSigDy      = " << fLBNEData->GetBeamSigDy()/mm << " mm" << std::endl
-	    << spaces << "   BeamSigMaxDx   = " << fLBNEData->GetBeamMaxDx()/mm << " mm" << std::endl
-	    << spaces << "   BeamSigMaxDy   = " << fLBNEData->GetBeamMaxDy()/mm << " mm" << std::endl;
+	    << spaces << "   Momentum          = " << fParticleGun->GetParticleMomentum()/GeV << " GeV/c" << std::endl
+	    << spaces << "   Kinetic Energy    = " << fParticleGun->GetParticleEnergy()/GeV << " GeV" << std::endl
+	    << spaces << "   Beam Offset, X    = " << fBeamOffsetX/mm << " mm" << std::endl
+	    << spaces << "   Beam Offset, Y    = " << fBeamOffsetY/mm << " mm" << std::endl
+	    << spaces << "   Beam Offset, Z    = " << fBeamOffsetZ/m << " m" << std::endl
+	    << spaces << "   Beam Sigma, X     = " << fBeamSigmaX/mm << " mm" << std::endl
+	    << spaces << "   Beam Sigma, Y     = " << fBeamSigmaY/mm << " mm" << std::endl
+	    << spaces << "   Beam Max. d|X|    = " << fBeamMaxValX/mm << " mm" << std::endl
+	    << spaces << "   Beam Max, d|Y|    = " << fBeamMaxValY/mm << " mm" << std::endl
+	    << spaces << "   Direction         = " << fParticleGun->GetParticleMomentumDirection() << std::endl;
 
 }
 
@@ -141,12 +134,11 @@ void LBNEPrimaryGeneratorAction::SetProtonBeam()
 //---------------------------------------------------------------------------------------
 G4bool LBNEPrimaryGeneratorAction::OpenNtuple(G4String ntupleName)
 {
-
-   if(fLBNEData->GetDebugLevel() > 0)
-   {
-      std::cout << "LBNEPrimaryGeneratorAction::OpenNtuple() Called." << std::endl;
-   }
-   
+   G4String message("Input Ntuple"); 
+   message += ntupleName + G4String("Not yet supported"); 
+   G4Exception("LBNEPrimaryGeneratorAction::OpenNtuple", " ", 
+                FatalErrorInArgument, message.c_str());
+    /*		
    fCurrentPrimaryNo=0;
    
    G4bool fIsOpen=false;
@@ -180,16 +172,13 @@ G4bool LBNEPrimaryGeneratorAction::OpenNtuple(G4String ntupleName)
             <<"   Aborting run"<<G4endl;
       fIsOpen=false;
    }
-   
    return fIsOpen;
+   */
+   return false;
 }
 //---------------------------------------------------------------------------------------
 void LBNEPrimaryGeneratorAction::CloseNtuple()
 {
-   if(fLBNEData->GetDebugLevel() > 0)
-   {
-      std::cout << "LBNEPrimaryGeneratorAction::CloseNtuple() Called." << std::endl;
-   }
 
    if(!fInputFile) return;
 
@@ -234,11 +223,13 @@ void LBNEPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
    }
    
    {
+/* 
       if (fLBNEData->GetUseFlukaInput() || fLBNEData->GetUseMarsInput()) 
       {
 	 LBNEPrimaryGeneratorAction::GenerateBeamFromInput(anEvent);
       }
-      else if (fUseGeantino || fUseMuonGeantino ) {
+*/      
+      if (fUseGeantino || fUseMuonGeantino ) {
         LBNEPrimaryGeneratorAction::Geantino(anEvent);
       }
       else
@@ -269,12 +260,10 @@ void LBNEPrimaryGeneratorAction::GenerateG4ProtonBeam(G4Event* anEvent)
     G4double x0;
     G4double y0; 
     G4double z0;
-    G4double sigmax=fLBNEData->GetBeamSigmaX();
-    G4double sigmay=fLBNEData->GetBeamSigmaY();
     
-    x0 = G4RandGauss::shoot(fLBNEData->GetBeamXPosition(),sigmax);
-    y0 = G4RandGauss::shoot(fLBNEData->GetBeamYPosition(),sigmay);
-    z0 = fLBNEData->GetBeamZPosition();
+    x0 = G4RandGauss::shoot(fBeamOffsetX, fBeamSigmaX );
+    y0 = G4RandGauss::shoot(fBeamOffsetY, fBeamSigmaY );
+    z0 = fBeamOffsetZ;
 
     if(!fBeamOnTarget){
       // b.c. if fBeamOnTarget, all offsets are ignored.
@@ -286,15 +275,15 @@ void LBNEPrimaryGeneratorAction::GenerateG4ProtonBeam(G4Event* anEvent)
     G4double dx, dy, dz;
     do 
     {
-       dx = G4RandGauss::shoot(0.0, fLBNEData->GetBeamSigDx());
+       dx = G4RandGauss::shoot(0.0, fBeamSigmaX);
     }
-    while(abs(dx) > fLBNEData->GetBeamMaxDx());
+    while(abs(dx) > fBeamMaxValX);
     
     do 
     {
-       dy = G4RandGauss::shoot(0.0, fLBNEData->GetBeamSigDy());
+       dy = G4RandGauss::shoot(0.0, fBeamSigmaY);
     }
-    while(abs(dy) > fLBNEData->GetBeamMaxDy());
+    while(abs(dy) > fBeamMaxValY);
     
     if(fabs(fBeamAngleTheta) > 1e-4){
       dx += sin(fBeamAngleTheta)*cos(fBeamAnglePhi);
@@ -312,8 +301,7 @@ void LBNEPrimaryGeneratorAction::GenerateG4ProtonBeam(G4Event* anEvent)
     fProtonN = fCurrentPrimaryNo;
     
     fProtonOrigin   = G4ThreeVector(x0, y0, z0);
-    //fProtonMomentum = G4ThreeVector(0, 0, fLBNEData->protonMomentum);
-    fProtonMomentum = fLBNEData->GetProtonMomentum()*direction;
+    fProtonMomentum = G4ThreeVector(0, 0, fProtonMomentumMag);
     fProtonIntVertex = G4ThreeVector(-9999.,-9999.,-9999.);
     fWeight=1.; //for primary protons set weight and tgen
     fTgen=0;
@@ -428,7 +416,7 @@ void LBNEPrimaryGeneratorAction::Geantino(G4Event* anEvent)
          
     fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., fZOriginGeantino));
     fParticleGun->SetParticleMomentumDirection(direction);
-    if (fUseMuonGeantino) fParticleGun->SetParticleEnergy(20*GeV);
+    if (fUseMuonGeantino) fParticleGun->SetParticleEnergy(fProtonMomentumMag); // back door use of the proton momentum data card. 
     fParticleGun->GeneratePrimaryVertex(anEvent);
 }
 
@@ -453,6 +441,8 @@ void LBNEPrimaryGeneratorAction::GenerateBeamFromInput(G4Event* anEvent)
      MOMTYPE                         PTYPE                                     - ???
      */
 
+   G4Exception("LBNEPrimaryGeneratorAction::GenerateBeamFromInput", " ", 
+                FatalErrorInArgument, " Input Ntuple not yet supported ");
       //
     //Need to create a new Gun each time
     //so Geant v4.9 doesn't complain
@@ -470,7 +460,8 @@ void LBNEPrimaryGeneratorAction::GenerateBeamFromInput(G4Event* anEvent)
     
     x0 = fInputTree->GetLeaf("x")->GetValue()*cm;
     y0 = fInputTree->GetLeaf("y")->GetValue()*cm;
-    z0 = fInputTree->GetLeaf("z")->GetValue()*cm+fLBNEData->GetTargetZ0(0)+fLBNEData->GetExtraFlukaNumiTargetZShift();
+    z0 = fBeamOffsetZ; // fixed translation!!! Input file not yet supported anyways... 
+//    z0 = fInputTree->GetLeaf("z")->GetValue()*cm+fLBNEData->GetTargetZ0(0)+fLBNEData->GetExtraFlukaNumiTargetZShift();
     //z0 = fInputTree->GetLeaf("z")->GetValue()*cm+fLBNEData->TargetZ0+fLBNEData->GetExtraFlukaNumiTargetZShift();
     
     px = fInputTree->GetLeaf("px")->GetValue()*GeV;
@@ -491,6 +482,7 @@ void LBNEPrimaryGeneratorAction::GenerateBeamFromInput(G4Event* anEvent)
                                     fInputTree->GetLeaf("protpy")->GetValue()*cm,
                                     fInputTree->GetLeaf("protpz")->GetValue()*cm);
     
+/*
     if (fLBNEData->GetUseMarsInput()){
       fProtonIntVertex = G4ThreeVector(fInputTree->GetLeaf("pvtxx")->GetValue()*cm,
                                        fInputTree->GetLeaf("pvtxy")->GetValue()*cm,
@@ -501,7 +493,7 @@ void LBNEPrimaryGeneratorAction::GenerateBeamFromInput(G4Event* anEvent)
                                        fInputTree->GetLeaf("protvy")->GetValue()*cm,
                                        fInputTree->GetLeaf("protvz")->GetValue()*cm);
     }
-    
+*/    
     G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
     fParticleGun->SetParticleDefinition(particleTable->FindParticle(particleName));
     //G4double mass=particleTable->FindParticle(particleName)->GetPDGMass();

@@ -325,7 +325,7 @@ void LBNEVolumePlacements::DeclareHorn1Dims() {
  // Now the top level sections. Only two of them, alignable. 
    fHorn1TopUpstrOuterRad = 16.250*in/2. +  5.0*mm; // safety 5 mm, big radius..// Drawing 8875.112-MD 363097
    fHorn1NeckLength = 1.568*in; // Drawing 8875.112-MD  363105
-   fHorn1NeckZPosition = 30.135*in + fHorn1NeckLength/2.;  // Drawing 8875.112-MD  363105
+   fHorn1NeckZPosition = 30.315*in + fHorn1NeckLength/2.;  // Drawing 8875.112-MD  363105
       // In Z Drawing coordinates. 
 
    fHorn1TopDownstrLength  = 133.752*in; // We will have to subtract the upstream length, once we know it 
@@ -1322,7 +1322,7 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
 	  const double radiusInner =  fHorn2RadialRescale*3.071*in/2.;
 	  const double radiusOuter = fHorn2RadialRescale*3.465*in/2. + fWaterLayerThickInHorns + 0.0025; 
 	  fHorn2NeckOuterRadius = fHorn2RadialRescale*3.465*in/2.;
-	  fHorn2NeckInnerRadius = radiusInner*3.465*in/2.;
+	  fHorn2NeckInnerRadius = radiusInner;
           G4Tubs* tubsPart = new G4Tubs(nStr, radiusInner, radiusOuter, lengthNeck/2., 0., 360.0*deg );
           G4LogicalVolume *tubsL = new G4LogicalVolume(tubsPart, G4Material::GetMaterial("Aluminum"), nStr);
           G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] =0.; 
@@ -1457,10 +1457,7 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
 	  eqnOuter = 5;
 	  fHorn2ZEqnChanges.push_back(zStartDrawing);
 	  eqnInner = 9;
-	} else if (kPart == 6) {
-	  eqnOuter = 5;
-	  eqnInner = 9;
-        }
+	}
         int numSubSect = GetNumberOfInnerHorn2SubSections(eqnOuter, zStartDrawing, 
                                                       zEndDrawing, 10);   
         const double deltaZ = (zEndDrawing - zStartDrawing)/numSubSect;

@@ -58,12 +58,21 @@ class LBNEPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
   void SetBeamOnTarget(G4bool aBool) { fBeamOnTarget = aBool; }
   void SetBeamOffsetX(G4double x) { fBeamOffsetX = x; }
   void SetBeamOffsetY(G4double y) { fBeamOffsetY = y; }
+  void SetBeamSigmaX(G4double x) { fBeamSigmaX = x; }
+  void SetBeamSigmaY(G4double y) { fBeamSigmaY = y; }
+  void SetBeamMaxValX(G4double x) { fBeamMaxValX = x; }
+  void SetBeamMaxValY(G4double y) { fBeamMaxValY = y; }
   void SetBeamTheta(G4double theta) { fBeamAngleTheta = theta; }
   void SetBeamPhi(G4double phi) { fBeamAnglePhi = phi; }
-
+  void SetProtonMomentum(G4double p) {fProtonMomentumMag = p;}
+  
+  inline double GetBeamSigmaX() const { return fBeamSigmaX; }
+  inline double GetBeamSigmaY() const { return fBeamSigmaY; }
+  inline double GetBeamMaxValX() const { return fBeamMaxValX; }
+  inline double GetBeamMaxValY() const { return fBeamMaxValY; }
+  
 private:
 
-  LBNEDataInput*          fLBNEData;
   LBNERunManager*         fRunManager;
   LBNEPrimaryMessenger*   fPrimaryMessenger;
   
@@ -78,6 +87,7 @@ private:
 
   //G4ThreeVector fTunnelPos;
 
+  G4double fProtonMomentumMag;
   G4ThreeVector fProtonOrigin;
   G4ThreeVector fProtonMomentum;
   G4ThreeVector fProtonIntVertex;
@@ -92,6 +102,11 @@ private:
   G4bool   fBeamOnTarget;
   G4double fBeamOffsetX;
   G4double fBeamOffsetY;
+  G4double fBeamOffsetZ;
+  G4double fBeamMaxValX;
+  G4double fBeamMaxValY;
+  G4double fBeamSigmaX;
+  G4double fBeamSigmaY;
   G4double fBeamAngleTheta;
   G4double fBeamAnglePhi;
  

@@ -61,8 +61,9 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
     // declaration of some constant which should not impact the physics at all, 
     // but are needed to build the G4 geometry. 
    fDecayPipeLength=203.7*m; // CDR, Vol 2 LBNE Doc Db 4317-v25
+   fTotalLength = 2.0*(10.0*m + fDecayPipeLength + 50.*m); // total length, with room to spare..
    fDecayPipeRadius = 4.0*m/2.;
-   fDecayPipeUpstrWindowThick = 3.0*mm; // Only used for Helium. A guess at this point. 
+   fDecayPipeUpstrWindowThick = 1.3*mm; // After discussion with Alberto M., Sept 3 2013. Material is Berylium 
    fDecayPipeWallThick = 12.5*mm; // CDR, March 2012, Vol-2, p 3.130 
    fDecayPipeLongPosition = 22.2*m; // From the target, CDR-Vol2, March 2012, Decay pipe section, p. 3.130
    fDecayPipeGas = G4String("Air");
@@ -298,9 +299,9 @@ LBNEVolumePlacementData*
   info.fTypeName = G4String("Tubs"); // most common type of volume.. 
   std::string volumeName(name); // volumeName += std::string("_solid"); Not necessary 
   if (name == G4String("Tunnel")) {
-    info.fParams[0] = 8*m - 2.0*cm + 2.0*(fDecayPipeRadius - 2.0*m) + 5.0*m; 
+    info.fParams[0] = 8*m - 2.0*cm + 2.0*(fDecayPipeRadius - 2.0*m) + 15.0*m; 
        // Note: the total volume is 60 m. wide => plenty enough rocks. The last term is for the Hadron Absorber cavern  
-    info.fParams[1] = 12*m - 2.0*cm + 2.0*(fDecayPipeRadius - 2.0*m) ; 
+    info.fParams[1] = 20*m - 2.0*cm + 2.0*(fDecayPipeRadius - 2.0*m) ; // Too tall Set by the Hadron absorber requirement 
     info.fParams[2] = fTotalLength -2.0*cm;
     G4Box* hallBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2. ); 
     info.fCurrent = new G4LogicalVolume(hallBox, G4Material::GetMaterial("Air"), name); 
@@ -997,7 +998,7 @@ LBNEVolumePlacementData*
         info.fParams[2] = fDecayPipeUpstrWindowThick ; 
         G4Tubs* tubs = new G4Tubs(volumeName, info.fParams[0], info.fParams[1],
 	                            info.fParams[2]/2., 0., 360.*deg);
-        info.fCurrent = new G4LogicalVolume(tubs, G4Material::GetMaterial("Mylar"), volumeName);
+        info.fCurrent = new G4LogicalVolume(tubs, G4Material::GetMaterial("Beryllium"), volumeName);
 	info.fPosition[2] = -plInfo->fParams[2]/2. + 0.5*mm + info.fParams[2]/2.;
     }
    
@@ -1288,17 +1289,17 @@ void LBNEVolumePlacements::PlaceFinalUpstrTarget(G4PVPlacement *mother) {
 				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
 					  
     posTmp[1] = -1.0*fTargetFinHeight/2.;			  
-    G4PVPlacement *vTubeDown =  new G4PVPlacement((G4RotationMatrix *) 0, 
+    new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, plTargetCoolingTube->fCurrent,
 				     nameTgtUpDownSeg+ G4String("CoolingTubeUp_PBottom"), 
 				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
     posTmp[0] = 0.; posTmp[1] = 0.; posTmp[2] = 0.;			  
-    G4PVPlacement *vTubeWater = new G4PVPlacement((G4RotationMatrix *) 0, 
+    new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, plTargetCoolingTubeWater->fCurrent,
 				    nameTgtUpDownSeg+ G4String("CoolingTubeWater_P"), 
 				          vTubeUp->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
       
-    G4PVPlacement *vTargetFin = new G4PVPlacement((G4RotationMatrix *) 0, 
+    new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, plTargetFin->fCurrent, nameTgtUpDownSeg+G4String("TargetFinVert_P"), 
 				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
     // Repeat the last few mantra for the last segments 
@@ -1322,16 +1323,16 @@ void LBNEVolumePlacements::PlaceFinalUpstrTarget(G4PVPlacement *mother) {
 				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
 					  
     posTmp[1] = -1.0*fTargetFinHeight/2.;			  
-    vTubeDown =  new G4PVPlacement((G4RotationMatrix *) 0, 
+    new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, plTargetCoolingTubeLast->fCurrent, 
 				    G4String("TargetUpstrDownstrCoolingTubeUpLast_PBottom"), 
 				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
     posTmp[0] = 0.; posTmp[1] = 0.; posTmp[2] = 0.;			  
-    vTubeWater = new G4PVPlacement((G4RotationMatrix *) 0, 
+    new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, plTargetCoolingTubeWaterLast->fCurrent, 
 				    nameTgtUpDownSeg+G4String("CoolingTubeWater_P"), 
 				          vTubeUp->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
-    vTargetFin = new G4PVPlacement((G4RotationMatrix *) 0, 
+    new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, plTargetFinLast->fCurrent, G4String("TargetFinVertLast_P"), 
 				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
    					  				  

@@ -29,13 +29,55 @@ LBNEPrimaryMessenger::LBNEPrimaryMessenger(LBNEPrimaryGeneratorAction* RA)
   fBeamOffsetXCmd->SetGuidance("Set the X offset of the proton beam");
   fBeamOffsetXCmd->SetParameterName("beamOffsetX", false);
   fBeamOffsetXCmd->SetUnitCategory("Length");
+  fBeamOffsetXCmd->SetDefaultValue (0.);
+  fBeamOffsetXCmd->SetDefaultUnit ("mm");
+  fBeamOffsetXCmd->SetUnitCandidates ("mm cm");
   
   fBeamOffsetYCmd = 
     new G4UIcmdWithADoubleAndUnit("/LBNE/generator/beamOffsetY",this);
   fBeamOffsetYCmd->SetGuidance("Set the Y offset of the proton beam");
   fBeamOffsetYCmd->SetParameterName("beamOffsetY", false);
   fBeamOffsetYCmd->SetUnitCategory("Length");
+  fBeamOffsetYCmd->SetDefaultValue (0.);
+  fBeamOffsetYCmd->SetDefaultUnit ("mm");
+  fBeamOffsetYCmd->SetUnitCandidates ("mm cm");
+ 
+  fBeamSigmaXCmd = 
+    new G4UIcmdWithADoubleAndUnit("/LBNE/generator/beamSigmaX",this);
+  fBeamSigmaXCmd->SetGuidance("Set the X Sigma of the proton beam");
+  fBeamSigmaXCmd->SetParameterName("beamSigmaX", false);
+  fBeamSigmaXCmd->SetUnitCategory("Length");
+  fBeamSigmaXCmd->SetDefaultValue (fPrimaryAction->GetBeamSigmaX());
+  fBeamSigmaXCmd->SetDefaultUnit ("mm");
+  fBeamSigmaXCmd->SetUnitCandidates ("mm cm");
   
+  fBeamSigmaYCmd = 
+    new G4UIcmdWithADoubleAndUnit("/LBNE/generator/beamSigmaY",this);
+  fBeamSigmaYCmd->SetGuidance("Set the Y Sigma of the proton beam");
+  fBeamSigmaYCmd->SetParameterName("beamSigmaY", false);
+  fBeamSigmaYCmd->SetUnitCategory("Length");
+  fBeamSigmaYCmd->SetDefaultValue (fPrimaryAction->GetBeamSigmaY());
+  fBeamSigmaYCmd->SetDefaultUnit ("mm");
+  fBeamSigmaYCmd->SetUnitCandidates ("mm cm");
+ 
+  fBeamMaxValXCmd = 
+    new G4UIcmdWithADoubleAndUnit("/LBNE/generator/beamMaxValX",this);
+  fBeamMaxValXCmd->SetGuidance("Set the maximum value in Y that a proton can have on target");
+  fBeamMaxValXCmd->SetParameterName("beamMaxValX", false);
+  fBeamMaxValXCmd->SetUnitCategory("Length");
+  fBeamMaxValXCmd->SetDefaultValue (fPrimaryAction->GetBeamMaxValX());
+  fBeamMaxValXCmd->SetDefaultUnit ("mm");
+  fBeamMaxValXCmd->SetUnitCandidates ("mm cm");
+  
+  fBeamMaxValYCmd = 
+    new G4UIcmdWithADoubleAndUnit("/LBNE/generator/beamMaxValY",this);
+  fBeamMaxValYCmd->SetGuidance("Set the maximum value in Y that a proton can have on target");
+  fBeamMaxValYCmd->SetParameterName("beamMaxValY", false);
+  fBeamMaxValYCmd->SetUnitCategory("Length");
+  fBeamMaxValYCmd->SetDefaultValue (fPrimaryAction->GetBeamMaxValY());
+  fBeamMaxValYCmd->SetDefaultUnit ("mm");
+  fBeamMaxValYCmd->SetUnitCandidates ("mm cm");
+ 
   fBeamThetaCmd =
     new G4UIcmdWithADoubleAndUnit("/LBNE/generator/beamTheta",this);
   fBeamThetaCmd->SetGuidance("Set the angle (theta) of the proton beam");
@@ -55,6 +97,14 @@ LBNEPrimaryMessenger::LBNEPrimaryMessenger(LBNEPrimaryGeneratorAction* RA)
   fCorrectForAngleCmd->SetGuidance("beam. Offsets in x and y specified via");
   fCorrectForAngleCmd->SetGuidance("messenger are still respected.");
   
+  fProtonMomentum  = new G4UIcmdWithADoubleAndUnit("/LBNE/primary/protonMomentum",this);
+  fProtonMomentum->SetGuidance("Primary proton momentum delivered by the Fermilab Main Injector ");
+  fProtonMomentum->SetParameterName("protonMomentum",true);
+  fProtonMomentum->SetDefaultValue (120.0*GeV);
+  fProtonMomentum->SetDefaultUnit ("GeV");
+  fProtonMomentum->SetUnitCandidates ("GeV");
+  fProtonMomentum->AvailableForStates(G4State_Idle);
+    
   fBeamOnTargetCmd = 
     new G4UIcmdWithABool("/LBNE/generator/beamOnTarget", this);
   fBeamOnTargetCmd->SetGuidance("If true, forces beam to hit the center");
@@ -92,12 +142,17 @@ LBNEPrimaryMessenger::~LBNEPrimaryMessenger()
 {
   delete fBeamOffsetXCmd;
   delete fBeamOffsetYCmd;
+  delete fBeamSigmaXCmd;
+  delete fBeamSigmaYCmd;
+  delete fBeamMaxValXCmd;
+  delete fBeamMaxValYCmd;
   delete fBeamPhiCmd;
   delete fBeamThetaCmd;
   delete fCorrectForAngleCmd;
   delete fBeamOnTargetCmd;
   delete fDirectory;
   delete fUseGeantino;
+  delete fProtonMomentum;
   delete fUseMuonGeantino;
   delete fGeantinoOpeningAngle;
   delete fGeantinoZOrigin;
@@ -123,6 +178,18 @@ void LBNEPrimaryMessenger::SetNewValue(G4UIcommand* cmd, G4String val)
   }
   if(cmd == fBeamOffsetYCmd){
     fPrimaryAction->SetBeamOffsetY(fBeamOffsetYCmd->GetNewDoubleValue(val));   
+  }
+  if(cmd == fBeamSigmaXCmd){
+    fPrimaryAction->SetBeamSigmaX(fBeamSigmaXCmd->GetNewDoubleValue(val));   
+  }
+  if(cmd == fBeamSigmaYCmd){
+    fPrimaryAction->SetBeamSigmaY(fBeamSigmaYCmd->GetNewDoubleValue(val));   
+  }
+  if(cmd == fBeamMaxValXCmd){
+    fPrimaryAction->SetBeamMaxValX(fBeamMaxValXCmd->GetNewDoubleValue(val));   
+  }
+  if(cmd == fBeamMaxValYCmd){
+    fPrimaryAction->SetBeamMaxValY(fBeamMaxValYCmd->GetNewDoubleValue(val));   
   }
   if(cmd == fBeamThetaCmd){
     fPrimaryAction->SetBeamTheta(fBeamThetaCmd->GetNewDoubleValue(val));   
@@ -154,6 +221,10 @@ void LBNEPrimaryMessenger::SetNewValue(G4UIcommand* cmd, G4String val)
 	              "Can't use both a muon geantino, and a geantino ");
       }
       fPrimaryAction->SetUseMuonGeantino(true);
+   } else if (cmd ==  fProtonMomentum ) {
+      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (cmd);
+      fPrimaryAction->SetProtonMomentum( cmdWD->GetNewDoubleValue(val));
    }
+   
 }
 

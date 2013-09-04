@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 // LBNEAnalysis.cc
 //
-// $Id: LBNEAnalysis.cc,v 1.3 2012/07/25 00:38:06 loiacono Exp $
+// $Id: LBNEAnalysis.cc,v 1.3.2.1 2013/09/04 22:56:47 lebrun Exp $
 //----------------------------------------------------------------------
 
 #include <vector>
@@ -36,7 +36,6 @@
 #include "LBNEAnalysis.hh"
 #include "LBNETrackInformation.hh"
 #include "LBNEPrimaryGeneratorAction.hh"
-#include "LBNEDataInput.hh"
 #include "LBNENuWeight.hh"
 
 using namespace std;
@@ -48,9 +47,9 @@ LBNEAnalysis::LBNEAnalysis()
    :fOutFile(0),
     fOutTree(0)
 {
-  LBNEData = LBNEDataInput::GetLBNEDataInput();
+  G4RunManager *pRunManager=(LBNERunManager*)LBNERunManager::GetRunManager();
 
-  if(LBNEData->GetDebugLevel() > 0)
+ if (pRunManager->GetVerboseLevel() > 0) {
   {
      std::cout << "LBNEAnalysis Constructor Called." << std::endl;
   }
@@ -92,8 +91,9 @@ LBNEAnalysis::LBNEAnalysis()
 //------------------------------------------------------------------------------------
 LBNEAnalysis::~LBNEAnalysis()
 { 
-   if(LBNEData->GetDebugLevel() > 0)
-   {
+  G4RunManager *pRunManager=(LBNERunManager*)LBNERunManager::GetRunManager();
+
+ if (pRunManager->GetVerboseLevel() > 0) {
       std::cout << "LBNEAnalysis Destructor Called." << std::endl;
    }
 
@@ -111,16 +111,13 @@ LBNEAnalysis* LBNEAnalysis::getInstance()
 G4bool LBNEAnalysis::CreateOutput()
 {
 
-   if (LBNEData->GetCreateOutput())
+  G4RunManager *pRunManager=(LBNERunManager*)LBNERunManager::GetRunManager();
+   if (pRunManager->GetCreateOutput()) {
    {
       G4String spaces = "      ";
       std::cout << "    LBNEAnalysis::CreateOutput() - Creating output ntuple..." << std::endl; 
 
       
-      if(LBNEData->GetSimulation() == "Standard Neutrino Beam" ||
-	 LBNEData->GetSimulation() == "Target Tracking"      ||
-	 LBNEData->GetSimulation() == "Horn 1 Tracking" ||
-	 LBNEData->GetSimulation() == "Horn 2 Tracking")
       {
 	 //std::cout << spaces << "Creating G4LBNEData Ntuple..." << std::endl;
 	 //return LBNEAnalysis::CreateG4LBNEDataNtp();
@@ -137,11 +134,6 @@ G4bool LBNEAnalysis::CreateOutput()
 	 return true;
 	 
       }
-      else
-      {
-	 std::cout << "LBNEAnalysis::CreateOutput() - PROBLEM: Don't know about the \"" 
-		   << LBNEData->GetSimulation() << "\" Simulation" << std::endl;
-      }
       
       return false;
       
@@ -156,8 +148,8 @@ G4bool LBNEAnalysis::CreateOutput()
 //------------------------------------------------------------------------------------
 void LBNEAnalysis::CloseOutput()
 {  
-  if(LBNEData->GetCreateOutput())
-  {
+  G4RunManager *pRunManager=(LBNERunManager*)LBNERunManager::GetRunManager();
+  if (pRunManager->GetCreateOutput()) {
      //if(fOutFile && fOutFile->IsOpen())
      //{
 	fOutFile->cd();
@@ -207,10 +199,12 @@ G4int LBNEAnalysis::GetEntry()
 void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
 {
 
-   if(LBNEData->GetDebugLevel() > 3) 
+  G4RunManager *pRunManager=(LBNERunManager*)LBNERunManager::GetRunManager();
+
+ if (pRunManager->GetVerboseLevel() > 3) 
    { G4cout << "LBNEAnalysis::FillNeutrinoNtuple() called." << G4endl;}
    
-   if (!LBNEData->GetCreateOutput()) return;
+  if (!pRunManager->GetCreateOutput())  return;
 
    fLBNEOutNtpData -> Clear();
 
@@ -253,10 +247,11 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
    
    fLBNEOutNtpData->run        = pRunManager->GetCurrentRun()->GetRunID();
    fLBNEOutNtpData->evtno      = pRunManager->GetCurrentEvent()->GetEventID();
-   fLBNEOutNtpData->beamHWidth = LBNEData->GetBeamSigmaX()/cm;
-   fLBNEOutNtpData->beamVWidth = LBNEData->GetBeamSigmaY()/cm;
-   fLBNEOutNtpData->beamX      = LBNEData->GetBeamXPosition()/cm;
-   fLBNEOutNtpData->beamY      = LBNEData->GetBeamYPosition()/cm;
+   //// ???????????????????????????
+//   fLBNEOutNtpData->beamHWidth = LBNEData->GetBeamSigmaX()/cm;
+//   fLBNEOutNtpData->beamVWidth = LBNEData->GetBeamSigmaY()/cm;
+//   fLBNEOutNtpData->beamX      = LBNEData->GetBeamXPosition()/cm;
+//   fLBNEOutNtpData->beamY      = LBNEData->GetBeamYPosition()/cm;
    
    //G4int particleID = track.GetParentID();
    G4ThreeVector protonOrigin = NPGA->GetProtonOrigin();
@@ -269,8 +264,8 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
    fLBNEOutNtpData->protonPy             = protonMomentum[1];
    fLBNEOutNtpData->protonPz             = protonMomentum[2];
    
-   fLBNEOutNtpData->nuTarZ      = LBNEData->GetTargetZ0(0);
-   fLBNEOutNtpData->hornCurrent = LBNEData->GetHornCurrent()/ampere/1000.;
+//   fLBNEOutNtpData->nuTarZ      = LBNEData->GetTargetZ0(0);
+//   fLBNEOutNtpData->hornCurrent = LBNEData->GetHornCurrent()/ampere/1000.;
    
    // Random decay - these neutrinos rarely hit any of the detectors
    fLBNEOutNtpData->Ndxdz   = NuMomentum[0]/NuMomentum[2];
@@ -363,6 +358,8 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
    //if not using external ntuple then need to find the particle that exited the target
    //
    //G4int tptrkid = -99;
+   //?????????????????????????????
+   /*
    if(!(LBNEData->GetUseFlukaInput()) && !(LBNEData->GetUseMarsInput())) 
    {
 
@@ -396,7 +393,7 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
 	    if(ii < numberOfPoints-1) postvolname = TrackTrajectory->GetPreStepVolumeName(ii+1);
 	    
 
-            /*for debugging
+            // //// for debugging
             //
 	    if(evtno == 73 )
 	    {
@@ -409,7 +406,6 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
 			 << " postvolname = " << postvolname << std::endl;
 	    }
             //
-	    */
 
 	    if(!postvolname.contains("TGT") &&
 	       !postvolname.empty())
@@ -515,7 +511,9 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
    //end find particle exiting target
 
 
+   */
 
+/* ????????????????????????????
 
    //
    //Near Detector
@@ -634,7 +632,7 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
   //Done. Fill Tree.
   //
   fOutTree->Fill();  
-
+/* ?????????????????????????????
   //
   // Write to ascii file
   //
@@ -651,7 +649,7 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
 	asciiFile.close();
      }
   }
-
+*/
 
 }
 

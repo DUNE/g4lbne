@@ -714,7 +714,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
   {
      const double zStartDrawing =  fHorn1LongRescale*41.108*in;
      const double zEndDrawing = fHorn1LongRescale*117.126*in;
-     fHorn1ZEndIC = zEndDrawing; // For use in the Magentic field class. 
+     fHorn1ZEndIC = zEndDrawing; // For use in the Magnetic field class. 
      int numSubSect = GetNumberOfInnerHornSubSections(4, zStartDrawing, 
                                                       zEndDrawing, 10); // These Z position are from the start of the inner conductor.   
      const double deltaZ = (zEndDrawing - zStartDrawing)/numSubSect;
@@ -1351,7 +1351,9 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
 	  for (size_t kSub=0; kSub!=4; kSub++) {
 	    const double zStartDrawing = fHorn2LongRescale*zStartDrawingsSubP2[kSub]*in;
             const double zEndDrawing =  fHorn2LongRescale*zEndDrawingsSubP2[kSub]*in;
-            fHorn2ZEqnChanges.push_back(zStartDrawing); 
+            fHorn2ZEqnChanges.push_back(zStartDrawing);
+	    // Need to insert the neck one.. to get consistent set to compute the magnetic field. 
+	    if (kSub == 1) fHorn2ZEqnChanges.push_back(zEndDrawing);
 	    const double zShiftTmp = zStartDrawing - fHorn2LongRescale*zStartDrawingsSubP2[0]*in;
             int numSubSect = GetNumberOfInnerHorn2SubSections(eqnInner[kSub], zStartDrawing, zEndDrawing, 10);   
             const double deltaZ = (zEndDrawing - zStartDrawing)/numSubSect;
@@ -1457,6 +1459,7 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
 	  eqnOuter = 5;
 	  fHorn2ZEqnChanges.push_back(zStartDrawing);
 	  eqnInner = 9;
+	  fHorn2ZEqnChanges.push_back(zEndDrawing);
 	}
         int numSubSect = GetNumberOfInnerHorn2SubSections(eqnOuter, zStartDrawing, 
                                                       zEndDrawing, 10);   

@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNESteppingAction.cc
-// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.3 2013/08/23 06:09:13 lebrun Exp $
+// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.4 2013/09/04 22:56:47 lebrun Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -27,7 +27,9 @@
 #include "LBNEAnalysis.hh"
 #include "LBNEEventAction.hh"
 #include "LBNERunManager.hh"
-
+#include "G4FieldManager.hh"
+#include "G4Field.hh"
+#include "LBNEVolumePlacements.hh"
 
 //----------------------------------------------------------------------
 LBNESteppingAction::LBNESteppingAction()
@@ -38,10 +40,13 @@ LBNESteppingAction::LBNESteppingAction()
    std::cerr << " LBNESteppingAction::LBNESteppingAction called ... " << std::endl;
  }
  pMessenger = new LBNESteppingActionMessenger(this); 
+ fEvtIdPrevious = -1;
 }
 //----------------------------------------------------------------------
 LBNESteppingAction::~LBNESteppingAction()
 {
+ if (fOutStudy.is_open()) fOutStudy.close();
+ if (fOutStepStudy.is_open()) fOutStepStudy.close();
  delete pMessenger;
 }
 
@@ -56,6 +61,8 @@ void LBNESteppingAction::UserSteppingAction(const G4Step * theStep)
       std::cout << "Event " << evtno << ": LBNESteppingAction::UserSteppingAction() Called." << std::endl;
    }
 
+   if(pRunManager->GetCurrentEvent()->GetEventID() < 5) 
+        this->dumpStepCheckVolumeAndFields(theStep); 
 
    LBNESteppingAction::KillNonNuThresholdParticles(theStep);
       
@@ -314,6 +321,10 @@ void LBNESteppingAction::StudyAbsorption(const G4Step * theStep) {
    G4Track * theTrack = theStep->GetTrack();
    if (((theTrack->GetParticleDefinition()->GetParticleName()).find("geantino") == std::string::npos) && (
         ((theTrack->GetParticleDefinition()->GetParticleName()).find("mu+") == std::string::npos ))) return;
+
+   
+
+	
    G4StepPoint* prePtr = theStep->GetPreStepPoint();
    if (prePtr == 0) return;
    if ( theTrack->GetNextVolume() == 0 ) {
@@ -366,8 +377,8 @@ void LBNESteppingAction::StudyAbsorption(const G4Step * theStep) {
 	      " In " << vName << " material " << material->GetName()
 	      << " InterLength " << material->GetNuclearInterLength() << std::endl;  
    } 
-   if (postPtr->GetPosition()[2] > 830.) goneThroughHorn1Neck=true; // approximate... 
-   if (postPtr->GetPosition()[2] > 6600.) goneThroughHorn2Entr=true; //truly approximate. 
+   if (postPtr->GetPosition()[2] > -50.) goneThroughHorn1Neck=true; // approximate... 
+   if (postPtr->GetPosition()[2] > 6360.) goneThroughHorn2Entr=true; //truly approximate. 
    if (ll < 1.0e-10) return; 
    // Just print where we are now... 
 
@@ -382,11 +393,11 @@ void LBNESteppingAction::StudyAbsorption(const G4Step * theStep) {
      if (vName.find("WaterLayer") != std::string::npos) {
         waterAbsHorn2Entr += ll/material->GetNuclearInterLength(); 
      } else {
-       if ((vName.find("PH01") != std::string::npos) && (material->GetName().find("Alumin") != std::string::npos))
+       if ((vName.find("Horn1") != std::string::npos) && (material->GetName().find("Alumin") != std::string::npos))
          alumAbsHorn2Entr += ll/material->GetNuclearInterLength(); 
       }
    }
-   if (vName.find("DPipe") !=  std::string::npos) {
+   if (vName.find("DecayPipe") !=  std::string::npos) {
         fOutStudy << " " << pRunManager->GetCurrentEvent()->GetEventID(); 
         for (size_t k=0; k!=3; k++) fOutStudy << " " << postPtr->GetPosition()[k];
 	fOutStudy << " " << totalAbsDecayChan << " " <<  totalAbsHorn1Neck 
@@ -397,4 +408,61 @@ void LBNESteppingAction::StudyAbsorption(const G4Step * theStep) {
 	return;
    } 
     
+}
+void LBNESteppingAction::dumpStepCheckVolumeAndFields(const G4Step * theStep) {
+
+  int idEvt = pRunManager->GetCurrentEvent()->GetEventID();
+  if (fEvtIdPrevious != idEvt) {
+      if (fOutStepStudy.is_open()) fOutStepStudy.close();
+      int idEvt = pRunManager->GetCurrentEvent()->GetEventID();
+      std::ostringstream fNameStrStr; fNameStrStr << "./StepSudies_Evt" << idEvt << ".txt";
+      std::string fNameStr(fNameStrStr.str());
+      fOutStepStudy.open(fNameStr.c_str());
+      fOutStepStudy << " x y z xp yp dpt bphi vName " << std::endl;
+      fEvtIdPrevious = idEvt;
+  }
+  G4StepPoint* prePtr = theStep->GetPreStepPoint();
+  if (theStep->GetPreStepPoint()->GetPhysicalVolume() == 0) return;
+  if (prePtr == 0) return;
+  G4Track * theTrack = theStep->GetTrack();
+  if ( theTrack->GetNextVolume() == 0 ) {
+    if (fOutStepStudy.is_open()) fOutStepStudy.close();
+    return;
+  }
+  G4StepPoint* postPtr = theStep->GetPostStepPoint();
+  if (postPtr == 0) {
+    if (fOutStepStudy.is_open()) fOutStepStudy.close();
+    return;
+  } 
+  for (size_t k=0; k !=3; k++) fOutStepStudy << " " << postPtr->GetPosition()[k];
+  G4ThreeVector postVec = postPtr->GetMomentum();
+  G4ThreeVector preVec = prePtr->GetMomentum();
+  fOutStepStudy << " " << postVec[0]/postVec[2];
+  fOutStepStudy << " " << postVec[1]/postVec[2];
+  const double ptPre = std::sqrt(preVec[0]*preVec[0] + preVec[1]*preVec[1])/GeV;
+  const double ptPost = std::sqrt(postVec[0]*postVec[0] + postVec[1]*postVec[1])/GeV;
+  fOutStepStudy << " " << ptPost - ptPre;
+  // Use our our utility to navigate to find the right field
+  const G4Field *myField = 0;
+  if ((postPtr->GetPosition()[2] > -500.) && (postPtr->GetPosition()[2] < 5000.)) {
+    LBNEVolumePlacements *aPlacementHandler= LBNEVolumePlacements::Instance();
+    const LBNEVolumePlacementData *pl = 
+        aPlacementHandler->Find("FieldHorn1", "Horn1TopLevelUpstr", "DetectorConstruction");
+    myField = pl->fCurrent->GetFieldManager()->GetDetectorField();
+  } else if (postPtr->GetPosition()[2] < 10000.) {
+    LBNEVolumePlacements *aPlacementHandler= LBNEVolumePlacements::Instance();
+    const LBNEVolumePlacementData *pl = 
+        aPlacementHandler->Find("FieldHorn1", "Horn2Hall", "DetectorConstruction");
+    myField = pl->fCurrent->GetFieldManager()->GetDetectorField();
+  }
+   
+  if (myField == 0) {
+   fOutStepStudy << " " << 0.; 
+  } else {
+   double pos[3]; for (size_t k=0; k!= 3; ++k) pos[k] = postPtr->GetPosition()[k];
+   double bf[3];
+   myField->GetFieldValue(pos, &bf[0]);
+   fOutStepStudy << " " << std::sqrt(bf[0]*bf[0] + bf[1]*bf[1])/tesla;
+  }
+  fOutStepStudy << " " << postPtr->GetPhysicalVolume()->GetLogicalVolume()->GetName() << std::endl; 
 }

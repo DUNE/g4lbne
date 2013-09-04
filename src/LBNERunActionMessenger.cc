@@ -127,9 +127,6 @@ LBNERunActionMessenger::LBNERunActionMessenger(LBNERunAction* RA)
   KillTracking->SetParameterName("KillTracking",true);
   KillTracking->SetDefaultValue(true);
   KillTracking->AvailableForStates(G4State_PreInit,G4State_Idle);
-  
-  //
-
 
   //
   //LBNE/output/

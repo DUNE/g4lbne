@@ -81,6 +81,11 @@ fSkinDepth(4.1*mm)
   } else {
      const LBNEVolumePlacementData *plDat = aPlacementHandler->Find("Bfield", 
                             "Horn2TopLevel", "LBNEMagneticFieldHorn::LBNEMagneticFieldHorn");
+//     std::cerr << " Number of equation changes " << aPlacementHandler->GetHorn2ZEqnChangeNumEqn() << std::endl;
+//     for (size_t k=0; k != aPlacementHandler->GetHorn2ZEqnChangeNumEqn(); k++) {
+//       std::cerr << " Horn2 zone " << k << " at z " 
+//                 << aPlacementHandler->GetHorn2ZEqnChange(k)/25.4 << std::endl;
+//     }
      fEffectiveLength = plDat->fParams[2];
      const double z1 = 	aPlacementHandler->GetHorn2ZEqnChange(0);	    
      fZDCBegin.push_back(0.); fZDCEnd.push_back(z1); 
@@ -92,28 +97,36 @@ fSkinDepth(4.1*mm)
 
      const double z3 = 	aPlacementHandler->GetHorn2ZEqnChange(2);	    
      fZDCBegin.push_back(z2); fZDCEnd.push_back(z3); 
-     fEqnIndicesInner.push_back(6);  fEqnIndicesOuter.push_back(1); // Just before the neck
+     fEqnIndicesInner.push_back(6);  fEqnIndicesOuter.push_back(0); // Getting to the neck, neck region 
 
      const double z4 = 	aPlacementHandler->GetHorn2ZEqnChange(3);	    
-     fZDCBegin.push_back(z3); fZDCEnd.push_back(z4);     
+     fZDCBegin.push_back(z3); fZDCEnd.push_back(z4); 
+     fEqnIndicesInner.push_back(6);  fEqnIndicesOuter.push_back(1); // Just before the neck
+
+     const double z5 = 	aPlacementHandler->GetHorn2ZEqnChange(4);	    
+     fZDCBegin.push_back(z4); fZDCEnd.push_back(z5);     
      fEqnIndicesInner.push_back(99); fEqnIndicesOuter.push_back(99); //The neck, fixe radius
      fHornNeckOuterRadius = aPlacementHandler->GetHorn2NeckOuterRadius();
      fHornNeckInnerRadius = aPlacementHandler->GetHorn2NeckInnerRadius();
 
-     const double z5 = 	aPlacementHandler->GetHorn2ZEqnChange(4);	    
-     fZDCBegin.push_back(z4); fZDCEnd.push_back(z5); 
-     fEqnIndicesInner.push_back(7);  fEqnIndicesOuter.push_back(3); // Just after the neck
-
      const double z6 = 	aPlacementHandler->GetHorn2ZEqnChange(5);	    
      fZDCBegin.push_back(z5); fZDCEnd.push_back(z6); 
-     fEqnIndicesInner.push_back(7);  fEqnIndicesOuter.push_back(3); // moving along positive Z 
+     fEqnIndicesInner.push_back(7);  fEqnIndicesOuter.push_back(2); // Just after the neck
 
-      const double z7 =  aPlacementHandler->GetHorn2ZEqnChange(6);	    
+     const double z7 = 	aPlacementHandler->GetHorn2ZEqnChange(6);	    
      fZDCBegin.push_back(z6); fZDCEnd.push_back(z7); 
+     fEqnIndicesInner.push_back(7);  fEqnIndicesOuter.push_back(3); // moving along positive Z, neck region 
+
+      const double z8 =  aPlacementHandler->GetHorn2ZEqnChange(7);  // 	Next physical section     
+     fZDCBegin.push_back(z7); fZDCEnd.push_back(z8); 
+     fEqnIndicesInner.push_back(7);  fEqnIndicesOuter.push_back(3);
+
+      const double z9 =  aPlacementHandler->GetHorn2ZEqnChange(8);  // 	    
+     fZDCBegin.push_back(z8); fZDCEnd.push_back(z9); 
      fEqnIndicesInner.push_back(8);  fEqnIndicesOuter.push_back(4);
 
-      const double z8 =  aPlacementHandler->GetHorn2ZEqnChange(7);	    
-     fZDCBegin.push_back(z7); fZDCEnd.push_back(z8); 
+      const double z10 =  aPlacementHandler->GetHorn2ZEqnChange(9);	    
+     fZDCBegin.push_back(z9); fZDCEnd.push_back(z10); 
      fEqnIndicesInner.push_back(9);  fEqnIndicesOuter.push_back(5);
      
      fOuterRadius = aPlacementHandler->GetHorn2OuterTubeOuterRad();
@@ -121,6 +134,7 @@ fSkinDepth(4.1*mm)
   }
   fOuterRadiusEff = fOuterRadius - 2.0*fSkinDepth; // skin depth at 0.43 kHz 
   // Z coordinate change not yet initialize, done at the first track.
+/*
   std::cerr << " Table of Z position and equations for ";
   if (amHorn1) std::cerr << " Horn1 " ;
   else  std::cerr << " Horn2 " ;
@@ -139,6 +153,7 @@ fSkinDepth(4.1*mm)
     }
     std::cerr << " " << rIn << " " << rOut - rIn  << std::endl;
   }
+*/
 //
 // Use now the survey data (simulated for now.. ) to establish the coordinate transform..  
 //
@@ -204,7 +219,7 @@ void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) 
 //     std::cerr << " fZShiftUpstrWorldToLocal " << 
 //                    fZShiftUpstrWorldToLocal << " fZShiftDrawingCoordinate " << fZShiftDrawingCoordinate << std::endl;
 //      if (!amHorn1) { std::cerr << " And quit  !!!! " << std::endl; exit(2); }
-      this->dumpField();
+//      this->dumpField();
    } // Initialization of Z coordinate transform 
    if (!fCoordinateSet) return;
    std::vector<double> ptTrans(2,0.);
@@ -225,8 +240,8 @@ void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) 
      size_t kSelZ = fEqnIndicesInner.size();
      const double zLocD = Point[2] - fZShiftDrawingCoordinate;
      for (size_t k=0; k != fEqnIndicesInner.size(); ++k) {
-       if (zLocD < fZDCBegin[k]) continue;
-       if (zLocD > fZDCEnd[k]) break; // They are Z ordered.. 
+       if (zLocD < fZDCBegin[k]) break;
+       if (zLocD > fZDCEnd[k]) continue; // They are Z ordered.. 
        kSelZ = k; 
        break;
      }
@@ -254,19 +269,22 @@ void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) 
      }
      Bfield[0] = -magBField*ptTrans[1]/r;
      Bfield[1] = magBField*ptTrans[0]/r;
-//     std::cerr << " Field region at Z " << Point[3] << " r = " << r 
-//               << " radIC " << radIC << " radOC " << radOC << " magBField " <<  magBField/tesla << std::endl;
+//     std::cerr << " Field region at Z " << Point[2] << " r = " << r 
+//	       << " radIC " << radIC << " radOC " 
+//	       << radOC << "zLocD " << zLocD << " magBField " 
+//	       <<  magBField/tesla << " Bx " << Bfield[0]/tesla << std::endl;
    }
 }
 void LBNEMagneticFieldHorn::dumpField() const {
+   const LBNEVolumePlacements *aPlacementHandler = LBNEVolumePlacements::Instance();
   std::string fName = (amHorn1) ? std::string("./FieldMapHorn1.txt") : std::string("./FieldMapHorn2.txt");
   std::ofstream fOut(fName.c_str());
-  fOut << " z r bphi " << std::endl;
+  fOut << " z zd r bphi " << std::endl;
   double zStart = -500.;
   double zEnd = 4000.;
   double rMax = fOuterRadius + 50.0*mm;
   if (!amHorn1) { zStart = 6000.; zEnd = 11000.; }
-  const int numZStep = 400;
+  const int numZStep = 1000;
   const int numRStep= 200;
   const double zStep = (zEnd-zStart)/numZStep;
   const double rStep = rMax/numRStep;
@@ -274,14 +292,32 @@ void LBNEMagneticFieldHorn::dumpField() const {
   for (int iZ=0; iZ !=numZStep; iZ++) { 
     double z = zStart +  iZ*zStep;
     point[2] = z;
-    for (int iR=0; iR != numRStep; iR++) {
-      const double r = iR*rStep;
+    const double zLocD = point[2] - fZShiftDrawingCoordinate;
+    double radIC = fHornNeckInnerRadius;
+    size_t kSelZ = fEqnIndicesInner.size();
+    for (size_t k=0; k != fEqnIndicesInner.size(); ++k) {
+       if (zLocD < fZDCBegin[k]) break;
+       if (zLocD > fZDCEnd[k]) continue; // They are Z ordered.. 
+       kSelZ = k; 
+       break;
+    }
+    if (kSelZ ==  fEqnIndicesInner.size()) continue;
+    if (fEqnIndicesInner[kSelZ] != 99) {
+       radIC = (amHorn1) ? aPlacementHandler->GetConductorRadiusHorn1(zLocD,fEqnIndicesInner[kSelZ] ) : 
+                        aPlacementHandler->GetConductorRadiusHorn2(zLocD, fEqnIndicesInner[kSelZ]);
+    }
+    double r = radIC - 0.25*mm;
+    // inside the conductor... 
+    while (r < rMax)  {
       const double phi = 2.0*M_PI*G4RandFlat::shoot();
       point[0] = r*std::cos(phi);
       point[1] = r*std::sin(phi);
       double bf[3];
       this->GetFieldValue(point, &bf[0]);
-      fOut << " " << z << "  " << r << " " << std::sqrt(bf[0]*bf[0] + bf[1]*bf[1])/tesla << std::endl;
+      fOut << " " << z << "  " << zLocD << " " << r << " " 
+           << std::sqrt(bf[0]*bf[0] + bf[1]*bf[1])/tesla << std::endl;
+      if (r < (radIC + 5.0*mm)) r += 0.1*mm;
+      else  r += rStep;
     }
   } 
   fOut.close();

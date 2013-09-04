@@ -54,7 +54,7 @@ fPositionCmd(0)
 //   std::cerr << " LBNESurveyorMessenger::LBNESurveyorMessenger for " << aName <<  " done " <<  std::endl;
   
 }
-LBNESurveyorMessenger::LBNESurveyorMessenger(LBNESurveyorMessenger const &other) {
+LBNESurveyorMessenger::LBNESurveyorMessenger(LBNESurveyorMessenger const &other): G4UImessenger(other) {
   fFullName = other.fFullName;
   fPoint = other.fPoint; // back pointer to the point in question... Could be null is this messenger is blank. 
   fSetPositionFromToleranceCmd = other.fSetPositionFromToleranceCmd;

@@ -1,5 +1,5 @@
 
-// $Id: LBNEMagneticField.hh,v 1.2.2.4 2013/09/03 22:51:39 lebrun Exp $
+// $Id: LBNEMagneticField.hh,v 1.2.2.5 2013/09/04 08:11:34 lebrun Exp $
 // --------------------------------------------------------------
 // LBNEMagneticField.hh modified by Yuki 2004/7/16
 // modified by Yuki 8/2/04
@@ -53,7 +53,7 @@ class LBNEMagneticFieldHorn : public G4MagneticField
    inline void SetHornCurrent(G4double ihorn) {fHornCurrent = ihorn;}
    inline G4double GetHornCurrent() const { return fHornCurrent;}
    
-   void dumpField();
+   void dumpField() const;
 
 };
 

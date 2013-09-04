@@ -10,6 +10,7 @@
 #include "G4TransportationManager.hh"
 #include "LBNEVolumePlacements.hh"
 #include "LBNESurveyor.hh"
+#include "Randomize.hh"
 
 //magnetic field between conductors ====================================================
 
@@ -203,6 +204,7 @@ void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) 
 //     std::cerr << " fZShiftUpstrWorldToLocal " << 
 //                    fZShiftUpstrWorldToLocal << " fZShiftDrawingCoordinate " << fZShiftDrawingCoordinate << std::endl;
 //      if (!amHorn1) { std::cerr << " And quit  !!!! " << std::endl; exit(2); }
+      this->dumpField();
    } // Initialization of Z coordinate transform 
    if (!fCoordinateSet) return;
    std::vector<double> ptTrans(2,0.);
@@ -252,8 +254,35 @@ void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) 
      }
      Bfield[0] = -magBField*ptTrans[1]/r;
      Bfield[1] = magBField*ptTrans[0]/r;
-     std::cerr << " Field region at Z " << Point[3] << " r = " << r 
-               << " radIC " << radIC << " radOC " << radOC << " magBField " <<  magBField/tesla << std::endl;
+//     std::cerr << " Field region at Z " << Point[3] << " r = " << r 
+//               << " radIC " << radIC << " radOC " << radOC << " magBField " <<  magBField/tesla << std::endl;
    }
 }
-
+void LBNEMagneticFieldHorn::dumpField() const {
+  std::string fName = (amHorn1) ? std::string("./FieldMapHorn1.txt") : std::string("./FieldMapHorn2.txt");
+  std::ofstream fOut(fName.c_str());
+  fOut << " z r bphi " << std::endl;
+  double zStart = -500.;
+  double zEnd = 4000.;
+  double rMax = fOuterRadius + 50.0*mm;
+  if (!amHorn1) { zStart = 6000.; zEnd = 11000.; }
+  const int numZStep = 400;
+  const int numRStep= 200;
+  const double zStep = (zEnd-zStart)/numZStep;
+  const double rStep = rMax/numRStep;
+  double point[3];
+  for (int iZ=0; iZ !=numZStep; iZ++) { 
+    double z = zStart +  iZ*zStep;
+    point[2] = z;
+    for (int iR=0; iR != numRStep; iR++) {
+      const double r = iR*rStep;
+      const double phi = 2.0*M_PI*G4RandFlat::shoot();
+      point[0] = r*std::cos(phi);
+      point[1] = r*std::sin(phi);
+      double bf[3];
+      this->GetFieldValue(point, &bf[0]);
+      fOut << " " << z << "  " << r << " " << std::sqrt(bf[0]*bf[0] + bf[1]*bf[1])/tesla << std::endl;
+    }
+  } 
+  fOut.close();
+}  

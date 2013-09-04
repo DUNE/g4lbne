@@ -25,7 +25,7 @@
 # Primary vertex setting 
 #
 /LBNE/primary/useMuonGeantino
-/LBNE/primary/geantinoOpeningAngle 0.03 radian
+/LBNE/primary/geantinoOpeningAngle 0.05 radian
 /LBNE/primary/geantinoZOrigin -5000. mm 
 /LBNE/primary/protonMomentum 5.0 GeV
 #

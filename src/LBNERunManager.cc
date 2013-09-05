@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNERunManager.cc
-// $Id: LBNERunManager.cc,v 1.1.1.1.2.4 2013/09/05 12:32:50 lebrun Exp $
+// $Id: LBNERunManager.cc,v 1.1.1.1.2.5 2013/09/05 19:27:58 lebrun Exp $
 //----------------------------------------------------------------------
 
 #include "LBNERunManager.hh"
@@ -35,7 +35,7 @@ fAsciiOutputFileName(G4String("")),
 fNptOutputFileName(G4String("")),
 fUseFluka(false),
 fUseMars(false),
-fCreateOutput(false),
+fCreateOutput(true),
 fCreateAsciiOutput(false),
 fVerboseLevel(1)
 

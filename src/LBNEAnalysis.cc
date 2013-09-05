@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 // LBNEAnalysis.cc
 //
-// $Id: LBNEAnalysis.cc,v 1.3.2.2 2013/09/05 12:32:49 lebrun Exp $
+// $Id: LBNEAnalysis.cc,v 1.3.2.3 2013/09/05 19:27:58 lebrun Exp $
 //----------------------------------------------------------------------
 
 #include <vector>
@@ -130,10 +130,11 @@ G4bool LBNEAnalysis::CreateOutput()
 
          LBNERunManager *pRunManager=
           dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
+
 	 sprintf(nuNtupleFileName,"%s_%03d%s.root",
 	   (pRunManager->GetOutputNtpFileName()).c_str(),pRunManager->GetCurrentRun()->GetRunID(), "v3xxx");
 	 fOutFile = new TFile(nuNtupleFileName,"RECREATE","root ntuple");
-	 G4cout << "Creating neutrino ntuple: "<<nuNtupleFileName<<G4endl;
+	 std::cerr << "Creating neutrino ntuple: " << nuNtupleFileName << std::endl;
 	 //fOutTree = new TTree("nudata","g4numi Neutrino ntuple");
 	 //fOutTree->Branch("data","data_t",&g4data,32000,1);
          fOutTree = new TTree("nudata","g4lbne Neutrino ntuple");
@@ -772,7 +773,7 @@ void LBNEAnalysis::TrackThroughGeometry(const LBNETrajectory* TrackTrajectory)
    G4int trackID = TrackTrajectory-> GetTrackID();
 
    G4int numberOfPoints            = TrackTrajectory->GetPointEntries();
-
+   
    for (G4int ii=numberOfPoints-1; ii > -1; --ii)
    {
       
@@ -782,8 +783,6 @@ void LBNEAnalysis::TrackThroughGeometry(const LBNETrajectory* TrackTrajectory)
       
       G4ThreeVector ParticleMomentum = TrackTrajectory->GetMomentum(ii);              
       G4ThreeVector ParticlePosition = TrackTrajectory->GetPoint(ii)->GetPosition();
-      
-      
       
       /*
 	G4double steplength = TrackTrajectory->GetStepLength(ii);              
@@ -815,14 +814,15 @@ void LBNEAnalysis::TrackThroughGeometry(const LBNETrajectory* TrackTrajectory)
       //
       //particle created in the target
       //
-      if (prevolname.contains("TGT") && ii==0)
+      if (prevolname.contains("TargetFin") && ii==0)
       {
 	 fLBNEOutNtpData -> AddTrkPoint(TrkPoint::StringToEnum("Target"), TrkPt);
       }
       //
       //particle as exits target
       //
-      if ((prevolname.contains("TargetInnerExit")) && postvolname.contains("TargetOuterExit"))
+      if ((prevolname.contains("Target")) && 
+           postvolname.contains("Horn1") && (!postvolname.contains("Target")))
       {
 	 /*if(fLBNEOutNtpData->evtno == 1450 || fLBNEOutNtpData->evtno == 1679)
 	   {
@@ -866,7 +866,7 @@ void LBNEAnalysis::TrackThroughGeometry(const LBNETrajectory* TrackTrajectory)
      // 
 
       //particle enters horn 1
-      if ((prevolname.contains("TGAR")) && postvolname.contains("PH01"))
+      if ((prevolname.contains("Horn1TopLevelDownstr")) && postvolname.contains("Horn1TopLevelDownstr"))
       {
 	 fLBNEOutNtpData -> AddTrkPoint(TrkPoint::StringToEnum("Horn1Enter"), TrkPt);
       }
@@ -877,7 +877,7 @@ void LBNEAnalysis::TrackThroughGeometry(const LBNETrajectory* TrackTrajectory)
 	 fLBNEOutNtpData -> AddTrkPoint(TrkPoint::StringToEnum("Horn1NeckPlane"), TrkPt);
       }
       //particle exists horn 1
-      if ((prevolname.contains("PH01")) && postvolname.contains("TGAR"))
+      if ((prevolname.contains("Horn1")) && postvolname.contains("Tunnel"))
       {
 	 fLBNEOutNtpData -> AddTrkPoint(TrkPoint::StringToEnum("Horn1Exit"), TrkPt);
       }
@@ -887,17 +887,17 @@ void LBNEAnalysis::TrackThroughGeometry(const LBNETrajectory* TrackTrajectory)
 	 fLBNEOutNtpData -> AddTrkPoint(TrkPoint::StringToEnum("Horn1EndPlane"), TrkPt);
       }
       //particle enters horn 2
-      if ((prevolname.contains("TGAR")) && postvolname.contains("PH02"))
+      if ((prevolname.contains("Tunnel")) && postvolname.contains("Horn2"))
       {
 	 fLBNEOutNtpData -> AddTrkPoint(TrkPoint::StringToEnum("Horn2Enter"), TrkPt);
       }
       //particle at neck of horn 2 the last entry will be just before it leaves the neck
-      //if (prevolname.contains("PH02-02"))
+      if (prevolname.contains("Horn2Part2"))
       {
 	 fLBNEOutNtpData -> AddTrkPoint(TrkPoint::StringToEnum("Horn2NeckPlane"), TrkPt);
       }
       //particle exits horn 2
-      if ((prevolname.contains("PH02")) && postvolname.contains("TGAR"))
+      if ((prevolname.contains("Horn2")) && postvolname.contains("Tunnel"))
       {
 	 fLBNEOutNtpData -> AddTrkPoint(TrkPoint::StringToEnum("Horn2Exit"), TrkPt);
       }
@@ -907,36 +907,15 @@ void LBNEAnalysis::TrackThroughGeometry(const LBNETrajectory* TrackTrajectory)
 	 fLBNEOutNtpData -> AddTrkPoint(TrkPoint::StringToEnum("Horn2EndPlane"), TrkPt);
       }
       //Particle enters DP
-      if ( (prevolname.contains("UPWN") || 
-	    prevolname.contains("DPipeWall") ||
-	    prevolname.contains("DNWN") ) && 
-	   postvolname.contains("DPipeVol") )
-      {
-	 if(prevolname.contains("DNWN")) 
-	    std::cout << "LBNEAnalysis::FillNeutrinoNtuple - " 
-		      << "Event ID = " << fLBNEOutNtpData->evtno 
-			 << ". Particle is entering Decay Pipe from the Downstream Window" 
-		      << "The particle is a " << TrackTrajectory->GetParticleName() 
-		      << ", type = " << TrkPt.type << std::endl;
-	 
-	 fLBNEOutNtpData -> AddTrkPoint(TrkPoint::StringToEnum("DPipeEnter"), TrkPt);
+      if ( (prevolname.contains("DecayPipeUsptrWindow")) &&  
+           (postvolname.contains("DecayPipeVolume"))) {
+	   
+	   fLBNEOutNtpData -> AddTrkPoint(TrkPoint::StringToEnum("DPipeEnter"), TrkPt);
       }
       //Particle exits DP
-      if ( prevolname.contains("DPipeVol")  &&
-	   (postvolname.contains("UPWN")      || 
-	    postvolname.contains("DPipeWall") ||
-	    postvolname.contains("DNWN") ) )
+      if ( (prevolname.contains("DecayPipe"))  && (postvolname.contains("Tunnel")))
 	 
       {
-	 if(prevolname.contains("UPWN")) 
-	 {
-	    std::cout << "LBNEAnalysis::FillNeutrinoNtuple - " 
-		      << "Event ID = " << fLBNEOutNtpData->evtno 
-		      << ". Particle is exiting Decay Pipe from the Upstream Window. " 
-		      << "The particle is a " << TrackTrajectory->GetParticleName() 
-		      << ", type = " << TrkPt.type << std::endl;
-	 }
-	 
        fLBNEOutNtpData -> AddTrkPoint(TrkPoint::StringToEnum("DPipeExit"), TrkPt);
       }
       

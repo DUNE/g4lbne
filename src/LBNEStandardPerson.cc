@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEStandardPerson.cc,v 1.1.2.3 2013/06/03 18:55:37 robj137 Exp $
+// $Id: LBNEStandardPerson.cc,v 1.1.2.4 2013/09/05 12:32:50 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <stdio.h>
@@ -25,18 +25,16 @@
 #include "G4Transform3D.hh"
 #include "G4RotationMatrix.hh"
 #include "G4AssemblyVolume.hh"
-
-#include "LBNEDataInput.hh"
 #include "LBNEStandardPerson.hh"
 
-LBNEStandardPerson::LBNEStandardPerson(G4String detName):LBNESubVolume(detName)
+LBNEStandardPerson::LBNEStandardPerson(G4String detName)
 {
-  fMessenger = new LBNEStandardPersonMessenger(this);
+//  fMessenger = new LBNEStandardPersonMessenger(this);
 }
 
 LBNEStandardPerson::~LBNEStandardPerson()
 {
-  delete fMessenger;
+//  delete fMessenger;
 }
 
 
@@ -62,7 +60,7 @@ void LBNEStandardPerson::ConstructSubvolume()
 //---------------------------------------------------------------------------// 
 
 //---------------------------------------------------------------------------// 
-  G4double eps = 1.0e-6*cm;
+//  G4double eps = 1.0e-6*cm;
 
   fHeadRadius = 10*cm;
   fHeight = 170*cm;
@@ -97,9 +95,9 @@ void LBNEStandardPerson::ConstructSubvolume()
   
   G4VisAttributes *Vis = new G4VisAttributes(G4Colour(0,0.3,0.3));
   humanLogical->SetVisAttributes(Vis);
-  fSubVolumeLogical = humanLogical;
+//  fSubVolumeLogical = humanLogical;
 }
-
+/*
 LBNEStandardPersonMessenger::LBNEStandardPersonMessenger(LBNESubVolume *subVolume)
   :LBNESubVolumeMessenger(subVolume) 
 {
@@ -113,3 +111,4 @@ LBNEStandardPersonMessenger::~LBNEStandardPersonMessenger()
 void LBNEStandardPersonMessenger::SetNewValue(G4UIcommand* command, G4String val)
 {
 }
+*/

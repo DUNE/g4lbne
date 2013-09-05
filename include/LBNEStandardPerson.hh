@@ -1,16 +1,13 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEStandardPerson.hh,v 1.1.2.3 2013/06/03 18:55:37 robj137 Exp $
+// $Id: LBNEStandardPerson.hh,v 1.1.2.4 2013/09/05 12:32:49 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEStandardPerson_H
 #define LBNEStandardPerson_H 
 
-#include "LBNESubVolume.hh"
-#include "G4UIcmdWithADoubleAndUnit.hh"
-
 class G4LogicalVolume;
 
-class LBNEStandardPerson : public LBNESubVolume
+class LBNEStandardPerson
 {
 
 private:
@@ -27,7 +24,8 @@ public:
   void ConstructSubvolume();
 
 };
-
+/*
+** Obsolete..
 class LBNEStandardPersonMessenger: public LBNESubVolumeMessenger{
   
   public:
@@ -39,5 +37,6 @@ class LBNEStandardPersonMessenger: public LBNESubVolumeMessenger{
 
     LBNEStandardPerson*      fStandardPerson;
 };
+*/
 #endif
 

@@ -8,7 +8,6 @@
 
 #include "globals.hh"
 #include "LBNETrajectory.hh"
-#include "LBNEDataInput.hh"
 
 //root
 #include "TSystem.h"
@@ -74,8 +73,6 @@ private:
    std::map<int, int> code;
    //
    
-   LBNEDataInput* LBNEData;
-
    TFile* fOutFile;
    TTree* fOutTree;
 

@@ -12,7 +12,6 @@
 #include "LBNESteppingAction.hh"
 #include "LBNEStackingAction.hh"
 
-class LBNEDataInput;
 #include "LBNEPrimaryGeneratorAction.hh"
 
 class LBNERunManager : public G4RunManager

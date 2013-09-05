@@ -6,7 +6,6 @@
 #include "G4ios.hh"
 
 class LBNERunAction;
-class LBNEDataInput;
 class G4UIdirectory;
 class G4UIcmdWithAnInteger;
 class G4UIcmdWithADoubleAndUnit;
@@ -26,8 +25,6 @@ public:
 private:
 
    LBNERunAction*              runAction;
-   LBNEDataInput*              LBNEData;
-
    //
    //NuMI/rndm
    //

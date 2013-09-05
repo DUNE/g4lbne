@@ -11,7 +11,6 @@
 class G4ParticleGun;
 class G4Event;
 class LBNEPrimaryMessenger;
-class LBNEDataInput;
 class TFile;
 class TTree;
 class LBNERunManager;
@@ -68,6 +67,8 @@ class LBNEPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
   
   inline double GetBeamSigmaX() const { return fBeamSigmaX; }
   inline double GetBeamSigmaY() const { return fBeamSigmaY; }
+  inline double GetBeamOffsetX() const { return fBeamOffsetX; }
+  inline double GetBeamOffsetY() const { return fBeamOffsetY; }
   inline double GetBeamMaxValX() const { return fBeamMaxValX; }
   inline double GetBeamMaxValY() const { return fBeamMaxValY; }
   

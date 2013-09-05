@@ -29,8 +29,8 @@ class LBNEStackingAction : public G4UserStackingAction
 			      const G4Track * aTrack);
    void KillThresholdParticles(G4ClassificationOfNewTrack& classification, 
 			       const G4Track * aTrack);
-   void KillOutOfWorldParticles(G4ClassificationOfNewTrack& classification, 
-				const G4Track * aTrack);
+//   void KillOutOfWorldParticles(G4ClassificationOfNewTrack& classification, 
+//				const G4Track * aTrack);
    void KillUnimportantParticles(G4ClassificationOfNewTrack& classification, 
 				 const G4Track * aTrack);
 

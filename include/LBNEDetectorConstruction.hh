@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.hh,v 1.5.2.17 2013/09/02 09:35:03 lebrun Exp $
+// $Id: LBNEDetectorConstruction.hh,v 1.5.2.18 2013/09/05 12:32:49 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEDetectorConstruction_H
@@ -15,11 +15,8 @@
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
-#include "LBNEDecayPipe.hh"
-#include "LBNEHadronAbsorber.hh"
-#include "LBNEStandardPerson.hh"
+//#include "LBNEStandardPerson.hh"
 //#include "LBNEDetectorMessenger.hh"
-#include "LBNESubVolume.hh"
 #include "LBNEVolumePlacements.hh"
 #include "G4Element.hh"
 
@@ -39,8 +36,6 @@ class LBNEMagneticFieldOC;
 //class LBNETarget;
 //class LBNEBaffle;
 //class LBNEHornAssembly;
-
-typedef std::vector<LBNESubVolume*> LBNEDet;
 
 class LBNEDetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -73,14 +68,12 @@ private:
   // Geometric instantiations
   LBNEVolumePlacements*                  fPlacementHandler;
 
-  std::vector<LBNESubVolume*>        fSubVolumes;
-
   //LBNETarget                            *fTarget;
   //LBNEBaffle                            *fBaffle;
   //LBNEHornAssembly                      *fHornAssembly;
-  LBNEDecayPipe*                        fDecayPipe;
-  LBNEHadronAbsorber*                   fHadronAbsorber;
-  LBNEStandardPerson*                   fStandardPerson;
+//  LBNEDecayPipe*                        fDecayPipe;
+//  LBNEHadronAbsorber*                   fHadronAbsorber;
+//  LBNEStandardPerson*                   fStandardPerson;
    
   // Horn current value
   G4double fHornCurrent;
@@ -256,7 +249,7 @@ private:
  public:
  
   inline void SetHornCurrent(G4double val) { fHornCurrent = val; }
-
+  inline double GetHornCurrent() const {return fHornCurrent; }
 
 };
 #endif

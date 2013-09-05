@@ -5,7 +5,7 @@
 ** the process of surveying the LBNE target and neutrino beam elements. 
 ** It is not mean to be a general tool: Qunatities are specific to the LBNE beam layout. 
 **
-** The main class is a singleton. It can be refered by the LBNESubVolume class, when it comes to place 
+** The main class is a singleton. It can be refered by the LBNEVolumePlacement class, when it comes to place 
 ** a sub volume. Unlike the SubVolume class, this class does not actively place volume in the hierarchy. 
 ** It simply manages the key surveyed points along the beam line. 
 ** 
@@ -24,33 +24,18 @@
 **
 **  2. Based on the above logbook, as one construct the G4 geometry, one enquire about the relative coordinates
 ** of the surveyed points, relative to the nominal base line. From this points, a rotation matrix and vector displacement 
-** for the relevant volume can be computed, either in the  LBNESubVolume constructor, or any of the G4 geometry
+** for the relevant volume can be computed, either in the  
+** LBNEVolumePlacement::PlaceFinal method, or any of the G4 geometry
 ** construction process, where the G4Placement occured. 
 **
-** Example: when it is time to place the Horn1 outer conductor (or a volume firmly attached to it) into 
-** Horn1 hall (or a smaller box that fully contains it), one does 
-**
-** G4ThreeVector nominalPlacement (0., -5., -3471.);  // Where the z coordinate is either hardtyped, or obtained 
-** from the subclass G4SubVolume. We have been told that a vertical offset of 5 mm is "really there.." 
-** These are the nominal coordinates. They could be set by the messenger of the LBNESubvolume class, 
-** if need be. 
-**
-** LBNESurveyor* mySurveyor = LBNESurveyor::GetInstance();
-** std::vector<LBNESurveyedPt>::const_iterator itPinUpstream=mySurveyor->GetPoint("Horn1/UpstreamLeftPin");
-** G4ThreeVector pinUpsL =  itPinUpstream->GetPosition();
-** G4ThreeVector pinUpsR =  mySurveyor->GetPoint("Horn1/UpstreamRightPin")->GetPosition();
-**
-** ... Assume for now the downstream pin is perfectly aligned 
-** deduce an overall placement:
+** Example: See method LBNEVolumePlacement::PlaceFinal
 ** 
-** G4ThreeVector honr1OuterPos = nominalPlacement + 0.5*(pinUpsL + pinUpsR);
-** aHorn1OuterPhysical = new G4PVPlacement(0, honr1OuterPos,...) 
-**
-** Unlike LBNESubVolume class, the LBNESurveyor class has knowledge about the complete survey of the beam 
+** Unlike LBNEDetectorConstruction class, the LBNESurveyor class has knowledge about the complete survey of the beam 
 ** line, and therefore can check relative alignment prior to the geometry construction. It could also contain
-** surveyed point (monuments) that would have no correspondance to a corner, or a center,  of the G4Volume. 
+** surveyed point (monuments) that would have some correspondance to a corner, or a center,  of the G4Volume. 
+** 
 **
-** Paul L. G. Lebrun, June 2013. 
+** Paul L. G. Lebrun, June 2013. Revised Sept. 2013  
 */
 #include <string>
 #include <vector>

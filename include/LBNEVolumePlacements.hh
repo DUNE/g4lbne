@@ -1,11 +1,12 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.26 2013/09/05 11:20:22 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.27 2013/09/05 12:32:49 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
 #define LBNEVolumePlacement_H 1
 
 #include <vector>
+#include <map>
 
 //#include "G4VUserVolumePlacement.hh"
 #include "globals.hh"

@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 // LBNEAnalysis.cc
 //
-// $Id: LBNEAnalysis.cc,v 1.3.2.1 2013/09/04 22:56:47 lebrun Exp $
+// $Id: LBNEAnalysis.cc,v 1.3.2.2 2013/09/05 12:32:49 lebrun Exp $
 //----------------------------------------------------------------------
 
 #include <vector>
@@ -23,7 +23,7 @@
 #include "G4SteppingManager.hh"
 #include "G4ThreeVector.hh"
 #include "G4TrajectoryContainer.hh"
-#include "G4RunManager.hh"
+#include "LBNERunManager.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTypes.hh"
 #include "G4Navigator.hh"
@@ -37,6 +37,8 @@
 #include "LBNETrackInformation.hh"
 #include "LBNEPrimaryGeneratorAction.hh"
 #include "LBNENuWeight.hh"
+#include "LBNEVolumePlacements.hh"
+#include "LBNEDetectorConstruction.hh"
 
 using namespace std;
 
@@ -47,9 +49,10 @@ LBNEAnalysis::LBNEAnalysis()
    :fOutFile(0),
     fOutTree(0)
 {
-  G4RunManager *pRunManager=(LBNERunManager*)LBNERunManager::GetRunManager();
+  LBNERunManager *pRunManager=
+    dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
 
- if (pRunManager->GetVerboseLevel() > 0) {
+ if (pRunManager->GetVerboseLevel() > 0) 
   {
      std::cout << "LBNEAnalysis Constructor Called." << std::endl;
   }
@@ -91,7 +94,8 @@ LBNEAnalysis::LBNEAnalysis()
 //------------------------------------------------------------------------------------
 LBNEAnalysis::~LBNEAnalysis()
 { 
-  G4RunManager *pRunManager=(LBNERunManager*)LBNERunManager::GetRunManager();
+  LBNERunManager *pRunManager=
+    dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
 
  if (pRunManager->GetVerboseLevel() > 0) {
       std::cout << "LBNEAnalysis Destructor Called." << std::endl;
@@ -111,8 +115,10 @@ LBNEAnalysis* LBNEAnalysis::getInstance()
 G4bool LBNEAnalysis::CreateOutput()
 {
 
-  G4RunManager *pRunManager=(LBNERunManager*)LBNERunManager::GetRunManager();
-   if (pRunManager->GetCreateOutput()) {
+  LBNERunManager *pRunManager=
+    dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
+
+   if (pRunManager->GetCreateOutput()) 
    {
       G4String spaces = "      ";
       std::cout << "    LBNEAnalysis::CreateOutput() - Creating output ntuple..." << std::endl; 
@@ -122,8 +128,10 @@ G4bool LBNEAnalysis::CreateOutput()
 	 //std::cout << spaces << "Creating G4LBNEData Ntuple..." << std::endl;
 	 //return LBNEAnalysis::CreateG4LBNEDataNtp();
 
-	 G4RunManager* pRunManager = G4RunManager::GetRunManager();
-	 sprintf(nuNtupleFileName,"%s_%03d%s.root",(LBNEData->GetOutputNtpFileName()).c_str(),pRunManager->GetCurrentRun()->GetRunID(), (LBNEData->GetGeometryTag()).c_str());
+         LBNERunManager *pRunManager=
+          dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
+	 sprintf(nuNtupleFileName,"%s_%03d%s.root",
+	   (pRunManager->GetOutputNtpFileName()).c_str(),pRunManager->GetCurrentRun()->GetRunID(), "v3xxx");
 	 fOutFile = new TFile(nuNtupleFileName,"RECREATE","root ntuple");
 	 G4cout << "Creating neutrino ntuple: "<<nuNtupleFileName<<G4endl;
 	 //fOutTree = new TTree("nudata","g4numi Neutrino ntuple");
@@ -148,7 +156,8 @@ G4bool LBNEAnalysis::CreateOutput()
 //------------------------------------------------------------------------------------
 void LBNEAnalysis::CloseOutput()
 {  
-  G4RunManager *pRunManager=(LBNERunManager*)LBNERunManager::GetRunManager();
+  LBNERunManager *pRunManager=
+    dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
   if (pRunManager->GetCreateOutput()) {
      //if(fOutFile && fOutFile->IsOpen())
      //{
@@ -199,7 +208,8 @@ G4int LBNEAnalysis::GetEntry()
 void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
 {
 
-  G4RunManager *pRunManager=(LBNERunManager*)LBNERunManager::GetRunManager();
+  LBNERunManager *pRunManager=
+    dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
 
  if (pRunManager->GetVerboseLevel() > 3) 
    { G4cout << "LBNEAnalysis::FillNeutrinoNtuple() called." << G4endl;}
@@ -208,7 +218,6 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
 
    fLBNEOutNtpData -> Clear();
 
-   G4RunManager* pRunManager        = G4RunManager::GetRunManager();
    LBNEPrimaryGeneratorAction *NPGA = (LBNEPrimaryGeneratorAction*)(pRunManager)->GetUserPrimaryGeneratorAction();
    G4int evtno                      = pRunManager->GetCurrentEvent()->GetEventID();
     
@@ -247,11 +256,10 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
    
    fLBNEOutNtpData->run        = pRunManager->GetCurrentRun()->GetRunID();
    fLBNEOutNtpData->evtno      = pRunManager->GetCurrentEvent()->GetEventID();
-   //// ???????????????????????????
-//   fLBNEOutNtpData->beamHWidth = LBNEData->GetBeamSigmaX()/cm;
-//   fLBNEOutNtpData->beamVWidth = LBNEData->GetBeamSigmaY()/cm;
-//   fLBNEOutNtpData->beamX      = LBNEData->GetBeamXPosition()/cm;
-//   fLBNEOutNtpData->beamY      = LBNEData->GetBeamYPosition()/cm;
+   fLBNEOutNtpData->beamHWidth = NPGA->GetBeamSigmaX()/cm;
+   fLBNEOutNtpData->beamVWidth = NPGA->GetBeamSigmaY()/cm;
+   fLBNEOutNtpData->beamX      = NPGA->GetBeamOffsetX()/cm;
+   fLBNEOutNtpData->beamY      = NPGA->GetBeamOffsetY()/cm;
    
    //G4int particleID = track.GetParentID();
    G4ThreeVector protonOrigin = NPGA->GetProtonOrigin();
@@ -264,8 +272,12 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
    fLBNEOutNtpData->protonPy             = protonMomentum[1];
    fLBNEOutNtpData->protonPz             = protonMomentum[2];
    
-//   fLBNEOutNtpData->nuTarZ      = LBNEData->GetTargetZ0(0);
-//   fLBNEOutNtpData->hornCurrent = LBNEData->GetHornCurrent()/ampere/1000.;
+   LBNEVolumePlacements *volDB = LBNEVolumePlacements::Instance();
+   
+   fLBNEOutNtpData->nuTarZ      = volDB->GetTargetLengthIntoHorn(); // A better info that the somewhat meaningless Z0 
+   const LBNEDetectorConstruction *detDB = 
+      dynamic_cast<const LBNEDetectorConstruction*>(pRunManager->GetUserDetectorConstruction());
+   fLBNEOutNtpData->hornCurrent = detDB->GetHornCurrent()/ampere/1000.;
    
    // Random decay - these neutrinos rarely hit any of the detectors
    fLBNEOutNtpData->Ndxdz   = NuMomentum[0]/NuMomentum[2];
@@ -359,7 +371,9 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
    //
    //G4int tptrkid = -99;
    //?????????????????????????????
-   /*
+/*
+** We do not currently support Fluka nor Mars input 
+**
    if(!(LBNEData->GetUseFlukaInput()) && !(LBNEData->GetUseMarsInput())) 
    {
 
@@ -496,8 +510,8 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
 	 }
       }
    }
-   else          // using external ntuple, so set these to whatever comes from that ntuple
-   {
+*/
+  {
       G4ThreeVector ParticlePosition = NPGA->GetParticlePosition();
       fLBNEOutNtpData->tvx = ParticlePosition[0]/cm;
       fLBNEOutNtpData->tvy = ParticlePosition[1]/cm;
@@ -510,18 +524,57 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
    }   
    //end find particle exiting target
 
-
-   */
-
-/* ????????????????????????????
-
    //
    //Near Detector
    // Neutrino data at different points
    // need neutrino parent info to be filled in fLBNEOutNtpData by this point
-   const std::vector<G4double> xdet_near = LBNEData->GetXDetNear();
-   const std::vector<G4double> ydet_near = LBNEData->GetYDetNear();
-   const std::vector<G4double> zdet_near = LBNEData->GetZDetNear();
+   // We have no Near Detector. ..
+   // 
+   //Near & Far Detector location
+   // This has been lifted from LBNEDataInput, no changes. 
+   // except that we no longer accept user input from now.  
+   //
+  const int nNear=5;
+  const int nFar=3;
+  G4double xdetNear[]    = { 0.       ,  0.      ,    11.50,     0.         ,     25.84   };
+  G4double ydetNear[]    = { 0.       ,  0.      ,    -3.08,     0.         ,     78.42   };
+  G4double zdetNear[]    = {1000.     ,1036.49   ,   1000.97,   1030.99     ,    745.25   };
+//  G4String detNameNear[] = {"LBNE", "Minos",        "Nova", "Minerva"  , "MiniBooNE" };
+  G4double xdetFar[]     = { 0.       , 0.        , 11040.   };
+  G4double ydetFar[]     = { 0.       , 0.        , -4200.   };
+  G4double zdetFar[]     = { 1297000. , 735340.  , 810450.   };
+//  G4String detNameFar[]  = {"LBNE",  "Minos" , "Nova"};
+
+//  get(xdetNear[0], "FluxAreaX0near");
+//  get(ydetNear[0], "FluxAreaY0near");
+//  get(zdetNear[0], "FluxAreaZ0near");
+  
+//  get(xdetFar[0], "FluxAreaX0far");
+//  get(ydetFar[0], "FluxAreaY0far");
+//  get(zdetFar[0], "FluxAreaZ0far");
+
+   std::vector<G4double> xdet_near(nNear, 0.);
+   std::vector<G4double> ydet_near(nNear, 0.);
+   std::vector<G4double> zdet_near(nNear, 0.);
+
+  for(G4int ii=0;ii<nNear;ii++){
+    xdet_near.push_back(xdetNear[ii]*m);
+    ydet_near.push_back(ydetNear[ii]*m);
+    zdet_near.push_back(zdetNear[ii]*m);
+  }
+   //Far Detector
+   // Neutrino data at different points
+   // need neutrino parent info to be filled in fLBNEOutNtpData by this point
+   std::vector<G4double> xdet_far(nNear, 0.);
+   std::vector<G4double> ydet_far(nNear, 0.);
+   std::vector<G4double> zdet_far(nNear, 0.);
+   
+  for(G4int ii=0;ii<nFar;ii++){
+    xdet_far.push_back(xdetFar[ii]*m);
+    ydet_far.push_back(ydetFar[ii]*m);
+    zdet_far.push_back(zdetFar[ii]*m);
+  }
+   
    
    if(xdet_near.size() != ydet_near.size() || 
       xdet_near.size() != zdet_near.size() ||
@@ -552,11 +605,6 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
 
    //
    //Far Detector
-   // Neutrino data at different points
-   // need neutrino parent info to be filled in fLBNEOutNtpData by this point
-   const std::vector<G4double> xdet_far = LBNEData->GetXDetFar();
-   const std::vector<G4double> ydet_far = LBNEData->GetYDetFar();
-   const std::vector<G4double> zdet_far = LBNEData->GetZDetFar();
    
    if(xdet_far.size() != ydet_far.size() || 
       xdet_far.size() != zdet_far.size() ||
@@ -632,13 +680,12 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
   //Done. Fill Tree.
   //
   fOutTree->Fill();  
-/* ?????????????????????????????
   //
   // Write to ascii file
   //
-  if (LBNEData->GetCreateASCIIOutput())
+  if (pRunManager->GetCreateASCIIOutput())
   {
-     std::string asciiFileName = LBNEData->GetASCIIOutputFileName();
+     std::string asciiFileName = pRunManager->GetOutputASCIIFileName();
      std::ofstream asciiFile(asciiFileName.c_str(), std::ios::app);
      if(asciiFile.is_open())
      {
@@ -649,7 +696,6 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
 	asciiFile.close();
      }
   }
-*/
 
 }
 
@@ -658,11 +704,13 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
 void LBNEAnalysis::FillTrackingNtuple(const G4Track& track, LBNETrajectory* currTrajectory)
 {
    
-   if (!LBNEData->GetCreateOutput()) return;
+   LBNERunManager* pRunManager = 
+       dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
+       
+   if (!pRunManager->GetCreateOutput()) return;
 
    fLBNEOutNtpData -> Clear();
 
-   G4RunManager* pRunManager = G4RunManager::GetRunManager();
    LBNEPrimaryGeneratorAction *NPGA = 
       (LBNEPrimaryGeneratorAction*)(pRunManager)->GetUserPrimaryGeneratorAction();
 
@@ -673,10 +721,10 @@ void LBNEAnalysis::FillTrackingNtuple(const G4Track& track, LBNETrajectory* curr
    
    fLBNEOutNtpData->run        = pRunManager->GetCurrentRun()->GetRunID();
    fLBNEOutNtpData->evtno      = pRunManager->GetCurrentEvent()->GetEventID();
-   fLBNEOutNtpData->beamHWidth = LBNEData->GetBeamSigmaX()/cm;
-   fLBNEOutNtpData->beamVWidth = LBNEData->GetBeamSigmaY()/cm;
-   fLBNEOutNtpData->beamX      = LBNEData->GetBeamXPosition()/cm;
-   fLBNEOutNtpData->beamY      = LBNEData->GetBeamYPosition()/cm;
+   fLBNEOutNtpData->beamHWidth = NPGA->GetBeamSigmaX()/cm;
+   fLBNEOutNtpData->beamVWidth = NPGA->GetBeamSigmaY()/cm;
+   fLBNEOutNtpData->beamX      = NPGA->GetBeamOffsetX()/cm;
+   fLBNEOutNtpData->beamY      = NPGA->GetBeamOffsetY()/cm;
    
    //G4int particleID = track.GetParentID();
    G4ThreeVector protonOrigin = NPGA->GetProtonOrigin();
@@ -689,13 +737,12 @@ void LBNEAnalysis::FillTrackingNtuple(const G4Track& track, LBNETrajectory* curr
    fLBNEOutNtpData->protonPy             = protonMomentum[1];
    fLBNEOutNtpData->protonPz             = protonMomentum[2];
    
-   fLBNEOutNtpData->nuTarZ      = LBNEData->GetTargetZ0(0);
-   fLBNEOutNtpData->hornCurrent = LBNEData->GetHornCurrent()/ampere/1000.;
-
-
-
-
-
+   LBNEVolumePlacements *volDB = LBNEVolumePlacements::Instance();
+   
+   fLBNEOutNtpData->nuTarZ      = volDB->GetTargetLengthIntoHorn(); // A better info that the somewhat meaningless Z0 
+   const LBNEDetectorConstruction *detDB = 
+      dynamic_cast<const LBNEDetectorConstruction*>(pRunManager->GetUserDetectorConstruction());
+   fLBNEOutNtpData->hornCurrent = detDB->GetHornCurrent()/ampere/1000.;
 
    G4int trackID                   = track.GetTrackID();
    G4String currentTrackVolName    = track.GetVolume() -> GetName();
@@ -813,9 +860,10 @@ void LBNEAnalysis::TrackThroughGeometry(const LBNETrajectory* TrackTrajectory)
       }
 
 
-      if(LBNEData->GetSimulation() == "Target Tracking") continue;
-
-
+//      if(LBNEData->GetSimulation() == "Target Tracking") continue;
+      //
+      // The following volume names need updating.....
+     // 
 
       //particle enters horn 1
       if ((prevolname.contains("TGAR")) && postvolname.contains("PH01"))
@@ -824,8 +872,7 @@ void LBNEAnalysis::TrackThroughGeometry(const LBNETrajectory* TrackTrajectory)
       }
       //particle at neck of horn 1 the last entry will be just before it leaves the neck
       //if (prevolname.contains("PH01-02"))
-      if(prevolname.contains(LBNEData->GetHornNeckPartName(1)) ||
-	 prevolname.contains("PH01NeckPlane"))
+      if (prevolname.contains("Horn1DownstrPart1"))
       {
 	 fLBNEOutNtpData -> AddTrkPoint(TrkPoint::StringToEnum("Horn1NeckPlane"), TrkPt);
       }
@@ -846,8 +893,6 @@ void LBNEAnalysis::TrackThroughGeometry(const LBNETrajectory* TrackTrajectory)
       }
       //particle at neck of horn 2 the last entry will be just before it leaves the neck
       //if (prevolname.contains("PH02-02"))
-      if(prevolname.contains(LBNEData->GetHornNeckPartName(2)) ||
-	 prevolname.contains("PH02NeckPlane"))
       {
 	 fLBNEOutNtpData -> AddTrkPoint(TrkPoint::StringToEnum("Horn2NeckPlane"), TrkPt);
       }
@@ -921,7 +966,12 @@ void LBNEAnalysis::TrackThroughGeometry(const LBNETrajectory* TrackTrajectory)
 LBNETrajectory* LBNEAnalysis::GetParentTrajectory(G4int parentID)
 {
 
-   if(LBNEData->GetDebugLevel() == 10) { G4cout << "LBNEAnalysis::GetParentTrajectory() called." << G4endl;}
+  LBNERunManager *pRunManager=
+    dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
+
+  if (pRunManager->GetVerboseLevel() == 10) {
+   G4cout << "LBNEAnalysis::GetParentTrajectory() called." << G4endl;
+  }
       
   G4TrajectoryContainer* container = 
     G4RunManager::GetRunManager()->GetCurrentEvent()->GetTrajectoryContainer();

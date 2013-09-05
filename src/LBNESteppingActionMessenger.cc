@@ -1,7 +1,6 @@
 #include "LBNESteppingActionMessenger.hh"
 
 #include "LBNESteppingAction.hh"
-#include "LBNEDataInput.hh"
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"

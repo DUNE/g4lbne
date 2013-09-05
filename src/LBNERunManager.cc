@@ -1,10 +1,9 @@
 //----------------------------------------------------------------------
 // LBNERunManager.cc
-// $Id: LBNERunManager.cc,v 1.1.1.1.2.3 2013/08/23 06:09:13 lebrun Exp $
+// $Id: LBNERunManager.cc,v 1.1.1.1.2.4 2013/09/05 12:32:50 lebrun Exp $
 //----------------------------------------------------------------------
 
 #include "LBNERunManager.hh"
-#include "LBNEDataInput.hh"
 #include "TStopwatch.h"
 #include "TTime.h"
 #include "LBNEPrimaryGeneratorAction.hh"
@@ -311,6 +310,7 @@ void LBNERunManager::BeamOn(G4int n_event,const char* macroFile,G4int n_select)
 	std::cout << "********************************************************" << std::endl;
 	std::cout << "********************************************************" << std::endl;
 	std::cout << "*****LBNERunManager::BeamOn - With "<<nEvents << " Events " << std::endl;	 
+	std::cout << "***** (argument n_event = " << n_event <<" ignored, O.K.) " << std::endl;	 
 	std::cout << "********************************************************" << std::endl;
 	G4RunManager::BeamOn(nEvents, macroFile, n_select);
 	std::cout << "********************************************************" << std::endl;

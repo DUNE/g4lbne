@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNESteppingAction.cc
-// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.4 2013/09/04 22:56:47 lebrun Exp $
+// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.5 2013/09/05 12:32:50 lebrun Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -228,12 +228,13 @@ void LBNESteppingAction::CheckInHornEndPlane(const G4Step * theStep, G4int nhorn
    
    if(theStep->GetPreStepPoint()->GetPhysicalVolume() == NULL) return;
 
-   std::string preStepPointName  = theStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
+   std::string preStepPointName  = 
+     theStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetName();
+   std::string postStepPointName  = 
+     theStep->GetPostStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetName();
 
-   std::stringstream endName;
-   endName << "PH0" << nhorn << "EndPlane";
-
-   if (preStepPointName.find(endName.str()) != std::string::npos)
+   if (((preStepPointName == G4String("TargetHallAndHorn1")) && (postStepPointName == G4String("Tunnel"))) ||
+       ((preStepPointName == G4String("Horn2Hall")) && (postStepPointName == G4String("Tunnel")))) 
    {
       theTrack->SetTrackStatus(fStopAndKill);
       G4VTrajectory* currTrajectory = 0;

@@ -1,9 +1,8 @@
-// $Id: LBNEImpWeight.cc,v 1.1 2011/07/13 16:20:52 loiacono Exp $
+// $Id: LBNEImpWeight.cc,v 1.1.1.1.2.1 2013/09/05 12:32:50 lebrun Exp $
 //g4numi
 #include "LBNERunManager.hh"
 #include "LBNEPrimaryGeneratorAction.hh"
 #include "LBNETrackInformation.hh"
-#include "LBNEDataInput.hh"
 #include "LBNEImpWeight.hh"
 #include "LBNETrajectory.hh"
 #include "LBNEAnalysis.hh"
@@ -26,7 +25,9 @@ LBNEImpWeight::~LBNEImpWeight()
 G4double LBNEImpWeight::CalculateImpWeight(const G4Track *aTrack)
 {
 
-  G4RunManager* pRunManager=(LBNERunManager*)LBNERunManager::GetRunManager();
+  LBNERunManager* pRunManager = 
+       dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
+       
   LBNEPrimaryGeneratorAction* NPGA=(LBNEPrimaryGeneratorAction*)pRunManager->GetUserPrimaryGeneratorAction();
   G4double impwt=NPGA->GetWeight();
 

@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNEStackingAction.cc
-// $Id: LBNEStackingAction.cc,v 1.2.2.1 2013/08/19 22:32:14 lebrun Exp $
+// $Id: LBNEStackingAction.cc,v 1.2.2.2 2013/09/05 12:32:50 lebrun Exp $
 //----------------------------------------------------------------------
 
 #include "LBNEStackingAction.hh"
@@ -57,7 +57,7 @@ G4ClassificationOfNewTrack LBNEStackingAction::ClassifyNewTrack(const G4Track * 
    LBNEStackingAction::KillEMParticles(classification, aTrack);
      //LBNEStackingAction::KillltZeroPzParticles(classification, aTrack);
    LBNEStackingAction::KillThresholdParticles(classification, aTrack);
-   LBNEStackingAction::KillOutOfWorldParticles(classification, aTrack);
+//   LBNEStackingAction::KillOutOfWorldParticles(classification, aTrack); Obsolete in G4 
    LBNEStackingAction::KillUnimportantParticles(classification, aTrack);
    
   return classification;
@@ -143,14 +143,13 @@ void LBNEStackingAction::KillThresholdParticles(G4ClassificationOfNewTrack& clas
 
 
 //----------------------------------------------------------------------------------
+/*
 void LBNEStackingAction::KillOutOfWorldParticles(G4ClassificationOfNewTrack& classification, 
 						 const G4Track * aTrack)
 {
 
    //check if track is inside world (some neutral particles make huge jumps from horns (field part) and
    // end up decaying in ~infinity which occasionaly causes g4numi to crash
-   /* 
-   ** Hopefully obsolete.. 
    
    int verboseLevel = G4TrackingManager::GetVerboseLevel()();
    
@@ -170,9 +169,8 @@ void LBNEStackingAction::KillOutOfWorldParticles(G4ClassificationOfNewTrack& cla
       classification =fKill;
    }
    
-   */
 }
-
+*/
 //----------------------------------------------------------------------------------
 void LBNEStackingAction::KillUnimportantParticles(G4ClassificationOfNewTrack& classification, 
 						  const G4Track * aTrack)

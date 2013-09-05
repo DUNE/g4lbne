@@ -10,7 +10,6 @@
 #include "LBNETrajectory.hh"
 
 class G4Run;
-class LBNEDataInput;
 class LBNERunActionMessenger;
 
 class LBNERunAction : public G4UserRunAction

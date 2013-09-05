@@ -32,10 +32,6 @@
 #include "LBNEPlacementMessenger.hh"
 
 
-#include "LBNEDataInput.hh"
-
-
-
 #ifdef G4VIS_USE
 #include "LBNEVisManager.hh"
 #endif
@@ -107,10 +103,6 @@ int main(int argc,char** argv)
   if(optind < argc){ 
     G4cout << "Setting macroFile to " << argv[argc-1] << G4endl;
     macroFileName = argv[argc-1];
-  }
-
-  if(!inputFileName.isNull()){
-    LBNEDataInput::setInputFile(inputFileName);
   }
 
   // Invoke both the Surveoyr class and the Volume placement 

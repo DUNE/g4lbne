@@ -6,7 +6,6 @@
 #include "G4ios.hh"
 
 class LBNESteppingAction;
-class LBNEDataInput;
 class G4UIdirectory;
 class G4UIcmdWithAnInteger;
 class G4UIcmdWithADoubleAndUnit;

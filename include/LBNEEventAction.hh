@@ -17,7 +17,6 @@
 class G4Event;
 class G4Track;
 class G4TrajectoryContainer;
-class LBNEDataInput;
 class LBNERunManager;
 
 class LBNEEventAction : public G4UserEventAction
@@ -38,7 +37,6 @@ private:
  
 private:
 
-   LBNEDataInput* LBNEData;
    LBNERunManager* pRunManager;
    
 };

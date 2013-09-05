@@ -30,7 +30,7 @@ class LBNESteppingAction : public G4UserSteppingAction
 
    void CheckInTgtEndPlane(const G4Step * theStep);
    
-   void OpenAscii(const char *fname);
+   void OpenAscii(const char *fname); // for Geantino studies. (Absorption studies..) 
 
 private:
    
@@ -43,6 +43,7 @@ private:
 // 
    LBNESteppingActionMessenger *pMessenger;
    std::ofstream fOutStudy;
+   std::ofstream fOutStepStudy;
    
    double fKillTrackingThreshold;
    
@@ -59,9 +60,11 @@ private:
    
    bool goneThroughHorn1Neck;
    bool goneThroughHorn2Entr;
+   int fEvtIdPrevious; 
    
    
    void StudyAbsorption(const G4Step*); 
+   void dumpStepCheckVolumeAndFields(const G4Step*);
    
 public:
    

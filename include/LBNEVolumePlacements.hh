@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.25 2013/09/03 22:51:39 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.26 2013/09/05 11:20:22 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -211,6 +211,7 @@ public:
   inline double GetHorn2NeckInnerRadius() const { return fHorn2NeckInnerRadius; } // same coordinate system.. 
   inline double GetHorn2ZEndIC() const { return fHorn2ZEndIC; } // the Z end of the inner conductor, rescaled..
   inline double GetHorn2ZEqnChange(size_t k) const {return fHorn2ZEqnChanges[k]; } 
+  inline size_t GetHorn2ZEqnChangeNumEqn() const {return fHorn2ZEqnChanges.size(); } 
   inline double GetHorn2DeltaZEntranceToZOrigin() const {return fHorn2DeltaZEntranceToZOrigin; } 
   inline double GetHorn2OuterTubeOuterRad() const {return  fHorn2OuterTubeOuterRad; }
   void SegmentTarget(); // Check the target segmentation. Assume fixed Fin size. 

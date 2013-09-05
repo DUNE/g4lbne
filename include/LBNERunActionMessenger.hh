@@ -61,6 +61,7 @@ private:
    G4UIcmdWithABool*           useFlukaInput;
    G4UIcmdWithABool*           useMarsInput;
    G4UIcmdWithABool*           KillTracking;
+   G4UIcmdWithABool*           GenerateOutputNTuple;
 
    //
 

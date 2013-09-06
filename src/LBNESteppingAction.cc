@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNESteppingAction.cc
-// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.5 2013/09/05 12:32:50 lebrun Exp $
+// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.6 2013/09/06 22:54:50 lebrun Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -41,6 +41,8 @@ LBNESteppingAction::LBNESteppingAction()
  }
  pMessenger = new LBNESteppingActionMessenger(this); 
  fEvtIdPrevious = -1;
+ fStudyGeantinoMode=G4String("none");
+ fKeyVolumeForOutput=G4String("blank");
 }
 //----------------------------------------------------------------------
 LBNESteppingAction::~LBNESteppingAction()
@@ -61,13 +63,16 @@ void LBNESteppingAction::UserSteppingAction(const G4Step * theStep)
       std::cout << "Event " << evtno << ": LBNESteppingAction::UserSteppingAction() Called." << std::endl;
    }
 
-   if(pRunManager->GetCurrentEvent()->GetEventID() < 5) 
+   if(pRunManager->GetCurrentEvent()->GetEventID() < -5) 
         this->dumpStepCheckVolumeAndFields(theStep); 
 
    LBNESteppingAction::KillNonNuThresholdParticles(theStep);
       
    LBNESteppingAction::CheckDecay(theStep);
-   if (fOutStudy.is_open()) StudyAbsorption(theStep);
+   if (fOutStudy.is_open()) { 
+    if (fStudyGeantinoMode.find("Absorb") != std::string::npos) StudyAbsorption(theStep);
+    if (fStudyGeantinoMode.find("Propa") != std::string::npos) StudyPropagation(theStep);
+   }
 }
 
 
@@ -304,14 +309,21 @@ void LBNESteppingAction::CheckInTgtEndPlane(const G4Step * theStep)
 }
 void LBNESteppingAction::OpenAscii(const char *fname) {
 
+   std::cerr << " LBNESteppingAction::OpenAscii Start with filename " << std::string(fname) << std::endl;
    fOutStudy.open(fname);
    if (!fOutStudy.is_open()) {
      std::string descr("Can not open output file "); 
      descr += std::string(fname);
      G4Exception("LBNESteppingAction::OpenAscii", "I/O Problem ", FatalException, descr.c_str());
    }
-   fOutStudy << 
+   if (fStudyGeantinoMode.find("Absorb") != std::string::npos) { 
+     fOutStudy << 
     " id x y z ILDecayChan ILHorn1Neck ILHorn2Entr ILNCDecayChan ILNCHorn1Neck ILNCHorn2Entr ILAlHorn2Entr" << std::endl;
+   } else if (fStudyGeantinoMode.find("Propa") != std::string::npos) {
+     fOutStudy << " id x y z zPost step matPre matPost " << std::endl;
+   }
+   fOutStudy.flush();
+   std::cerr << " LBNESteppingAction::OpenAscii " << std::string(fname) << std::endl;
 }
 
 void LBNESteppingAction::StudyAbsorption(const G4Step * theStep) {
@@ -410,6 +422,41 @@ void LBNESteppingAction::StudyAbsorption(const G4Step * theStep) {
    } 
     
 }
+void LBNESteppingAction::StudyPropagation(const G4Step * theStep) {
+//
+//make sure we are dealing with a geantino... 
+//
+   G4Track * theTrack = theStep->GetTrack();
+   if ((theTrack->GetParticleDefinition()->GetParticleName()).find("geantino") == std::string::npos) return;
+   G4StepPoint* prePtr = theStep->GetPreStepPoint();
+   if (prePtr == 0) return;
+   G4StepPoint* postPtr = theStep->GetPostStepPoint();
+   if (postPtr == 0) return;
+   if (theStep->GetStepLength() < 0.1*mm) return;
+   G4LogicalVolume *volPost = postPtr->GetPhysicalVolume()->GetLogicalVolume();
+   G4LogicalVolume *volPre = prePtr->GetPhysicalVolume()->GetLogicalVolume();
+   std::string volNamePost(volPost->GetName());
+   std::string volNamePre(volPre->GetName());
+   if ((volNamePost.find(fKeyVolumeForOutput.c_str()) != std::string::npos) || 
+      (volNamePost.find(fKeyVolumeForOutput.c_str()) != std::string::npos)) {
+        std::cout << " LBNESteppingAction::StudyPropagation, critical volume " << 
+	  volNamePre << " to " << volNamePost 
+	             << " detected at " <<  prePtr->GetPosition() << std::endl;
+   }   
+   if (volPre->GetMaterial()->GetName() == volPost->GetMaterial()->GetName()) return;
+   fOutStudy << " " << pRunManager->GetCurrentEvent()->GetEventID(); 
+   for (int k=0; k != 3; k++) fOutStudy << " " << prePtr->GetPosition()[k];
+   fOutStudy << " " << postPtr->GetPosition()[2];
+   fOutStudy << " " << theStep->GetStepLength();
+   fOutStudy << " " << volPre->GetMaterial()->GetName();
+   fOutStudy << " " << volPost->GetMaterial()->GetName();
+   fOutStudy << std::endl;
+   G4String vName(volPre->GetName());
+   if (vName.find("DecayPipe") !=  std::string::npos) {
+        theTrack->SetTrackStatus(fStopAndKill);
+    }
+}
+
 void LBNESteppingAction::dumpStepCheckVolumeAndFields(const G4Step * theStep) {
 
   int idEvt = pRunManager->GetCurrentEvent()->GetEventID();

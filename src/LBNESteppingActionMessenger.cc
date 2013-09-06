@@ -25,7 +25,7 @@ LBNESteppingActionMessenger::LBNESteppingActionMessenger(LBNESteppingAction* RA)
   SimulationNameCmd  = new G4UIcmdWithAString("/LBNE/stepping/name",this);
   SimulationNameCmd->SetGuidance("Name for the study in question");
   SimulationNameCmd->SetParameterName("Name",true);
-  SimulationNameCmd->SetDefaultValue ("Geom101");
+  SimulationNameCmd->SetDefaultValue ("GeomPos101");
   SimulationNameCmd->AvailableForStates(G4State_Idle);
     
   OutputASCIIFileNameCmd  = new G4UIcmdWithAString("/LBNE/stepping/filename",this);
@@ -34,11 +34,17 @@ LBNESteppingActionMessenger::LBNESteppingActionMessenger(LBNESteppingAction* RA)
   OutputASCIIFileNameCmd->SetDefaultValue ("./steppingActionOut.txt");
   OutputASCIIFileNameCmd->AvailableForStates(G4State_Idle);
     
+  KeyVolumeForOutput  = new G4UIcmdWithAString("/LBNE/stepping/keyVolumeForOutput",this);
+  KeyVolumeForOutput->SetGuidance("A volume that will trigger output running geantino propagation ");
+  KeyVolumeForOutput->SetParameterName("keyVolumeForOutput",true);
+  KeyVolumeForOutput->SetDefaultValue ("blank");
+  KeyVolumeForOutput->AvailableForStates(G4State_Idle);
 }
 LBNESteppingActionMessenger::~LBNESteppingActionMessenger() {
 
   delete SimulationNameCmd; 
   delete OutputASCIIFileNameCmd;
+  delete KeyVolumeForOutput;
   delete StepDir;
 }
 
@@ -47,9 +53,13 @@ void LBNESteppingActionMessenger::SetNewValue(G4UIcommand* command,G4String newV
    if (command == SimulationNameCmd)
    { 
       G4cout << "\n---> Stepping Output info Data Set Name " << newValues << G4endl;
+      SteppingAction->SetStudyGeantinoMode(newValues);
       
    } else if(command == OutputASCIIFileNameCmd) {
      SteppingAction->OpenAscii(newValues.c_str());
+   } else if(command == KeyVolumeForOutput) {
+     SteppingAction->SetKeyVolumeForOutput(newValues);
    }
-
 }
+
+

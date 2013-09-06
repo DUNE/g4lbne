@@ -71,6 +71,7 @@ LBNEPrimaryGeneratorAction::LBNEPrimaryGeneratorAction() :
     fUseGeantino(false),
     fUseMuonGeantino(false),
     fZOriginGeantino(-515.), // Upstream of target.
+    fSigmaZOriginGeantino(100.), // Upstream of target.
     fPolarAngleGeantino(.005)
 {
    fRunManager       =(LBNERunManager*)LBNERunManager::GetRunManager();
@@ -413,8 +414,10 @@ void LBNEPrimaryGeneratorAction::Geantino(G4Event* anEvent)
     fProtonN = fCurrentPrimaryNo;
     
     fTgen=0;
-         
-    fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., fZOriginGeantino));
+    const double x =  G4RandGauss::shoot(0.0, 5.0);  
+    const double y =  G4RandGauss::shoot(0.0, 5.0);  
+    const double z =  fZOriginGeantino +  G4RandGauss::shoot(0.0, fSigmaZOriginGeantino);  
+    fParticleGun->SetParticlePosition(G4ThreeVector(x, y, z));
     fParticleGun->SetParticleMomentumDirection(direction);
     if (fUseMuonGeantino) fParticleGun->SetParticleEnergy(fProtonMomentumMag); // back door use of the proton momentum data card. 
     fParticleGun->GeneratePrimaryVertex(anEvent);

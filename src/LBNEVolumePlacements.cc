@@ -133,11 +133,14 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
   fTargetCTubeReturnLengthUpstr = fTargetDistFlangeToTargetStart + 10.25*in; // from the upstream end of target to 
                                  // Upstr bend return 
   fTargetCTubeReturnLengthUpstrEnd = 6.604*in - fTargetDistFlangeToTargetStart;
-  fTargetAlignRingMaterial = std::string("Steel316");
-  fTargetAlignRingThick = 11.0*mm; // Accurate to +- 1 mm, from Russian drawing. Err on the excess side.  
-  fTargetAlignRingInnerRadius = (18.0/2)*mm;
+  fTargetAlignRingMaterial = std::string("Aluminum");
+  fTargetAlignRingThick = 11.0*mm; // Accurate to +- 1 mm, from Russian drawing. Err on the excess side. 
+  fTargetAlignRingInnerRadius = (18.0/2)*mm + 0.25*mm; // final tweak to avoid overlaps. compensate by increaing thickness.
   fTargetAlignRingOuterRadius = (29.5/2)*mm;
-  fTargetAlignRingCutAngle = 0.1735; // Assume atan(3.4 mm/fTargetAlignRingInnerRadius);
+//  fTargetAlignRingCutAngle = 0.1735; // Assume atan(3.4 mm/fTargetAlignRingInnerRadius), to remove overlaps 
+  fTargetAlignRingCutAngle = 0.45; // Too tight... increase it 
+  fTargetAlignRingThick *= 1.0 + 2.0*fTargetAlignRingCutAngle/M_PI; // We compensate the deleted region of the rings 
+                                                   // by increasing the thickness.                  // 
   fTargetAlignRingSpacing = 243.6*mm; // Such we can have 5 alignment rings over the entire distance. 
   fMaxNumAlignRings = 5; // assiming a target length of ~ 1 m. long 
   fTargetHeContTubeInnerRadius = 30.0*mm/2.0;
@@ -648,30 +651,40 @@ LBNEVolumePlacementData*
  // despite being a single copy, do the placement in a separate method. 	    
     }
     
-    if (name == G4String("TargetAlignmentRingLeft")) { // 
-	    info.fParams.resize(5);
-            info.fParams[0] = fTargetAlignRingInnerRadius;
-            info.fParams[1] = fTargetAlignRingOuterRadius; 
-            info.fParams[2] = fTargetAlignRingThick;
-	    info.fParams[3] = M_PI/2. + fTargetAlignRingCutAngle ;
-	    info.fParams[4] = M_PI - fTargetAlignRingCutAngle ;
-            G4Tubs* aTubs = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2.,
-	                           info.fParams[3],   info.fParams[4]  );
-            info.fCurrent = new G4LogicalVolume(aTubs, G4Material::GetMaterial(std::string("Steel316")), volumeName);
- // Multiple copies.. 
- 	    
-    }
     if (name == G4String("TargetAlignmentRingRight")) { // 
 	    info.fParams.resize(5);
             info.fParams[0] = fTargetAlignRingInnerRadius;
             info.fParams[1] = fTargetAlignRingOuterRadius; 
             info.fParams[2] = fTargetAlignRingThick;
-	    info.fParams[3] = M_PI + fTargetAlignRingCutAngle;
-	    info.fParams[4] = 2.0*M_PI -  fTargetAlignRingCutAngle;
+	    info.fParams[3] = M_PI/2. + fTargetAlignRingCutAngle ;
+	    info.fParams[4] = M_PI - 2.0*fTargetAlignRingCutAngle ;
+	    G4Tubs* aTubs = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2.,
+				 info.fParams[3],   info.fParams[4]  );
+            info.fCurrent =
+	      new G4LogicalVolume(aTubs, G4Material::GetMaterial(fTargetAlignRingMaterial), volumeName);
+	    std::cerr << " Created TargetAlignmentRingLeft, Params " ;
+	    for (size_t k=0; k!=5; k++) std::cerr << " " <<  info.fParams[k] << " / ";
+	    std::cerr << " dphi " << aTubs->GetDeltaPhiAngle();
+	    std::cerr << std::endl;
+ // Multiple copies.. 
+ 	    
+    }
+    if (name == G4String("TargetAlignmentRingLeft")) { // 
+	    info.fParams.resize(5);
+            info.fParams[0] = fTargetAlignRingInnerRadius;
+            info.fParams[1] = fTargetAlignRingOuterRadius; 
+            info.fParams[2] = fTargetAlignRingThick;
+	    info.fParams[3] = -M_PI/2. +  fTargetAlignRingCutAngle + 2.0*M_PI;
+	    info.fParams[4] = M_PI - 2.0*fTargetAlignRingCutAngle ;
             G4Tubs* aTubs = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2.,
 	                           info.fParams[3],   info.fParams[4]  );
-            info.fCurrent = new G4LogicalVolume(aTubs, G4Material::GetMaterial(std::string("Steel316")), volumeName);
+            info.fCurrent = 
+	     new G4LogicalVolume(aTubs, G4Material::GetMaterial(fTargetAlignRingMaterial), volumeName);
  // Multiple copies.. 
+	    std::cerr << " Created TargetAlignmentRingRight, Params " ;
+	    for (size_t k=0; k!=5; k++) std::cerr << " " <<  info.fParams[k] << " / ";
+	    std::cerr << " dphi " << aTubs->GetDeltaPhiAngle();
+	    std::cerr << std::endl;
  	    
     } 
   // Things that are physically part of Horn1, but placed in at the dowstream end of the target volume 
@@ -1235,29 +1248,25 @@ void LBNEVolumePlacements::PlaceFinalUpstrTarget(G4PVPlacement *mother) {
     std::string tUpDown("TargetUpstrDownstr"); 
     Create(tUpDown + std::string("HeContainer")); 
     G4PVPlacement *vHeTube = PlaceFinal(tUpDown + std::string("HeContainer"), vM1); // Surveyable 
-    Create(tUpDown + std::string("Helium")); 
+    LBNEVolumePlacementData *plHelium = Create(tUpDown + std::string("Helium")); 
     G4PVPlacement *vHelium = PlaceFinal(tUpDown + std::string("Helium"), vHeTube); // Fixed 
     
     // First alignment ring, locate flush with the end plate (within 1 mm ) , left and right      
-    Create(G4String("TargetAlignmentRingLeft"));
-    std::map<G4String, LBNEVolumePlacementData>::iterator itTmpRLeft = fSubVolumes.find(G4String("TargetAlignmentRingLeft"));
-    LBNEVolumePlacementData &infoTmpRLeft = itTmpRLeft->second;
-    Create(G4String("TargetAlignmentRingRight"));
-    std::map<G4String, LBNEVolumePlacementData>::iterator itTmpRRight = fSubVolumes.find(G4String("TargetAlignmentRingRight"));
-    LBNEVolumePlacementData &infoTmpRRight = itTmpRRight->second;
+    LBNEVolumePlacementData *infoTmpRLeft = Create(G4String("TargetAlignmentRingLeft"));
+    LBNEVolumePlacementData *infoTmpRRight = Create(G4String("TargetAlignmentRingRight"));
 
     posTmp[0] = 0.; // The alignment rings are always centered.. 
     posTmp[1] = 0.;
-    posTmp[2] = -1.0*plM1->fParams[2]/2.0 + infoTmpRLeft.fParams[2]/2. + 1.0*mm; // 1 mm spacing Left and right have the same thickness. 
+    posTmp[2] = -1.0*plHelium->fParams[2]/2.0 + infoTmpRLeft->fParams[2]/2. + 1.0*mm; // 1 mm spacing Left and right have the same thickness. 
     int copyNumber = 0;
     while (true) {
       std::ostringstream cNumStrStr; cNumStrStr << "_P" << copyNumber;
-      G4PVPlacement((G4RotationMatrix *) 0, 
-	                            posTmp, infoTmpRLeft.fCurrent, G4String("TargetAlignmentRingLeft")+cNumStrStr.str(), 
-				          vHelium->GetLogicalVolume(), false, copyNumber, fCheckVolumeOverLapWC);
-      G4PVPlacement((G4RotationMatrix *) 0, 
-	                            posTmp, infoTmpRRight.fCurrent, G4String("TargetAlignmentRingRight")+ cNumStrStr.str(), 
-				          vHelium->GetLogicalVolume(), false, copyNumber, fCheckVolumeOverLapWC);
+      new G4PVPlacement((G4RotationMatrix *) 0, 
+				  posTmp, infoTmpRLeft->fCurrent, G4String("TargetAlignmentRingLeft")+cNumStrStr.str(), 
+					vHelium->GetLogicalVolume(), false, copyNumber, fCheckVolumeOverLapWC);
+      new G4PVPlacement((G4RotationMatrix *) 0, 
+				posTmp, infoTmpRRight->fCurrent, G4String("TargetAlignmentRingRight")+ cNumStrStr.str(), 
+				      vHelium->GetLogicalVolume(), false, copyNumber, fCheckVolumeOverLapWC);
       posTmp[2] += fTargetAlignRingSpacing;      
       copyNumber++;
       if ( posTmp[2] > (plM1->fParams[2]/2.0 - 1.0*mm)) break;

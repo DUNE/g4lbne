@@ -6,7 +6,7 @@
 # Place here the commands that modify the default geometry. 
 # We are at Geant4 stage call "PreInit" 
 # 
-/LBNE/det/waterThickInHorn 2 mm
+#/LBNE/det/waterThickInHorn 2 mm
 /LBNE/det/TargetLengthIntoHorn 40 cm
 #/LBNE/det/decayPipeLength 204.55 m
 /LBNE/det/seHornCurrent 201 kA
@@ -25,23 +25,28 @@
 # Primary vertex setting 
 #
 /LBNE/primary/useGeantino
-/LBNE/primary/geantinoOpeningAngle 0.0001 radian
-/LBNE/primary/geantinoZOrigin -2000. mm 
+/LBNE/primary/geantinoOpeningAngle 0.05 radian
+/LBNE/primary/geantinoZOrigin -1000. mm 
+/LBNE/primary/geantinoSigmaZOrigin 250. mm 
 #/LBNE/primary/protonMomentum 5.0 GeV
 #
-/LBNE/stepping/filename ./example/steppingGeantino101.txt
+#/LBNE/stepping/filename ./example/steppingPropa101.txt
+# The order of these 2 cards matters 
+/LBNE/stepping/name GeomPropagation101
+/LBNE/stepping/filename  /scratch/lbne/lebrun/steppingPropa101_l8.txt
+/LBNE/stepping/keyVolumeForOutput TargetAlignmentRing
 #
 # Allows the RunID, which is included in the
 # output file name(s), to be set at runtime.
 #
+/LBNE/output/CreateOutput false
 /LBNE/run/setRunID 11
 #
 # If NOT using an external hadron file then this establishes how 
 # many particles(protons) to use during the simulation. To be consistent 
 # with past neutrino ntuples each run uses 500000 or 100000 protons
 #
-/LBNE/run/NEvents 1
-/LBNE/output/CreateOutput false
+/LBNE/run/NEvents 10000
 #
 # This will place Geant4 in the stage "EventProc", i.e. ,simulating events. 
 #

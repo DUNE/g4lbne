@@ -114,6 +114,7 @@ private:
   G4bool fUseGeantino;
   G4bool fUseMuonGeantino;
   G4double fZOriginGeantino;
+  G4double fSigmaZOriginGeantino;
   G4double fPolarAngleGeantino;
    
    //double                  DoubleRand() {return 2*G4UniformRand()-1.;}
@@ -123,6 +124,7 @@ public:
    inline void SetUseGeantino(bool t) {fUseGeantino=t;}
    inline void SetUseMuonGeantino(bool t) {fUseMuonGeantino=t;}
    inline void SetZOriginGeantino(double v) {fZOriginGeantino=v;}
+   inline void SetSigmaZOriginGeantino(double v) {fSigmaZOriginGeantino=v;}
    
    inline bool GetUseMuonGeantino() const { return fUseMuonGeantino; }
    inline bool GetUseGeantino() const { return fUseGeantino; }

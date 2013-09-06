@@ -135,6 +135,14 @@ LBNEPrimaryMessenger::LBNEPrimaryMessenger(LBNEPrimaryGeneratorAction* RA)
   fGeantinoZOrigin->SetUnitCandidates ("mm cm m");
   fGeantinoZOrigin->AvailableForStates(G4State_Idle);
   
+  fGeantinoZOriginSigma  = 
+     new G4UIcmdWithADoubleAndUnit("/LBNE/primary/geantinoSigmaZOrigin",this);
+  fGeantinoZOriginSigma->SetGuidance("Z origin  longitudinal spread generating the geantino (or mu geantino) (in mm) ");
+  fGeantinoZOriginSigma->SetParameterName("GeantinoSigmaZOrigin",true);
+  fGeantinoZOriginSigma->SetDefaultValue (100.);
+  fGeantinoZOriginSigma->SetDefaultUnit ("mm");
+  fGeantinoZOriginSigma->SetUnitCandidates ("mm cm m");
+  fGeantinoZOriginSigma->AvailableForStates(G4State_Idle);
 
 }
 
@@ -156,6 +164,7 @@ LBNEPrimaryMessenger::~LBNEPrimaryMessenger()
   delete fUseMuonGeantino;
   delete fGeantinoOpeningAngle;
   delete fGeantinoZOrigin;
+  delete fGeantinoZOriginSigma;
 }
 
 void LBNEPrimaryMessenger::SetNewValue(G4UIcommand* cmd, G4String val)
@@ -209,6 +218,9 @@ void LBNEPrimaryMessenger::SetNewValue(G4UIcommand* cmd, G4String val)
   } else if (cmd ==  fGeantinoZOrigin ) {
       G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (cmd);
       fPrimaryAction->SetZOriginGeantino( cmdWD->GetNewDoubleValue(val));   
+  } else if (cmd ==  fGeantinoZOriginSigma ) {
+      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (cmd);
+      fPrimaryAction->SetSigmaZOriginGeantino( cmdWD->GetNewDoubleValue(val));   
    } else if (cmd ==  fUseGeantino ) {
       if (fPrimaryAction->GetUseMuonGeantino()) {
         G4Exception("LBNEPrimaryMessenger", "Inconsistency in particle choice ", FatalException,

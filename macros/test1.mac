@@ -7,7 +7,7 @@
 # We are at Geant4 stage call "PreInit" 
 # 
 #/LBNE/det/waterThickInHorn 2 mm
-/LBNE/det/TargetLengthIntoHorn 50 cm
+/LBNE/det/TargetLengthIntoHorn 62 cm
 #/LBNE/det/decayPipeLength 204.55 m
 /LBNE/det/seHornCurrent 201 kA
 #
@@ -25,19 +25,19 @@
 # Primary vertex setting 
 #
 /LBNE/primary/useGeantino
-/LBNE/primary/geantinoOpeningAngle 0.05 radian
-/LBNE/primary/geantinoZOrigin -1000. mm 
-/LBNE/primary/geantinoSigmaZOrigin 250. mm 
+/LBNE/primary/geantinoOpeningAngle 0.040 radian
+/LBNE/primary/geantinoZOrigin -1500. mm 
+/LBNE/primary/geantinoSigmaZOrigin 150. mm 
 #/LBNE/primary/protonMomentum 5.0 GeV
 #
 #/LBNE/stepping/filename ./example/steppingPropa101.txt
 # The order of these 2 cards matters 
 /LBNE/stepping/name GeomPropagation101
 # on lbnegpvm02
-/LBNE/stepping/filename  /scratch/lbne/lebrun/steppingPropa101_l9.txt
+/LBNE/stepping/filename  /scratch/lbne/lebrun/steppingPropa102_a.txt
 # laptop, home 
-#/LBNE/stepping/filename  /home/lebrun/G4LBNE/g4lbne_work/lbne-beamSimB/lbne-beamsim/g4lbne/geantinoResults/steppingPropa101_l10.txt
-/LBNE/stepping/keyVolumeForOutput Horn1TargetCoolingTubeHLast
+#/LBNE/stepping/filename  /home/lebrun/G4LBNE/g4lbne_work/lbne-beamSimB/lbne-beamsim/g4lbne/geantinoResults/steppingPropa102_a.txt
+/LBNE/stepping/keyVolumeForOutput Horn1IOTransInnerPurt2
 #
 # Allows the RunID, which is included in the
 # output file name(s), to be set at runtime.

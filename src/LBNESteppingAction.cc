@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNESteppingAction.cc
-// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.6 2013/09/06 22:54:50 lebrun Exp $
+// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.7 2013/09/08 21:05:31 lebrun Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -320,7 +320,7 @@ void LBNESteppingAction::OpenAscii(const char *fname) {
      fOutStudy << 
     " id x y z ILDecayChan ILHorn1Neck ILHorn2Entr ILNCDecayChan ILNCHorn1Neck ILNCHorn2Entr ILAlHorn2Entr" << std::endl;
    } else if (fStudyGeantinoMode.find("Propa") != std::string::npos) {
-     fOutStudy << " id x y z zPost step matPre matPost " << std::endl;
+     fOutStudy << " id x y z xo yo zo zPost step matPre matPost " << std::endl;
    }
    fOutStudy.flush();
    std::cerr << " LBNESteppingAction::OpenAscii " << std::string(fname) << std::endl;
@@ -438,14 +438,30 @@ void LBNESteppingAction::StudyPropagation(const G4Step * theStep) {
    std::string volNamePost(volPost->GetName());
    std::string volNamePre(volPre->GetName());
    if ((volNamePost.find(fKeyVolumeForOutput.c_str()) != std::string::npos) || 
-      (volNamePost.find(fKeyVolumeForOutput.c_str()) != std::string::npos)) {
-        std::cout << " LBNESteppingAction::StudyPropagation, critical volume " << 
-	  volNamePre << " to " << volNamePost 
-	             << " detected at " <<  prePtr->GetPosition() << std::endl;
+      (volNamePre.find(fKeyVolumeForOutput.c_str()) != std::string::npos)) {
+       std::cout << " LBNESteppingAction::StudyPropagation, critical volume " << std::endl 
+	  << ".. from " << volNamePre << " to " << volNamePost 
+	             << " detected at " <<  prePtr->GetPosition() << " going to " << postPtr->GetPosition() << std::endl;
+       const G4VTouchable *preHist = prePtr->GetTouchable();
+       const G4VTouchable *postHist = postPtr->GetTouchable();
+       const G4int nDepthPre = preHist->GetHistoryDepth();
+       const G4int nDepthPost = postHist->GetHistoryDepth();
+       std::cerr << " ....  History depth for pre point " <<  nDepthPre << " Post " << nDepthPost << std::endl;
+       for (int k=0; k!=  std::max(nDepthPre, nDepthPost); k++) {
+         if ((k <nDepthPre) && (k <nDepthPost))
+	     std::cerr << " ............. Translation at depth, pre ... " << preHist->GetTranslation(k) 
+	               << " Post " <<  postHist->GetTranslation(k) <<   std::endl;
+	 else if (k <nDepthPre) 	       
+	     std::cerr << " ..............Translation at depth, pre ... " << preHist->GetTranslation(k) << std::endl;
+	 else  if (k <nDepthPost)     
+	     std::cerr << " ..............Translation at depth, post ... " << postHist->GetTranslation(k) << std::endl;
+       }
+       std::cerr << " ------------------------------------------- " << std::endl;	     
    }   
    if (volPre->GetMaterial()->GetName() == volPost->GetMaterial()->GetName()) return;
    fOutStudy << " " << pRunManager->GetCurrentEvent()->GetEventID(); 
    for (int k=0; k != 3; k++) fOutStudy << " " << prePtr->GetPosition()[k];
+   for (int k=0; k != 3; k++) fOutStudy << " " << postPtr->GetPosition()[k];
    fOutStudy << " " << postPtr->GetPosition()[2];
    fOutStudy << " " << theStep->GetStepLength();
    fOutStudy << " " << volPre->GetMaterial()->GetName();

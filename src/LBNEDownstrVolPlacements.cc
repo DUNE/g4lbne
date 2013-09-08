@@ -368,7 +368,7 @@ void LBNEVolumePlacements::DeclareHorn1Dims() {
 }
 
 
-void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement *motherDownstrTarget) {
+void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement *motherHorn1Upstr) {
 
 // 
 // Start with upstream Inner to Out transition. This one is surveyable (as well as optionally rescaled. )
@@ -380,7 +380,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
    std::cerr << " Test 1 passed " << std::endl;
 //   fHorn1Equations[3].test1(); // This supposed to fail... 
    LBNEVolumePlacementData *plTrUpst = this->Create("Horn1IOTransCont");
-   G4PVPlacement *vTrUpst = this->PlaceFinal("Horn1IOTransCont", motherDownstrTarget);
+   G4PVPlacement *vTrUpst = this->PlaceFinal("Horn1IOTransCont", motherHorn1Upstr);
    //
    // These sub-volumes will be never misaligned with respect to each other, or the container volume 
    // above.  So skip the VolumePlacement utilities. Code bloat here instead in the Create method.. Oh well.. 
@@ -391,11 +391,15 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
      G4Cons *aCons = new G4Cons(nameStr, fHorn1UpstrInnerRadsUpstr[k],fHorn1UpstrInnerRadsOuterUpstr[k],
                                          fHorn1UpstrInnerRadsDownstr[k],fHorn1UpstrInnerRadsOuterDownstr[k],
 	                              fHorn1UpstrLengths[k]/2., 0., 360.0*deg);
-     G4LogicalVolume *pCurrent = new G4LogicalVolume(aCons, G4Material::GetMaterial(std::string("Air")), nameStr);
+     G4LogicalVolume *pCurrent = new G4LogicalVolume(aCons, G4Material::GetMaterial(std::string("Aluminum")), nameStr);
      G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] = 0.;  
      posTmp[2] = -1.0*(plTrUpst->fParams[2])/2. + fHorn1UpstrZPositions[k];			      
      new G4PVPlacement(	(G4RotationMatrix *) 0,	posTmp, pCurrent, nameStr + std::string("_P"), 
-                        vTrUpst->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);	      
+                        vTrUpst->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);
+     std::cerr << " Placing IOTrans Sub elem " << k << " at z = " << fHorn1UpstrZPositions[k] << " (abs), rel " << 
+       posTmp[2] << " length " << fHorn1UpstrLengths[k] << std::endl;
+     std::cerr << " RIUps " << fHorn1UpstrInnerRadsUpstr[k] << " ROUps " << fHorn1UpstrInnerRadsOuterUpstr[k];  			      
+     std::cerr << " RIDwn " << fHorn1UpstrInnerRadsDownstr[k] << " RODwn " << fHorn1UpstrInnerRadsOuterDownstr[k] << std::endl;  			      
    }
    
    for (size_t k=0; k!= fHorn1UpstrOuterIOTransInnerRads.size(); k++) {
@@ -406,7 +410,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
 	                              fHorn1UpstrOuterIOTransLengths[k]/2., 0., 360.0*deg);
      G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] = 0.;  
      posTmp[2] = -1.0*(plTrUpst->fParams[2])/2. + fHorn1UpstrOuterIOTransPositions[k];			      
-     G4LogicalVolume *pCurrent = new G4LogicalVolume(aTubs, G4Material::GetMaterial(std::string("Air")), nameStr);
+     G4LogicalVolume *pCurrent = new G4LogicalVolume(aTubs, G4Material::GetMaterial(std::string("Aluminum")), nameStr);
      new G4PVPlacement(	(G4RotationMatrix *) 0,	posTmp, pCurrent, nameStr + std::string("_P"), 
                         vTrUpst->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);	      
    }
@@ -415,7 +419,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
    // We already defined this mother volume. It is the infamous volume Horn1TopLevelUpstr
    // It is a cylinder (inner radius 0. ), or radius encompassing the inner and outer conductors. 
    
-   G4PVPlacement *vUpst = motherDownstrTarget;
+   G4PVPlacement *vUpst = motherHorn1Upstr;
    const LBNEVolumePlacementData *plHUpst = Find(G4String("InnerConductors"), "Horn1TopLevelUpstr", G4String("Create"));
   
 // Start by checking possible radial overlap at the downstream end of the target. 
@@ -436,9 +440,15 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
       const double zzEnd = zzBegin + deltaZ;
      std::ostringstream nameStrStr; nameStrStr << "Horn1UpstrSubSect" << iSub;
      G4String nameStr(nameStrStr.str());
-     const int eqn = ((zzBegin/fHorn1LongRescale) < 21.0888*in) ? 0 : 1;
-     const double rMin1 = fHorn1Equations[eqn].GetVal(zzBegin); // Equation 1
-     const double rMin2 = fHorn1Equations[eqn].GetVal(zzEnd);
+// Smooth transition between equation 1 and 2 
+     const double rMin1Eqn1 = fHorn1Equations[0].GetVal(zzBegin); // Equation 1 or 0
+     const double rMin2Eqn1 = fHorn1Equations[0].GetVal(zzEnd);
+     const double rMin1Eqn2 = fHorn1Equations[1].GetVal(zzBegin); // Equation 1 or 0
+     const double rMin2Eqn2 = fHorn1Equations[1].GetVal(zzEnd);
+     const double rMin1 = ((numSubSect - iSub -1)*rMin1Eqn1 + ((iSub+1)*rMin1Eqn2))/numSubSect;
+     const double rMin2 = ((numSubSect - iSub -1)*rMin2Eqn1 + ((iSub+1)*rMin2Eqn2))/numSubSect;
+    std::cerr << " Inner radius for section " << nameStr << " At zzBegin " << zzBegin
+               << " rMin1 " << rMin1 << " rMin2 " << rMin2 << std::endl; 
      const double rMax1 = fHorn1Equations[5].GetVal(zzBegin) + fWaterLayerThickInHorns + 0.0025; 
        // Equation 6 (Drawing 8875.112-MD 363104)
      const double rMax2 = fHorn1Equations[5].GetVal(zzEnd) + fWaterLayerThickInHorns + 0.0025;     
@@ -484,15 +494,17 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
    }
    // Now place the first support ring, and the spider hang, if room.
    const double lengthHangerRing = fHorn1LongRescale*0.750*in;
-   const double zLocFirstHanger = fHorn1IOTransLength + fHorn1LongRescale*(17.876 - 1.385)*in - lengthHangerRing/2.;
-   // With respect to the starting point of Horn1TopLevelUpstr 
-   std::cerr << " zLocFirstHanger " << zLocFirstHanger << std::endl;
+   const double zLocFirstHangerDC = fHorn1LongRescale*(17.876 - 1.385)*in - lengthHangerRing/2.; // Drawing 8875.112-MD 363104
+   const double zLocFirstHanger = zLocFirstHangerDC + fHorn1LongRescale*3.0*cm;
+   // With respect to the starting point of Horn1TopLevelUpstr (assuming it is in the first section )
+   std::cerr << " zLocFirstHanger " << zLocFirstHanger << " in drawing coord. " << zLocFirstHangerDC << std::endl;
    const bool firstHangerinUpstrSect = (zLocFirstHanger < fHorn1TopUpstrLength);
      //Must have room for the whole piece.. Move it to the left if need be 
-   const double zLocTweakedFirstHanger = std::min(zLocFirstHanger, 
-                           (fHorn1TopUpstrLength - (0.375*in - 0.512*in)*fHorn1LongRescale - 3.0*mm));
-			   // the 0.375 is the length if hanger ring, 0.512 the space for weld ant the end. 
-			   
+   const double zLocFirstHangerFull = zLocFirstHanger + lengthHangerRing/2. + 1.0*mm;
+   double zLocTweakedFirstHanger = zLocFirstHanger;
+   if (firstHangerinUpstrSect && (zLocFirstHangerFull > fHorn1TopUpstrLength)) {
+     zLocTweakedFirstHanger -= (zLocFirstHangerFull - fHorn1TopUpstrLength);
+   }
    std::cerr << " zLocTweakedFirstHanger " << zLocTweakedFirstHanger << std::endl;
    if (firstHangerinUpstrSect) std::cerr << " First Spider Hanger is in Horn1Upstr section " << std::endl;
    if (!firstHangerinUpstrSect) std::cerr << " First Spider Hanger is in Horn1Downstr section " << std::endl;
@@ -500,8 +512,8 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
    G4String nameStrFirstHanger("Horn1UpstrSpiderHanger");
    if ( firstHangerinUpstrSect ) {
 	const double zPosCenterMotherVolume = -1.0*(plHUpst->fParams[2])/2. + zLocTweakedFirstHanger + lengthHangerRing/2. ;  			   
-	const double zPosCenterDrawingCoord = zLocTweakedFirstHanger - 3.0*cm*fHorn1LongRescale; 			   
-        this->Horn1InstallSpiderHanger(nameStrFirstHanger, zPosCenterDrawingCoord, 
+	const double zPosUpstrDrawingCoord = zLocTweakedFirstHanger - 0.5*lengthHangerRing - 3.0*cm*fHorn1LongRescale; 			   
+        this->Horn1InstallSpiderHanger(nameStrFirstHanger, zPosUpstrDrawingCoord, 
 	                                    zPosCenterMotherVolume, vUpst );			       
    }
    // Outer tube 
@@ -543,7 +555,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
    
    double lengthToTheNeck = fHorn1NeckZPosition - 
                           (fHorn1TopUpstrLength - 3.0*cm*fHorn1LongRescale)  - fHorn1NeckLength/2.;
-			  // Stupid 3 cm coordinate shift. 
+			    // Stupid 3 cm coordinate shift. again..
   if (lengthToTheNeck < 0.) {
     std::ostringstream messStrStr; 
     messStrStr << "Inconsistent length to the neck of" << lengthToTheNeck << " Neck Position (drawing) "
@@ -638,28 +650,26 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
       }
     } // of the number of subsection to the neck 
     // Place the hanger, if not already done 
-    if (!firstHangerinUpstrSect) { // Unlikely possiblity... Not Checked yet !!!!! 
+    if (!firstHangerinUpstrSect) { // 
      //Must have room for the whole piece.. Move it to the right if need be 
       G4String nameStrFirstHanger("Horn1DownstrFirstSpiderHanger");
-       const double zLocDrawing = fHorn1TopUpstrLength - 3.0*in*fHorn1LongRescale 
-                                 + lengthToTheNeck + 0.3750*in*fHorn1LongRescale;
-       const double zLocPosM = -plHDwn->fParams[2]/2 + lengthToTheNeck + 0.3750*in*fHorn1LongRescale; // with respect to the center of 
-       // of the mother volume. 
-       this->Horn1InstallSpiderHanger( nameStrFirstHanger, zLocDrawing, zLocPosM,  vDown); 
+ 			    // Stupid 3 cm coordinate shift. again..
+       const double zLocPosM = zLocFirstHangerDC + zShiftDrawingDownstr + lengthHangerRing/2.;
+      // of the mother volume. 
+       this->Horn1InstallSpiderHanger( nameStrFirstHanger, zLocFirstHangerDC, zLocPosM,  vDown); 
     }
     // The first weld for this section. 
    {
      G4String nameStr("Horn1DownstrSubSect1Weld0");
      G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] = 0.;
      const double length = 24.0*mm; //Cover two real sections... 
-     double zW = 21.0888*in*fHorn1LongRescale + length/2;
-     posTmp[2] =  zW + zShiftDrawingDownstr + length/2.;
-     if (posTmp[2] < -1.0*(plHDwn->fParams[2])/2.) {
-        const double wrongZ = posTmp[2];
-	zW = zUpstreamCrazy3cm + length	+ 2.0*mm;     
-	posTmp[2] =-1.0*(plHDwn->fParams[2])/2.  + length + 0.1*mm;	     
+     double zW = 21.0888*in*fHorn1LongRescale + length/2; // In Drawing coordinate system 
+     posTmp[2] =  zW + zShiftDrawingDownstr + length/2.; // with respecto the upstr edge of Horn1TopLevelDownstr
+     if ((posTmp[2] - 0.5*length) < -1.0*(plHDwn->fParams[2])/2.) {
+        const double posTmpW = posTmp[2];
+	posTmp[2] =-1.0*(plHDwn->fParams[2])/2.  + length/2. + 0.05*mm;	     
        std::cerr << " Weld should be placed in the upstream section, but placed in the downstream one.. "
-                 << std::endl << " shifted by "  << posTmp[2] - wrongZ << std::endl;
+                 << std::endl << " shifted by "  << posTmpW - posTmp[2] << std::endl;
      } 
                     // Assuming it won't have to move because of the hanger ring
                                                    //  Could collide with it. Take nominal position, but to be checked.  
@@ -960,9 +970,7 @@ void LBNEVolumePlacements::CheckHorn1InnerConductAndTargetRadii() {
   
   const double rSmall = plSmallRing->fParams[1]; // Outer radius
   // Compute the large radius based on equation 0, at the relevant Z 
-  const double zCoordEnd  = plLargeRing->fParams[2] -fTargetLengthIntoHorn/2. + 
-                            fTargetZOffsetStart + 3.0*cm + fTargetSLengthDownstrEnd;
-  // Last term du to the various longitudina shifts, which are quite baffling.. 
+  const double zCoordEnd  = fHorn1TopUpstrLength - 3.0*in*fHorn1LongRescale;
   const int eqNum = ((zCoordEnd/fHorn1LongRescale) < 21.0888*in) ? 0 : 1;
   const double rLarge = fHorn1Equations[eqNum].GetVal(zCoordEnd); // Equation 1;  // Inner Radius
   std::cerr << " CheckHorn1InnerConductAndTargetRadii, zCoordEnd " 
@@ -1029,16 +1037,21 @@ int LBNEVolumePlacements::GetNumberOfInnerHornSubSections(size_t eqn, double z1,
    }
    return numSubSect;
 }
+//
+// 2nd argument is in drawing coordinate system, the upstream coordinate of the beginning of the ring
+//  Third argument, in the reference frame of the mother volume, the long. center position 
+//
 void LBNEVolumePlacements::Horn1InstallSpiderHanger(const G4String &nameStrH, 
-                                                    double zLocTweaked, double zPosMotherVolume, 
+                                                    double zLocTweakedDC, double zPosMotherVolume, 
 						   G4PVPlacement *vMother ) {
 
   const double in = 2.54*cm;
   G4String nameStr(nameStrH);nameStr += G4String("Ring");
   const double length = 0.750*in*fHorn1LongRescale;
-  const int eqnNum = (zLocTweaked < (41.076*fHorn1LongRescale*in)) ? 5 : 7;
-  const double zSignLength = (eqnNum == 5) ? -1.0 : 1.0; // to avoid collision with the inner conductor. 
-  const double rTmp1 = fHorn1Equations[eqnNum].GetVal(zLocTweaked + length*zSignLength) 
+  const int eqnNum = (zLocTweakedDC < (41.076*fHorn1LongRescale*in)) ? 5 : 7;
+  const double zSignLength = (eqnNum == 5) ? -1.0 : 1.0; // to avoid collision with the inner conductor outer radius 
+                                                         // at the upstream or downstream end 
+  const double rTmp1 = fHorn1Equations[eqnNum].GetVal(zLocTweakedDC + length*zSignLength) 
                           + 0.0015*mm + fWaterLayerThickInHorns;
   const double rTmp2 = rTmp1 + 0.24*in; // Deduced from 363104 and equation 6
   G4Tubs *aTubs = new G4Tubs(nameStr, rTmp1, rTmp2, 

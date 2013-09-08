@@ -7,7 +7,7 @@
 # We are at Geant4 stage call "PreInit" 
 # 
 #/LBNE/det/waterThickInHorn 2 mm
-/LBNE/det/TargetLengthIntoHorn 40 cm
+/LBNE/det/TargetLengthIntoHorn 50 cm
 #/LBNE/det/decayPipeLength 204.55 m
 /LBNE/det/seHornCurrent 201 kA
 #
@@ -36,7 +36,7 @@
 # on lbnegpvm02
 /LBNE/stepping/filename  /scratch/lbne/lebrun/steppingPropa101_l9.txt
 # laptop, home 
-#/LBNE/stepping/filename  /home/lebrun/G4LBNE/g4lbne_work/lbne-beamSimB/lbne-beamsim/g4lbne/geantinoResults/steppingPropa101_l8.txt
+#/LBNE/stepping/filename  /home/lebrun/G4LBNE/g4lbne_work/lbne-beamSimB/lbne-beamsim/g4lbne/geantinoResults/steppingPropa101_l10.txt
 /LBNE/stepping/keyVolumeForOutput Horn1TargetCoolingTubeHLast
 #
 # Allows the RunID, which is included in the

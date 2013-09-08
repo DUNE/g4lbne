@@ -74,20 +74,21 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
 //
 // Target The first quantity is the target length as far as the beam is concerned 
 //  Can be changed vis G4UIMessenger command 
-  fTargetSLengthGraphite = 953.8*mm; // Russian drawing 7589-00-00-00 
+  fTargetSLengthGraphite = 953.8*mm; // Russian drawing 7589-00-00-00.  
 
-  fTargetSLengthDownstrEnd = 59*mm;
+  fTargetSLengthDownstrEnd = 0.964*in; // Doc db 6100. Consistent with Russian drawing. 
 // 
 // The following quantity can be changed via messenger command. 
 // 
-  fTargetLengthIntoHorn = 40.0*cm; //  LBNE Doc 6100, page 7  Actually, the suggested value 
-                                   // of 50 cm. conflicts with the 2.9 mm tolerance on transverse position.  
+  fTargetLengthIntoHorn = 50.0*cm; //  LBNE Doc 6100, page 7 
+  
   fTargetMaterialName = G4String("Graphite");
   fTargetDensity =  1.78*g/cm3; // Assume density of POCO ZXF-5Q  graphite
   
   // No fTargetX0, Y0:  These would be surveyed point, part of the alignement 
   // realm, i.e. handled in the Surveyor class.
-  fTargetFinHeight = 21.4*mm; // It includes half of the cooling tube, which will be inside the fins
+  fTargetFinHeight = 21.4*mm - 0.2*mm; // It includes half of the cooling tube, which will be inside the fins
+    // Subract 200 microns such that the segments in the He containment tube. 
                              // Drawing 7589-01-50-02 
   // The round edges (grinded 
 //  fTargetFinWidth = 6.4*mm;
@@ -125,28 +126,53 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
   fTargetCTubeUpstrRadCurve = 0.965*in;
   fTargetCTubeUpstrNumSegCurve = 12; // 30 degrees angles Should be good enough. 
   fTargetCTubeReturnHOffset = 0.1*in; // guess !!! barely at 3 sigma of the beam...
-  fTargetCTubeReturnLengthDownstr = 0.6*in - fTargetCTubeInnerRadius - 0.050*mm;
+  // Content of the downstream tip of the target containment tube 
+  fTargetCTubeReturnLengthDownstr = fTargetSLengthDownstrEnd - 2.0*mm;
+  // The above qantity is obsolete. A better and simplfied model 
+  // based on 3 Tubs one titanium, followed by water, followed by titanium
+  fTargetCTubeReturnDownstrCutAngleStart = 0.35; 
+  fTargetCTubeReturnDownstrCutAngleSize = M_PI - 2.0*fTargetCTubeReturnDownstrCutAngleStart;
+  // Above quantity obsolete, use a simple model for the downstream end of the Helium target return 
+  // cooling pipe.   
+  // We will model the bends in the cooling tube with a simple tubular section, of titanium, filled with water. 
+  const double lEffCTubeReturnDownstr = 2.0*(0.6*in) + 15*mm;  // 1rst term is the bend, horizontal part, top & bottom. 
+  const double vCTubeReturnDownstrTitanium = lEffCTubeReturnDownstr*M_PI*
+     ( fTargetCTubeOuterRadius*fTargetCTubeOuterRadius - fTargetCTubeInnerRadius*fTargetCTubeInnerRadius);
+  const double vCTubeReturnDownstrWater = lEffCTubeReturnDownstr*M_PI*
+                                         fTargetCTubeInnerRadius*fTargetCTubeInnerRadius;
+  fTargetCTubeReturnDownstrRadInner = 11.0*mm; // Rougly 14.5 - 3 - a bit, to make up the mass 
+                                               // without increasing the thickness by too much
+  fTargetCTubeReturnDownstrRadOuter = 14.25*mm;
+  const double aSurfWedge = fTargetCTubeReturnDownstrRadOuter*fTargetCTubeReturnDownstrRadOuter - 
+                          fTargetCTubeReturnDownstrRadInner*fTargetCTubeReturnDownstrRadInner;
+  const double aWedgeRelSize = fTargetCTubeReturnDownstrCutAngleSize/(2.0*M_PI);
+  fTargetCTubeReturnDownstrThickTitanium = 
+      vCTubeReturnDownstrTitanium/(M_PI*aWedgeRelSize*aSurfWedge);
+  fTargetCTubeReturnDownstrThickWater =
+      vCTubeReturnDownstrWater/(M_PI*aWedgeRelSize*aSurfWedge);
+//  std::cerr << " Effective thickness for cTube return, " << fTargetCTubeReturnDownstrThickTitanium <<
+//               " Water " << fTargetCTubeReturnDownstrThickWater << std::endl;
+ 
   // A small correction for the tilt angle 
-  fTargetCTubeReturnLengthDownstr -= fTargetCTubeReturnLengthDownstr*
-                                          std::sin(fTargetCTubeReturnHOffset/fTargetCTubeReturnLengthDownstr);
   fTargetDistFlangeToTargetStart = 32.2*mm;
   fTargetCTubeReturnLengthUpstr = fTargetDistFlangeToTargetStart + 10.25*in; // from the upstream end of target to 
                                  // Upstr bend return 
   fTargetCTubeReturnLengthUpstrEnd = 6.604*in - fTargetDistFlangeToTargetStart;
+  fTargetHeContTubeThickness = 0.4*mm;
+  fTargetHeContTubeInnerRadius = 30.0*mm/2.0 - fTargetHeContTubeThickness; // Doc DB 6100, page 1 
   fTargetAlignRingMaterial = std::string("Aluminum");
+  
   fTargetAlignRingThick = 11.0*mm; // Accurate to +- 1 mm, from Russian drawing. Err on the excess side. 
   fTargetAlignRingInnerRadius = (18.0/2)*mm + 0.25*mm; // final tweak to avoid overlaps. compensate by increaing thickness.
-  fTargetAlignRingOuterRadius = (29.5/2)*mm;
+  fTargetAlignRingOuterRadius = fTargetHeContTubeInnerRadius - 0.1*mm;
 //  fTargetAlignRingCutAngle = 0.1735; // Assume atan(3.4 mm/fTargetAlignRingInnerRadius), to remove overlaps 
   fTargetAlignRingCutAngle = 0.45; // Too tight... increase it 
   fTargetAlignRingThick *= 1.0 + 2.0*fTargetAlignRingCutAngle/M_PI; // We compensate the deleted region of the rings 
                                                    // by increasing the thickness.                  // 
   fTargetAlignRingSpacing = 243.6*mm; // Such we can have 5 alignment rings over the entire distance. 
   fMaxNumAlignRings = 5; // assiming a target length of ~ 1 m. long 
-  fTargetHeContTubeInnerRadius = 30.0*mm/2.0;
-  fTargetHeContTubeThickness = 0.4*mm;
   fTargetBerylDownstrWindowThick = 1.0*mm; // ???? pure guess 
-  fTargetBerylDownstrWindowRadius = fTargetHeContTubeInnerRadius + fTargetHeContTubeThickness;
+  fTargetBerylDownstrWindowRadius = fTargetHeContTubeInnerRadius + fTargetHeContTubeThickness; 
   fTargetBerylUpstrWindowThick = 1.0*mm; // pure guess 
   fTargetBerylUpstrWindowRadius = 0.8425*in/2.; // ???? Again, guessing... 
   // Section of Horn1 which is the logical volume of the target Upstream Assembly.
@@ -222,17 +248,17 @@ void LBNEVolumePlacements::SegmentTarget() {
 
   const G4double in = 2.54*cm;
 
-  fTargetSLength = fTargetSLengthDownstrEnd + fTargetSLengthGraphite; // Russian drawing 7589-00-00-00 The 59 mm iscomputed as
-    // 1022 + 23 - 32.2 - 953.8 // 32.2 is  fTargetDistFlangeToTargetStart
-  fTargetLengthOutsideHorn = fTargetSLength - fTargetLengthIntoHorn + fTargetFinLength; 
+  fTargetSLength = fTargetSLengthDownstrEnd + fTargetSLengthGraphite; // Russian drawing 7589-00-00-00 
+  fTargetLengthOutsideHorn = fTargetSLength - fTargetLengthIntoHorn + fTargetFinLength; // why + one fin Transition fin... 
   fTargetFinSpacingLength = 0.3*mm; // Nominal value.. 
   double  targetNumFinsNominal = fTargetSLengthGraphite/(fTargetFinLength + fTargetFinSpacingLength); 
   fTargetNumFins = (int) (targetNumFinsNominal + 0.5);
   double deltaNumFins =  targetNumFinsNominal - (double) fTargetNumFins; 
   if (deltaNumFins > 0.5) fTargetNumFins++;
   if (deltaNumFins < -0.5) fTargetNumFins--;
-//  std::cout << " LBNEVolumePlacements::SegmentTarget, total number of segments " << fTargetNumFins << 
+//  std::cerr << " LBNEVolumePlacements::SegmentTarget, total number of segments " << fTargetNumFins << 
 //               " Delta Num fins " << deltaNumFins << std::endl;
+//  std::cerr << " fTargetSLength " << fTargetSLength << " fTargetLengthOutsideHorn " << 	fTargetLengthOutsideHorn << std::endl;     
   const double oldLength = fTargetSLengthGraphite;
   fTargetSLengthGraphite = fTargetNumFins*fTargetFinLength + (fTargetNumFins-1)*fTargetFinSpacingLength; 
   fTargetFinSpacingLength = (fTargetSLengthGraphite  - fTargetNumFins*fTargetFinLength)/(fTargetNumFins - 1); //   
@@ -247,9 +273,25 @@ void LBNEVolumePlacements::SegmentTarget() {
 //  std::cerr << "  Num Fins Ups /Downstr " << fTargetNumFinsUpstr << " / " << fTargetNumFinsInHorn << std::endl;
   fTargetFinLengthSplitUpstr = fTargetLengthOutsideHorn - fTargetFinSpacingLength - 
                                fTargetNumFinsUpstr*(fTargetFinLength + fTargetFinSpacingLength);
-  fTargetFinLengthSplitDwnstr = fTargetFinLength - fTargetFinLengthSplitUpstr;	
+  fTargetFinLengthSplitDwnstr = fTargetFinLength - fTargetFinLengthSplitUpstr;
+  if ((	fTargetFinLengthSplitDwnstr < 0.) ||
+      (	fTargetFinLengthSplitDwnstr > (fTargetFinSpacingLength + fTargetFinLength)) ||
+      (fTargetFinLengthSplitUpstr < 0.) || 
+      (fTargetFinLengthSplitUpstr > (fTargetFinSpacingLength + fTargetFinLength))) {
+        // split occurs in a spacing. Set this length to 0., we will not install this target segment
+        std::ostringstream mStrStr; 
+	mStrStr << " Odd length for the splitted fin ..." << fTargetFinLengthSplitUpstr << " Downstr " << 	
+        fTargetFinLengthSplitDwnstr << " tempNFins = " << tempNFins << std::endl;
+	G4String mStr(mStrStr.str());
+        G4Exception("LBNEVolumePlacements::SegmentTarget", " ", JustWarning, mStr.c_str()); 
+	if (fTargetFinLengthSplitUpstr > fTargetFinLength) fTargetFinLengthSplitUpstr = fTargetFinLength;
+	if (fTargetFinLengthSplitDwnstr > fTargetFinLength) fTargetFinLengthSplitDwnstr = fTargetFinLength;
+	// if lengths are negative, skip the placement
+	
+  }
   // more deduced variables.. 		       
-  fTargetHeContTubeLengthInHorn = fTargetLengthIntoHorn + fTargetSLengthDownstrEnd;
+//  fTargetHeContTubeLengthInHorn = fTargetLengthIntoHorn + fTargetSLengthDownstrEnd;
+  fTargetHeContTubeLengthInHorn = fTargetLengthIntoHorn + 0.025*mm;
   fTargetHeContTubeLengthUpstr = 2.0*in + fTargetCanLength  + fTargetDownstrCanFlangeThick + 
                                  fTargetFlangeThick + fTargetDistFlangeToTargetStart;
    fTargetAndBaffleLengthApprox = fBaffleLength + fTargetUpstrUpstrMargin  + fTargetUpstrPlateThick + fTargetCanLength 
@@ -582,8 +624,8 @@ LBNEVolumePlacementData*
             info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Water")), volumeName); 
          }
           if (name == G4String("TargetUpstrDownstrSegment")) { // 
-            info.fParams[0] = fTargetFinWidth + 0.2*mm; 
-            info.fParams[1] = fTargetFinHeight + 2.0*fTargetCTubeOuterRadius + 0.2*mm; 
+            info.fParams[0] = fTargetFinWidth + 0.05*mm; 
+            info.fParams[1] = fTargetFinHeight + 2.0*fTargetCTubeOuterRadius + 0.05*mm; 
             info.fParams[2] = fTargetFinLength+ 0.95*fTargetFinSpacingLength ;
             G4Box* aBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2.);
             info.fCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("HeliumTarget")), volumeName); 
@@ -606,7 +648,7 @@ LBNEVolumePlacementData*
          }
           if (name == G4String("TargetUpstrDownstrSegmentLast")) { // 
             info.fParams[0] = fTargetFinWidth + 0.2*mm; 
-            info.fParams[1] = fTargetFinHeight + 2.0*fTargetCTubeOuterRadius + 0.2*mm; 
+            info.fParams[1] = fTargetFinHeight + 2.0*fTargetCTubeOuterRadius + 0.05*mm; 
             info.fParams[2] = fTargetFinLengthSplitUpstr - 0.01*mm;
             G4Box* aBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2.);
             info.fCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("HeliumTarget")), volumeName); 
@@ -662,10 +704,11 @@ LBNEVolumePlacementData*
 				 info.fParams[3],   info.fParams[4]  );
             info.fCurrent =
 	      new G4LogicalVolume(aTubs, G4Material::GetMaterial(fTargetAlignRingMaterial), volumeName);
-	    std::cerr << " Created TargetAlignmentRingLeft, Params " ;
-	    for (size_t k=0; k!=5; k++) std::cerr << " " <<  info.fParams[k] << " / ";
-	    std::cerr << " dphi " << aTubs->GetDeltaPhiAngle();
-	    std::cerr << std::endl;
+
+//	    std::cerr << " Created TargetAlignmentRingRight, Params " ;
+//	    for (size_t k=0; k!=5; k++) std::cerr << " " <<  info.fParams[k] << " / ";
+//	    std::cerr << " dphi " << aTubs->GetDeltaPhiAngle();
+//	    std::cerr << std::endl;
  // Multiple copies.. 
  	    
     }
@@ -681,10 +724,10 @@ LBNEVolumePlacementData*
             info.fCurrent = 
 	     new G4LogicalVolume(aTubs, G4Material::GetMaterial(fTargetAlignRingMaterial), volumeName);
  // Multiple copies.. 
-	    std::cerr << " Created TargetAlignmentRingRight, Params " ;
-	    for (size_t k=0; k!=5; k++) std::cerr << " " <<  info.fParams[k] << " / ";
-	    std::cerr << " dphi " << aTubs->GetDeltaPhiAngle();
-	    std::cerr << std::endl;
+//	    std::cerr << " Created TargetAlignmentRingLeft, Params " ;
+//	    for (size_t k=0; k!=5; k++) std::cerr << " " <<  info.fParams[k] << " / ";
+//	    std::cerr << " dphi " << aTubs->GetDeltaPhiAngle();
+//	    std::cerr << std::endl;
  	    
     } 
   // Things that are physically part of Horn1, but placed in at the dowstream end of the target volume 
@@ -752,7 +795,7 @@ LBNEVolumePlacementData*
         const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1TopLevelUpstr"), G4String("Create"));
         info.fParams[0] = 0.; 
         info.fParams[1] = fTargetHeContTubeInnerRadius + fTargetHeContTubeThickness; 
-        info.fParams[2] = fTargetHeContTubeLengthInHorn + 0.020*mm;
+        info.fParams[2] = fTargetHeContTubeLengthInHorn + 3.0*mm; // extra 3mm to be able to place the return cooling tube
         G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
         info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Beryllium")), volumeName); 
         info.fPosition[2] = -plInfoM->fParams[2]/2. + info.fParams[2]/2. + 0.002*mm; //
@@ -796,7 +839,7 @@ LBNEVolumePlacementData*
       if (name == G4String("Horn1TargetSegmentFirst")) { //
           const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1TargetDownstrHelium"), G4String("Create"));
             info.fParams[0] = fTargetFinWidth + 0.2*mm; 
-            info.fParams[1] = fTargetFinHeight + 2.0*fTargetCTubeOuterRadius + 0.2*mm; 
+            info.fParams[1] = fTargetFinHeight + 2.0*fTargetCTubeOuterRadius + 0.05*mm; 
             info.fParams[2] = fTargetFinLengthSplitDwnstr - 0.01*mm;
             G4Box* aBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2.);
             info.fCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("HeliumTarget")), volumeName); 
@@ -812,52 +855,33 @@ LBNEVolumePlacementData*
             info.fCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("HeliumTarget")), volumeName); 
             info.fTypeName = G4String("Box");
       }
-      if (name == G4String("Horn1TargetCoolingTubeHLast")) { // 
+      if (name == G4String("Horn1TargetCoolingTubeDwnRetTit")) { // 
+	    info.fParams.resize(5);
+            info.fParams[0] = fTargetCTubeReturnDownstrRadInner; 
+            info.fParams[1] = fTargetCTubeReturnDownstrRadOuter; 
+            info.fParams[2] = fTargetCTubeReturnDownstrThickTitanium/2.;
+	    info.fParams[3] = M_PI/2. + fTargetCTubeReturnDownstrCutAngleStart;
+	    info.fParams[4] = fTargetCTubeReturnDownstrCutAngleSize;
+            G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2.,
+	       info.fParams[3], info.fParams[4]);
+             info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Titanium")), volumeName); 
+	   // Two copies will be placed explictely   
+     }
+     if (name == G4String("Horn1TargetCoolingTubeDwnRetWater")) { //           
             const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1TargetDownstrHelium"), G4String("Create"));
-            info.fParams[0] = 0.; 
-            info.fParams[1] = fTargetCTubeOuterRadius; 
-            info.fParams[2] = fTargetCTubeReturnLengthDownstr;
-            G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
-            info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Titanium")), volumeName); 
-            info.fPosition[0] = fTargetCTubeReturnHOffset/2.0;
-            info.fPosition[2] =
-	       plInfoM->fParams[2]/2 - fTargetCTubeOuterRadius - 15.0*mm - fTargetCTubeReturnLengthDownstr/2.0;
-	       // ?????????????????????????? To be checked with  the drawing... // 
-	    // Two different Vetical locations (up and down) 
-	    info.fRotation.rotateY(fTargetCTubeReturnHOffset/(info.fParams[2]+2.0*mm)); // approximate.	
-	    info.fRotationIsUnitMatrix = false; 		 
-	        ; // possibly tweak for the margin... 
-     }
-     if (name == G4String("Horn1TargetCoolingTubeVLast")) { //           
-            const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1TargetDownstrHelium"), G4String("Create"));
-           info.fParams[0] = 0.; 
-           info.fParams[1] = fTargetCTubeOuterRadius; 
-           info.fParams[2] = fTargetFinHeight;
-           G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
-           info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Titanium")), volumeName); 
-           info.fPosition[0] = fTargetCTubeReturnHOffset;
-           info.fPosition[2] = 	plInfoM->fParams[2]/2 - fTargetCTubeOuterRadius - 10.0*mm  ;
-	    // Two different Vetical locations (up and down) 
-	   info.fRotation.rotateX(M_PI/2.); 	info.fRotationIsUnitMatrix = false;
-	        ; // possibly tweak for the margin... 
-     }
-     if (name == G4String("Horn1TargetCoolingTubeHLastWater")) { // 
-            const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1TargetCoolingTubeHLast"), G4String("Create"));
-           info.fParams[0] = 0.; 
-           info.fParams[1] = fTargetCTubeInnerRadius; 
-           info.fParams[2] = plInfoM->fParams[2] - 0.050*mm;
-           G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
+	    info.fParams.resize(5);
+            info.fParams[0] = fTargetCTubeReturnDownstrRadInner; 
+            info.fParams[1] = fTargetCTubeReturnDownstrRadOuter; 
+            info.fParams[2] = fTargetCTubeReturnDownstrThickWater;
+	    info.fParams[3] = M_PI/2. + fTargetCTubeReturnDownstrCutAngleStart;
+	    info.fParams[4] = fTargetCTubeReturnDownstrCutAngleSize;
+            G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2.,
+	       info.fParams[3], info.fParams[4]);
            info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Water")), volumeName); 
+           info.fPosition[0] = 0.; info.fPosition[1] = 0.;
+           info.fPosition[2] = 	plInfoM->fParams[2]/2 - 
+	       fTargetCTubeReturnDownstrThickWater/2. - fTargetCTubeReturnDownstrThickTitanium/2 - 1.5*mm  ; // leave room for the cap. 
      }
-     if (name == G4String("Horn1TargetCoolingTubeVLastWater")) { // 
-            const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1TargetCoolingTubeVLast"), G4String("Create"));
-           info.fParams[0] = 0.; 
-           info.fParams[1] = fTargetCTubeInnerRadius; 
-           info.fParams[2] = plInfoM->fParams[2] - 0.050*mm;
-           G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
-           info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Water")), volumeName); 
-     }
-    
       if (name == G4String("Horn1TargetDownstrHeContainerCap")) { // 
             const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1TargetDownstrHelium"), G4String("Create"));
            info.fParams[0] = 0.; 
@@ -1312,39 +1336,40 @@ void LBNEVolumePlacements::PlaceFinalUpstrTarget(G4PVPlacement *mother) {
 	                            posTmp, plTargetFin->fCurrent, nameTgtUpDownSeg+G4String("TargetFinVert_P"), 
 				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
     // Repeat the last few mantra for the last segments 
-    LBNEVolumePlacementData *plTargetCoolingTubeLast = Create(G4String("TargetUpstrDownstrCoolingTubeLast"));    
-    LBNEVolumePlacementData *plTargetCoolingTubeWaterLast = Create(G4String("TargetUpstrDownstrCoolingTubeLastWater"));
-    LBNEVolumePlacementData *plTargetFinLast = Create(G4String("TargetFinVertUpstrLast"));
-    G4String nameTgtUpDownSegLast("TargetUpstrDownstrSegmentLast");
-    LBNEVolumePlacementData *plTargetUpstrDownstrSegmentLast = Create(nameTgtUpDownSegLast);
-    posTmp[0] = 0.; posTmp[1] = 0.;
+    if (fTargetFinLengthSplitUpstr > 0.3*mm) {
+      LBNEVolumePlacementData *plTargetCoolingTubeLast = Create(G4String("TargetUpstrDownstrCoolingTubeLast"));    
+      LBNEVolumePlacementData *plTargetCoolingTubeWaterLast = Create(G4String("TargetUpstrDownstrCoolingTubeLastWater"));
+      LBNEVolumePlacementData *plTargetFinLast = Create(G4String("TargetFinVertUpstrLast"));
+      G4String nameTgtUpDownSegLast("TargetUpstrDownstrSegmentLast");
+      LBNEVolumePlacementData *plTargetUpstrDownstrSegmentLast = Create(nameTgtUpDownSegLast);
+      posTmp[0] = 0.; posTmp[1] = 0.;
     
-    posTmp[2] = zCoordTmp + plTargetUpstrDownstrSegmentLast->fParams[2]/2. + 
+      posTmp[2] = zCoordTmp + plTargetUpstrDownstrSegmentLast->fParams[2]/2. + 
 		  (fTargetNumFinsUpstr-1)*(fTargetFinLength + fTargetFinSpacingLength);
-    vSeg = new G4PVPlacement((G4RotationMatrix *) 0, 
+      vSeg = new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, plTargetUpstrDownstrSegmentLast->fCurrent, 
 				      G4String("TargetUpstrDowstrSegmentLast"),
 				          vHelium->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
-    posTmp[0] = 0.; posTmp[1] = fTargetFinHeight/2.; posTmp[2] = 0.;			  
-    vTubeUp =  new G4PVPlacement((G4RotationMatrix *) 0, 
+      posTmp[0] = 0.; posTmp[1] = fTargetFinHeight/2.; posTmp[2] = 0.;			  
+      vTubeUp =  new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, plTargetCoolingTubeLast->fCurrent, 
 				    G4String("TargetUpstrDownstrCoolingTubeUpLast_PTop"), 
 				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
 					  
-    posTmp[1] = -1.0*fTargetFinHeight/2.;			  
-    new G4PVPlacement((G4RotationMatrix *) 0, 
+      posTmp[1] = -1.0*fTargetFinHeight/2.;			  
+      new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, plTargetCoolingTubeLast->fCurrent, 
 				    G4String("TargetUpstrDownstrCoolingTubeUpLast_PBottom"), 
 				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
-    posTmp[0] = 0.; posTmp[1] = 0.; posTmp[2] = 0.;			  
-    new G4PVPlacement((G4RotationMatrix *) 0, 
+      posTmp[0] = 0.; posTmp[1] = 0.; posTmp[2] = 0.;			  
+      new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, plTargetCoolingTubeWaterLast->fCurrent, 
 				    nameTgtUpDownSeg+G4String("CoolingTubeWater_P"), 
 				          vTubeUp->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
-    new G4PVPlacement((G4RotationMatrix *) 0, 
+      new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, plTargetFinLast->fCurrent, G4String("TargetFinVertLast_P"), 
 				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
-   					  				  
+   }					  				  
     // End for the segment of the target which is outside Horn1
     
     // We now have to include at the end of VM1 the parts of the transition Inner to Outer from Horn1. 

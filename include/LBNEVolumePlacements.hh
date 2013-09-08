@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.27 2013/09/05 12:32:49 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.28 2013/09/08 06:55:41 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -323,7 +323,15 @@ private:
   G4double fTargetCTubeReturnLengthUpstr;
   G4int fTargetCTubeUpstrNumSegCurve;
   G4double fTargetCTubeReturnHOffset;
-  G4double fTargetCTubeReturnLengthDownstr;
+  G4double fTargetCTubeReturnLengthDownstr;// Obsolete.but keep for possible upgrade if need 
+  // Replaced by an effective thicness Titanium + water effective thickness
+  G4double fTargetCTubeReturnDownstrCutAngleStart; // The angle at which we start, from 90 dgree (x=0., y ~ 16.5 mm) 
+  G4double fTargetCTubeReturnDownstrCutAngleSize; // The angular size of the wedge representing the volume
+  G4double fTargetCTubeReturnDownstrRadInner;
+  G4double fTargetCTubeReturnDownstrRadOuter;
+  G4double fTargetCTubeReturnDownstrThickTitanium;
+  G4double fTargetCTubeReturnDownstrThickWater;
+  // 
   G4double fTargetCTubeReturnLengthUstr;
   G4double fTargetCTubeReturnLengthUpstrEnd;
   G4double fTargetDistFlangeToTargetStart;

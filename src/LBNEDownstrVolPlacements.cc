@@ -47,7 +47,7 @@ void LBNEVolumePlacements::PlaceFinalDownstrTarget(G4PVPlacement *mother) {
   
     Create("Horn1TargetDownstrHeContainer");
     G4PVPlacement *vMTop = PlaceFinal(std::string("Horn1TargetDownstrHeContainer"), mother);
-    Create("Horn1TargetDownstrHelium");
+    LBNEVolumePlacementData *plDowstrHe = Create("Horn1TargetDownstrHelium");
     G4PVPlacement *vMHe = PlaceFinal(std::string("Horn1TargetDownstrHelium"), vMTop);
     // Deal with alignment ring located in the dowstream part of the target. We assume here that 
     // they have been already defined while dealing with the Upstream target portion 
@@ -78,45 +78,52 @@ void LBNEVolumePlacements::PlaceFinalDownstrTarget(G4PVPlacement *mother) {
 	 }
       } else {
         std::ostringstream cNumStrStr; cNumStrStr << "_P" << copyNumber;
-        G4PVPlacement((G4RotationMatrix *) 0, 
+ 	if (copyNumber == (fMaxNumAlignRings -1)) {
+	 // retract the last one a bit by 5 mm to place the return cooling pipe. 
+	 posTmp[2] -= 10.0*mm;
+	}				  
+        new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, infoTmpRLeft.fCurrent, G4String("TargetAlignmentRingLeft")+cNumStrStr.str(), 
 				          vMHe->GetLogicalVolume(), false, copyNumberHere, fCheckVolumeOverLapWC);
-        G4PVPlacement((G4RotationMatrix *) 0, 
+        new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, infoTmpRRight.fCurrent, G4String("TargetAlignmentRingRight")+ cNumStrStr.str(), 
 				          vMHe->GetLogicalVolume(), false, copyNumberHere, fCheckVolumeOverLapWC);
-        posTmp[2] += fTargetAlignRingSpacing;      
+       posTmp[2] += fTargetAlignRingSpacing;      
         copyNumber++; copyNumberHere++; 
         if ( copyNumber == fMaxNumAlignRings) break;
       }
     }
-    // Deal with the first, split, target segment. 				  
-    Create("Horn1TargetSegmentFirst");
-    G4PVPlacement *vTargSegFirst = PlaceFinal("Horn1TargetSegmentFirst", vMHe);
-    Create("Horn1TargetFinVertFirst");
-    LBNEVolumePlacementData * plCoolingTubeFirst = Create("Horn1TargetCoolingTubeFirst");
-    Create("Horn1TargetCoolingTubeFirstWater");
-    std::map<G4String, LBNEVolumePlacementData>::iterator itTargSegFirst = fSubVolumes.find(G4String("Horn1TargetSegmentFirst"));
-    LBNEVolumePlacementData &infoTargSegFirst = itTargSegFirst->second;    
-    posTmp[0] = 0.; posTmp[1] = fTargetFinHeight/2.; posTmp[2] = 0.;			  
-    G4PVPlacement((G4RotationMatrix *) 0, 
+    // Deal with the first, split, target segment.  
+    LBNEVolumePlacementData *infoTargSegFirst = 0;
+    if (fTargetFinLengthSplitDwnstr > 0.3*mm) { 
+      infoTargSegFirst = Create("Horn1TargetSegmentFirst");
+      G4PVPlacement *vTargSegFirst = PlaceFinal("Horn1TargetSegmentFirst", vMHe);
+      Create("Horn1TargetFinVertFirst");
+      LBNEVolumePlacementData * plCoolingTubeFirst = Create("Horn1TargetCoolingTubeFirst");
+      Create("Horn1TargetCoolingTubeFirstWater");
+      posTmp[0] = 0.; posTmp[1] = fTargetFinHeight/2.; posTmp[2] = 0.;			  
+      G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, plCoolingTubeFirst->fCurrent, 
 				    G4String("Horn1TargetSegmentCoolingTubeFirst_PTop"), 
 				          vTargSegFirst->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
-    posTmp[1] = -1.0*fTargetFinHeight/2.;			  
-    G4PVPlacement *vTubeDown =  new G4PVPlacement((G4RotationMatrix *) 0, 
+      posTmp[1] = -1.0*fTargetFinHeight/2.;			  
+      G4PVPlacement *vTubeDown =  new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, plCoolingTubeFirst->fCurrent, 
 				    G4String("Horn1TargetSegmentCoolingTubeFirst_PBottom"), 
 				          vTargSegFirst->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
-    PlaceFinal("Horn1TargetCoolingTubeFirstWater", vTubeDown);					  
-    PlaceFinal("Horn1TargetFinVertFirst", vTargSegFirst);
-    // Now place the reviously defined standard target segment. Note: they already contain their cooling and 
+      PlaceFinal("Horn1TargetCoolingTubeFirstWater", vTubeDown);					  
+      PlaceFinal("Horn1TargetFinVertFirst", vTargSegFirst);
+     }
+    // Now place the previously defined standard target segment. Note: they already contain their cooling and 
     // real target. 
 //    LBNEVolumePlacementData  *plHorn1TargetSegment = Create("Horn1TargetSegment");
     std::map<G4String, LBNEVolumePlacementData>::iterator itTargSeg = fSubVolumes.find(G4String("TargetUpstrDownstrSegment"));
     LBNEVolumePlacementData  *plTargetUpstrDownstrSegment= &itTargSeg->second;    
     
-    double zCoordTmp = infoTargSegFirst.fPosition[2] + infoTargSegFirst.fParams[2]/2. + 
-                       plTargetUpstrDownstrSegment->fParams[2]/2. + 0.002*mm;	       
+    double zCoordTmp = (infoTargSegFirst == 0) ? 
+                       (-1.0*plDowstrHe->fParams[2]/2. + plTargetUpstrDownstrSegment->fParams[2]/2. + 0.005*mm) :
+                        ( infoTargSegFirst->fPosition[2] + infoTargSegFirst->fParams[2]/2. + 
+                       plTargetUpstrDownstrSegment->fParams[2]/2. + 0.002*mm);	       
     for (int iSeg=0; iSeg != fTargetNumFinsInHorn; iSeg++) { // Place with no misalignment
       posTmp[0] = 0.; posTmp[1] = 0.;
       posTmp[2] =  zCoordTmp;
@@ -129,25 +136,24 @@ void LBNEVolumePlacements::PlaceFinalDownstrTarget(G4PVPlacement *mother) {
       zCoordTmp += (fTargetFinLength + fTargetFinSpacingLength);
     }
     // Now the end 
-    LBNEVolumePlacementData *plCoolingTubeReturn = Create("Horn1TargetCoolingTubeHLast");
-    posTmp[0] = plCoolingTubeReturn->fPosition[0]; posTmp[1] = fTargetFinHeight/2.; 
-    posTmp[2] = plCoolingTubeReturn->fPosition[2];			  
-    G4PVPlacement(&plCoolingTubeReturn->fRotation, 
+    LBNEVolumePlacementData *plCoolingTubeReturn = Create("Horn1TargetCoolingTubeDwnRetTit");
+    posTmp[0] = 0.; posTmp[1] = 0.; 
+    posTmp[2] = plDowstrHe->fParams[2]/2 - 
+	       fTargetCTubeReturnDownstrThickWater - 1.5*fTargetCTubeReturnDownstrThickTitanium/2. - 2.0*mm;
+	       //  Hopefully some roo to spare.. 			  
+    new G4PVPlacement(&plCoolingTubeReturn->fRotation, 
 	                            posTmp, plCoolingTubeReturn->fCurrent, 
-				    G4String("Horn1TargetCoolingTubeHLast_PTop"), 
+				    G4String("Horn1TargetCoolingTubeDwnRetTit_PFront"), 
 				          vMHe->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
-    posTmp[1] = -1.0*fTargetFinHeight/2.;			  
-    vTubeDown =  new G4PVPlacement(&plCoolingTubeReturn->fRotation, 
-	                            posTmp, plCoolingTubeReturn->fCurrent, 
-				    G4String("Horn1TargetCoolingTubeHLast_PTop"), 
-				          vMHe->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
+    posTmp[2] = plDowstrHe->fParams[2]/2 -  0.5*fTargetCTubeReturnDownstrThickTitanium/2. - 1.3*mm;			  
+    new G4PVPlacement(&plCoolingTubeReturn->fRotation, 
+				  posTmp, plCoolingTubeReturn->fCurrent, 
+				  G4String("Horn1TargetCoolingTubeDwnRetTit_PBack"), 
+					vMHe->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
     
-    Create("Horn1TargetCoolingTubeHLastWater");
-    PlaceFinal("Horn1TargetCoolingTubeHLastWater", vTubeDown);
-    Create("Horn1TargetCoolingTubeVLast");
-    G4PVPlacement *vCL = PlaceFinal("Horn1TargetCoolingTubeVLast", vMHe);					  				  
-    Create("Horn1TargetCoolingTubeVLastWater");
-    PlaceFinal("Horn1TargetCoolingTubeVLastWater", vCL);					  				  
+    Create("Horn1TargetCoolingTubeDwnRetWater");
+    PlaceFinal("Horn1TargetCoolingTubeDwnRetWater", vMHe);
+
     Create("Horn1TargetDownstrHeContainerCap");
     PlaceFinal("Horn1TargetDownstrHeContainerCap", vMHe);					  				  
 }
@@ -430,8 +436,9 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
       const double zzEnd = zzBegin + deltaZ;
      std::ostringstream nameStrStr; nameStrStr << "Horn1UpstrSubSect" << iSub;
      G4String nameStr(nameStrStr.str());
-     const double rMin1 = fHorn1Equations[0].GetVal(zzBegin); // Equation 1
-     const double rMin2 = fHorn1Equations[0].GetVal(zzEnd);
+     const int eqn = ((zzBegin/fHorn1LongRescale) < 21.0888*in) ? 0 : 1;
+     const double rMin1 = fHorn1Equations[eqn].GetVal(zzBegin); // Equation 1
+     const double rMin2 = fHorn1Equations[eqn].GetVal(zzEnd);
      const double rMax1 = fHorn1Equations[5].GetVal(zzBegin) + fWaterLayerThickInHorns + 0.0025; 
        // Equation 6 (Drawing 8875.112-MD 363104)
      const double rMax2 = fHorn1Equations[5].GetVal(zzEnd) + fWaterLayerThickInHorns + 0.0025;     
@@ -534,7 +541,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
    // Used later... ZCoordinate translation from ZDrawing and the center of Horn1TopLevelDownstr
    const double zShiftDrawingDownstr = -1.0*(plHDwn->fParams[2])/2. - zUpstreamCrazy3cm;
    
-   const double lengthToTheNeck = fHorn1NeckZPosition - 
+   double lengthToTheNeck = fHorn1NeckZPosition - 
                           (fHorn1TopUpstrLength - 3.0*cm*fHorn1LongRescale)  - fHorn1NeckLength/2.;
 			  // Stupid 3 cm coordinate shift. 
   if (lengthToTheNeck < 0.) {
@@ -547,11 +554,16 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
   //
   // Install the length of inner conductor, from downstream end of the target to Zdrawing 21.0888 inches 
   //
-  const double z21p088 = fHorn1LongRescale*21.088*in; //Equation 
+  const double z21p088 = fHorn1LongRescale*21.088*in; //Equation change
+  std::cerr << " ... Length to the neck " << lengthToTheNeck << std::endl;
+  double aLengthPreNeck = 0.;
+  double zLocPosIncremental = 0;
   if (z21p088 > zUpstreamCrazy3cm) {
      int numSubSect = GetNumberOfInnerHornSubSections(0, zUpstreamCrazy3cm, 
                                                       z21p088, 10); // These Z position are from the start of the inner conductor.   
-     const double deltaZ = lengthToTheNeck/numSubSect;
+     aLengthPreNeck =  z21p088 - zUpstreamCrazy3cm;
+     const double deltaZ = aLengthPreNeck/numSubSect;
+     std::cerr << " ...... delta z to 21.0888 " << deltaZ << std::endl;
      for (int iSub = 0; iSub != numSubSect; iSub++) {					      
        const double zzBegin = zUpstreamCrazy3cm + iSub*deltaZ;
        const double zzEnd = zzBegin + deltaZ;
@@ -567,21 +579,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
        G4LogicalVolume *pCurrent = new G4LogicalVolume(aCons, G4Material::GetMaterial(std::string("Aluminum")), nameStr);
        G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] = 0.;
        posTmp[2] = -1.0*(plHDwn->fParams[2])/2. + iSub*deltaZ + deltaZ/2.;
-       // The above is what I want. At least I think I do. A more succint way, for downstream volumes could be:
-//	double zPosAlt = zzBegin + zShiftDrawingDownstr + deltaZ/2.; // Nicer form 
-//       zPosAlt ?= posTmp[2] = zzBegin	+ zShiftDrawingDownstr + deltaZ/2.;
-//       zShiftDrawingDownstr = posTmp[2] - zzBegin - deltaZ/2.	;	      
-//       zShiftDrawingDownstr = -1.0*(plHDwn->fParams[2])/2. + iSub*deltaZ + deltaZ/2.  - zzBegin - deltaZ/2.	;	      
-//       zShiftDrawingDownstr = -1.0*(plHDwn->fParams[2])/2. - zzBegin + iSub*deltaZ;
-//       zShiftDrawingDownstr = -1.0*(plHDwn->fParams[2])/2. - zUpstreamCrazy3cm ;
-	double zPosAlt = zzBegin + zShiftDrawingDownstr + deltaZ/2.;
-	//
-	// Check the silly 1D equations above.. 
-	if (std::abs( zPosAlt - posTmp[2]) > 0.010) {
-	  std::cerr << " Crap !" << std::endl; 
-	  
-	  exit(2);
-	}  
+       zLocPosIncremental += deltaZ ;
        G4PVPlacement *vSub = new G4PVPlacement((G4RotationMatrix *) 0, posTmp, pCurrent, nameStr + std::string("_P"), 
                         vDown->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);	
 			
@@ -597,18 +595,20 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
                         vSub->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);	
       }
     } // of the number of subsections in the upstream part of the neck region (zDrawing = 21.0888 inches) 
+    lengthToTheNeck -= aLengthPreNeck;
   }
   //
   // Install the length of inner conductor, from either z = 21.0888 inches or zUpstreamCrazy3cm
   // to the neck 
   //
+  std::cerr << " ... Length to the neck after possible installation of pre Neck " << lengthToTheNeck << std::endl;
   const double zStartToNeck = (z21p088 > zUpstreamCrazy3cm) ? z21p088 : zUpstreamCrazy3cm;
   {
      int numSubSect = GetNumberOfInnerHornSubSections(0, zStartToNeck, 
                                                       fHorn1NeckZPosition, 10); // These Z position are from the start of the inner conductor.   
      const double deltaZ = lengthToTheNeck/numSubSect;
      for (int iSub = 0; iSub != numSubSect; iSub++) {					      
-       const double zzBegin = zUpstreamCrazy3cm + iSub*deltaZ;
+       const double zzBegin = zStartToNeck + iSub*deltaZ;
        const double zzEnd = zzBegin + deltaZ;
        std::ostringstream nameStrStr; nameStrStr << "Horn1DownstrPart0SubSect" << iSub;
        G4String nameStr(nameStrStr.str());
@@ -621,22 +621,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
 	                              (deltaZ - 0.005*mm)/2., 0., 360.0*deg);
        G4LogicalVolume *pCurrent = new G4LogicalVolume(aCons, G4Material::GetMaterial(std::string("Aluminum")), nameStr);
        G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] = 0.;
-       posTmp[2] = -1.0*(plHDwn->fParams[2])/2. + iSub*deltaZ + deltaZ/2.;
-       // The above is what I want. At least I think I do. A more succint way, for downstream volumes could be:
-//	double zPosAlt = zzBegin + zShiftDrawingDownstr + deltaZ/2.; // Nicer form 
-//       zPosAlt ?= posTmp[2] = zzBegin	+ zShiftDrawingDownstr + deltaZ/2.;
-//       zShiftDrawingDownstr = posTmp[2] - zzBegin - deltaZ/2.	;	      
-//       zShiftDrawingDownstr = -1.0*(plHDwn->fParams[2])/2. + iSub*deltaZ + deltaZ/2.  - zzBegin - deltaZ/2.	;	      
-//       zShiftDrawingDownstr = -1.0*(plHDwn->fParams[2])/2. - zzBegin + iSub*deltaZ;
-//       zShiftDrawingDownstr = -1.0*(plHDwn->fParams[2])/2. - zUpstreamCrazy3cm ;
-	double zPosAlt = zzBegin + zShiftDrawingDownstr + deltaZ/2.;
-	//
-	// Check the silly 1D equations above.. 
-	if (std::abs( zPosAlt - posTmp[2]) > 0.010) {
-	  std::cerr << " Crap !" << std::endl; 
-	  
-	  exit(2);
-	}  
+       posTmp[2] = zLocPosIncremental -1.0*(plHDwn->fParams[2])/2. + iSub*deltaZ + deltaZ/2.;
        G4PVPlacement *vSub = new G4PVPlacement((G4RotationMatrix *) 0, posTmp, pCurrent, nameStr + std::string("_P"), 
                         vDown->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);	
 			
@@ -926,6 +911,12 @@ LBNEVolumePlacementData* LBNEVolumePlacements::CreateHorn1TopLevelUpstr() {
 			   // in defining the geometry.  
   // The transition Inner to Outer is now included in the Horn1TopLevelUpstr volume!!
   fHorn1TopUpstrLength += fHorn1IOTransLength;
+  //
+  // The above equation to determine fHorn1TopUpstrLength looks wrong based on Geantino analysis
+  // Why not simply:
+  
+  fHorn1TopUpstrLength  =  fTargetHeContTubeLengthInHorn + 7.0*mm;
+  
   std::cerr << "  CreateHorn1TopLevelUpstr : fHorn1IOTransLength " << fHorn1IOTransLength
              <<  " fTargetHeContTubeLengthInHorn " << fTargetHeContTubeLengthInHorn 
 	     <<  " fHorn1TopUpstrLength	" << fHorn1TopUpstrLength << std::endl;		   
@@ -945,6 +936,7 @@ LBNEVolumePlacementData* LBNEVolumePlacements::CreateHorn1TopLevelUpstr() {
 
 void LBNEVolumePlacements::CheckHorn1InnerConductAndTargetRadii() {
 
+  const double in = 2.54*cm;   
   const LBNEVolumePlacementData *plSmallRing = this->Find(G4String("Check"), 
                                                     G4String("Horn1TargetDownstrHeContainer"), 
 						    G4String("LBNEVolumePlacements::CheckHorn1InnerConductAndTargetRadii"));
@@ -968,13 +960,14 @@ void LBNEVolumePlacements::CheckHorn1InnerConductAndTargetRadii() {
   
   const double rSmall = plSmallRing->fParams[1]; // Outer radius
   // Compute the large radius based on equation 0, at the relevant Z 
-  const double zCoordEnd  = plLargeRing->fParams[2] - 3.0*cm*fHorn1LongRescale;
-  
-  const double rLarge = fHorn1Equations[0].GetVal(zCoordEnd); // Equation 1;  // Inner Radius
-//  std::cerr << " CheckHorn1InnerConductAndTargetRadii, zCoordEnd " 
-//            << zCoordEnd << " rLarge " << rLarge << std::endl;
+  const double zCoordEnd  = plLargeRing->fParams[2] -fTargetLengthIntoHorn/2. + 
+                            fTargetZOffsetStart + 3.0*cm + fTargetSLengthDownstrEnd;
+  // Last term du to the various longitudina shifts, which are quite baffling.. 
+  const int eqNum = ((zCoordEnd/fHorn1LongRescale) < 21.0888*in) ? 0 : 1;
+  const double rLarge = fHorn1Equations[eqNum].GetVal(zCoordEnd); // Equation 1;  // Inner Radius
+  std::cerr << " CheckHorn1InnerConductAndTargetRadii, zCoordEnd " 
+            << zCoordEnd << " rLarge " << rLarge << std::endl;
   G4String messHeader(" The downstream end target is touching (or nearly touching)  the Horn1 inner conductor \n");
-  
   if ((std::abs(xOff) < 0.002*mm) && (std::abs(yOff) < 0.002*mm)) {
     if (rSmall + fHorn1RadialSafetyMargin < rLarge) return;
     

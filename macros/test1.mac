@@ -33,8 +33,11 @@
 #/LBNE/stepping/filename ./example/steppingPropa101.txt
 # The order of these 2 cards matters 
 /LBNE/stepping/name GeomPropagation101
-/LBNE/stepping/filename  /scratch/lbne/lebrun/steppingPropa101_l8.txt
-/LBNE/stepping/keyVolumeForOutput TargetAlignmentRing
+# on lbnegpvm02
+/LBNE/stepping/filename  /scratch/lbne/lebrun/steppingPropa101_l9.txt
+# laptop, home 
+#/LBNE/stepping/filename  /home/lebrun/G4LBNE/g4lbne_work/lbne-beamSimB/lbne-beamsim/g4lbne/geantinoResults/steppingPropa101_l8.txt
+/LBNE/stepping/keyVolumeForOutput Horn1TargetCoolingTubeHLast
 #
 # Allows the RunID, which is included in the
 # output file name(s), to be set at runtime.
@@ -46,7 +49,7 @@
 # many particles(protons) to use during the simulation. To be consistent 
 # with past neutrino ntuples each run uses 500000 or 100000 protons
 #
-/LBNE/run/NEvents 10000
+/LBNE/run/NEvents 20000
 #
 # This will place Geant4 in the stage "EventProc", i.e. ,simulating events. 
 #

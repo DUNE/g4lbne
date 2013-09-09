@@ -48,7 +48,7 @@
 
 class LBNESurveyedPt;
 
-class LBNESurveyorMessenger: public G4UImessenger {
+class LBNESurveyorMessenger: public G4UImessenger { // Abandonned
   
   public:
     LBNESurveyorMessenger();
@@ -84,7 +84,7 @@ private:
    G4ThreeVector fPosition;  // The actual position with respect to the nominal alignment.
                             //  That is, if the alignment is really really good, then fPosition goes towards the null vector. 
 
-   LBNESurveyorMessenger fMessenger;
+//   LBNESurveyorMessenger fMessenger; Obsolete...
 
 public:
    inline const std::string& GetName() const {return fName;}
@@ -103,6 +103,7 @@ private:
 // The surveyor knows about the basic layout of the LBNE beam: there is one only one target, preceded by a baffle, 
 // Two horns and so forth.  This the methods for this class are specific to LBNE beam line. 
 //
+class LBNEAllSurveyorMessenger;
 class LBNESurveyor
 {
 
@@ -110,7 +111,9 @@ private:
   LBNESurveyor();
   static LBNESurveyor* fInstance;
   std::vector<LBNESurveyedPt> fData;
-
+  
+  LBNEAllSurveyorMessenger *fAllMessenger;
+  
 public:
   static LBNESurveyor* Instance();
   LBNESurveyor(LBNESurveyor const &); // not implemented 
@@ -160,6 +163,55 @@ private:
 			    // transverse position of the elements. Default value is extremly large (5 cm.,), meaning that volume clashes are 
 			    // likely if the tolerance is larger then the inner diameter of the Horn1. To be negotiated. 
 			    // This maxRadial move applies to the downstream end of the target... 
+// void defineMessengerPosition(const char *name); does not work either... 
+
+};
+//
+// The more elegant way to define all the associate messengers via the LBNESurveyedPt class does not work
+// Do it the brute force way..
+//
+
+class LBNEAllSurveyorMessenger: public G4UImessenger
+{
+public:
+  LBNEAllSurveyorMessenger();
+  ~LBNEAllSurveyorMessenger();
+  
+  void defineAllCommds();
+  
+  void SetNewValue(G4UIcommand* ,G4String );
+ 
+private:
+
+   bool amDefined; // to avoid circular instantiation... 
+   //
+   //NuMI/rndm
+   //
+   G4UIdirectory*   fSurvDir;
+   G4UIcmdWith3Vector* fSurvPosUpstreamLeftPinTargetCanister;
+   G4UIcmdWith3Vector* fSurvPosUpstreamRightPinTargetCanister;
+   G4UIcmdWith3Vector* fSurvPosDownstreamLeftPinTargetCanister;
+   G4UIcmdWith3Vector* fSurvPosDownstreamRightPinTargetCanister;
+   G4UIcmdWith3Vector* fSurvPosUpstreamLeftPinTargetHeTube;
+   G4UIcmdWith3Vector* fSurvPosUpstreamRightPinTargetHeTube;
+   G4UIcmdWith3Vector* fSurvPosDownstreamLeftPinTargetHeTube;
+   G4UIcmdWith3Vector* fSurvPosDownstreamRightPinTargetHeTube;
+   G4UIcmdWith3Vector* fSurvPosUpstreamLeftBallHorn1;
+   G4UIcmdWith3Vector* fSurvPosUpstreamRightBallHorn1;
+   G4UIcmdWith3Vector* fSurvPosDownstreamLeftBallHorn1;
+   G4UIcmdWith3Vector* fSurvPosDownstreamRightBallHorn1;
+   G4UIcmdWith3Vector* fSurvPosUpstreamLeftBallHorn2;
+   G4UIcmdWith3Vector* fSurvPosUpstreamRightBallHorn2;
+   G4UIcmdWith3Vector* fSurvPosDownstreamLeftBallHorn2;
+   G4UIcmdWith3Vector* fSurvPosDownstreamRightBallHorn2;
+   G4UIcmdWith3Vector* fSurvPosUpstreamLeftDecayPipe;
+   G4UIcmdWith3Vector* fSurvPosUpstreamRightDecayPipe;
+   G4UIcmdWith3Vector* fSurvPosDownstreamLeftDecayPipe;
+   G4UIcmdWith3Vector* fSurvPosDownstreamRightDecayPipe;
+   //
+
+   
+      
 };
 
 #endif

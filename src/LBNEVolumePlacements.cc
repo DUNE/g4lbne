@@ -1060,9 +1060,10 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
     if (name == G4String("TargetUpstrDownstrHeContainer")) surveyedPtName = std::string("HeTube");
     if (name == G4String("Horn1TargetDownstrHeContainer")) surveyedPtName = std::string("HeTube");
     if (name == G4String("Horn1IOTransCont")) surveyedPtName = std::string("Horn1");
-    if (name.find("Horn1TopLevel") == 0) surveyedPtName = std::string("Horn1");
-    if (name.find("Horn2TopLevel") == 0) surveyedPtName = std::string("Horn2");
-    if (name.find("DecayPipeHall") == 0) surveyedPtName = std::string("DecayPipe");
+    if (name == G4String("Horn1TopLevelUpstr")) surveyedPtName = std::string("Horn1");
+    if (name == G4String("Horn1TopLevelDownstr")) surveyedPtName = std::string("Horn1");
+    if (name == G4String("Horn2Hall")) surveyedPtName = std::string("Horn2");
+    if (name == G4String("DecayPipeHall")) surveyedPtName = std::string("DecayPipe");
    
     LBNEVolumePlacementData &info=it->second;
     info.fMother  =  mother; 
@@ -1111,7 +1112,8 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
 	     std::cerr << "   Meanwhile, setting the deltaUpstream to 0. " << std::endl;
 	     deltaUpstr[k] = 0.;
 	   }
-	   if (k != 2) {// Case by case for composite volumes..
+	 }
+	 if (k != 2) {// Case by case for composite volumes..
 	      if (surveyedPtName == std::string("HeTube")) { 
 	        deltaSlopes[k] = deltaDownstr[k]/(fTargetHeContTubeLengthUpstr + fTargetHeContTubeLengthInHorn);
 	        if (name == G4String("TargetUpstrDownstrHeContainer")) {
@@ -1119,6 +1121,8 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
 	        } else if (name == G4String("Horn1TargetDownstrHeContainer")) {
 	           info.fPosition[k] += 0.5 * fTargetHeContTubeLengthInHorn * deltaSlopes[k]; 
 	        }
+		//
+		
 	      } else if (surveyedPtName == std::string("Horn1")) {
 	        const double fTotalLength = fHorn1TopUpstrLength + fHorn1TopDownstrLength;
 		
@@ -1130,13 +1134,12 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
 	      	} else if(name == G4String("Horn1TopLevelDownstr")) {
 		  info.fPosition[k] += deltaUpstr[k] + deltaSlopes[k]*
 		              (fHorn1TopUpstrLength + fHorn1TopDownstrLength/2.) ;
-		}  
+		} 
              } else { //generic surveyed volume .
 	        info.fPosition[k] += 0.5*(deltaUpstr[k] + deltaDownstr[k]);
                 deltaSlopes[k] = (deltaDownstr[k] - deltaUpstr[k])/info.fParams[2]; 
 	      }
 	   }
-	 }
       }
       if ((std::abs(deltaSlopes[0]) > 2.0e-9) || (std::abs(deltaSlopes[1]) > 2.0e-9)) { 
         info.fRotationIsUnitMatrix = false;

@@ -7,14 +7,16 @@
 # We are at Geant4 stage call "PreInit" 
 # 
 #/LBNE/det/waterThickInHorn 2 mm
-/LBNE/det/TargetLengthIntoHorn 62 cm
+/LBNE/det/TargetLengthIntoHorn 61 cm
 #/LBNE/det/decayPipeLength 204.55 m
 /LBNE/det/seHornCurrent 201 kA
 #
 # Testing misalingments 
 #
-/LBNE/Surveyor/PosUpstreamLeftBallHorn1 2.0 0. 0.
-/LBNE/Surveyor/PosUpstreamRightBallHorn1 2.0 0. 0.
+#/LBNE/Surveyor/PosUpstreamLeftBallHorn1 2.0 0. 0.
+#/LBNE/Surveyor/PosUpstreamRightBallHorn1 2.0 0. 0.
+/LBNE/Surveyor/PosUpstreamLeftBallHorn1 0. 2.0 0.
+/LBNE/Surveyor/PosUpstreamRightBallHorn1 0. 2.0 0.
 #
 /LBNE/det/construct
 #
@@ -30,8 +32,8 @@
 # Primary vertex setting 
 #
 /LBNE/primary/useGeantino
-/LBNE/primary/geantinoOpeningAngle 0.040 radian
-/LBNE/primary/geantinoZOrigin -1500. mm 
+/LBNE/primary/geantinoOpeningAngle 0.004 radian
+/LBNE/primary/geantinoZOrigin -1000. mm 
 /LBNE/primary/geantinoSigmaZOrigin 150. mm 
 #/LBNE/primary/protonMomentum 5.0 GeV
 #
@@ -39,7 +41,7 @@
 # The order of these 2 cards matters 
 /LBNE/stepping/name GeomPropagation103
 # on lbnegpvm02
-/LBNE/stepping/filename  /scratch/lbne/lebrun/steppingPropa103_.txt
+/LBNE/stepping/filename  /scratch/lbne/lebrun/steppingPropa103_by2.txt
 # laptop, home 
 #/LBNE/stepping/filename  /home/lebrun/G4LBNE/g4lbne_work/lbne-beamSimB/lbne-beamsim/g4lbne/geantinoResults/steppingPropa103_a.txt
 /LBNE/stepping/keyVolumeForOutput Horn1IOTransInnerPurt2

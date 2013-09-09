@@ -42,6 +42,7 @@
 #include "G4String.hh"
 #include "G4UImessenger.hh"
 #include "G4UIcommand.hh"
+#include "G4UIdirectory.hh"
 #include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWith3Vector.hh"
 #include "G4ThreeVector.hh"

@@ -9,7 +9,7 @@
 #/LBNE/det/waterThickInHorn 2 mm
 /LBNE/det/TargetLengthIntoHorn 62 cm
 #/LBNE/det/decayPipeLength 204.55 m
-/LBNE/det/seHornCurrent 201 kA
+#/LBNE/det/seHornCurrent 201 kA
 #
 /LBNE/det/construct
 #
@@ -25,7 +25,7 @@
 # Primary vertex setting 
 #
 /LBNE/primary/useGeantino
-/LBNE/primary/geantinoOpeningAngle 0.040 radian
+/LBNE/primary/geantinoOpeningAngle 0.010 radian
 /LBNE/primary/geantinoZOrigin -1500. mm 
 /LBNE/primary/geantinoSigmaZOrigin 150. mm 
 #/LBNE/primary/protonMomentum 5.0 GeV
@@ -34,7 +34,7 @@
 # The order of these 2 cards matters 
 /LBNE/stepping/name GeomPropagation101
 # on lbnegpvm02
-/LBNE/stepping/filename  /scratch/lbne/lebrun/steppingPropa102_.txt
+/LBNE/stepping/filename  /scratch/lbne/lebrun/steppingPropa101_l20.txt
 # laptop, home 
 #/LBNE/stepping/filename  /home/lebrun/G4LBNE/g4lbne_work/lbne-beamSimB/lbne-beamsim/g4lbne/geantinoResults/steppingPropa102_a.txt
 /LBNE/stepping/keyVolumeForOutput Horn1IOTransInnerPurt2

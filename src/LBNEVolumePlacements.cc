@@ -749,7 +749,7 @@ LBNEVolumePlacementData*
 	    std::istringstream nameIndexStrStr(nameIndexStr); 
 	    int iPart = -1;
 	    nameIndexStrStr >> iPart;
-	    std::cerr << " from LBNEVolumePlacements::Create, for " << name << " Part number " << iPart << std::endl;
+//	    std::cerr << " from LBNEVolumePlacements::Create, for " << name << " Part number " << iPart << std::endl;
 	    if (iPart != 2) {
 	      info.fParams.resize(5); 
               info.fParams[0] = fTargetHorn1InnerRadsUpstr[iPart];
@@ -792,7 +792,7 @@ LBNEVolumePlacementData*
     // horn1. Target is not a typo, nor misplaced in the information flow. 
     if (name.find("Horn1Target") == 0) {
       if (name ==  G4String("Horn1TargetDownstrHeContainer")) {    
-        const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1TopLevelUpstr"), G4String("Create"));
+        const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1Hall"), G4String("Create"));
         info.fParams[0] = 0.; 
         info.fParams[1] = fTargetHeContTubeInnerRadius + fTargetHeContTubeThickness; 
         info.fParams[2] = fTargetHeContTubeLengthInHorn + 3.0*mm; // extra 3mm to be able to place the return cooling tube
@@ -909,11 +909,11 @@ LBNEVolumePlacementData*
       if (name ==  G4String("Horn1TopLevelUpstr")) {  // A container for the section of inner and outer conductors enveloping 
                                                    // the target.  
         const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1Hall"), G4String("Create"));
-        info.fParams[0] = 0.;
+        info.fParams[0] = fTargetHeContTubeInnerRadius + fTargetHeContTubeThickness + 1.5*mm;
         info.fParams[1] = fHorn1TopUpstrOuterRad + 3.0*in;  // room for the flanges.        
         info.fParams[2] = fHorn1TopUpstrLength - 0.010*mm;
-	std::cerr << " Horn1TopLevelUpstr Params " 
-	          << fHorn1TopUpstrInnerRad << " , " << fHorn1TopUpstrOuterRad << " " << info.fParams[2] << std::endl;
+//	std::cerr << " Horn1TopLevelUpstr Params " 
+//	          << fHorn1TopUpstrInnerRad << " , " << fHorn1TopUpstrOuterRad << " " << info.fParams[2] << std::endl;
         G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
         info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Air")), volumeName); 
         info.fPosition[2] = -plInfoM->fParams[2]/2. + info.fParams[2]/2. + 0.005*mm; 
@@ -956,7 +956,7 @@ LBNEVolumePlacementData*
 	    // next to last term: subtract twice the margin, and 
 	    // last term : Z = 0, drawing with respect to the  entrance of Horn2TopLevel, - margin (we are placing the hall, not yet 
 	    // the container (surveyable) volume 
-	std::cerr << " Horn2Hall Placement data, zHHinTGH, " << zHHinTGH << " zHHinTunnel " << zHHinTunnel << std::endl;
+//	std::cerr << " Horn2Hall Placement data, zHHinTGH, " << zHHinTGH << " zHHinTunnel " << zHHinTunnel << std::endl;
     } 
      if (name == G4String("Horn2TopLevel")) { //  align-able. Use survey data in PlaceFinal
        info.fParams[0] = 0.; 
@@ -1070,9 +1070,9 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
     LBNESurveyor* theSurvey = LBNESurveyor::Instance();
     std::vector<double> posA(3,0.); 
     for (size_t k=0; k!=3; ++k) posA[k] = info.fPosition[k]; 
-    std::cerr << " LBNEVolumePlacements::PlaceFinal, Prior to alignment " << name << " half size " 
-                << info.fParams[2]/2. << " position X " << info.fPosition[0] 
-		 << " Y " << info.fPosition[1] << " Z  " << info.fPosition[2] << std::endl;
+//    std::cerr << " LBNEVolumePlacements::PlaceFinal, Prior to alignment " << name << " half size " 
+//                << info.fParams[2]/2. << " position X " << info.fPosition[0] 
+//		 << " Y " << info.fPosition[1] << " Z  " << info.fPosition[2] << std::endl;
     if (theSurvey->size() != 0) {
       G4ThreeVector deltaUpstrLeft; 
       G4ThreeVector deltaUpstrRight; 
@@ -1143,7 +1143,7 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
       }
       if ((std::abs(deltaSlopes[0]) > 2.0e-9) || (std::abs(deltaSlopes[1]) > 2.0e-9)) { 
         info.fRotationIsUnitMatrix = false;
-        info.fRotation.rotateY(deltaSlopes[0]);	
+        info.fRotation.rotateY(-1.0*deltaSlopes[0]); // change sign?????? 	
         info.fRotation.rotateX(deltaSlopes[1]); // rotation in the YZ plane, axis is then X Commutative for small angles.. 
 	// Shift the volume longitudinally if a signficant slope exists. 
 	const double maxSlope = std::max(std::abs(deltaSlopes[0]), std::abs(deltaSlopes[1]));
@@ -1153,16 +1153,16 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
 	// Note: position might have to revised as well.. On a case by case basis? 	
       }
     } // End of alignment. 
-    std::cerr << " LBNEVolumePlacements::PlaceFinal, " << name << " half size " 
-                << info.fParams[2]/2. << " position X " << info.fPosition[0] 
-		 << " Y " << info.fPosition[1] << " Z  " << info.fPosition[2] << std::endl;
+//    std::cerr << " LBNEVolumePlacements::PlaceFinal, " << name << " half size " 
+//                << info.fParams[2]/2. << " position X " << info.fPosition[0] 
+//		 << " Y " << info.fPosition[1] << " Z  " << info.fPosition[2] << std::endl;
     std::map<G4String, LBNEVolumePlacementData>::iterator itMother = 
        fSubVolumes.find(lMother->GetName());
     if (itMother != fSubVolumes.end()) {
-       LBNEVolumePlacementData &infoMother=itMother->second;
-      std::cerr << " .... Params for mother ";
-      for (size_t k=0; k!= infoMother.fParams.size(); k++) std::cerr << " " << infoMother.fParams[k] << ",";
-      std::cerr << " . " << std::endl;
+//       LBNEVolumePlacementData &infoMother=itMother->second;
+//      std::cerr << " .... Params for mother ";
+//      for (size_t k=0; k!= infoMother.fParams.size(); k++) std::cerr << " " << infoMother.fParams[k] << ",";
+//      std::cerr << " . " << std::endl;
 
     }
     G4PVPlacement *placement=0;
@@ -1186,13 +1186,13 @@ void LBNEVolumePlacements::PlaceFinalUpstrTarget(G4PVPlacement *mother) {
    
     Create("TargetUpstrMTop");
     G4PVPlacement *vMTop = PlaceFinal(std::string("TargetUpstrMTop"), mother);
-    std::cerr << " TargetUpstrMTop  created and placed ... " << std::endl;
+//    std::cerr << " TargetUpstrMTop  created and placed ... " << std::endl;
     LBNEVolumePlacementData *plM0 = Create("TargetUpstrM0");
-    std::cerr << " TargetUpstrM0  created ... " << std::endl;
+//    std::cerr << " TargetUpstrM0  created ... " << std::endl;
     LBNEVolumePlacementData *plM1 = Create("TargetUpstrM1");
-    std::cerr << " TargetUpstrM1  created ... " << std::endl;
+//    std::cerr << " TargetUpstrM1  created ... " << std::endl;
     G4PVPlacement *vM0 = PlaceFinal(std::string("TargetUpstrM0"), vMTop);
-    std::cerr << " TargetUpstrM0  placed ... " << std::endl;
+//    std::cerr << " TargetUpstrM0  placed ... " << std::endl;
     G4PVPlacement *vM1 = PlaceFinal(std::string("TargetUpstrM1"), vMTop);
     std::string tUpUp("TargetUpstrUpstr");
     Create(tUpUp + std::string("Plate"));
@@ -1223,8 +1223,8 @@ void LBNEVolumePlacements::PlaceFinalUpstrTarget(G4PVPlacement *mother) {
 	                         fTargetUpstrPlateThick + fTargetCanLength + 
 				 fTargetDownstrCanFlangeThick + fTargetFlangeThick - infoTmp.fParams[2]/2 - 1.0*mm;
     G4String vpNameTmp5(nameTmp5);				 			 
-    std::cerr << " Position for " << vpNameTmp5+G4String("_PTop") << " X = " 
-                                  << posTmp[0] << " Y " << posTmp[1] << " Z " << posTmp[2] << std::endl;  
+//    std::cerr << " Position for " << vpNameTmp5+G4String("_PTop") << " X = " 
+//                                  << posTmp[0] << " Y " << posTmp[1] << " Z " << posTmp[2] << std::endl;  
     G4PVPlacement *vCoolingTubeTop = new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, infoTmp.fCurrent, vpNameTmp5+G4String("_PTop"),
 				     vM0->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC );
@@ -1436,16 +1436,16 @@ void LBNEVolumePlacements::TestVolumeOverlap(const G4String &name, G4VPhysicalVo
     int numTrials = 0;
     if (name == G4String("Horn1Hall")) {
      // "blind" test: shift until we are o.k. 
-      std::cerr << " LBNEVolumePlacements::TestVolumeOverlap for volume " << name 
-                << " in mother volume " << vMother->GetName() << std::endl;
+//      std::cerr << " LBNEVolumePlacements::TestVolumeOverlap for volume " << name 
+//                << " in mother volume " << vMother->GetName() << std::endl;
       while (numTrials < numTrialsMax) {
        
        // Special cases : not at the center of the mother volume.  It's downstream edge is the border 
       // 10 micron safety zone. 
        infoTmp.fPosition[2]= infoTmp.fParams[2]/2. + 0.010*mm - 5.0*mm ; // last 5 mm is a mistake... 
        infoTmp.fPosition[2] += (G4RandGauss::shoot(0., 3.0))*mm; // randomly trial 
-       std::cerr << " ... z Offset = " << infoTmp.fPosition[2] - infoTmp.fParams[2]/2. 
-                << " mm, half size " <<  infoTmp.fParams[2]/2. << " mm, Pos " << infoTmp.fPosition[2] <<  std::endl;
+//       std::cerr << " ... z Offset = " << infoTmp.fPosition[2] - infoTmp.fParams[2]/2. 
+//                << " mm, half size " <<  infoTmp.fParams[2]/2. << " mm, Pos " << infoTmp.fPosition[2] <<  std::endl;
        // Ignore rotations for this tests 
        std::string vpName(name); vpName += std::string("_Ptmp");
 //       std::cerr << " ... Before placing  " << vpName << " at Z = " << infoTmp.fPosition[2] << std::endl;

@@ -1,21 +1,23 @@
 
-// $Id: LBNEMagneticField.hh,v 1.2.2.5 2013/09/04 08:11:34 lebrun Exp $
+// $Id: LBNEMagneticField.hh,v 1.2.2.6 2013/09/09 20:01:49 lebrun Exp $
 // --------------------------------------------------------------
 // LBNEMagneticField.hh modified by Yuki 2004/7/16
 // modified by Yuki 8/2/04
 #ifndef LBNEMagneticField_H
 #define LBNEMagneticField_H 1
+#include <fstream>
 #include <vector>
 
 #include "globals.hh"
 #include "G4MagneticField.hh"
-
+#include <fstream>
 
 class LBNEMagneticFieldHorn : public G4MagneticField
 {
   public:
     explicit LBNEMagneticFieldHorn(bool isHorn1);
-
+    ~LBNEMagneticFieldHorn();
+    
   virtual void GetFieldValue( const double Point[3], double *Bfield ) const;
 
   private:
@@ -47,6 +49,10 @@ class LBNEMagneticFieldHorn : public G4MagneticField
    std::vector<double> fZDCBegin;
    std::vector<double> fZDCEnd;
    G4double fNeckRadius;
+   mutable std::ofstream fOutTraj;
+   
+   
+   void fillTrajectories(const double Point[3], double bx, double by) const;
    
   public:
     

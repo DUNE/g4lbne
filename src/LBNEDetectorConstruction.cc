@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.27 2013/09/03 22:51:39 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.28 2013/09/09 20:01:51 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -367,7 +367,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
    fPlacementHandler->CreateHorn1TopLevelUpstr();
    G4PVPlacement *vUpstr = fPlacementHandler->PlaceFinal("Horn1TopLevelUpstr", vHorn1);
 
-  fPlacementHandler->PlaceFinalDownstrTarget((G4PVPlacement*) vUpstr);
+  fPlacementHandler->PlaceFinalDownstrTarget((G4PVPlacement*) vHorn1);
 
   fPlacementHandler->PlaceFinalHorn1((G4PVPlacement*) vHorn1, vUpstr);  
 

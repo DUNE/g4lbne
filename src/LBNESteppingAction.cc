@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNESteppingAction.cc
-// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.7 2013/09/08 21:05:31 lebrun Exp $
+// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.8 2013/09/09 20:01:52 lebrun Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -50,6 +50,7 @@ LBNESteppingAction::~LBNESteppingAction()
  if (fOutStudy.is_open()) fOutStudy.close();
  if (fOutStepStudy.is_open()) fOutStepStudy.close();
  delete pMessenger;
+ // delete 
 }
 
 //----------------------------------------------------------------------

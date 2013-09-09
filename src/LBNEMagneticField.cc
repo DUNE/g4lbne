@@ -11,6 +11,7 @@
 #include "LBNEVolumePlacements.hh"
 #include "LBNESurveyor.hh"
 #include "Randomize.hh"
+#include "LBNERunManager.hh"
 
 //magnetic field between conductors ====================================================
 
@@ -179,7 +180,16 @@ fSkinDepth(4.1*mm)
                                                   // Transverse shoft at the upstream  entrance of Horn1 
     fShiftSlope[k] = 0.5*(pUpLeft[k] + pUpRight[k] -  pDwLeft[k] - pDwRight[k])/fEffectiveLength; 
   }
-  
+//
+// Open a file to study the value of the field for displaced trajectory... 
+//  
+ if (!fOutTraj.is_open()) {
+   G4String fNameStr("./FieldTrajectories_Horn");
+   if (amHorn1) fNameStr += G4String("1_1.txt");
+   else  fNameStr += G4String("2_1.txt");
+   fOutTraj.open(fNameStr.c_str()); // we will place a GUI interface at a later stage... 
+   fOutTraj << " id x y z bx by " << std::endl;
+ }
 }
 
 void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) const
@@ -215,11 +225,11 @@ void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) 
         fZShiftDrawingCoordinate = Point[2] - aPlacementHandler->GetHorn2DeltaZEntranceToZOrigin();
      }
      fCoordinateSet = true;
-//     std::cerr << " Coordinate transform, Z shifts at Z World  " << Point[2] << " in  " << vName << std::endl;
-//     std::cerr << " fZShiftUpstrWorldToLocal " << 
-//                    fZShiftUpstrWorldToLocal << " fZShiftDrawingCoordinate " << fZShiftDrawingCoordinate << std::endl;
+      this->dumpField();
+     std::cerr << " Coordinate transform, Z shifts at Z World  " << Point[2] << " in  " << vName << std::endl;
+     std::cerr << " fZShiftUpstrWorldToLocal " << 
+		    fZShiftUpstrWorldToLocal << " fZShiftDrawingCoordinate " << fZShiftDrawingCoordinate << std::endl;
 //      if (!amHorn1) { std::cerr << " And quit  !!!! " << std::endl; exit(2); }
-//      this->dumpField();
    } // Initialization of Z coordinate transform 
    if (!fCoordinateSet) return;
    std::vector<double> ptTrans(2,0.);
@@ -269,6 +279,7 @@ void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) 
      }
      Bfield[0] = -magBField*ptTrans[1]/r;
      Bfield[1] = magBField*ptTrans[0]/r;
+     this->fillTrajectories(Point, Bfield[0],  Bfield[1]);
 //     std::cerr << " Field region at Z " << Point[2] << " r = " << r 
 //	       << " radIC " << radIC << " radOC " 
 //	       << radOC << "zLocD " << zLocD << " magBField " 
@@ -322,3 +333,17 @@ void LBNEMagneticFieldHorn::dumpField() const {
   } 
   fOut.close();
 }  
+
+void LBNEMagneticFieldHorn::fillTrajectories(const double Point[3], double bx, double by) const {
+ if (!fOutTraj.is_open()) return; 
+ LBNERunManager* pRunManager = dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
+ fOutTraj << " " << pRunManager->GetCurrentEvent()->GetEventID();
+ for (size_t k=0; k!= 3; k++) fOutTraj << " " << Point[k];
+ fOutTraj << " " << bx/tesla << " " << " " << by/tesla << std::endl;
+ // we flush, the destructor never called.. 
+ fOutTraj.flush();
+}
+LBNEMagneticFieldHorn::~LBNEMagneticFieldHorn() {
+   std::cerr << " Closing Output Trajectory file in LBNEMagneticFieldHorn " << std::endl;
+   if (fOutTraj.is_open()) fOutTraj.close();
+}

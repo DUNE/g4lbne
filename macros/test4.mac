@@ -1,0 +1,71 @@
+#-----------------------------------------------------------------------------------
+#
+# An example script for running the Standard Neutrino Beam simulation in G4LBNE
+# using a Geant4 generated proton beam. P. Lebrun
+#
+# Place here the commands that modify the default geometry. 
+# We are at Geant4 stage call "PreInit" 
+# 
+#/LBNE/det/waterThickInHorn 2 mm
+/LBNE/det/TargetLengthIntoHorn 61 cm
+#/LBNE/det/decayPipeLength 204.55 m
+/LBNE/det/seHornCurrent 201 kA
+#
+# Testing misalingments 
+#
+#/LBNE/Surveyor/PosUpstreamLeftBallHorn1 2.0 0. 0.
+#/LBNE/Surveyor/PosUpstreamRightBallHorn1 2.0 0. 0.
+/LBNE/Surveyor/PosUpstreamLeftBallHorn1 0. 2.0 0.
+/LBNE/Surveyor/PosUpstreamRightBallHorn1 0.0 2. 0.
+#
+/LBNE/det/construct
+#
+#exit
+/run/initialize
+#
+# We are at Geant4 stage "idle" 
+#
+/event/verbose 0
+/tracking/verbose 0
+#
+#
+# Primary vertex setting 
+#
+/LBNE/primary/useMuonGeantino
+/LBNE/primary/geantinoOpeningAngle 0.012 radian
+/LBNE/primary/geantinoZOrigin -1000. mm 
+/LBNE/primary/geantinoSigmaZOrigin 150. mm 
+#/LBNE/primary/protonMomentum 5.0 GeV
+#
+#/LBNE/stepping/filename ./example/steppingPropa101.txt
+# The order of these 2 cards matters 
+/LBNE/stepping/name GeomPropagation103
+# on lbnegpvm02
+/LBNE/stepping/filename  /scratch/lbne/lebrun/steppingPropa104_by2.txt
+# laptop, home 
+#/LBNE/stepping/filename  /home/lebrun/G4LBNE/g4lbne_work/lbne-beamSimB/lbne-beamsim/g4lbne/geantinoResults/steppingPropa103_a.txt
+/LBNE/stepping/keyVolumeForOutput Horn1IOTransInnerPurt2
+#
+# Allows the RunID, which is included in the
+# output file name(s), to be set at runtime.
+#
+/LBNE/output/CreateOutput false
+/LBNE/run/setRunID 11
+#
+# If NOT using an external hadron file then this establishes how 
+# many particles(protons) to use during the simulation. To be consistent 
+# with past neutrino ntuples each run uses 500000 or 100000 protons
+#
+/LBNE/run/NEvents 200
+#
+# This will place Geant4 in the stage "EventProc", i.e. ,simulating events. 
+#
+/run/beamOn 
+#
+exit
+#
+#NOTE: To debug problems grep for "PROBLEM" in the output of the simulation
+# "PROBLEM" statements are printed when there is a problem.
+#
+
+

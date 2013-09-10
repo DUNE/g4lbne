@@ -909,7 +909,20 @@ LBNEVolumePlacementData*
       if (name ==  G4String("Horn1TopLevelUpstr")) {  // A container for the section of inner and outer conductors enveloping 
                                                    // the target.  
         const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1Hall"), G4String("Create"));
-        info.fParams[0] = fTargetHeContTubeInnerRadius + fTargetHeContTubeThickness + 1.5*mm;
+//        info.fParams[0] = fTargetHeContTubeInnerRadius + fTargetHeContTubeThickness + 1.5*mm;
+// Above is not optimum if misalignment Use the equation set
+//  
+        const double zMaxDC = fTargetLengthIntoHorn + 3.0*in*fHorn1LongRescale;
+	const size_t iEqn = (zMaxDC < (21.0888*in*fHorn1LongRescale)) ? 0 : 1;
+	info.fParams[0] = fHorn1Equations[iEqn].GetVal(zMaxDC) - 0.5*mm;
+	const double rMaxOut = fTargetHeContTubeInnerRadius + fTargetHeContTubeThickness +0.050*mm;
+	if (info.fParams[0] <  rMaxOut) {
+	  std::ostringstream mStrStr; 
+	  mStrStr << " Can't create Horn1TopLevelUpstr, radial clash between Horn1 inner conductor, rMin " <<  
+	    info.fParams[0] << " Target Helium tube + safety = " << rMaxOut << std::endl;
+	  G4String mStr(mStrStr.str());
+          G4Exception("LBNEVolumePlacements::Create", " ", FatalErrorInArgument, mStr.c_str()); 
+	}
         info.fParams[1] = fHorn1TopUpstrOuterRad + 3.0*in;  // room for the flanges.        
         info.fParams[2] = fHorn1TopUpstrLength - 0.010*mm;
 //	std::cerr << " Horn1TopLevelUpstr Params " 

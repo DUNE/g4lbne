@@ -581,8 +581,12 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
        const double zzEnd = zzBegin + deltaZ;
        std::ostringstream nameStrStr; nameStrStr << "Horn1DownstrPartM0SubSect" << iSub;
        G4String nameStr(nameStrStr.str());
-       const double rMin1 = fHorn1Equations[0].GetVal(zzBegin); // Equation 1
-       const double rMin2 = fHorn1Equations[0].GetVal(zzEnd);
+       const double rMin1Eqn1 = fHorn1Equations[0].GetVal(zzBegin); // Equation 1 or 0
+       const double rMin2Eqn1 = fHorn1Equations[0].GetVal(zzEnd);
+       const double rMin1Eqn2 = fHorn1Equations[1].GetVal(zzBegin); // Equation 1 or 0
+       const double rMin2Eqn2 = fHorn1Equations[1].GetVal(zzEnd);
+       const double rMin1 = ((numSubSect - iSub -1)*rMin1Eqn1 + ((iSub+1)*rMin1Eqn2))/numSubSect;
+       const double rMin2 = ((numSubSect - iSub -1)*rMin2Eqn1 + ((iSub+1)*rMin2Eqn2))/numSubSect;
        const double rMax1 = fHorn1Equations[5].GetVal(zzBegin) + fWaterLayerThickInHorns + 0.0025; 
        // Equation 6 (Drawing 8875.112-MD 363104)
        const double rMax2 = fHorn1Equations[5].GetVal(zzEnd) + fWaterLayerThickInHorns + 0.0025;     

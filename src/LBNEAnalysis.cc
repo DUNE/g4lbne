@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 // LBNEAnalysis.cc
 //
-// $Id: LBNEAnalysis.cc,v 1.3.2.3 2013/09/05 19:27:58 lebrun Exp $
+// $Id: LBNEAnalysis.cc,v 1.3.2.4 2013/09/12 13:25:30 lebrun Exp $
 //----------------------------------------------------------------------
 
 #include <vector>
@@ -366,7 +366,6 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
    //	 etc. until the cascade exiting the target core.
    // 
    
-
    //
    //if not using external ntuple then need to find the particle that exited the target
    //
@@ -559,21 +558,22 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
    std::vector<G4double> zdet_near(nNear, 0.);
 
   for(G4int ii=0;ii<nNear;ii++){
-    xdet_near.push_back(xdetNear[ii]*m);
-    ydet_near.push_back(ydetNear[ii]*m);
-    zdet_near.push_back(zdetNear[ii]*m);
+    xdet_near[ii] = xdetNear[ii]*m;
+    ydet_near[ii] = ydetNear[ii]*m;
+    zdet_near[ii] = zdetNear[ii]*m;
   }
    //Far Detector
    // Neutrino data at different points
    // need neutrino parent info to be filled in fLBNEOutNtpData by this point
-   std::vector<G4double> xdet_far(nNear, 0.);
-   std::vector<G4double> ydet_far(nNear, 0.);
-   std::vector<G4double> zdet_far(nNear, 0.);
+   // 
+   std::vector<G4double> xdet_far(nFar, 0.);
+   std::vector<G4double> ydet_far(nFar, 0.);
+   std::vector<G4double> zdet_far(nFar, 0.);
    
   for(G4int ii=0;ii<nFar;ii++){
-    xdet_far.push_back(xdetFar[ii]*m);
-    ydet_far.push_back(ydetFar[ii]*m);
-    zdet_far.push_back(zdetFar[ii]*m);
+    xdet_far[ii] = xdetFar[ii]*m;
+    ydet_far[ii] = ydetFar[ii]*m;
+    zdet_far[ii] = zdetFar[ii]*m;
   }
    
    
@@ -614,6 +614,8 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
       G4cout << "LBNEAnalysis::FillNeutrinoNtuple - "
 	     << "Far Detector vectors are not the same size." << G4endl; 
    }
+
+   const int ntypeBefWeight = fLBNEOutNtpData->Ntype;      
    
    ndets = xdet_far.size();
    for(unsigned int idet = 0; idet < ndets; ++idet)
@@ -633,7 +635,6 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
       fLBNEOutNtpData->NWtFar[idet]   = nu_wght;
    }
    //end far det
-
 
 
    //
@@ -675,7 +676,6 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
 
    }//end while trackID > 0
    //end tracking through geometry
-
 
   //
   //Done. Fill Tree.

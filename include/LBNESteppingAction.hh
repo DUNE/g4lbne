@@ -62,11 +62,13 @@ private:
    bool goneThroughHorn2Entr;
    G4String fStudyGeantinoMode;
    G4String fKeyVolumeForOutput;
+   G4String fKeyVolumeForOutputTo;
    int fEvtIdPrevious; 
    
    
    void StudyAbsorption(const G4Step*); 
    void StudyPropagation(const G4Step*); 
+   void StudyCheckOverlap(const G4Step*); 
    void dumpStepCheckVolumeAndFields(const G4Step*);
    
 public:
@@ -75,6 +77,7 @@ public:
    G4String GetStudyGeantinoMode() const { return fStudyGeantinoMode; } 
    void SetStudyGeantinoMode(G4String v) {fStudyGeantinoMode = v; }
    void SetKeyVolumeForOutput(G4String v) {fKeyVolumeForOutput = v; }
+   void SetKeyVolumeForOutputTo(G4String v) {fKeyVolumeForOutputTo = v; }
 
 };
 

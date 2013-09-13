@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNESteppingAction.cc
-// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.8 2013/09/09 20:01:52 lebrun Exp $
+// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.9 2013/09/13 22:49:34 lebrun Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -43,6 +43,7 @@ LBNESteppingAction::LBNESteppingAction()
  fEvtIdPrevious = -1;
  fStudyGeantinoMode=G4String("none");
  fKeyVolumeForOutput=G4String("blank");
+ fKeyVolumeForOutputTo=G4String("blank");
 }
 //----------------------------------------------------------------------
 LBNESteppingAction::~LBNESteppingAction()
@@ -73,6 +74,7 @@ void LBNESteppingAction::UserSteppingAction(const G4Step * theStep)
    if (fOutStudy.is_open()) { 
     if (fStudyGeantinoMode.find("Absorb") != std::string::npos) StudyAbsorption(theStep);
     if (fStudyGeantinoMode.find("Propa") != std::string::npos) StudyPropagation(theStep);
+    if (fStudyGeantinoMode.find("PropCO") != std::string::npos) StudyCheckOverlap(theStep);
    }
 }
 
@@ -279,7 +281,7 @@ void LBNESteppingAction::CheckInTgtEndPlane(const G4Step * theStep)
    std::string preStepPointName  = theStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
 
    std::stringstream endName;
-   endName << "TgtEndPlane";
+   endName << "Horn1TopLevelDown";
 
    if (preStepPointName.find(endName.str()) != std::string::npos)
    {
@@ -322,6 +324,8 @@ void LBNESteppingAction::OpenAscii(const char *fname) {
     " id x y z ILDecayChan ILHorn1Neck ILHorn2Entr ILNCDecayChan ILNCHorn1Neck ILNCHorn2Entr ILAlHorn2Entr" << std::endl;
    } else if (fStudyGeantinoMode.find("Propa") != std::string::npos) {
      fOutStudy << " id x y z xo yo zo zPost step matPre matPost " << std::endl;
+   } else if (fStudyGeantinoMode.find("PropCO") != std::string::npos) {
+     fOutStudy << " id x y z xo yo zo step matPre matPost " << std::endl;
    }
    fOutStudy.flush();
    std::cerr << " LBNESteppingAction::OpenAscii " << std::string(fname) << std::endl;
@@ -341,6 +345,7 @@ void LBNESteppingAction::StudyAbsorption(const G4Step * theStep) {
 	
    G4StepPoint* prePtr = theStep->GetPreStepPoint();
    if (prePtr == 0) return;
+/*
    if ( theTrack->GetNextVolume() == 0 ) {
        fOutStudy << " " << pRunManager->GetCurrentEvent()->GetEventID(); 
         for (size_t k=0; k!=3; k++) fOutStudy << " " << prePtr->GetPosition()[k];
@@ -350,11 +355,15 @@ void LBNESteppingAction::StudyAbsorption(const G4Step * theStep) {
 	          << " " << waterAbsHorn2Entr << " " <<  alumAbsHorn2Entr << std::endl;
 		  return;
    }		  
+*/
    //
    // I set the position of the geantino production vertex at Z=0.;
    //
-   if ((std::abs(prePtr->GetPosition()[0]) < 1.0e-10) && (std::abs(prePtr->GetPosition()[1]) < 1.0e-10)) {
-//     std::cerr << " Starting point, z = " << prePtr->GetPosition()[2] << std::endl;
+   G4LogicalVolume *volPre = prePtr->GetPhysicalVolume()->GetLogicalVolume();
+   if (fEvtIdPrevious  != pRunManager->GetCurrentEvent()->GetEventID() ) { 
+     std::cerr << " Evt id " << 
+           pRunManager->GetCurrentEvent()->GetEventID() <<
+	      " Starting point, z = " << prePtr->GetPosition()[2] << std::endl;
      totalAbsDecayChan= 0.;
      totalAbsHorn1Neck=0.;
      totalAbsHorn2Entr=0.;
@@ -364,11 +373,14 @@ void LBNESteppingAction::StudyAbsorption(const G4Step * theStep) {
      alumAbsHorn2Entr=0.;
      goneThroughHorn1Neck = false;
      goneThroughHorn2Entr = false;
+     fEvtIdPrevious = pRunManager->GetCurrentEvent()->GetEventID();
+     return;
    } 
 
    if(theStep->GetPreStepPoint()->GetPhysicalVolume() == NULL) return;
    const double ll = theStep->GetStepLength();
    G4StepPoint* postPtr = theStep->GetPostStepPoint();
+/*
    if (postPtr == NULL) {
        fOutStudy << " " << pRunManager->GetCurrentEvent()->GetEventID(); 
         for (size_t k=0; k!=3; k++) fOutStudy << " " << prePtr->GetPosition()[k];
@@ -378,11 +390,13 @@ void LBNESteppingAction::StudyAbsorption(const G4Step * theStep) {
 	          << " " << waterAbsHorn2Entr << " " <<  alumAbsHorn2Entr << std::endl;
 		  return;
    } 		  
+*/
+  if (postPtr == NULL) return;
    G4VPhysicalVolume *physVol = postPtr->GetPhysicalVolume();
    std::string vName(physVol->GetName());
-   G4Material *material = postPtr->GetMaterial();
+   G4Material *material = theTrack->GetMaterial();
     
-   if (pRunManager->GetCurrentEvent()->GetEventID() < 3) {
+   if (pRunManager->GetCurrentEvent()->GetEventID() < -3) {
       const double r = std::sqrt(postPtr->GetPosition()[0]*postPtr->GetPosition()[0] + 
                                  postPtr->GetPosition()[1]*postPtr->GetPosition()[1]); 
       const double t = r/std::abs(postPtr->GetPosition()[2] + 515.25); // ZOrigin = -515.25
@@ -391,10 +405,9 @@ void LBNESteppingAction::StudyAbsorption(const G4Step * theStep) {
 	      " In " << vName << " material " << material->GetName()
 	      << " InterLength " << material->GetNuclearInterLength() << std::endl;  
    } 
-   if (postPtr->GetPosition()[2] > -50.) goneThroughHorn1Neck=true; // approximate... 
+   if (postPtr->GetPosition()[2] > 500.) goneThroughHorn1Neck=true; // approximate... 
    if (postPtr->GetPosition()[2] > 6360.) goneThroughHorn2Entr=true; //truly approximate. 
    if (ll < 1.0e-10) return; 
-   // Just print where we are now... 
 
    totalAbsDecayChan += ll/material->GetNuclearInterLength(); 
    if (vName.find("WaterLayer") != std::string::npos) waterAbsDecayChan += ll/material->GetNuclearInterLength(); 
@@ -403,7 +416,11 @@ void LBNESteppingAction::StudyAbsorption(const G4Step * theStep) {
      if (vName.find("WaterLayer") != std::string::npos) waterAbsHorn1Neck += ll/material->GetNuclearInterLength(); 
    }
    if (!goneThroughHorn2Entr) {
-     totalAbsHorn2Entr += ll/material->GetNuclearInterLength(); 
+     totalAbsHorn2Entr += ll/material->GetNuclearInterLength();
+     if (theTrack->GetTrackLength() < (6000.0*mm)) 
+//       std::cerr << " trackLength = " << theTrack->GetTrackLength() << " Z = " << postPtr->GetPosition()[2] << 
+//         " Abs L " << totalAbsHorn2Entr << std::endl;
+     
      if (vName.find("WaterLayer") != std::string::npos) {
         waterAbsHorn2Entr += ll/material->GetNuclearInterLength(); 
      } else {
@@ -472,6 +489,38 @@ void LBNESteppingAction::StudyPropagation(const G4Step * theStep) {
    if (vName.find("DecayPipe") !=  std::string::npos) {
         theTrack->SetTrackStatus(fStopAndKill);
     }
+}
+void LBNESteppingAction::StudyCheckOverlap(const G4Step * theStep) {
+//
+//make sure we are dealing with a geantino... 
+//
+   G4Track * theTrack = theStep->GetTrack();
+   if ((theTrack->GetParticleDefinition()->GetParticleName()).find("geantino") == std::string::npos) return;
+   G4StepPoint* prePtr = theStep->GetPreStepPoint();
+   if (prePtr == 0) return;
+   G4StepPoint* postPtr = theStep->GetPostStepPoint();
+   if (postPtr == 0) return;
+   G4LogicalVolume *volPost = postPtr->GetPhysicalVolume()->GetLogicalVolume();
+   G4LogicalVolume *volPre = prePtr->GetPhysicalVolume()->GetLogicalVolume();
+   std::string volNamePost(volPost->GetName());
+   std::string volNamePre(volPre->GetName());
+//   if (((volNamePost.find(fKeyVolumeForOutput.c_str()) != std::string::npos) || 
+//      (volNamePre.find(fKeyVolumeForOutput.c_str()) != std::string::npos)) &&
+//      ( (volNamePost.find(fKeyVolumeForOutputTo.c_str()) != std::string::npos) || 
+//      (volNamePre.find(fKeyVolumeForOutputTo.c_str()) != std::string::npos))) {
+   if ( (volNamePre.find(fKeyVolumeForOutput.c_str()) != std::string::npos) &&
+        (volNamePost.find(fKeyVolumeForOutputTo.c_str()) != std::string::npos)) {
+     fOutStudy << " " << pRunManager->GetCurrentEvent()->GetEventID(); 
+     for (int k=0; k != 3; k++) fOutStudy << " " << prePtr->GetPosition()[k];
+     for (int k=0; k != 3; k++) fOutStudy << " " << postPtr->GetPosition()[k];
+     fOutStudy << " " << theStep->GetStepLength();
+     fOutStudy << " " << volPre->GetMaterial()->GetName();
+     fOutStudy << " " << volPost->GetMaterial()->GetName();
+     fOutStudy << std::endl;
+  }
+  if (volNamePost.find("DecayPipe") !=  std::string::npos) {
+        theTrack->SetTrackStatus(fStopAndKill);
+  }
 }
 
 void LBNESteppingAction::dumpStepCheckVolumeAndFields(const G4Step * theStep) {

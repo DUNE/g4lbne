@@ -72,7 +72,8 @@ LBNEPrimaryGeneratorAction::LBNEPrimaryGeneratorAction() :
     fUseMuonGeantino(false),
     fZOriginGeantino(-515.), // Upstream of target.
     fSigmaZOriginGeantino(100.), // Upstream of target.
-    fPolarAngleGeantino(.005)
+    fPolarAngleGeantino(.005),
+    fPolarAngleGeantinoMin(0.)
 {
    fRunManager       =(LBNERunManager*)LBNERunManager::GetRunManager();
    fPrimaryMessenger = new LBNEPrimaryMessenger(this);
@@ -402,7 +403,8 @@ void LBNEPrimaryGeneratorAction::Geantino(G4Event* anEvent)
     
 // If nothing else is set, use a proton beam
     
-    const double dr = fPolarAngleGeantino*G4RandFlat::shoot();
+    const double dr = fPolarAngleGeantinoMin + 
+                      (fPolarAngleGeantino - fPolarAngleGeantinoMin)*G4RandFlat::shoot();
     const double dPhi = 2.0*M_PI*G4RandFlat::shoot();
     const double dx = dr*std::cos(dPhi);
     const double dy = dr*std::sin(dPhi);
@@ -414,8 +416,8 @@ void LBNEPrimaryGeneratorAction::Geantino(G4Event* anEvent)
     fProtonN = fCurrentPrimaryNo;
     
     fTgen=0;
-    const double x =  G4RandGauss::shoot(0.0, 5.0);  
-    const double y =  G4RandGauss::shoot(0.0, 5.0);  
+    const double x =  G4RandGauss::shoot(0.0, 1.3);  
+    const double y =  G4RandGauss::shoot(0.0, 1.3);  
     const double z =  fZOriginGeantino +  G4RandGauss::shoot(0.0, fSigmaZOriginGeantino);  
     fParticleGun->SetParticlePosition(G4ThreeVector(x, y, z));
     fParticleGun->SetParticleMomentumDirection(direction);

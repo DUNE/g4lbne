@@ -116,11 +116,13 @@ private:
   G4double fZOriginGeantino;
   G4double fSigmaZOriginGeantino;
   G4double fPolarAngleGeantino;
+  G4double fPolarAngleGeantinoMin;
    
    //double                  DoubleRand() {return 2*G4UniformRand()-1.;}
 public: 
 
    inline void SetPolarAngleGeantino(double r) {fPolarAngleGeantino=r;}
+   inline void SetPolarAngleGeantinoMin(double r) {fPolarAngleGeantinoMin=r;}
    inline void SetUseGeantino(bool t) {fUseGeantino=t;}
    inline void SetUseMuonGeantino(bool t) {fUseMuonGeantino=t;}
    inline void SetZOriginGeantino(double v) {fZOriginGeantino=v;}

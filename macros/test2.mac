@@ -30,8 +30,8 @@
 # many particles(protons) to use during the simulation. To be consistent 
 # with past neutrino ntuples each run uses 500000 or 100000 protons
 #
-/LBNE/run/NEvents 500000
-/LBNE/output/OutputNtpFileName test2_500k
+/LBNE/run/NEvents 100000
+/LBNE/output/OutputNtpFileName test2_100k_B
 #
 # This will place Geant4 in the stage "EventProc", i.e. ,simulating events. 
 #

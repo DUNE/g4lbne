@@ -127,6 +127,14 @@ LBNEPrimaryMessenger::LBNEPrimaryMessenger(LBNEPrimaryGeneratorAction* RA)
   fGeantinoOpeningAngle->SetUnitCandidates("radian");
   fGeantinoOpeningAngle->AvailableForStates(G4State_Idle);
    
+  fGeantinoOpeningAngleMin  = new G4UIcmdWithADoubleAndUnit("/LBNE/primary/geantinoOpeningAngleMin",this);
+  fGeantinoOpeningAngleMin->SetGuidance("Minimum Polar angle generating the geantino (or mu geantino)  ");
+  fGeantinoOpeningAngleMin->SetParameterName("GeantinoOpeningAngleMin",true);
+  fGeantinoOpeningAngleMin->SetDefaultValue (0.);
+  fGeantinoOpeningAngleMin->SetDefaultUnit("radian");
+  fGeantinoOpeningAngleMin->SetUnitCandidates("radian");
+  fGeantinoOpeningAngleMin->AvailableForStates(G4State_Idle);
+   
   fGeantinoZOrigin  = new G4UIcmdWithADoubleAndUnit("/LBNE/primary/geantinoZOrigin",this);
   fGeantinoZOrigin->SetGuidance("Z origin  generating the geantino (or mu geantino) (in mm) ");
   fGeantinoZOrigin->SetParameterName("GeantinoOpeningAngle",true);
@@ -218,6 +226,9 @@ void LBNEPrimaryMessenger::SetNewValue(G4UIcommand* cmd, G4String val)
   } else if (cmd ==  fGeantinoZOrigin ) {
       G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (cmd);
       fPrimaryAction->SetZOriginGeantino( cmdWD->GetNewDoubleValue(val));   
+  } else if (cmd ==  fGeantinoOpeningAngleMin ) {
+      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (cmd);
+      fPrimaryAction->SetPolarAngleGeantinoMin(cmdWD->GetNewDoubleValue(val));   
   } else if (cmd ==  fGeantinoZOriginSigma ) {
       G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (cmd);
       fPrimaryAction->SetSigmaZOriginGeantino( cmdWD->GetNewDoubleValue(val));   

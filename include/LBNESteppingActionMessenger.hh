@@ -38,6 +38,7 @@ private:
    G4UIcmdWithAString*         OutputASCIIFileNameCmd;
 
    G4UIcmdWithAString*         KeyVolumeForOutput;
+   G4UIcmdWithAString*         KeyVolumeForOutputTo;
 
 
    //

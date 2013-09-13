@@ -39,6 +39,7 @@ private:
   G4UIcmdWithoutParameter*      fUseGeantino;
   G4UIcmdWithoutParameter*      fUseMuonGeantino;
   G4UIcmdWithADoubleAndUnit*    fGeantinoOpeningAngle;
+  G4UIcmdWithADoubleAndUnit*    fGeantinoOpeningAngleMin;
   G4UIcmdWithADoubleAndUnit*    fGeantinoZOrigin;
   G4UIcmdWithADoubleAndUnit*    fGeantinoZOriginSigma;
 };

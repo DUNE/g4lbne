@@ -7,7 +7,7 @@
 # We are at Geant4 stage call "PreInit" 
 # 
 #/LBNE/det/waterThickInHorn 2 mm
-/LBNE/det/TargetLengthIntoHorn 61 cm
+/LBNE/det/TargetLengthIntoHorn 50 cm
 #/LBNE/det/decayPipeLength 204.55 m
 /LBNE/det/seHornCurrent 201 kA
 #
@@ -15,8 +15,8 @@
 #
 #/LBNE/Surveyor/PosUpstreamLeftBallHorn1 2.0 0. 0.
 #/LBNE/Surveyor/PosUpstreamRightBallHorn1 2.0 0. 0.
-/LBNE/Surveyor/PosUpstreamLeftBallHorn1 0. 2.0 0.
-/LBNE/Surveyor/PosUpstreamRightBallHorn1 0. 2.0 0.
+/LBNE/Surveyor/PosUpstreamLeftBallHorn1 2.0 0.0 0.
+/LBNE/Surveyor/PosUpstreamRightBallHorn1 2.0 0.0 0.
 #
 /LBNE/det/construct
 #
@@ -32,19 +32,22 @@
 # Primary vertex setting 
 #
 /LBNE/primary/useGeantino
-/LBNE/primary/geantinoOpeningAngle 0.004 radian
-/LBNE/primary/geantinoZOrigin -1000. mm 
-/LBNE/primary/geantinoSigmaZOrigin 150. mm 
+/LBNE/primary/geantinoOpeningAngle 0.060 radian
+#/LBNE/primary/geantinoOpeningAngleMin 0.035 radian
+/LBNE/primary/geantinoZOrigin -500. mm 
+/LBNE/primary/geantinoSigmaZOrigin 0.0015 mm 
 #/LBNE/primary/protonMomentum 5.0 GeV
 #
 #/LBNE/stepping/filename ./example/steppingPropa101.txt
 # The order of these 2 cards matters 
-/LBNE/stepping/name GeomPropagation103
+/LBNE/stepping/name GeomPropAbsorb103
 # on lbnegpvm02
-/LBNE/stepping/filename  /scratch/lbne/lebrun/steppingPropa103_by2.txt
+#/LBNE/stepping/filename  /scratch/lbne/lebrun/steppingPropCO103_H2Xby2.txt
+/LBNE/stepping/filename  /scratch/lbne/lebrun/steppingPropAbsorption_H2Xby2.txt
 # laptop, home 
 #/LBNE/stepping/filename  /home/lebrun/G4LBNE/g4lbne_work/lbne-beamSimB/lbne-beamsim/g4lbne/geantinoResults/steppingPropa103_a.txt
-/LBNE/stepping/keyVolumeForOutput Horn1IOTransInnerPurt2
+#/LBNE/stepping/keyVolumeForOutputTo Horn1TopLevelUpstr
+#/LBNE/stepping/keyVolumeForOutput Horn1IOTransCont 
 #
 # Allows the RunID, which is included in the
 # output file name(s), to be set at runtime.

@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNESteppingAction.cc
-// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.9 2013/09/13 22:49:34 lebrun Exp $
+// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.10 2013/09/16 22:30:59 lebrun Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -71,7 +71,7 @@ void LBNESteppingAction::UserSteppingAction(const G4Step * theStep)
    LBNESteppingAction::KillNonNuThresholdParticles(theStep);
       
    LBNESteppingAction::CheckDecay(theStep);
-   if (fOutStudy.is_open()) { 
+   if (fOutStudy.is_open()) {
     if (fStudyGeantinoMode.find("Absorb") != std::string::npos) StudyAbsorption(theStep);
     if (fStudyGeantinoMode.find("Propa") != std::string::npos) StudyPropagation(theStep);
     if (fStudyGeantinoMode.find("PropCO") != std::string::npos) StudyCheckOverlap(theStep);
@@ -359,7 +359,7 @@ void LBNESteppingAction::StudyAbsorption(const G4Step * theStep) {
    //
    // I set the position of the geantino production vertex at Z=0.;
    //
-   G4LogicalVolume *volPre = prePtr->GetPhysicalVolume()->GetLogicalVolume();
+//   G4LogicalVolume *volPre = prePtr->GetPhysicalVolume()->GetLogicalVolume();
    if (fEvtIdPrevious  != pRunManager->GetCurrentEvent()->GetEventID() ) { 
      std::cerr << " Evt id " << 
            pRunManager->GetCurrentEvent()->GetEventID() <<
@@ -417,7 +417,7 @@ void LBNESteppingAction::StudyAbsorption(const G4Step * theStep) {
    }
    if (!goneThroughHorn2Entr) {
      totalAbsHorn2Entr += ll/material->GetNuclearInterLength();
-     if (theTrack->GetTrackLength() < (6000.0*mm)) 
+//     if (theTrack->GetTrackLength() < (6000.0*mm)) 
 //       std::cerr << " trackLength = " << theTrack->GetTrackLength() << " Z = " << postPtr->GetPosition()[2] << 
 //         " Abs L " << totalAbsHorn2Entr << std::endl;
      
@@ -500,10 +500,17 @@ void LBNESteppingAction::StudyCheckOverlap(const G4Step * theStep) {
    if (prePtr == 0) return;
    G4StepPoint* postPtr = theStep->GetPostStepPoint();
    if (postPtr == 0) return;
+   if (postPtr->GetPhysicalVolume() == 0) return;
+   if (prePtr->GetPhysicalVolume() == 0) return;
    G4LogicalVolume *volPost = postPtr->GetPhysicalVolume()->GetLogicalVolume();
    G4LogicalVolume *volPre = prePtr->GetPhysicalVolume()->GetLogicalVolume();
+   if (volPre == 0) return;
+   if (volPost == 0) return;
    std::string volNamePost(volPost->GetName());
    std::string volNamePre(volPre->GetName());
+//   std::cerr << " at Z = " << prePtr->GetPosition()[2] << ", " << volNamePre  
+//             << " to " << postPtr->GetPosition()[2] << ", " << volNamePost  
+//	     << "   ... From " << fKeyVolumeForOutput << " to " << fKeyVolumeForOutputTo << std::endl;
 //   if (((volNamePost.find(fKeyVolumeForOutput.c_str()) != std::string::npos) || 
 //      (volNamePre.find(fKeyVolumeForOutput.c_str()) != std::string::npos)) &&
 //      ( (volNamePost.find(fKeyVolumeForOutputTo.c_str()) != std::string::npos) || 

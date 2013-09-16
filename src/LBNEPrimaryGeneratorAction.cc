@@ -418,6 +418,10 @@ void LBNEPrimaryGeneratorAction::Geantino(G4Event* anEvent)
     fTgen=0;
     const double x =  G4RandGauss::shoot(0.0, 1.3);  
     const double y =  G4RandGauss::shoot(0.0, 1.3);  
+// Back door to study effect of overlap
+//    const double dPhiPos = 2.0*M_PI*G4RandFlat::shoot();
+//    const double x =  G4RandGauss::shoot(0.0, 1.3) + 223.18 * std::sin(dPhiPos);  
+//    const double y =  G4RandGauss::shoot(0.0, 1.3) + 223.18 * std::cos(dPhiPos);  
     const double z =  fZOriginGeantino +  G4RandGauss::shoot(0.0, fSigmaZOriginGeantino);  
     fParticleGun->SetParticlePosition(G4ThreeVector(x, y, z));
     fParticleGun->SetParticleMomentumDirection(direction);

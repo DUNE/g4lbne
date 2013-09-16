@@ -40,7 +40,7 @@ LBNESteppingActionMessenger::LBNESteppingActionMessenger(LBNESteppingAction* RA)
   KeyVolumeForOutput->SetDefaultValue ("blank");
   KeyVolumeForOutput->AvailableForStates(G4State_Idle);
   
-  KeyVolumeForOutputTo  = new G4UIcmdWithAString("/LBNE/stepping/keyVolumeForOutput",this);
+  KeyVolumeForOutputTo  = new G4UIcmdWithAString("/LBNE/stepping/keyVolumeForOutputTo",this);
   KeyVolumeForOutputTo->SetGuidance(
    "A volume that will trigger output running geantino propagation, second one Post or pre step  ");
   KeyVolumeForOutputTo->SetParameterName("keyVolumeForOutputTo ",true);

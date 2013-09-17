@@ -898,10 +898,11 @@ LBNEVolumePlacementData*
        info.fParams[0] = fHorn1IOTransInnerRad;
        info.fParams[1] = fHorn1IOTransOuterRad;        
        info.fParams[2] = fHorn1IOTransLength;
+//       std::cerr << " Params for " << name << " " << info.fParams[0] << " / " << info.fParams[1] 
+//                 << " / " << info.fParams[2] << std::endl;
        G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
        info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Air")), volumeName); 
-       info.fPosition[2] = -plInfoM->fParams[2]/2. + info.fParams[2]/2. + 0.002*mm; //
-       // This is a surveyed volume, tweaked in PlaceFinal  
+       info.fPosition[2] = -plInfoM->fParams[2]/2. + info.fParams[2]/2. + 0.025*mm; //
       }
       
     } // End of the Inner Outer Transition for Horn1 
@@ -925,8 +926,8 @@ LBNEVolumePlacementData*
 	}
         info.fParams[1] = fHorn1TopUpstrOuterRad + 3.0*in;  // room for the flanges.        
         info.fParams[2] = fHorn1TopUpstrLength - 0.010*mm;
-//	std::cerr << " Horn1TopLevelUpstr Params " 
-//	          << fHorn1TopUpstrInnerRad << " , " << fHorn1TopUpstrOuterRad << " " << info.fParams[2] << std::endl;
+//       std::cerr << " Params for " << name << " " << info.fParams[0] << " / " << info.fParams[1] 
+//                 << " / " << info.fParams[2] << std::endl;
         G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
         info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Air")), volumeName); 
         info.fPosition[2] = -plInfoM->fParams[2]/2. + info.fParams[2]/2. + 0.005*mm; 
@@ -1067,12 +1068,11 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
       G4String mStr(mStrStr.str());
       G4Exception("LBNEVolumePlacements::PlaceFinal", " ", FatalErrorInArgument, mStr.c_str()); 
     }  
-    std::string surveyedPtName(name);
+    std::string surveyedPtName("blank");
     // Special case, nomenclature confusion.. Otherwise, name Surveyed point would get too long. 
     if (name == G4String("UpstreamTargetAssembly")) surveyedPtName = std::string("Canister");
     if (name == G4String("TargetUpstrDownstrHeContainer")) surveyedPtName = std::string("HeTube");
     if (name == G4String("Horn1TargetDownstrHeContainer")) surveyedPtName = std::string("HeTube");
-    if (name == G4String("Horn1IOTransCont")) surveyedPtName = std::string("Horn1");
     if (name == G4String("Horn1TopLevelUpstr")) surveyedPtName = std::string("Horn1");
     if (name == G4String("Horn1TopLevelDownstr")) surveyedPtName = std::string("Horn1");
     if (name == G4String("Horn2Hall")) surveyedPtName = std::string("Horn2");
@@ -1140,9 +1140,7 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
 	        const double fTotalLength = fHorn1TopUpstrLength + fHorn1TopDownstrLength;
 		
 	        deltaSlopes[k] = (deltaDownstr[k] - deltaUpstr[k])/fTotalLength;
-		if (name == G4String("Horn1IOTransCont")) {
-		  info.fPosition[k] += deltaUpstr[k] + deltaSlopes[k]*fHorn1IOTransLength/2.;
-	      	} else if(name == G4String("Horn1TopLevelUpstr")) {
+                if(name == G4String("Horn1TopLevelUpstr")) {
 		  info.fPosition[k] += deltaUpstr[k] + deltaSlopes[k]*(fHorn1TopUpstrLength/2.) ;
 	      	} else if(name == G4String("Horn1TopLevelDownstr")) {
 		  info.fPosition[k] += deltaUpstr[k] + deltaSlopes[k]*

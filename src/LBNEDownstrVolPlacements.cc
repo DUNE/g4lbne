@@ -457,7 +457,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
      G4LogicalVolume *pCurrent = new G4LogicalVolume(aCons, G4Material::GetMaterial(std::string("Aluminum")), nameStr);
      G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] = 0.;
      // plHUpst constain part of the Inner Outer Transition. Shift downtream by it's length 
-     posTmp[2] = -1.0*(plHUpst->fParams[2])/2. + fHorn1IOTransLength + deltaZ/2. + iSub*deltaZ;			      
+     posTmp[2] = -1.0*(plHUpst->fParams[2])/2. + fHorn1IOTransLength + deltaZ/2. + iSub*deltaZ + 0.055*mm;			      
      G4PVPlacement *vSub = new G4PVPlacement((G4RotationMatrix *) 0, posTmp, pCurrent, nameStr + std::string("_P"), 
                         vUpst->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);	
 			

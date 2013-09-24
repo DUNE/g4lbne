@@ -1,0 +1,24 @@
+This is an informal, code level, release note:
+
+v3r0 : gemoetry complete, see LBNE doc 7922 for status. 
+
+Sept 23 - 25: 
+a. adjust the Z offset for Volume TargetHallAndHorn1 and Hron2Hall such
+that the cooredinate MCZERO, drawing 8875.112-MD-363097, updated gy Jim Hylen, 
+July 2013, is at Z = 0., G4 world coordinate system. This MCZero is the
+"idealize" statring point of Horn1. 
+
+b. Hor1n inner conductor geometry Re-adjust ( again) the ratio of equation 0
+to equation 1 weights and cross-check the test ratio compatibility. If the 
+geometry is not rescaled, the maximum length of target inside Horn1 is about
+62.25 cm 
+
+c. Minor upgrade in the SteepingAction for dumping information about Geantino
+tracing. 
+
+d. Installation of the Decay Pipe Snout and Beryllium window (Al frame, Al/Be
+window.) And helium in the ~ 10 m. long snout. 
+
+
+
+

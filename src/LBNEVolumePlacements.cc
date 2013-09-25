@@ -1089,9 +1089,10 @@ LBNEVolumePlacementData*
         G4Tubs* tubs = new G4Tubs(volumeName, info.fParams[0], info.fParams[1],
 	                            info.fParams[2]/2., 0., 360.*deg);
         info.fCurrent = new G4LogicalVolume(tubs, G4Material::GetMaterial("DecayPipeGas"), volumeName);
-	info.fPosition[2] = fDecayPipeWindowZLocation - info.fParams[2]/2. + 17.1*in; // This last number is the distance 
-	 // between the upstream side of the container volume and the window itself. 
-	std::cerr << " Z Position  of the snout " << info.fPosition[2] << std::endl;
+	info.fPosition[2] = fDecayPipeWindowZLocation - info.fParams[2]/2. + 23.171*in; // This last number is the distance 
+	 // between the upstream side of the container volume and the window itself, 
+	 // and the length of the buffer volume, snout to snout container.  
+	std::cerr << " Z Position  of the snout window " << info.fPosition[2] << std::endl;
 	// the last number deduced from drawing 2251.000-ME-487107, right side (Scale 1/4 ) Correct within an inch 
 	// or so 
     }

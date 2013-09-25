@@ -35,7 +35,7 @@
 #include "G4GeometryManager.hh"
 #include "G4FieldManager.hh"
 
-#include "G4RunManager.hh"
+#include "LBNERunManager.hh"
 
 #include "G4VisExtent.hh"
 #include "LBNEPlacementMessenger.hh"
@@ -265,29 +265,29 @@ void LBNEVolumePlacements::DeclareHorn1Dims() {
   fHorn1UpstrInnerRadsOuterUpstr[0] = fHorn1UpstrInnerRadsUpstr[0] + 0.32*in; 
   fHorn1UpstrInnerRadsDownstr[0] = 1.41*in; 
   fHorn1UpstrInnerRadsOuterDownstr[0] = fHorn1UpstrInnerRadsDownstr[0] + 0.32*in; 
-  fHorn1UpstrLengths[0] = 0.508*in - 0.010*mm;
-  fHorn1UpstrZPositions[0] = fHorn1UpstrLengths[0]/2.; // With respect to the beginning of mother volume.  
+  fHorn1UpstrLengths[0] = 0.508*in - 0.100*mm;
+  fHorn1UpstrZPositions[0] = fHorn1UpstrLengths[0]/2. + 0.025; // With respect to the beginning of mother volume.  
   
   fHorn1UpstrInnerRadsUpstr[1] = fHorn1UpstrInnerRadsDownstr[0]; 
   fHorn1UpstrInnerRadsOuterUpstr[1] = fHorn1UpstrInnerRadsUpstr[1] + 0.32*in; 
   fHorn1UpstrInnerRadsDownstr[1] = 1.288*in; 
   fHorn1UpstrInnerRadsOuterDownstr[1] = fHorn1UpstrInnerRadsDownstr[1] + 0.3*in; 
-  fHorn1UpstrLengths[1] = 0.639*in  - 0.010*mm;
-  fHorn1UpstrZPositions[1] = fHorn1UpstrZPositions[0] + 0.005*mm + fHorn1UpstrLengths[0]/2 + fHorn1UpstrLengths[1]/2.;
+  fHorn1UpstrLengths[1] = 0.639*in  - 0.100*mm;
+  fHorn1UpstrZPositions[1] = fHorn1UpstrZPositions[0] + 0.025*mm + fHorn1UpstrLengths[0]/2 + fHorn1UpstrLengths[1]/2.;
   
   fHorn1UpstrInnerRadsUpstr[2] = fHorn1UpstrInnerRadsDownstr[1]; 
   fHorn1UpstrInnerRadsOuterUpstr[2] = fHorn1UpstrInnerRadsUpstr[2] + 0.28*in; 
   fHorn1UpstrInnerRadsDownstr[2] = 1.268*in; 
   fHorn1UpstrInnerRadsOuterDownstr[2] = fHorn1UpstrInnerRadsDownstr[2] + 0.118*in; 
-  fHorn1UpstrLengths[2] = 2.835*in  - 0.010*mm; // Reduce a bit, too tight..
-  fHorn1UpstrZPositions[2] = fHorn1UpstrZPositions[1] + 0.010*mm + fHorn1UpstrLengths[1]/2 + fHorn1UpstrLengths[2]/2.;
+  fHorn1UpstrLengths[2] = 2.835*in  - 0.100*mm; // Reduce a bit, too tight..
+  fHorn1UpstrZPositions[2] = fHorn1UpstrZPositions[1] + 0.025*mm + fHorn1UpstrLengths[1]/2 + fHorn1UpstrLengths[2]/2.;
   
   fHorn1UpstrInnerRadsUpstr[3] = fHorn1UpstrInnerRadsDownstr[2]; 
   fHorn1UpstrInnerRadsOuterUpstr[2] = fHorn1UpstrInnerRadsUpstr[2] + 0.118*in; 
   fHorn1UpstrInnerRadsDownstr[3] =  fHorn1UpstrInnerRadsUpstr[3]; 
   fHorn1UpstrInnerRadsOuterDownstr[3] = fHorn1UpstrInnerRadsDownstr[3] + 0.20*in; 
-  fHorn1UpstrLengths[3] = 0.40*in - 0.010*mm;
-  fHorn1UpstrZPositions[3] = fHorn1UpstrZPositions[2] + 0.010*mm + fHorn1UpstrLengths[2]/2 + fHorn1UpstrLengths[3]/2.;
+  fHorn1UpstrLengths[3] = 0.40*in - 0.100*mm;
+  fHorn1UpstrZPositions[3] = fHorn1UpstrZPositions[2] + 0.025*mm + fHorn1UpstrLengths[2]/2 + fHorn1UpstrLengths[3]/2.;
  //
  // These are elements, approximated as tubes, of the Inner Outer transition piece of Horn1 
  // 
@@ -445,13 +445,16 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
      const double rMin2Eqn1 = fHorn1Equations[0].GetVal(zzEnd);
      const double rMin1Eqn2 = fHorn1Equations[1].GetVal(zzBegin); // Equation 1 or 0
      const double rMin2Eqn2 = fHorn1Equations[1].GetVal(zzEnd);
-     const double rMin1 = ((numSubSect - iSub -1)*rMin1Eqn1 + ((iSub+1)*rMin1Eqn2))/numSubSect;
-     const double rMin2 = ((numSubSect - iSub -1)*rMin2Eqn1 + ((iSub+1)*rMin2Eqn2))/numSubSect;
-//    std::cerr << " Inner radius for section " << nameStr << " At zzBegin " << zzBegin
-//               << " rMin1 " << rMin1 << " rMin2 " << rMin2 << std::endl; 
+     const double ratio10vs1 = std::min(1.0, (zzBegin/(21.0888*in*fHorn1LongRescale)));
+     const double rMin1 = rMin1Eqn2*ratio10vs1 + (1.0-ratio10vs1)*rMin1Eqn1;
+     const double ratio20vs1 = std::min(1.0, (zzEnd/(21.0888*in*fHorn1LongRescale)));
+     const double rMin2 = rMin2Eqn2*ratio20vs1 + (1.0-ratio20vs1)*rMin2Eqn1;
      const double rMax1 = fHorn1Equations[5].GetVal(zzBegin) + fWaterLayerThickInHorns + 0.0025; 
        // Equation 6 (Drawing 8875.112-MD 363104)
      const double rMax2 = fHorn1Equations[5].GetVal(zzEnd) + fWaterLayerThickInHorns + 0.0025;     
+    std::cerr << " Inner radius for section " << nameStr << " At zzBegin " << zzBegin << " to " << zzEnd 
+               << " rMin1 " << rMin1 << " rMin2 " << rMin2 
+	       << " rMax1 " << rMax1 << " rMax2 " << rMax2 << std::endl; 
      G4Cons *aCons = new G4Cons(nameStr, rMin1, rMax1,rMin2, rMax2,
 	                              (deltaZ - 0.005*mm)/2., 0., 360.0*deg);
      G4LogicalVolume *pCurrent = new G4LogicalVolume(aCons, G4Material::GetMaterial(std::string("Aluminum")), nameStr);
@@ -976,9 +979,12 @@ void LBNEVolumePlacements::CheckHorn1InnerConductAndTargetRadii() {
   
   const double rSmall = plSmallRing->fParams[1]; // Outer radius
   // Compute the large radius based on equation 0, at the relevant Z 
-  const double zCoordEnd  = fHorn1TopUpstrLength - 3.0*in*fHorn1LongRescale;
-  const int eqNum = ((zCoordEnd/fHorn1LongRescale) < 21.0888*in) ? 0 : 1;
-  const double rLarge = fHorn1Equations[eqNum].GetVal(zCoordEnd); // Equation 1;  // Inner Radius
+  const double zMaxDC  = fHorn1TopUpstrLength - 3.0*cm;
+  const double rMinEqn1 = fHorn1Equations[0].GetVal(zMaxDC); // Equation 1 or 0
+  const double rMinEqn2 = fHorn1Equations[1].GetVal(zMaxDC); // Equation 1 or 0
+  const double ratio0vs1 = std::min(1.0, (zMaxDC/(21.0888*in*fHorn1LongRescale)));
+  const double rLarge = rMinEqn2*ratio0vs1 + (1.0-ratio0vs1)*rMinEqn1; 
+              // Equation 1 and 0, weighted by Z ;  // Inner Radius
 //  std::cerr << " CheckHorn1InnerConductAndTargetRadii, zCoordEnd " 
 //            << zCoordEnd << " rLarge " << rLarge << " rSmall " << rSmall << std::endl;
 //  std::cerr << " .. xOffS " << 	xOffS << "  yOffS  " <<  yOffS 
@@ -1627,7 +1633,80 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
   		     vH2->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);   
 }
 
+void LBNEVolumePlacements::PlaceFinalDecayPipeSnout(G4PVPlacement* tunnel) {
 
+  // ref : Drawing number 2251-000-ME-487107 and phone converstion with Glenn Waver (MD/AD) 
+  const double in = 2.54*cm;
+  G4PVPlacement* vTop = this->PlaceFinal(G4String("DecayPipeSnout"), tunnel);
+  const LBNEVolumePlacementData *plInfoTop = this->Find(G4String("Snout"), G4String("DecayPipeSnout"),
+                                     G4String("LBNEVolumePlacements::PlaceFinalDecayPipeSnout"));
+  //
+  // The window is tilted, true vertical. Pick the rotation. Create a rotated buffer volume   
+  //  
+  LBNERunManager *pRunManager=static_cast<LBNERunManager*> (LBNERunManager::GetRunManager());
+  const LBNEDetectorConstruction *pDet = 
+	    static_cast<const LBNEDetectorConstruction*> (pRunManager->GetUserDetectorConstruction());
+  G4double angle = pDet->GetBeamlineAngle();
+  G4RotationMatrix *beamAngleRot = new G4RotationMatrix;
+  beamAngleRot->rotateX(-angle);
+//  std::cerr << " Window angle, yz term " << beamAngleRot->yz() << " yy " 
+//            << beamAngleRot->yy() << " zz " << beamAngleRot->zz() << std::endl; 
+  double boxX = 50.0*in + 0.1*mm; 
+  double boxY = 48.0*in + 0.1*mm; 
+  double boxZ = 24.0*in + 0.1*mm;  
+  G4String boxCStr("DecayPipeUpstrWindowCont");
+  G4Box* aBoxC = new G4Box(boxCStr, boxX/2., boxY/2., boxZ/2.);
+  G4LogicalVolume *contL = new G4LogicalVolume(aBoxC, G4Material::GetMaterial("DecayPipeGas"), boxCStr);
+  G4ThreeVector posTmp; posTmp[0] =0.; posTmp[1] =0.;
+  posTmp[2] = -plInfoTop->fParams[2]/2 + boxZ/2. + 0.5*cm; // approximate location, but accurate enough 
+  posTmp[2] += 25.0*in*std::abs( beamAngleRot->yz()); // inclined! Shift a bit upstream 
+//  std::cerr << " Position of the rotated container  " << posTmp[2] << std::endl;
+  G4PVPlacement *vCont = new G4PVPlacement(beamAngleRot, posTmp, contL, boxCStr + std::string("_P"), 
+  		     vTop->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);
+// if air, we stop here, the aluminum window and the window itself don't exist. 
+// (3.5 million bugs saving, I am told..) 
+		      
+   if (fDecayPipeGas == G4String("Air")) return;
+   boxX -= 0.1*mm;
+   boxY -= 0.1*mm;
+   boxZ -= 0.1*mm;
+   G4String boxFStr("DecayPipeUpstrWindowFrame");
+   G4Box* aBoxF = new G4Box(boxFStr, boxX/2., boxY/2., boxZ/2.);
+   G4LogicalVolume *frameL = new G4LogicalVolume(aBoxF, G4Material::GetMaterial("Aluminum"), boxFStr);
+   posTmp[0] =0.; posTmp[1] =0.; posTmp[2] =0.;
+   G4PVPlacement *vFrame = new G4PVPlacement((G4RotationMatrix *) 0, posTmp, 
+                          frameL, boxFStr + std::string("_P"), 
+  		     vCont->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);
+		     
+   G4String holeFStr("DecayPipeUpstrWindowHole");
+   double holeRadius= fDecayPipeWindowRadiusAlum + 0.01*mm;
+   G4Tubs* holeR = new G4Tubs(holeFStr, 0., holeRadius, boxZ/2., 0., 360.0*deg);
+				// The upstream part is Air.. 
+   G4LogicalVolume *holeL = new G4LogicalVolume(holeR, G4Material::GetMaterial("Air"),holeFStr);
+   G4PVPlacement *vHole = new G4PVPlacement((G4RotationMatrix *) 0, posTmp, 
+                          holeL, holeFStr + std::string("_P"), 
+  		     vFrame->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);
+//
+   G4String windAlumStr("DecayPipeUpstrWindowAlum");
+   G4Tubs* windAlum = new G4Tubs(windAlumStr, fDecayPipeWindowRadiusBeryl, 
+                             fDecayPipeWindowRadiusAlum , fDecayPipeWindowThickAlum/2., 0., 360.0*deg);
+				// The upstream part is Air.. 
+   G4LogicalVolume *windAlumL = new G4LogicalVolume(windAlum, G4Material::GetMaterial("Aluminum"), windAlumStr);
+   posTmp[2] = -boxZ/2. + 17.1*in + 3.0*mm; // first number picked up from drawing. We place the Alum a bit behind..  
+   new G4PVPlacement((G4RotationMatrix *) 0, posTmp, 
+                          windAlumL, windAlumStr + std::string("_P"), 
+  		     vHole->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);
+   		     
+   G4String windBerylStr("DecayPipeUpstrWindowBeryl");
+   G4Tubs* windBeryl = new G4Tubs(windBerylStr, 0., 
+                             fDecayPipeWindowRadiusBeryl , fDecayPipeWindowThickBeryl/2., 0., 360.0*deg);
+				// The upstream part is Air.. 
+   G4LogicalVolume *windBerylL = new G4LogicalVolume(windBeryl, G4Material::GetMaterial("Beryllium"), windBerylStr);
+   posTmp[2] = -boxZ/2. + 17.1*in + 1.0*mm; // first number picked up from drawing.
+   new G4PVPlacement((G4RotationMatrix *) 0, posTmp, 
+                          windBerylL, windBerylStr + std::string("_P"), 
+  		     vHole->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);
+} 
 // Clone for Horn1.. Could avoid a bit of code bloat, but that's not much... 
 int LBNEVolumePlacements::GetNumberOfInnerHorn2SubSections(size_t eqn, double z1, double z2, int nMax) const {
 

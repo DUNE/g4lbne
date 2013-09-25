@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.28 2013/09/08 06:55:41 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.29 2013/09/25 22:58:24 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -130,13 +130,13 @@ public:
   void PlaceFinalHorn1(G4PVPlacement *mother,  G4PVPlacement *motherDownstrTarget);
   
   void PlaceFinalHorn2(G4PVPlacement *mother);
+  
+  void PlaceFinalDecayPipeSnout(G4PVPlacement *mother);
   			       
   // No change to either this data or the establish Geant4 geometry. 
   // 
   void TestVolumeOverlap(const G4String &name, G4VPhysicalVolume *mother) const;
   void PrintAll() const;
-
-  const LBNEVolumePlacementData* GetDetectorPlacementData(const G4String &name);
 
   inline double GetTargetHallZ() const { return fTargetHallZ; }
   inline double GetDecayHallZ()  const { return fDecayHallZ; }
@@ -474,6 +474,21 @@ private:
   G4double fHorn2NeckZPosition; // from the start of Horn1TopLevelUpstr
   G4double fHorn2ZEndIC; // Z coordinate of the end of the inner conductor, rescaled is need be.
   G4double fHorn2DeltaZEntranceToZOrigin;
+//
+// ===========================================
+//
+//
+// Decay Pipe Snout Window ( if Helium chosen) 
+//
+  G4double fDecayPipeWindowZLocation; 
+  G4double fDecayPipeWindowRadiusAlum;
+  G4double fDecayPipeWindowRadiusBeryl;
+  G4double fDecayPipeWindowThickBeryl; // Alreay defined see fDecayPipeUpstrWindowThick
+  G4double fDecayPipeWindowThickAlum;
+// 
+// Other dimensions in PlaceFinalDecayPipeSnout
+//
+
 //
 // Connectors and flange downstream used only once,  so we declare and rescale them as we go  
   

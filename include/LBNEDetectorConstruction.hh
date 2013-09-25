@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.hh,v 1.5.2.18 2013/09/05 12:32:49 lebrun Exp $
+// $Id: LBNEDetectorConstruction.hh,v 1.5.2.19 2013/09/25 22:58:24 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEDetectorConstruction_H
@@ -58,6 +58,7 @@ public:
   void SetConstructTarget(bool val) { fConstructTarget = val; }
   void SetSimulationType(G4String val) { fSimulationType = val; }
   void SetBeamlineAngle(G4double angle) { fBeamlineAngle = angle; }
+  inline G4double GetBeamlineAngle() const { return fBeamlineAngle; }
 
   bool HasBeenConstructed() const {return fHasBeenConstructed; }
 

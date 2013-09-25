@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.28 2013/09/09 20:01:51 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.29 2013/09/25 22:58:30 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -355,11 +355,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
     fPlacementHandler->PlaceFinal(G4String("UpstreamTargetAssembly"), targethorn1Phys); 
 //
   fPlacementHandler->PlaceFinalUpstrTarget(upstreamTargetAssPhys);
-  
-  
-  // Just test random error in positioning along the Z axis
-//  fPlacementHandler->TestVolumeOverlap(G4String("Horn1Hall"), targethorn1Phys);
-  
+    
   G4PVPlacement *vHorn1 = fPlacementHandler->PlaceFinal(G4String("Horn1Hall"), targethorn1Phys); 
 //
 // We will place the downstream part of the target in a container volume 
@@ -403,6 +399,11 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 // This will be a surveyed elements, but let us skip this step for now.    
    fPlacementHandler->PlaceFinal(G4String("Baffle"), upstreamTargetAssPhys);
 //
+// Place the decay Pipe Snout, which contains the window, in case we have Helium gas. 
+//
+   fPlacementHandler->Create(G4String("DecayPipeSnout")); // Now in Snout region 
+   fPlacementHandler->PlaceFinalDecayPipeSnout((G4PVPlacement*) tunnel);
+//   
 // Place the decay pipe 
 //   
    fPlacementHandler->Create(G4String("DecayPipeHall"));
@@ -411,13 +412,12 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
    fPlacementHandler->Create(G4String("DecayPipeOuterWall"));
    fPlacementHandler->Create(G4String("DecayPipeWall"));
    fPlacementHandler->Create(G4String("DecayPipeVolume"));
-   fPlacementHandler->Create(G4String("DecayPipeUpstrWindow"));
+//   fPlacementHandler->Create(G4String("DecayPipeUpstrWindow")); // Now in Snout region 
    
    fPlacementHandler->PlaceFinal(G4String("DecayPipeConcrete"), vDecayPipe);
    fPlacementHandler->PlaceFinal(G4String("DecayPipeOuterWall"), vDecayPipe);
    fPlacementHandler->PlaceFinal(G4String("DecayPipeWall"), vDecayPipe);
    fPlacementHandler->PlaceFinal(G4String("DecayPipeVolume"), vDecayPipe);
-   fPlacementHandler->PlaceFinal(G4String("DecayPipeUpstrWindow"), vDecayPipe);
    
    this->ConstructLBNEHadronAbsorber(tunnel);
    

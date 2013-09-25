@@ -93,11 +93,12 @@ print "Using GEANT4 physics list",physics_list
 # Determine G4LBNE Version
 #
 ###################################################
-f = open(options.g4lbne_dir+"/CVS/Tag")
-lines = f.readlines();
-f.close()
+#f = open(options.g4lbne_dir+"/CVS/Tag")
+#lines = f.readlines();
+#f.close()
 
-version = lines[0].strip()[1:]
+#version = lines[0].strip()[1:]
+version="v2r4p1"
 
 ###################################################
 #

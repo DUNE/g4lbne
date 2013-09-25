@@ -35,9 +35,9 @@ parser.add_option("-m", "--macro", dest="macro",
                   help="G4LBNE Macro", default="nubeam-G4PBeam-stdnubeam")
 parser.add_option("-t", "--test", dest="test",action="store_true",
                   help="Test mode -- just print file locations but don't move anything", default=False)
-parser.add_option("-f", "--fdloc", dest="fdloc", action="store_true",
+parser.add_option("-f", "--fdloc", dest="fdloc",
                   help="Far Detector Location", default="LBNEFD");
-parser.add_option("-n", "--ndloc", dest="ndloc", action="store_true",
+parser.add_option("-n", "--ndloc", dest="ndloc",
                   help="Near Detector Location", default="LBNEND");
 
 (options, args) = parser.parse_args()
@@ -91,7 +91,7 @@ if options.test:
 ###################################################
 if not os.path.exists(os.path.dirname(dests[0])):
     os.makedirs(os.path.dirname(dests[0]))
-    os.chmod(os.path.dirname(dests[0],0777))
+    os.chmod(os.path.dirname(dests[0]),0777)
 
 ###################################################
 #
@@ -101,4 +101,11 @@ if not os.path.exists(os.path.dirname(dests[0])):
 for i in range(0,4):
     if os.path.exists(sources[i]):
         shutil.copyfile(sources[i],dests[i])
-        os.system("root -b -q $FMC_GENIE/addfineflux.C\\(\\\"$FMC_FLUX_FILES/"+options.fmc_dir+"\\\"\\)")
+        os.chmod(dests[i],0777)
+
+###################################################
+#
+# Create RIK files
+#
+###################################################
+os.system("root -b -q $FMC_GENIE/addfineflux.C\\(\\\"$FMC_FLUX_FILES/"+options.fmc_dir+"\\\"\\)")

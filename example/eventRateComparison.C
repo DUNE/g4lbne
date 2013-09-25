@@ -64,6 +64,8 @@ void drawRatio( TH1* hist1, TH1 *hist2, std::string ytitle){
   //ratio->SetLineWidth(ratio_line_width);
   //ratio->SetLineColor(ratio_color);
 
+  ratio->SetMinimum(0.8);
+  ratio->SetMaximum(1.2);
   ratio->DrawCopy("X0");
   
   {
@@ -95,6 +97,9 @@ void eventRateComparison(std::string osc, std::string sim1, std::string sim2, st
   // loc1/loc2: name of locations you want to compare
   // plist1/plist2: physics lists of samples you want to compare
   // descriptor1/descriptor2: label that will be used in plot legends for the two samples
+
+  std::string current = "FHC";
+  if(input1.find("RHC")!=string::npos) current = "RHC";
 
   gStyle->SetTitleOffset(1.3,"X");
   gStyle->SetTitleOffset(1.3,"Y");
@@ -130,11 +135,21 @@ void eventRateComparison(std::string osc, std::string sim1, std::string sim2, st
 
   TFile *f1, *f1_fastmc, *f2, *f2_fastmc;
 
-  f1 = new TFile(("/lbne/data/users/"+username+"/fluxfiles/g4lbne/"+version1+"/"+input1+"/"+plist1+"/nubeam-"+sim1+"-stdnubeam/flux/histos_g4lbne_"+input1+"_"+plist1+"_"+loc1+".root").c_str());
-  f1_fastmc = new TFile(("/lbne/data/users/"+username+"/fluxfiles/g4lbne/"+version1+"/"+input1+"/"+plist1+"/nubeam-"+sim1+"-stdnubeam/flux/histos_g4lbne_"+input1+"_"+plist1+"_"+loc1+"_fastmc.root").c_str());
+  std::string nom_histo_directory = "/lbne/data/users/"+username+"/fluxfiles/g4lbne/"+version1+"/"+input1+"/"+plist1+"/nubeam-"+sim1+"-stdnubeam/flux/";
+  std::string var_histo_directory = "/lbne/data/users/"+username+"/fluxfiles/g4lbne/"+version2+"/"+input2+"/"+plist2+"/nubeam-"+sim2+"-stdnubeam/flux/";
+  
+  f1 = new TFile((nom_histo_directory+"histos_g4lbne_"+input1+"_"+plist1+"_"+loc1+".root").c_str());
+  f1_fastmc = new TFile((nom_histo_directory+"histos_g4lbne_"+input1+"_"+plist1+"_"+loc1+"_fastmc.root").c_str());
+  
+  f2 = new TFile((var_histo_directory+"histos_g4lbne_"+input2+"_"+plist2+"_"+loc2+".root").c_str());
+  f2_fastmc = new TFile((var_histo_directory+"histos_g4lbne_"+input2+"_"+plist2+"_"+loc2+"_fastmc.root").c_str());
 
-  f2 = new TFile(("/lbne/data/users/"+username+"/fluxfiles/g4lbne/"+version2+"/"+input2+"/"+plist2+"/nubeam-"+sim2+"-stdnubeam/flux/histos_g4lbne_"+input2+"_"+plist2+"_"+loc2+".root").c_str());
-  f2_fastmc = new TFile(("/lbne/data/users/"+username+"/fluxfiles/g4lbne/"+version2+"/"+input2+"/"+plist2+"/nubeam-"+sim2+"-stdnubeam/flux/histos_g4lbne_"+input2+"_"+plist2+"_"+loc2+"_fastmc.root").c_str());
+  int n_plots = 2;
+
+  if(descriptor1==descriptor2)
+    n_plots = 1;
+
+  std::cout<<"NPLOTS "<<n_plots<<std::endl;
 
   std::vector< TH1D* > h1;
   std::vector< TH1D* > h2;
@@ -142,7 +157,9 @@ void eventRateComparison(std::string osc, std::string sim1, std::string sim2, st
   std::vector< TH1D* > h2_fastmc;
 
   std::vector<std::string> histo_names;
+  std::string short_osc = "Osc";
   if(osc == "unoscillated") {
+    short_osc = "Unosc";
     histo_names.push_back("numu_flux_forplots");
     histo_names.push_back("numubar_flux_forplots");
     histo_names.push_back("nue_flux_forplots");
@@ -196,67 +213,70 @@ void eventRateComparison(std::string osc, std::string sim1, std::string sim2, st
   cout<<f1_fastmc->GetName()<<endl;
   cout<<f2_fastmc->GetName()<<endl;
 
- TLegend *leg = new TLegend(0.55,0.65,0.8,0.8);
+ TLegend *leg = new TLegend(0.4,0.6,0.85,0.8);
  leg->SetFillColor(0);
  leg->SetBorderSize(0);
  leg->AddEntry(h1[0],descriptor1.c_str(),"l");
- leg->AddEntry(h2[0],descriptor2.c_str(),"l");
+ if(n_plots>1)
+   leg->AddEntry(h2[0],descriptor2.c_str(),"l");
 
  TCanvas *c1 = new TCanvas("flux","flux",1500,900);
  c1->Divide(3,2);
 
  TCanvas *c2 = new TCanvas("cceventrate","cceventrate",1500,900);
-  c2->Divide(3,2);
+ c2->Divide(3,2);
+ 
+ TCanvas *c3 = new TCanvas("nceventrate","nceventrate",1500,900);
+ c3->Divide(3,2);
+ 
+ TCanvas *c4 = new TCanvas("flux_ratio","flux_ratio",1500,900);
+ c4->Divide(3,2);
+ 
+ TCanvas *c5 = new TCanvas("cceventrate_ratio","cceventrate_ratio",1500,900);
+ c5->Divide(3,2);
+ 
+ TCanvas *c6 = new TCanvas("nceventrate_ratio","nceventrate_ratio",1500,900);
+ c6->Divide(3,2);
+ 
+ std::vector<std::string> nu_names;
+ nu_names.push_back("#nu_{#mu}");
+ nu_names.push_back("#bar{#nu}_{#mu}");
+ nu_names.push_back("#nu_{e}");
+ nu_names.push_back("#bar{#nu}_{e}");
+ nu_names.push_back("#nu_{#tau}");
+ nu_names.push_back("#bar{#nu}_{#tau}");
 
-  TCanvas *c3 = new TCanvas("nceventrate","nceventrate",1500,900);
-  c3->Divide(3,2);
+ std::vector<std::string> nu_names_simple;
+ nu_names_simple.push_back("numu");
+ nu_names_simple.push_back("numubar");
+ nu_names_simple.push_back("nue");
+ nu_names_simple.push_back("nuebar");
+ nu_names_simple.push_back("nutau");
+ nu_names_simple.push_back("nutaubar");
+ 
+ for(int i = 0; i<18; i++) {
+   h1[i]->UseCurrentStyle();
+   h2[i]->UseCurrentStyle();
+ }
 
-  TCanvas *c4 = new TCanvas("flux_ratio","flux_ratio",1500,900);
-  c4->Divide(3,2);
-
-  TCanvas *c5 = new TCanvas("cceventrate_ratio","cceventrate_ratio",1500,900);
-  c5->Divide(3,2);
-
-  TCanvas *c6 = new TCanvas("nceventrate_ratio","nceventrate_ratio",1500,900);
-  c6->Divide(3,2);
-
-  std::vector<std::string> nu_names;
-  nu_names.push_back("#nu_{#mu}");
-  nu_names.push_back("#bar{#nu}_{#mu}");
-  nu_names.push_back("#nu_{e}");
-  nu_names.push_back("#bar{#nu}_{e}");
-  nu_names.push_back("#nu_{#tau}");
-  nu_names.push_back("#bar{#nu}_{#tau}");
-
-  std::vector<std::string> nu_names_simple;
-  nu_names_simple.push_back("numu");
-  nu_names_simple.push_back("numubar");
-  nu_names_simple.push_back("nue");
-  nu_names_simple.push_back("nuebar");
-  nu_names_simple.push_back("nutau");
-  nu_names_simple.push_back("nutaubar");
-
-
-  for(int i = 0; i<18; i++) {
-    h1[i]->UseCurrentStyle();
-    h2[i]->UseCurrentStyle();
-  }
-  
-  for(int i = 0; i<6; i++) {
-    c1->cd(i+1);
-    h1[i]->Sumw2();
-    h1[i]->SetLineWidth(3);
-    h1[i]->SetMaximum(TMath::Max(h1[i]->GetMaximum(),h2[i]->GetMaximum())*1.1);
-    h1[i]->Draw("histe");
-    h2[i]->SetLineColor(2);
-    h2[i]->Draw("histsame");
-    leg->Draw();
-    
-    c4->cd(i+1);
-    std::string ytitle = osc+" "+nu_names[i]+"s  "+descriptor2+" / "+descriptor1;
-    drawRatio( h2[i], h1[i],ytitle);
-
-  }
+ for(int i = 0; i<6; i++) {
+   c1->cd(i+1);
+   h1[i]->Sumw2();
+   h1[i]->SetLineWidth(3);
+   h1[i]->SetMaximum(TMath::Max(h1[i]->GetMaximum(),h2[i]->GetMaximum())*1.1);
+   h1[i]->Draw("histe");
+   h2[i]->SetLineColor(2);
+   if(n_plots>1)
+     h2[i]->Draw("histsame");
+   if ((current=="FHC" && i==0) || (current=="RHC" && i==1))
+     leg->Draw();
+   
+   c4->cd(i+1);
+   std::string ytitle = osc+" "+nu_names[i]+"s  "+descriptor2+" / "+descriptor1;
+   if(n_plots>1)
+     drawRatio( h2[i], h1[i],ytitle);
+   
+ }
 
   double n_kton = 34;
   if(detector == "LBNEND") n_kton = 0.018;
@@ -279,12 +299,15 @@ void eventRateComparison(std::string osc, std::string sim1, std::string sim2, st
     h1[i]->SetMaximum(TMath::Max(h1[i]->GetMaximum(),h2[i]->GetMaximum())*1.1);
     h1[i+6]->Draw("histe");
     h2[i+6]->SetLineColor(2);
-    h2[i+6]->Draw("histsame");
-    leg->Draw();
+    if(n_plots>1)
+      h2[i+6]->Draw("histsame");
+   if ((current=="FHC" && i==6) || (current=="RHC" && i==7))
+     leg->Draw();
 
     c5->cd(i+1);
-    std::string ratio_ytitle = osc+" "+nu_names[i]+" CC events  "+descriptor2+" / "+descriptor1;
-    drawRatio( h2[i+6], h1[i+6],ratio_ytitle);
+    std::string ratio_ytitle = short_osc+" "+nu_names[i]+" CC events  "+descriptor2+" / "+descriptor1;
+    if(n_plots>1)
+      drawRatio( h2[i+6], h1[i+6],ratio_ytitle);
     
   }
 
@@ -303,156 +326,169 @@ void eventRateComparison(std::string osc, std::string sim1, std::string sim2, st
     h1[i]->SetMaximum(TMath::Max(h1[i]->GetMaximum(),h2[i]->GetMaximum())*1.1);
     h1[i+12]->Draw("histe");
     h2[i+12]->SetLineColor(2);
-    h2[i+12]->Draw("histsame");
-    leg->Draw();
+    if(n_plots > 1)
+      h2[i+12]->Draw("histsame");
+    if ((current=="FHC" && i==12) || (current=="RHC" && i==12))
+      leg->Draw();
 
     c6->cd(i+1);
-    std::string ratio_ytitle = osc+" "+nu_names[i]+" NC events  "+descriptor2+" / "+descriptor1;
-    drawRatio( h2[i+12], h1[i+12],ratio_ytitle);
+    std::string ratio_ytitle = short_osc+" "+nu_names[i]+" NC events  "+descriptor2+" / "+descriptor1;
+    if(n_plots>1)
+      drawRatio( h2[i+12], h1[i+12],ratio_ytitle);
   }
 
   std::string variation = descriptor1+"_vs_"+descriptor2;
+  if(n_plots==1) variation = descriptor1;
 
   system(("mkdir -p eventRateComparisons/"+variation).c_str());
 
-  c1->Print(("eventRateComparisons/"+variation+"/flux_"+variation+"_"+osc+".eps").c_str());
-  c1->Print(("eventRateComparisons/"+variation+"/flux_"+variation+"_"+osc+".png").c_str());
 
-  c2->Print(("eventRateComparisons/"+variation+"/cceventrate_"+variation+"_"+osc+".eps").c_str());
-  c2->Print(("eventRateComparisons/"+variation+"/cceventrate_"+variation+"_"+osc+".png").c_str());
+  c1->Print((var_histo_directory+"comp_flux_g4lbne_"+input2+"_"+plist2+"_"+loc2+"_"+osc+"_vs_"+descriptor1+".eps").c_str());
+  c1->Print((var_histo_directory+"comp_flux_g4lbne_"+input2+"_"+plist2+"_"+loc2+"_"+osc+"_vs_"+descriptor1+".png").c_str());
 
-  c3->Print(("eventRateComparisons/"+variation+"/nceventrate_"+variation+"_"+osc+".eps").c_str());
-  c3->Print(("eventRateComparisons/"+variation+"/nceventrate_"+variation+"_"+osc+".png").c_str());
+  c2->Print((var_histo_directory+"comp_cceventrate_g4lbne_"+input2+"_"+plist2+"_"+loc2+"_"+osc+"_vs_"+descriptor1+".eps").c_str());
+  c2->Print((var_histo_directory+"comp_cceventrate_g4lbne_"+input2+"_"+plist2+"_"+loc2+"_"+osc+"_vs_"+descriptor1+".png").c_str());
 
-  c4->Print(("eventRateComparisons/"+variation+"/flux_ratios_"+variation+"_"+osc+".eps").c_str());
-  c4->Print(("eventRateComparisons/"+variation+"/flux_ratios_"+variation+"_"+osc+".png").c_str());
+  c3->Print((var_histo_directory+"comp_nceventrate_g4lbne_"+input2+"_"+plist2+"_"+loc2+"_"+osc+"_vs_"+descriptor1+".eps").c_str());
+  c3->Print((var_histo_directory+"comp_nceventrate_g4lbne_"+input2+"_"+plist2+"_"+loc2+"_"+osc+"_vs_"+descriptor1+".png").c_str());
 
-  c5->Print(("eventRateComparisons/"+variation+"/cceventrate_ratios_"+variation+"_"+osc+".eps").c_str());
-  c5->Print(("eventRateComparisons/"+variation+"/cceventrate_ratios_"+variation+"_"+osc+".png").c_str());
-
-  c6->Print(("eventRateComparisons/"+variation+"/nceventrate_ratios_"+variation+"_"+osc+".eps").c_str());
-  c6->Print(("eventRateComparisons/"+variation+"/nceventrate_ratios_"+variation+"_"+osc+".png").c_str());
+  if(n_plots>1) {
+    c4->Print((var_histo_directory+"comp_flux_ratios_g4lbne_"+input2+"_"+plist2+"_"+loc2+"_"+osc+"_vs_"+descriptor1+".eps").c_str());
+    c4->Print((var_histo_directory+"comp_flux_ratios_g4lbne_"+input2+"_"+plist2+"_"+loc2+"_"+osc+"_vs_"+descriptor1+".png").c_str());
+    
+    c5->Print((var_histo_directory+"comp_cceventrate_ratios_g4lbne_"+input2+"_"+plist2+"_"+loc2+"_"+osc+"_vs_"+descriptor1+".eps").c_str());
+    c5->Print((var_histo_directory+"comp_cceventrate_ratios_g4lbne_"+input2+"_"+plist2+"_"+loc2+"_"+osc+"_vs_"+descriptor1+".png").c_str());
+    
+    c6->Print((var_histo_directory+"comp_nceventrate_ratios_g4lbne_"+input2+"_"+plist2+"_"+loc2+"_"+osc+"_vs_"+descriptor1+".eps").c_str());
+    c6->Print((var_histo_directory+"comp_nceventrate_ratios_g4lbne_"+input2+"_"+plist2+"_"+loc2+"_"+osc+"_vs_"+descriptor1+".png").c_str());
+  }    
 
   // integrate over several energy ranges and make a text file
-  int bin0 = -1;
-  int bin0point5 = -1;
-  int bin2 = -1;
-  int bin5 = -1;
-  int bin20 = -1;
-  int bin120 = -1; 
+  if(n_plots>1) {
+    int bin0 = -1;
+    int bin0point5 = -1;
+    int bin2 = -1;
+    int bin5 = -1;
+    int bin20 = -1;
+    int bin120 = -1; 
 
-  for(int i = 0 ; i < h1_fastmc[0]->GetNbinsX()+1; i++) {
-    if(h1_fastmc[0]->GetBinLowEdge(i)==0)
-      bin0=i; 
-    if(h1_fastmc[0]->GetBinLowEdge(i)==0.5)
-      bin0point5=i; 
-    if(h1_fastmc[0]->GetBinLowEdge(i)==2)
-      bin2=i; 
-    if(h1_fastmc[0]->GetBinLowEdge(i)==5)
-      bin5=i; 
-    if(h1_fastmc[0]->GetBinLowEdge(i)==20)
-      bin20=i; 
-    if(h1_fastmc[0]->GetBinLowEdge(i)==120)
-      bin120=i; 
-  }
-  if(bin0==-1)
-    std::cout<<"ERROR: 0 is not a bin edge."<<std::endl;
-  if(bin0point5==-1)
-    std::cout<<"ERROR: 0.5 is not a bin edge."<<std::endl;
-  if(bin0==-1)
+    for(int i = 0 ; i < h1_fastmc[0]->GetNbinsX()+1; i++) {
+      if(h1_fastmc[0]->GetBinLowEdge(i)==0)
+	bin0=i; 
+      if(h1_fastmc[0]->GetBinLowEdge(i)==0.5)
+	bin0point5=i; 
+      if(h1_fastmc[0]->GetBinLowEdge(i)==2)
+	bin2=i; 
+      if(h1_fastmc[0]->GetBinLowEdge(i)==5)
+	bin5=i; 
+      if(h1_fastmc[0]->GetBinLowEdge(i)==20)
+	bin20=i; 
+      if(h1_fastmc[0]->GetBinLowEdge(i)==120)
+	bin120=i; 
+    }
+    if(bin0==-1)
+      std::cout<<"ERROR: 0 is not a bin edge."<<std::endl;
+    if(bin0point5==-1)
+      std::cout<<"ERROR: 0.5 is not a bin edge."<<std::endl;
+    if(bin0==-1)
       std::cout<<"ERROR: 2 is not a bin edge."<<std::endl;
-  if(bin0==-1)
-    std::cout<<"ERROR: 5 is not a bin edge."<<std::endl;
-  if(bin0==-1)
-    std::cout<<"ERROR: 20 is not a bin edge."<<std::endl;
-  if(bin0==-1)
-    std::cout<<"ERROR: 120 is not a bin edge."<<std::endl;
+    if(bin0==-1)
+      std::cout<<"ERROR: 5 is not a bin edge."<<std::endl;
+    if(bin0==-1)
+      std::cout<<"ERROR: 20 is not a bin edge."<<std::endl;
+    if(bin0==-1)
+      std::cout<<"ERROR: 120 is not a bin edge."<<std::endl;
+    
+    double ratio_0to0point5[18];
+    double ratio_0point5to2[18];
+    double ratio_2to5[18];
+    double ratio_5to20[18];
+    double ratio_20to120[18];
+    double ratio_0to20[18];
+    double ratio_0to120[18];
+    for(int i=0; i<18; i++) {
+      if(h1_fastmc[i]->Integral(bin0,bin0point5-1)!=0)
+	ratio_0to0point5[i] = h2_fastmc[i]->Integral(bin0,bin0point5-1)/
+	  h1_fastmc[i]->Integral(bin0,bin0point5-1);
+      else
+	ratio_0to0point5[i] = 1;
+      
+      if(h1_fastmc[i]->Integral(bin0point5,bin2-1)!=0)
+	ratio_0point5to2[i] = h2_fastmc[i]->Integral(bin0point5,bin2-1)/
+	  h1_fastmc[i]->Integral(bin0point5,bin2-1);
+      else
+	ratio_0point5to2[i] = 1;
+      
+      if(h1_fastmc[i]->Integral(bin2,bin5-1)!=0)
+	ratio_2to5[i] = h2_fastmc[i]->Integral(bin2,bin5-1)/
+	  h1_fastmc[i]->Integral(bin2,bin5-1);
+      else
+	ratio_2to5[i] = 1;
+      
+      if(h1_fastmc[i]->Integral(bin5,bin20-1)!=0)
+	ratio_5to20[i] = h2_fastmc[i]->Integral(bin5,bin20-1)/
+	  h1_fastmc[i]->Integral(bin5,bin20-1);
+      else
+	ratio_5to20[i] = 1;
+      
+      if(h1_fastmc[i]->Integral(bin20,bin120-1)!=0)
+	ratio_20to120[i] = h2_fastmc[i]->Integral(bin20,bin120-1)/
+	  h1_fastmc[i]->Integral(bin20,bin120-1);
+      else
+	ratio_20to120[i] = 1;
+      
+      if(h1_fastmc[i]->Integral(bin0,bin20-1)!=0)
+	ratio_0to20[i] = h2_fastmc[i]->Integral(bin0,bin20-1)/
+	  h1_fastmc[i]->Integral(bin0,bin20-1);
+      else
+	ratio_0to20[i] = 1;
+
+      if(h1_fastmc[i]->Integral(bin0,bin120-1)!=0)
+	ratio_0to120[i] = h2_fastmc[i]->Integral(bin0,bin120-1)/
+	  h1_fastmc[i]->Integral(bin0,bin120-1);
+      else
+	ratio_0to120[i] = 1;
+    }
   
-  double ratio_0to0point5[18];
-  double ratio_0point5to2[18];
-  double ratio_2to5[18];
-  double ratio_5to20[18];
-  double ratio_20to120[18];
-  double ratio_0to20[18];
-  double ratio_0to120[18];
-  for(int i=0; i<18; i++) {
-    if(h1_fastmc[i]->Integral(bin0,bin0point5-1)!=0)
-      ratio_0to0point5[i] = h2_fastmc[i]->Integral(bin0,bin0point5-1)/
-	h1_fastmc[i]->Integral(bin0,bin0point5-1);
-    else
-      ratio_0to0point5[i] = 1;
-
-    if(h1_fastmc[i]->Integral(bin0point5,bin2-1)!=0)
-      ratio_0point5to2[i] = h2_fastmc[i]->Integral(bin0point5,bin2-1)/
-	h1_fastmc[i]->Integral(bin0point5,bin2-1);
-    else
-      ratio_0point5to2[i] = 1;
-
-    if(h1_fastmc[i]->Integral(bin2,bin5-1)!=0)
-      ratio_2to5[i] = h2_fastmc[i]->Integral(bin2,bin5-1)/
-	h1_fastmc[i]->Integral(bin2,bin5-1);
-    else
-      ratio_2to5[i] = 1;
-
-    if(h1_fastmc[i]->Integral(bin5,bin20-1)!=0)
-      ratio_5to20[i] = h2_fastmc[i]->Integral(bin5,bin20-1)/
-	h1_fastmc[i]->Integral(bin5,bin20-1);
-    else
-      ratio_5to20[i] = 1;
-
-    if(h1_fastmc[i]->Integral(bin20,bin120-1)!=0)
-      ratio_20to120[i] = h2_fastmc[i]->Integral(bin20,bin120-1)/
-	h1_fastmc[i]->Integral(bin20,bin120-1);
-    else
-      ratio_20to120[i] = 1;
-
-    if(h1_fastmc[i]->Integral(bin0,bin20-1)!=0)
-      ratio_0to20[i] = h2_fastmc[i]->Integral(bin0,bin20-1)/
-	h1_fastmc[i]->Integral(bin0,bin20-1);
-    else
-      ratio_0to20[i] = 1;
-  }
-
-
-  ofstream myfile;
-  myfile.open(("eventRateComparisons/"+variation+"/summary_"+variation+"_"+osc+".txt").c_str());
-
-  myfile << "                0-0.5   0.5-2  2-5      5-20    20-120  0-20     0-120"<<std::endl;
-  myfile<<std::setprecision(4)<<fixed;
-  for(int i = 0; i<6; i++) {
-    myfile << setw(15)<<nu_names_simple[i]+" flux"
-    <<setw(7)<<ratio_0to0point5[i]<<" "
-    <<setw(7)<<ratio_0point5to2[i]<<" "
-    <<setw(7)<<ratio_2to5[i]<<" "
-    <<setw(7)<<ratio_5to20[i]<<" "
-    <<setw(7)<<ratio_20to120[i]<<" "
-    <<setw(7)<<ratio_0to20[i]<<" "
-    <<setw(7)<<ratio_0to120[i]<<std::endl;
-  }
-
-  /*
-
-  for(int i = 6; i<12; i++) {
+  
+    ofstream myfile;
+    myfile.open((var_histo_directory+"comp_flux_summary_g4lbne_"+input2+"_"+plist2+"_"+loc2+"_"+osc+"_vs_"+descriptor1+".txt").c_str());
+    myfile << "                0-0.5   0.5-2  2-5      5-20    20-120  0-20     0-120"<<std::endl;
+    myfile<<std::setprecision(4)<<fixed;
+    for(int i = 0; i<6; i++) {
+      myfile << setw(15)<<nu_names_simple[i]+" flux"
+	     <<setw(7)<<ratio_0to0point5[i]<<" "
+	     <<setw(7)<<ratio_0point5to2[i]<<" "
+	     <<setw(7)<<ratio_2to5[i]<<" "
+	     <<setw(7)<<ratio_5to20[i]<<" "
+	     <<setw(7)<<ratio_20to120[i]<<" "
+	     <<setw(7)<<ratio_0to20[i]<<" "
+	     <<setw(7)<<ratio_0to120[i]<<std::endl;
+    }
+    
+    /*
+      
+    for(int i = 6; i<12; i++) {
     myfile << nu_names[i+6] <<" cc event rate "
-	   <<ratio_0to0point5[i+6]<<" "
-	   <<ratio_0point5to2[i+6]<<" "
-	   <<ratio_2to5[i+6]<<" "
-	   <<ratio_5to20[i+6]<<" "
-	   <<ratio_20to120[i+6]<<" "
-	   <<ratio_0to20[i+6]<<" "
-	   <<ratio_0to120[i+6]<<std::endl;
-  }
-  for(int i = 12; i<18; i++) {
+    <<ratio_0to0point5[i+6]<<" "
+    <<ratio_0point5to2[i+6]<<" "
+    <<ratio_2to5[i+6]<<" "
+    <<ratio_5to20[i+6]<<" "
+    <<ratio_20to120[i+6]<<" "
+    <<ratio_0to20[i+6]<<" "
+    <<ratio_0to120[i+6]<<std::endl;
+    }
+    for(int i = 12; i<18; i++) {
     myfile << nu_names[i+12] <<" nc event rate "
-	   <<ratio_0to0point5[i+12]<<" "
-	   <<ratio_0point5to2[i+12]<<" "
-	   <<ratio_2to5[i+12]<<" "
-	   <<ratio_5to20[i+12]<<" "
-	   <<ratio_20to120[i+12]<<" "
-	   <<ratio_0to20[i+12]<<" "
-	   <<ratio_0to120[i+12]<<std::endl;
-  }   
-  */
-  //myfile.close();  
-
+    <<ratio_0to0point5[i+12]<<" "
+    <<ratio_0point5to2[i+12]<<" "
+    <<ratio_2to5[i+12]<<" "
+    <<ratio_5to20[i+12]<<" "
+    <<ratio_20to120[i+12]<<" "
+    <<ratio_0to20[i+12]<<" "
+    <<ratio_0to120[i+12]<<std::endl;
+    }   
+    */
+    //myfile.close();  
+  }
 }

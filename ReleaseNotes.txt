@@ -19,6 +19,38 @@ tracing.
 d. Installation of the Decay Pipe Snout and Beryllium window (Al frame, Al/Be
 window.) And helium in the ~ 10 m. long snout. 
 
+Sept 26-27:
+
+e. Reinstallation of the Hadron calorimeter. Create a new buffer volume, size to
+the 4 individual pieces that were daughter of the TOP volume received from MARS.
+This volume (HadronAbsorberTop in G4lbne) is rotate with respect to the decay
+pipe axis (beam axis), by the beam angle to reach South Dakota Homestake mine. 
+These 4 daughter volumes are placed in HadronAbsorberTop, roated by +90 degree
+around the Z axis, as the X-Axis in MARS is the vertical direction.  The volume
+named PreM_sp is not centered on the beam line, is presumed to be a supporting
+structure, and is indeed at negative Y in g4lbne. 
+
+To be verified with visualization! 
+
+We are not quite done: 
+
+	- the premask entrance volume is currently shifted up by ~20 cm. This
+	might be o.k., since the buffer volume is rotated, we'd like to have the
+	entrance window shifted up, such the core is more or less centered on
+	the beam axis. 
+
+f. Fix severe bug in creating the directions and vertices of the protons 
+in LBNEPrimaryGeneratorAction.  Confusion about beam spread in spatial position
+vs beam divergence (emittances in x', y', which we currently don't have), caused
+creating vertices with Nan... P.L. blurry code, no doubt.. 
+
+Protons of 120 GeV now impinging on target, from a z-coordinate of -3.60, well
+upstream of the target. .. 
+
+
+
+ 
+
 
 
 

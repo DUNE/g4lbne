@@ -183,13 +183,13 @@ fSkinDepth(4.1*mm)
 //
 // Open a file to study the value of the field for displaced trajectory... 
 //  
- if (!fOutTraj.is_open()) {
-   G4String fNameStr("./FieldTrajectories_Horn");
-   if (amHorn1) fNameStr += G4String("1_1.txt");
-   else  fNameStr += G4String("2_1.txt");
-   fOutTraj.open(fNameStr.c_str()); // we will place a GUI interface at a later stage... 
-   fOutTraj << " id x y z bx by " << std::endl;
- }
+// if (!fOutTraj.is_open()) {
+//   G4String fNameStr("./FieldTrajectories_Horn");
+//   if (amHorn1) fNameStr += G4String("1_1.txt");
+//   else  fNameStr += G4String("2_1.txt");
+//   fOutTraj.open(fNameStr.c_str()); // we will place a GUI interface at a later stage... 
+//   fOutTraj << " id x y z bx by " << std::endl;
+// }
 }
 
 void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) const
@@ -279,7 +279,7 @@ void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) 
      }
      Bfield[0] = -magBField*ptTrans[1]/r;
      Bfield[1] = magBField*ptTrans[0]/r;
-     this->fillTrajectories(Point, Bfield[0],  Bfield[1]);
+//     this->fillTrajectories(Point, Bfield[0],  Bfield[1]);
 //     std::cerr << " Field region at Z " << Point[2] << " r = " << r 
 //	       << " radIC " << radIC << " radOC " 
 //	       << radOC << "zLocD " << zLocD << " magBField " 

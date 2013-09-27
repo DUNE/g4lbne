@@ -62,11 +62,14 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
     // declaration of some constant which should not impact the physics at all, 
     // but are needed to build the G4 geometry. 
    fDecayPipeLength=203.7*m; // CDR, Vol 2 LBNE Doc Db 4317-v25
-   fTotalLength = 2.0*(10.0*m + fDecayPipeLength + 50.*m); // total length, with room to spare..
+   const double aRockLength = 2.0*(fDecayPipeLength + 160.*m ); 
+      // Approximate.. 150 m. is for the target hall, Horn1 + horn2, and the Hadron absorber hall + muon alcove. 
+   fTotalLength = aRockLength;
    fDecayPipeRadius = 4.0*m/2.;
    fDecayPipeUpstrWindowThick = 1.3*mm; // After discussion with Alberto M., Sept 3 2013. Material is Berylium 
    fDecayPipeWallThick = 12.5*mm; // CDR, March 2012, Vol-2, p 3.130 
    fDecayPipeLongPosition = 22.2*m; // From the target, CDR-Vol2, March 2012, Decay pipe section, p. 3.130
+   // The above will be overwritten in placing the DecayPipeHall, downstream of the decay pipe snout. 
    fDecayPipeGas = G4String("Air");
     
    fHorn1Length = 150.0*in; // Oversized.. Drawing 8875 - ME - 363093
@@ -241,8 +244,8 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
 //
    fDecayPipeWindowZLocation = fHorn2LongPosition + 201.484*in; 
 //
-     // The above has been kindly measured off the actual drawing 2251.000-ME-487107, 
-     // and it is the distance between the apex of the window 
+     // The above has been kindly measured off the actual drawing 2251.000-ME-487107, by Glenn Waver, 
+     // Sept 2013. It is the distance between the apex of the window 
      // and the point W.P. H.E. ACRNT2, which the entrance of Horn2. 
      //
    fDecayPipeWindowRadiusBeryl = 7.874*in/2.0;
@@ -358,10 +361,13 @@ LBNEVolumePlacementData*
   info.fTypeName = G4String("Tubs"); // most common type of volume.. 
   std::string volumeName(name); // volumeName += std::string("_solid"); Not necessary 
   if (name == G4String("Tunnel")) {
-    info.fParams[0] = 8*m - 2.0*cm + 2.0*(fDecayPipeRadius - 2.0*m) + 15.0*m; 
+    info.fParams[0] = std::max((18*m), 2.0*(fDecayPipeRadius)); 
        // Note: the total volume is 60 m. wide => plenty enough rocks. The last term is for the Hadron Absorber cavern  
-    info.fParams[1] = 20*m - 2.0*cm + 2.0*(fDecayPipeRadius - 2.0*m) ; // Too tall Set by the Hadron absorber requirement 
+    info.fParams[1] = std::max((40*m), 2.0*(fDecayPipeRadius)); // Too tall... Set by the Hadron absorber requirement 
     info.fParams[2] = fTotalLength -2.0*cm;
+    std::cerr << " Total half length of the tunnel " << info.fParams[2]/2. << std::endl;
+    std::cerr << " Total half Height of the tunnel " << info.fParams[1]/2. << std::endl;
+    std::cerr << " Total half Width of the tunnel " << info.fParams[0]/2. << std::endl;
     G4Box* hallBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2. ); 
     info.fCurrent = new G4LogicalVolume(hallBox, G4Material::GetMaterial("Air"), name); 
     info.fTypeName = G4String("Box");
@@ -1017,20 +1023,17 @@ LBNEVolumePlacementData*
   if (name.find("DecayPipe") == 0) {
     if (name == G4String("DecayPipeHall")) { // Surveyable, for ease of convenience, let us do it at this level. 
        const LBNEVolumePlacementData *plInfoTunnel = Find(name, G4String("Tunnel"), G4String("Create"));       
-       const LBNEVolumePlacementData *plInfoTGH = Find(name, G4String("TargetHallAndHorn1"), G4String("Create"));
-       const LBNEVolumePlacementData *plInfoH = Find(name, G4String("Horn1Hall"), G4String("Create"));
+       const LBNEVolumePlacementData *plInfoS = Find(name, G4String("DecayPipeSnout"), G4String("Create"));
        for (size_t k=0; k != 2; ++k) 
         info.fParams[k] = plInfoTunnel->fParams[k] - 50.*cm; // 50 cm misalignement unlikely. 
         info.fParams[2] = fDecayPipeLength + 4.0*cm; // Add extra margin, 2 on each side, as there will 
 	                                                         // be the container volume  
         G4Box* hallBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2. );
         info.fCurrent = new G4LogicalVolume(hallBox, G4Material::GetMaterial("Air"), volumeName);
-// We need the coordinate of the entrance of Horn1Hall in the reference frame of the tunnel. 
-// First, the coordinate of the entrance of Horn1Hall in the reference frame of TargetHallAndHorn1
-        const double zHHinTGH = plInfoH->fPosition[2] - plInfoH->fParams[2]/2.;
-// Second, in the coordinate system of the tunnel. 
-        const double zHHinTunnel = zHHinTGH - plInfoTGH->fPosition[2];
-        info.fPosition[2] = zHHinTunnel + info.fParams[2]/2. +  fDecayPipeLongPosition - 2.0*cm;
+	// we decide to place the decay pipe after the snout, and save 
+	fDecayPipeLongPosition = plInfoS->fPosition[2] + plInfoS->fParams[2]/2.;
+	// longitudinal position of the entrance of the decay pipe hall. 
+        info.fPosition[2] = info.fParams[2]/2. +  fDecayPipeLongPosition + 2.0*cm;
       
     }
     if (name == G4String("DecayPipeConcrete")) {
@@ -1072,7 +1075,6 @@ LBNEVolumePlacementData*
         info.fCurrent = new G4LogicalVolume(tubs, G4Material::GetMaterial("DecayPipeGas"), volumeName);
     }
      if (name == G4String("DecayPipeSnout")) {
-        const LBNEVolumePlacementData *plInfo = Find(name, G4String("Tunnel"), G4String("Create"));       
 	LBNERunManager *pRunManager=static_cast<LBNERunManager*> (LBNERunManager::GetRunManager());
         const LBNEDetectorConstruction *pDet = 
 	    static_cast<const LBNEDetectorConstruction*> (pRunManager->GetUserDetectorConstruction());
@@ -1080,16 +1082,19 @@ LBNEVolumePlacementData*
 	  // can be surveyable. 
         info.fParams[1] = ((50.0*in*std::sqrt(2.))/std::cos(pDet->GetBeamlineAngle()) + 1.0*cm)/2.;
         info.fParams[2] = 25.5*in +
-	                  25.0*in*std::abs(std::sin(pDet->GetBeamlineAngle())) + 
-	                  + 15.0*in; // The upstream part is the window holder, which will have to be rotated.. 
-			  + 201.*in; // the distance between the downstream end of the window unit and the beginning of 
+	                  25.0*in*std::abs(std::sin(pDet->GetBeamlineAngle())) + 15.0*in + 201.*in;
+			  // 15 in is the space upstream of the window box 
+			  // and the upstream part is the window holder, which will have to be rotated. 
+			  // the distance between the downstream end of the window unit and the beginning of 
 			  // the decay pipe. 
-			  // Ref Drawing 2251.000-ME-487107 
+			  // Ref Drawing 2251.000-ME-487107 + drawing from Rich Stefaneck, who obtained it
+			  // from Diane Reiztner
 	std::cerr << " radius of the snout " << info.fParams[1] << " Length " << info.fParams[2] << std::endl;		  
         G4Tubs* tubs = new G4Tubs(volumeName, info.fParams[0], info.fParams[1],
 	                            info.fParams[2]/2., 0., 360.*deg);
         info.fCurrent = new G4LogicalVolume(tubs, G4Material::GetMaterial("DecayPipeGas"), volumeName);
-	info.fPosition[2] = fDecayPipeWindowZLocation - info.fParams[2]/2. + 23.171*in; // This last number is the distance 
+	info.fPosition[2] = fDecayPipeWindowZLocation + info.fParams[2]/2. - 19.84*in; 
+	 // This last number is the distance 
 	 // between the upstream side of the container volume and the window itself, 
 	 // and the length of the buffer volume, snout to snout container.  
 	std::cerr << " Z Position  of the snout window " << info.fPosition[2] << std::endl;

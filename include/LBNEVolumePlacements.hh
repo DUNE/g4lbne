@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.29 2013/09/25 22:58:24 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.30 2013/09/27 19:14:03 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -154,10 +154,13 @@ public:
   // Interface to the Detector construction classes, or others..  
    
   inline void SetTotalLengthOfRock(double l) { fTotalLength = l;}
+  inline double GetTotalLengthOfRock() const { return fTotalLength;}
   
  // Interface to the Messenger command 
  
-  inline void SetDecayPipeLength(double l) {fDecayPipeLength=l;}
+  inline void SetDecayPipeLength(double l) {
+     fDecayPipeLength=l; fTotalLength = 2.0*(fDecayPipeLength + 160.*m );
+  }
   inline void SetDecayPipeRadius(double l) {fDecayPipeRadius=l;}
   inline void SetDecayPipeLongPosition(double l) {fDecayPipeLongPosition=l;}
   inline void SetDecayPipeUpstrWindowThick(double l) {fDecayPipeUpstrWindowThick=l;}

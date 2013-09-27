@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNESteppingAction.cc
-// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.11 2013/09/25 22:58:31 lebrun Exp $
+// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.12 2013/09/27 19:14:11 lebrun Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -513,7 +513,7 @@ void LBNESteppingAction::StudyCheckOverlap(const G4Step * theStep) {
      std::cout << " at Z = " << prePtr->GetPosition()[2] << " r " << 
            std::sqrt(prePtr->GetPosition()[0]*prePtr->GetPosition()[0] +
 	         prePtr->GetPosition()[1]*prePtr->GetPosition()[1]) 
-	   << ", " << volNamePre  << " to " << postPtr->GetPosition()[2] << ", " << volNamePost << std::endl;  
+	   << ", " << volNamePre  << " to " << postPtr->GetPosition() << ", " << volNamePost << std::endl;  
 //   if (((volNamePost.find(fKeyVolumeForOutput.c_str()) != std::string::npos) || 
 //      (volNamePre.find(fKeyVolumeForOutput.c_str()) != std::string::npos)) &&
 //      ( (volNamePost.find(fKeyVolumeForOutputTo.c_str()) != std::string::npos) || 

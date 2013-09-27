@@ -1,8 +1,9 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.29 2013/09/25 22:58:30 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.30 2013/09/27 19:14:11 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
+#include <vector>
 
 #include "LBNEDetectorConstruction.hh"
 
@@ -321,8 +322,8 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   
   fRockX = 60.0*m;
   fRockY = 60.0*m;
-  fRockLength = 2.0*(fPlacementHandler->GetDecayPipeLength() + 50.*m); // Approximate and irrelevant, all rock anyways.
-  fPlacementHandler->SetTotalLength(fRockLength);    
+  fRockLength = fPlacementHandler->GetTotalLengthOfRock() + 4.0*cm; 
+      // See LBNEVolumePlacements constructor. 
   G4Box* ROCK_solid = new G4Box("ROCK_solid",fRockX/2, fRockY/2, fRockLength/2);
   G4LogicalVolume *RockLogical = 
             new G4LogicalVolume(ROCK_solid,
@@ -431,8 +432,6 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber(G4VPhysicalVolume *mother)
 {
 
-   const G4double in = 25.4*mm;
-
    G4cout << "Importing hadron absorber gdml file... " << G4endl;
    
    G4String filename(fPlacementHandler->GetAbsorberGDMLFilename());
@@ -447,51 +446,129 @@ void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber(G4VPhysicalVolume *mo
     } else {
      gdmlfile.close();
     }
-    const LBNEVolumePlacementData *plTunnel = 
-      fPlacementHandler->Find("HadronAbsorber", "Tunnel", "ConstructLBNEHadronAbsorber");
-    const LBNEVolumePlacementData *plDecayPipe = 
-      fPlacementHandler->Find("HadronAbsorber", "DecayPipeHall", "ConstructLBNEHadronAbsorber");
-   
-     G4double CShld_length = 72*in;
-     G4double zLocAbsorber = plDecayPipe->fPosition[2] + plDecayPipe->fParams[2]/2. + CShld_length + 1.0*m;
-     std::cerr << "LBNEDetectorConstruction::ConstructLBNEHadronAbsorber zLocAbsorber " << zLocAbsorber << std::endl
-               << " .... tunnel length " << plTunnel->fParams[2] << " size , X/Y "<<
-	       plTunnel->fParams[0] << " / " << plTunnel->fParams[1] << std::endl;
-     G4RotationMatrix *zrot=new G4RotationMatrix();
-    
-     G4double xo =  plDecayPipe->fPosition[2] + plDecayPipe->fParams[2]/2. + 10.25*12*in;
-     G4double xp = (-6.0625*12*in - CShld_length/2.0);
-     G4double yp = 0;
-     G4double yo = -1*in; 
-     G4double z_shld = xp*cos(fBeamlineAngle) - yp*sin(fBeamlineAngle) + xo;
-     G4double y_shld = xp*sin(fBeamlineAngle) + yp*cos(fBeamlineAngle) + yo;
-      
-     G4ThreeVector tunnelPos = G4ThreeVector(0,0, zLocAbsorber);
-     G4ThreeVector shldpos = G4ThreeVector(0, y_shld, z_shld); // to be checked 
-     std::cerr << " shldpos " << shldpos << std::endl;
      G4GDMLParser parser;
      parser.Read( filename );
-     G4LogicalVolume *aConcShld = parser.GetVolume( "Conc_SH" ); 
-     G4LogicalVolume *aAHTop = parser.GetVolume( "AH_top" ); 
-     G4LogicalVolume *aAHBack = parser.GetVolume( "AH_back" ); 
-     G4LogicalVolume *aMuonAlk = parser.GetVolume( "AH_Muon_alk" ); 
+     G4LogicalVolume *topAbs = parser.GetVolume( "TOP" );
+     // We dump the volume hierarchy.  Hoopefully not too deep, 
+     /*
+     for (int i=0; i != topAbs->GetNoDaughters(); ++i) {
+        G4VPhysicalVolume *pVol = topAbs->GetDaughter(i);
+        G4LogicalVolume *lVol = pVol->GetLogicalVolume();
+	std::cerr << " Top level daughter # " << i << " Name " << lVol->GetName() 
+	          << " at " << pVol->GetObjectTranslation() << std::endl;
+        for (int ii=0; ii != lVol->GetNoDaughters(); ++ii) {
+          G4VPhysicalVolume *pVol2 = lVol->GetDaughter(ii);
+          G4LogicalVolume *lVol2 = pVol2->GetLogicalVolume();
+	  std::cerr << "  .. 2nd level daughter # " << ii << " Name " << lVol2->GetName()
+	   << " at " << pVol2->GetObjectTranslation() << std::endl;
+         for (int iii=0; iii != lVol2->GetNoDaughters(); ++iii) {
+           G4VPhysicalVolume *pVol3 = lVol2->GetDaughter(iii);
+           G4LogicalVolume *lVol3 = pVol3->GetLogicalVolume();
+	   std::cerr << "  ... 3rd level daughter # " << iii << " Name " << lVol3->GetName() 
+	    << " at " << pVol3->GetObjectTranslation() << std::endl;
+           for (int i4=0; i4 != lVol3->GetNoDaughters(); ++i4) {
+            G4VPhysicalVolume *pVol4 = lVol3->GetDaughter(i4);
+            G4LogicalVolume *lVol4 = pVol4->GetLogicalVolume();
+	    std::cerr << "  .... 4rth level daughter # " << i4 << " Name " << lVol4->GetName()
+	     << " at " << pVol4->GetObjectTranslation()  << std::endl;
+            for (int i5=0; i5 != lVol4->GetNoDaughters(); ++i5) {
+              G4VPhysicalVolume *pVol5 = lVol4->GetDaughter(i5);
+              G4LogicalVolume *lVol5 = pVol5->GetLogicalVolume();
+	      std::cerr << "  ..... 5rth level daughter # " << i5 << " Name " << lVol5->GetName() 
+	      << " at " << pVol5->GetObjectTranslation()  << std::endl;
+              for (int i6=0; i6 != lVol5->GetNoDaughters(); ++i6) {
+                G4VPhysicalVolume *pVol6 = lVol5->GetDaughter(i6);
+                G4LogicalVolume *lVol6 = pVol6->GetLogicalVolume();
+	        std::cerr << "  ...... 6rth level daughter # " << i6 << " Name " << lVol6->GetName() << std::endl;
+	      }
+	    }
+	  }
+	}
+      }
+    }
+*/	    
+       
+    
+//     const G4Box *topSol = static_cast<const G4Box *>(topAbs->GetSolid());
+//     const double marsTopWidth = topSol->GetYHalfLength();
+//     const double marsTopHeight = topSol->GetXHalfLength();
+//     const double marsTopLength = topSol->GetZHalfLength();
+//     std::cerr << " Dimension of top level Hadron absorber MARS container, X " << topSol->GetXHalfLength() << 
+//         " Y  "  << topSol->GetYHalfLength() <<   " Z  "  << topSol->GetZHalfLength() << std::endl;
+//     std::cerr << " Number of daughters for TOP " << topAbs->GetNoDaughters() << std::endl;
+     double maxHalfHeight = -1.0;
+     double maxHalfWidth = -1.0;
+     double maxHalfLength = -1.0;
+     for (int i=0; i != topAbs->GetNoDaughters(); ++i) {
+       G4VPhysicalVolume *pVol = topAbs->GetDaughter(i);
+       G4LogicalVolume *lVol = pVol->GetLogicalVolume();
+//       std::cerr << " Daughther " << lVol->GetName();
+       const G4Box *aBox = static_cast<const G4Box *>(lVol->GetSolid());
+       G4ThreeVector loc = pVol->GetObjectTranslation();
+//       std::cerr << " at MARS coordinates " << loc[0] << ", " <<loc[1] << ", " << loc[2] << 
+//                     " zLength " << 2.0*aBox->GetZHalfLength() << std::endl;
+       // Compute the maximum height, width.  Note the confusion about  X and Y X is up, vertical, in MArs  
+       if ((std::abs(loc[2]) + aBox->GetZHalfLength()) > maxHalfLength)
+           maxHalfLength = std::abs(loc[2]) + aBox->GetZHalfLength();
+       if ((std::abs(loc[1]) + aBox->GetYHalfLength()) >  maxHalfWidth)
+           maxHalfWidth = std::abs(loc[1]) + aBox->GetYHalfLength(); // Width is along X G4lbne orientation, which Y MARS 
+       if ((std::abs(loc[0]) + aBox->GetXHalfLength()) >  maxHalfHeight)
+           maxHalfHeight = std::abs(loc[0]) + aBox->GetXHalfLength();
+	    // Height is along Y G4lbne orientation, which is negative X in MARS 
+     }
+     maxHalfHeight += 5.0*cm;
+     maxHalfWidth += 5.0*cm;
+     maxHalfLength += std::abs(maxHalfHeight*std::sin(fBeamlineAngle)) + 5.0*cm;;
+//     std::cerr << " Container volume for Hadron absorber, 1/2 width " 
+//               << maxHalfWidth << " 1/2 Height " << maxHalfHeight 
+//	       << " 1/2 length " << maxHalfLength << std::endl;
+     G4Box *aHABoxTop = new G4Box(G4String("HadronAbsorberTop"), maxHalfWidth, maxHalfHeight, maxHalfLength);
+     G4LogicalVolume *aHATopL = 
+        new G4LogicalVolume(aHABoxTop, G4Material::GetMaterial("Air"), G4String("HadronAbsorberTop"));
+     G4RotationMatrix *beamAngleRot = new G4RotationMatrix;
+     beamAngleRot->rotateX(-fBeamlineAngle);
+     const LBNEVolumePlacementData *plDecayPipe = 
+         fPlacementHandler->Find(G4String("HadronAbsorber"), G4String("DecayPipeHall"), 
+	                         G4String("LBNEDetectorConstruction::ConstructLBNEHadronAbsorber"));
+     const double zzz = maxHalfLength + plDecayPipe->fParams[2]/2 + plDecayPipe->fPosition[2] + 
+         std::abs(maxHalfHeight*std::sin(fBeamlineAngle)) +  5.0*cm;	
+//     std::cerr << " half length Decay Pipe " << plDecayPipe->fParams[2]/2 
+//               << " Position in tunnel (center) " << plDecayPipe->fPosition[2] 
+//	       << " ZPosAbs " << zzz <<  std::endl;	 
+     G4ThreeVector posTopHA(0., 0., zzz);
+     new G4PVPlacement(beamAngleRot, posTopHA, aHATopL, "HadronAbsorberTop", 
+  		     mother->GetLogicalVolume(), false, 1, true);
      
-     G4ThreeVector conc = parser.GetPosition( "Conc_SH_1inTOPpos" )+shldpos;	     
-     G4ThreeVector top = parser.GetPosition( "AH_top_1inTOPpos" ) +shldpos;	    
-     G4ThreeVector back = parser.GetPosition( "AH_back_1inTOPpos" )+shldpos;	     
-     G4ThreeVector muon = parser.GetPosition( "AH_Muon_alk_1inTOPpos" )+shldpos;	 
-
-     // rotate about beamline z-axis, zrot rotates about z-axis relative to local object 
-     G4ThreeVector concRotZ( -conc.y(), conc.x(), conc.z() );
-     G4ThreeVector topRotZ( -top.y(), top.x(), top.z() );
-     G4ThreeVector backRotZ( -back.y(), back.x(), back.z() );
-     G4ThreeVector muonRotZ( -muon.y(), muon.x(), muon.z() );
-
-     new G4PVPlacement(zrot, concRotZ, "Conc_SH", aConcShld, mother, false, 0, true);
-     new G4PVPlacement(zrot, topRotZ, "AH_top", aAHTop, mother, false, 0, true);
-     new G4PVPlacement(zrot, backRotZ, "AH_back", aAHBack, mother, false, 0, true);
-     new G4PVPlacement(zrot, muonRotZ, "AH_Muon_alk", aMuonAlk, mother, false, 0, true);
-
+     G4RotationMatrix *marsRot = new G4RotationMatrix;
+     marsRot->rotateZ(-M_PI/2.);
+     for (int i=0; i != topAbs->GetNoDaughters(); ++i) {
+       G4VPhysicalVolume *pVol = topAbs->GetDaughter(i);
+       G4LogicalVolume *lVol = pVol->GetLogicalVolume();
+//       const G4Box *aBox = static_cast<const G4Box *>(lVol->GetSolid());
+       G4ThreeVector loc = pVol->GetObjectTranslation();
+//       const double yyy = loc[0]  - marsTopHeight + maxHalfHeight;  
+       const double yyy = loc[0] ;  // Up to a sign!!! 
+       const double xxx = loc[1]; // Y G4LBNE = -X Mars. Was centered in MARS, set to 0., o.k.
+         // X G4LBNE = Y Mars. !! Not centered in Mars! Perhaps, ned a shift due to the 
+        // the different size of the mother volume  
+//       const double zzz = loc[2] - marsTopLength + maxHalfLength;
+       const double zzz = loc[2] - 27.9*m; // Setting up this last shift with Geantino .
+        //  Difference in lengths for mother volume.  
+//       const double zzz = -maxHalfLength + aBox->GetZHalfLength() + 0.5*cm;
+       G4ThreeVector posTmp(xxx, yyy, zzz);
+//       std::cerr << " Placing volume " << lVol->GetName() << " at " << posTmp << " 1/2 sizes (G4 coord)  " 
+//          << aBox->GetYHalfLength() << " , " << aBox->GetXHalfLength() << " , " 
+//	  <<  aBox->GetZHalfLength() << std::endl;
+//       std::cerr << "  .... Extend in Y " << posTmp[1] - aBox->GetXHalfLength() 
+//                 << " to " << posTmp[1] + aBox->GetXHalfLength() << std::endl;
+//       std::cerr << "  .... Extend in Z " << posTmp[2] - aBox->GetZHalfLength() 
+//                 << " to " << posTmp[2] + aBox->GetZHalfLength() << std::endl;
+       new G4PVPlacement(marsRot, posTmp, lVol, lVol->GetName() + std::string("_P"), aHATopL, false, 1, true);
+     }
+     //
+     // We now clear the MARS top absorbers, simplify the geometry search 
+     //
+     topAbs->ClearDaughters();
 }
 
 LBNEDetectorMessenger::LBNEDetectorMessenger( LBNEDetectorConstruction* LBNEDet):LBNEDetector(LBNEDet)

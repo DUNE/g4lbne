@@ -60,7 +60,9 @@ LBNEPrimaryGeneratorAction::LBNEPrimaryGeneratorAction() :
     fBeamOnTarget(false),
     fBeamOffsetX(0.0),
     fBeamOffsetY(0.0),
-    fBeamOffsetZ(-2.0*m), // beam divergence assumed to be very small...
+    fBeamOffsetZ(-3.6*m), // beam divergence assumed to be very small... 
+                          // Should place well in front of the baffle, 
+			  // hopefully not too much air in the way.. 
     fBeamMaxValX(1.0*m),  // No truncation of the beam by default. 
     fBeamMaxValY(1.0*m), // No truncation of the beam by default. 
     fBeamSigmaX(1.3*mm),
@@ -262,8 +264,16 @@ void LBNEPrimaryGeneratorAction::GenerateG4ProtonBeam(G4Event* anEvent)
     G4double x0;
     G4double y0; 
     G4double z0;
-    
-    x0 = G4RandGauss::shoot(fBeamOffsetX, fBeamSigmaX );
+    do 
+    {
+       x0 = G4RandGauss::shoot(0.0, fBeamSigmaX);
+    }
+    while(std::abs(x0) > fBeamMaxValX);
+    do 
+    {
+       y0 = G4RandGauss::shoot(0.0, fBeamSigmaY);
+    }
+    while(std::abs(x0) > fBeamMaxValY);
     y0 = G4RandGauss::shoot(fBeamOffsetY, fBeamSigmaY );
     z0 = fBeamOffsetZ;
 
@@ -273,35 +283,23 @@ void LBNEPrimaryGeneratorAction::GenerateG4ProtonBeam(G4Event* anEvent)
       y0 += fBeamOffsetY;
     }
 
-
-    G4double dx, dy, dz;
-    do 
-    {
-       dx = G4RandGauss::shoot(0.0, fBeamSigmaX);
-    }
-    while(abs(dx) > fBeamMaxValX);
-    
-    do 
-    {
-       dy = G4RandGauss::shoot(0.0, fBeamSigmaY);
-    }
-    while(abs(dy) > fBeamMaxValY);
+    G4double dx=0.;
+    G4double dy=0.; 
+    G4double dz=0.;
     
     if(fabs(fBeamAngleTheta) > 1e-4){
       dx += sin(fBeamAngleTheta)*cos(fBeamAnglePhi);
       dy += sin(fBeamAngleTheta)*sin(fBeamAnglePhi);
     }
-    dz = sqrt(1.0 - (dx*dx + dy*dy));
+    dz = std::sqrt(1.0 - (dx*dx + dy*dy));
     G4ThreeVector direction(dx, dy, dz);
-    
-    
+        
     if(fCorrectForAngle || fBeamOnTarget){
        x0 += (dx/dz)*z0;
        y0 += (dy/dz)*z0;
     }
 
     fProtonN = fCurrentPrimaryNo;
-    
     fProtonOrigin   = G4ThreeVector(x0, y0, z0);
     fProtonMomentum = G4ThreeVector(0, 0, fProtonMomentumMag);
     fProtonIntVertex = G4ThreeVector(-9999.,-9999.,-9999.);
@@ -406,6 +404,7 @@ void LBNEPrimaryGeneratorAction::Geantino(G4Event* anEvent)
     const double dr = fPolarAngleGeantinoMin + 
                       (fPolarAngleGeantino - fPolarAngleGeantinoMin)*G4RandFlat::shoot();
     const double dPhi = 2.0*M_PI*G4RandFlat::shoot();
+//    const double dPhi = -M_PI/2.; // Shooting up, test Hadron Absorber. 
     const double dx = dr*std::cos(dPhi);
     const double dy = dr*std::sin(dPhi);
     const double dz = sqrt(1.0 - (dx*dx + dy*dy));

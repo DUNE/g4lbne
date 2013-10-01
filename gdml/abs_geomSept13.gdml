@@ -1,0 +1,2587 @@
+<?xml version="1.0"?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+  <define>
+    <position name="Soil-bottom_1inAirboxpos" x="-508.976700" y="0.000000" z="123.750825" unit="cm"/>
+    <position name="Pm3_sh20_1inAirboxpos" x="-127.802000" y="0.000000" z="-373.987975" unit="cm"/>
+    <position name="Pm3_sh2_2inAirboxpos" x="-127.802000" y="0.000000" z="-351.963575" unit="cm"/>
+    <position name="Pm3_sh0_3inAirboxpos" x="345.482000" y="0.000000" z="-373.987975" unit="cm"/>
+    <position name="Pm3_sh_4inAirboxpos" x="345.482000" y="0.000000" z="-351.963575" unit="cm"/>
+    <position name="Pm3_sh0a_5inAirboxpos" x="414.805200" y="260.205200" z="-362.233275" unit="cm"/>
+    <position name="Pm3_sh0a_6inAirboxpos" x="414.805200" y="-260.205200" z="-362.233275" unit="cm"/>
+    <position name="Pm3_sh0a_7inAirboxpos" x="-222.225200" y="260.205200" z="-362.233275" unit="cm"/>
+    <position name="Pm3_sh0a_8inAirboxpos" x="-222.225200" y="-260.205200" z="-362.233275" unit="cm"/>
+    <position name="Pm3_sv_1inAirboxpos" x="121.390000" y="-225.137000" z="-373.987975" unit="cm"/>
+    <position name="Pm3_sv_4inAirboxpos" x="121.390000" y="-225.137000" z="-351.963575" unit="cm"/>
+    <position name="Pm3_sv_2inAirboxpos" x="121.390000" y="225.137000" z="-373.987975" unit="cm"/>
+    <position name="Pm3_sv_3inAirboxpos" x="121.390000" y="225.137000" z="-351.963575" unit="cm"/>
+    <position name="Pm_5_sh2_1inAirboxpos" x="-104.687600" y="0.000000" z="-328.324175" unit="cm"/>
+    <position name="Pm_5_sh2_2inAirboxpos" x="-104.687600" y="0.000000" z="-304.684775" unit="cm"/>
+    <position name="Pm_5_sh1_3inAirboxpos" x="322.367600" y="0.000000" z="-328.324175" unit="cm"/>
+    <position name="Pm_5_sh1_4inAirboxpos" x="322.367600" y="0.000000" z="-304.684775" unit="cm"/>
+    <position name="Pm5_sh1a_5inAirboxpos" x="403.285800" y="260.225800" z="-316.754475" unit="cm"/>
+    <position name="Pm5_sh1a_6inAirboxpos" x="403.285800" y="-260.225800" z="-316.754475" unit="cm"/>
+    <position name="Pm5_sh1a_7inAirboxpos" x="-210.705800" y="260.225800" z="-316.754475" unit="cm"/>
+    <position name="Pm5_sh1a_8inAirboxpos" x="-210.705800" y="-260.225800" z="-316.754475" unit="cm"/>
+    <position name="Pm_5_sv_1inAirboxpos" x="121.390000" y="-213.603600" z="-328.324175" unit="cm"/>
+    <position name="Pm_5_sv_4inAirboxpos" x="121.390000" y="-213.603600" z="-304.684775" unit="cm"/>
+    <position name="Pm_5_sv_2inAirboxpos" x="121.390000" y="213.603600" z="-328.324175" unit="cm"/>
+    <position name="Pm_5_sv_3inAirboxpos" x="121.390000" y="213.603600" z="-304.684775" unit="cm"/>
+    <position name="Pm_7_sh2_1inAirboxpos" x="-81.548200" y="0.000000" z="-281.045375" unit="cm"/>
+    <position name="Pm_7_sh2_2inAirboxpos" x="-81.548200" y="0.000000" z="-257.405975" unit="cm"/>
+    <position name="Pm_7_sh1_3inAirboxpos" x="299.168200" y="0.000000" z="-281.045375" unit="cm"/>
+    <position name="Pm_7_sh1_4inAirboxpos" x="299.168200" y="0.000000" z="-257.405975" unit="cm"/>
+    <position name="Pm7_sh1a_5inAirboxpos" x="391.646400" y="248.646400" z="-269.275675" unit="cm"/>
+    <position name="Pm7_sh1a_6inAirboxpos" x="391.646400" y="-248.646400" z="-269.275675" unit="cm"/>
+    <position name="Pm7_sh1a_7inAirboxpos" x="-199.066400" y="248.646400" z="-269.275675" unit="cm"/>
+    <position name="Pm7_sh1a_8inAirboxpos" x="-199.066400" y="-248.646400" z="-269.275675" unit="cm"/>
+    <position name="Pm_7_sv_1inAirboxpos" x="121.390000" y="-190.638200" z="-281.045375" unit="cm"/>
+    <position name="Pm_7_sv_2inAirboxpos" x="121.390000" y="-190.638200" z="-257.405975" unit="cm"/>
+    <position name="Pm_7_sv_3inAirboxpos" x="121.390000" y="190.638200" z="-281.045375" unit="cm"/>
+    <position name="Pm_7_sv_4inAirboxpos" x="121.390000" y="190.638200" z="-257.405975" unit="cm"/>
+    <position name="Pm_9_sh2_1inAirboxpos" x="-72.648200" y="0.000000" z="-233.766575" unit="cm"/>
+    <position name="Pm_9_sh2_2inAirboxpos" x="-72.648200" y="0.000000" z="-210.127175" unit="cm"/>
+    <position name="Pm_9_sh1_1inAirboxpos" x="285.168200" y="0.000000" z="-233.766575" unit="cm"/>
+    <position name="Pm_9_sh1_2inAirboxpos" x="285.168200" y="0.000000" z="-210.127175" unit="cm"/>
+    <position name="Pm_9_sv_1inAirboxpos" x="116.190000" y="-167.378200" z="-233.766575" unit="cm"/>
+    <position name="Pm_9_sv_2inAirboxpos" x="116.190000" y="-167.378200" z="-210.127175" unit="cm"/>
+    <position name="Pm_9_sv_3inAirboxpos" x="116.290000" y="167.378200" z="-233.766575" unit="cm"/>
+    <position name="Pm_9_sv_4inAirboxpos" x="116.290000" y="167.378200" z="-210.127175" unit="cm"/>
+    <position name="Pmsk_hcnt_1inPpmaskpos" x="37.000000" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="Phl_up_2inPpmaskpos" x="305.000000" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="Ppmask_1inAirboxpos" x="94.700000" y="0.000000" z="-430.412675" unit="cm"/>
+    <position name="hm_1_1inPrepremask_2_hole_centrepos" x="0.000000" y="0.000000" z="-5.000000" unit="cm"/>
+    <position name="hm_1c_1inPrepremask_2_hole_centrepos" x="0.000000" y="0.000000" z="-4.400000" unit="cm"/>
+    <position name="hm_1s_1inPrepremask_2_hole_centrepos" x="0.000000" y="0.000000" z="-4.150000" unit="cm"/>
+    <position name="Prepremask_2_hole_centre_1inPpmask_2pos" x="37.000000" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="Ppmask_2_2inAirboxpos" x="94.700000" y="0.000000" z="-399.682675" unit="cm"/>
+    <position name="Pmsk3air_1inPmsk_30pos" x="4.064000" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="Pmsk_30_1inAirboxpos" x="116.290000" y="0.000000" z="-368.702675" unit="cm"/>
+    <position name="Pmsk3air_10x1inPmsk_3pos" x="14.986000" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="Pmsk_3_2inAirboxpos" x="116.290000" y="0.000000" z="-337.722675" unit="cm"/>
+    <position name="Pmsk5air_1inPmsk_5pos" x="8.890000" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="Pmsk_5_1inAirboxpos" x="116.290000" y="0.000000" z="-306.742675" unit="cm"/>
+    <position name="Pmsk_5_2inAirboxpos" x="116.290000" y="0.000000" z="-275.762675" unit="cm"/>
+    <position name="Pmsk7air_1inPmsk_7pos" x="4.064000" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="Pmsk_7_1inAirboxpos" x="116.290000" y="0.000000" z="-244.782675" unit="cm"/>
+    <position name="Pmsk_7_2inAirboxpos" x="116.290000" y="0.000000" z="-213.802675" unit="cm"/>
+    <position name="Pmsk_5_s_1inAirboxpos" x="-13.699700" y="0.000000" z="-328.324175" unit="cm"/>
+    <position name="Pmsk_5_s_2inAirboxpos" x="-13.699700" y="0.000000" z="-304.684775" unit="cm"/>
+    <position name="Pmsk_7_s_1inAirboxpos" x="-2.099700" y="0.000000" z="-281.045375" unit="cm"/>
+    <position name="Pmsk_7_s_2inAirboxpos" x="-2.099700" y="0.000000" z="-257.405975" unit="cm"/>
+    <position name="Pmsk_3s0_1inAirboxpos" x="-24.834400" y="0.000000" z="-373.987975" unit="cm"/>
+    <position name="Pmsk_3_s_2inAirboxpos" x="-24.834400" y="0.000000" z="-351.963575" unit="cm"/>
+    <position name="Al_core_1inAirboxpos" x="94.700000" y="2.540000" z="-182.322675" unit="cm"/>
+    <position name="Al_core_2inAirboxpos" x="94.700000" y="2.540000" z="-150.842675" unit="cm"/>
+    <position name="Al_core_3inAirboxpos" x="94.700000" y="2.540000" z="-119.362675" unit="cm"/>
+    <position name="Al_core_4inAirboxpos" x="94.700000" y="2.540000" z="-87.882675" unit="cm"/>
+    <position name="Al_core_5inAirboxpos" x="94.700000" y="-2.540000" z="-56.402675" unit="cm"/>
+    <position name="Al_core_6inAirboxpos" x="94.700000" y="-2.540000" z="-24.922675" unit="cm"/>
+    <position name="Al_core_7inAirboxpos" x="94.700000" y="-2.540000" z="6.557325" unit="cm"/>
+    <position name="Al_core_8inAirboxpos" x="94.700000" y="-2.540000" z="38.037325" unit="cm"/>
+    <position name="Core_bot_1inAirboxpos" x="8.500000" y="2.540000" z="-182.322675" unit="cm"/>
+    <position name="Core_bot_2inAirboxpos" x="8.500000" y="2.540000" z="-150.842675" unit="cm"/>
+    <position name="Core_bot_3inAirboxpos" x="8.500000" y="2.540000" z="-119.362675" unit="cm"/>
+    <position name="Core_bot_4inAirboxpos" x="8.500000" y="2.540000" z="-87.882675" unit="cm"/>
+    <position name="Core_bot_5inAirboxpos" x="8.500000" y="-2.540000" z="-56.402675" unit="cm"/>
+    <position name="Core_bot_6inAirboxpos" x="8.500000" y="-2.540000" z="-24.922675" unit="cm"/>
+    <position name="Core_bot_7inAirboxpos" x="8.500000" y="-2.540000" z="6.557325" unit="cm"/>
+    <position name="Core_bot_8inAirboxpos" x="8.500000" y="-2.540000" z="38.037325" unit="cm"/>
+    <position name="St_core_1inAl_toppos" x="10.000000" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="Al_top_1inAirboxpos" x="259.815200" y="2.540000" z="-182.322675" unit="cm"/>
+    <position name="Al_top_2inAirboxpos" x="259.815200" y="2.540000" z="-150.842675" unit="cm"/>
+    <position name="Al_top_3inAirboxpos" x="259.815200" y="2.540000" z="-119.362675" unit="cm"/>
+    <position name="Al_top_4inAirboxpos" x="259.815200" y="2.540000" z="-87.882675" unit="cm"/>
+    <position name="Al_top_5inAirboxpos" x="259.815200" y="-2.540000" z="-56.402675" unit="cm"/>
+    <position name="Al_top_6inAirboxpos" x="259.815200" y="-2.540000" z="-24.922675" unit="cm"/>
+    <position name="Al_top_7inAirboxpos" x="259.815200" y="-2.540000" z="6.557325" unit="cm"/>
+    <position name="Al_top_8inAirboxpos" x="259.815200" y="-2.540000" z="38.037325" unit="cm"/>
+    <position name="St2_core_1inCore_bl2pos" x="-98.915200" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="Core_bl2_1inAirboxpos" x="193.615200" y="2.540000" z="69.517325" unit="cm"/>
+    <position name="Core_bl2_2inAirboxpos" x="193.615200" y="2.540000" z="100.997325" unit="cm"/>
+    <position name="Core_bl2_3inAirboxpos" x="193.615200" y="2.540000" z="132.477325" unit="cm"/>
+    <position name="Core_bl2_4inAirboxpos" x="193.615200" y="2.540000" z="163.957325" unit="cm"/>
+    <position name="Core_bot_11inAirboxpos" x="8.500000" y="2.540000" z="69.517325" unit="cm"/>
+    <position name="Core_bot_12inAirboxpos" x="8.500000" y="2.540000" z="100.997325" unit="cm"/>
+    <position name="Core_bot_13inAirboxpos" x="8.500000" y="2.540000" z="132.477325" unit="cm"/>
+    <position name="Core_bot_14inAirboxpos" x="8.500000" y="2.540000" z="163.957325" unit="cm"/>
+    <position name="Big_core_spacer_1inAirboxpos" x="183.615200" y="-80.360000" z="-135.102675" unit="cm"/>
+    <position name="Big_core_spacer_2inAirboxpos" x="183.615200" y="-80.360000" z="116.737325" unit="cm"/>
+    <position name="Big_core_spacer_3inAirboxpos" x="183.615200" y="80.360000" z="-9.182675" unit="cm"/>
+    <position name="Small_core_spacer_1inAirboxpos" x="183.615200" y="82.900000" z="-135.102675" unit="cm"/>
+    <position name="Small_core_spacer_2inAirboxpos" x="183.615200" y="82.900000" z="116.737325" unit="cm"/>
+    <position name="Small_core_spacer_3inAirboxpos" x="183.615200" y="-82.900000" z="-9.182675" unit="cm"/>
+    <position name="Core_top_slab_1inAirboxpos" x="381.300100" y="0.000000" z="-9.182675" unit="cm"/>
+    <position name="Core_top_slab_2inAirboxpos" x="404.739500" y="0.000000" z="-9.182675" unit="cm"/>
+    <position name="slb_m2t1_1inAirboxpos" x="356.516100" y="0.000000" z="-246.042675" unit="cm"/>
+    <position name="slb_m2t2_1inAirboxpos" x="379.955500" y="0.000000" z="-269.672675" unit="cm"/>
+    <position name="slab_maskup_3_1inAirboxpos" x="403.394900" y="0.000000" z="-291.752675" unit="cm"/>
+    <position name="slab_maskup_3_2inAirboxpos" x="426.834300" y="0.000000" z="-291.752675" unit="cm"/>
+    <position name="slab_maskup_4_1inAirboxpos" x="450.273700" y="0.000000" z="-291.752675" unit="cm"/>
+    <position name="mskd_3_1inAirboxpos" x="-210.814900" y="0.000000" z="-291.752675" unit="cm"/>
+    <position name="mskd_3_2inAirboxpos" x="-234.254300" y="0.000000" z="-291.752675" unit="cm"/>
+    <position name="mskd_3_3inAirboxpos" x="-210.814900" y="0.000000" z="-106.072675" unit="cm"/>
+    <position name="slab_m4b_1inAirboxpos" x="-257.693700" y="0.000000" z="-291.752675" unit="cm"/>
+    <position name="slab_m1_1inAirboxpos" x="96.290000" y="248.796100" z="-222.292675" unit="cm"/>
+    <position name="slab_m2_1inAirboxpos" x="96.290000" y="271.935500" z="-245.972675" unit="cm"/>
+    <position name="slab_m3_1inAirboxpos" x="96.290000" y="295.074900" z="-291.752675" unit="cm"/>
+    <position name="slab_m3_2inAirboxpos" x="96.290000" y="318.214300" z="-291.752675" unit="cm"/>
+    <position name="slab_m1_2inAirboxpos" x="96.290000" y="-248.796100" z="-222.292675" unit="cm"/>
+    <position name="slab_m2_2inAirboxpos" x="96.290000" y="-271.935500" z="-245.972675" unit="cm"/>
+    <position name="slab_m3_3inAirboxpos" x="96.290000" y="-295.074900" z="-291.752675" unit="cm"/>
+    <position name="slab_m3_4inAirboxpos" x="96.290000" y="-318.214300" z="-291.752675" unit="cm"/>
+    <position name="slab_bl_1inAirboxpos" x="74.700000" y="0.000000" z="368.952625" unit="cm"/>
+    <position name="slab_bl2_2inAirboxpos" x="-29.727300" y="0.000000" z="368.952625" unit="cm"/>
+    <position name="slab_bl_3inAirboxpos" x="213.836400" y="0.000000" z="368.952625" unit="cm"/>
+    <position name="slab_bl2_4inAirboxpos" x="311.321880" y="0.000000" z="368.952625" unit="cm"/>
+    <position name="slb_m5bx_1inAirboxpos" x="-163.936100" y="0.000000" z="-207.354475" unit="cm"/>
+    <position name="slab_m5b_2inAirboxpos" x="-163.936100" y="0.000000" z="-52.268075" unit="cm"/>
+    <position name="slab_m5b_3inAirboxpos" x="-163.936100" y="0.000000" z="86.568325" unit="cm"/>
+    <position name="slab_m5b_4inAirboxpos" x="-163.936100" y="0.000000" z="225.404725" unit="cm"/>
+    <position name="slb_m5b_5inAirboxpos" x="-187.375500" y="0.000000" z="-261.964475" unit="cm"/>
+    <position name="slab_m5b_6inAirboxpos" x="-187.375500" y="0.000000" z="-114.228075" unit="cm"/>
+    <position name="slab_m5b_7inAirboxpos" x="-187.375500" y="0.000000" z="24.608325" unit="cm"/>
+    <position name="slab_m5b_8inAirboxpos" x="-187.375500" y="0.000000" z="163.444725" unit="cm"/>
+    <position name="Shield_back_slab_0inBack_shieldingpos" x="-23.439400" y="0.000000" z="-121.268200" unit="cm"/>
+    <position name="Shield_back_slab_1inBack_shieldingpos" x="-23.439400" y="0.000000" z="-97.828800" unit="cm"/>
+    <position name="Shield_back_slab_2inBack_shieldingpos" x="-23.439400" y="0.000000" z="-74.389400" unit="cm"/>
+    <position name="Shield_back_slab_3inBack_shieldingpos" x="-23.439400" y="0.000000" z="-50.950000" unit="cm"/>
+    <position name="Shield_back_slab_4inBack_shieldingpos" x="-23.439400" y="0.000000" z="-27.510600" unit="cm"/>
+    <position name="Shield_back_slab_5inBack_shieldingpos" x="-23.439400" y="0.000000" z="-4.071200" unit="cm"/>
+    <position name="Shield_back_slab_6inBack_shieldingpos" x="-23.439400" y="0.000000" z="19.368200" unit="cm"/>
+    <position name="bck_extr_7inBack_shieldingpos" x="-23.439400" y="0.000000" z="37.737900" unit="cm"/>
+    <position name="Back_shielding_1inAirboxpos" x="207.054600" y="0.000000" z="313.035225" unit="cm"/>
+    <position name="Shield_side_slab_horiz_0inShield_sidepos" x="-139.136400" y="-201.231500" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_10inShield_sidepos" x="-139.136400" y="-154.352700" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_20inShield_sidepos" x="-139.136400" y="-107.473900" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_30inShield_sidepos" x="-139.136400" y="-60.595100" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_1inShield_sidepos" x="0.000000" y="-201.231500" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_11inShield_sidepos" x="0.000000" y="-154.352700" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_21inShield_sidepos" x="0.000000" y="-107.473900" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_31inShield_sidepos" x="0.000000" y="-60.595100" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_2inShield_sidepos" x="139.136400" y="-201.231500" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_12inShield_sidepos" x="139.136400" y="-154.352700" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_22inShield_sidepos" x="139.136400" y="-107.473900" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_32inShield_sidepos" x="139.136400" y="-60.595100" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_vert_0inShield_sidepos" x="-0.000000" y="-177.792100" z="-251.579100" unit="cm"/>
+    <position name="Shield_side_slab_vert_10inShield_sidepos" x="-0.000000" y="-130.913300" z="-251.579100" unit="cm"/>
+    <position name="Shield_side_slab_vert_20inShield_sidepos" x="-0.000000" y="-84.034500" z="-251.579100" unit="cm"/>
+    <position name="Shield_side_slab_vert_30inShield_sidepos" x="-0.000000" y="-37.155700" z="-251.579100" unit="cm"/>
+    <position name="Shield_side_slab_vert_1inShield_sidepos" x="-0.000000" y="-177.792100" z="-112.442700" unit="cm"/>
+    <position name="Shield_side_slab_vert_11inShield_sidepos" x="-0.000000" y="-130.913300" z="-112.442700" unit="cm"/>
+    <position name="Shield_side_slab_vert_21inShield_sidepos" x="-0.000000" y="-84.034500" z="-112.442700" unit="cm"/>
+    <position name="Shield_side_slab_vert_31inShield_sidepos" x="-0.000000" y="-37.155700" z="-112.442700" unit="cm"/>
+    <position name="Shield_side_slab_vert_2inShield_sidepos" x="-0.000000" y="-177.792100" z="26.693700" unit="cm"/>
+    <position name="Shield_side_slab_vert_12inShield_sidepos" x="-0.000000" y="-130.913300" z="26.693700" unit="cm"/>
+    <position name="Shield_side_slab_vert_22inShield_sidepos" x="-0.000000" y="-84.034500" z="26.693700" unit="cm"/>
+    <position name="Shield_side_slab_vert_32inShield_sidepos" x="-0.000000" y="-37.155700" z="26.693700" unit="cm"/>
+    <position name="Shield_side_slab_vert_3inShield_sidepos" x="-0.000000" y="-177.792100" z="165.830100" unit="cm"/>
+    <position name="Shield_side_slab_vert_13inShield_sidepos" x="-0.000000" y="-130.913300" z="165.830100" unit="cm"/>
+    <position name="Shield_side_slab_vert_23inShield_sidepos" x="-0.000000" y="-84.034500" z="165.830100" unit="cm"/>
+    <position name="Shield_side_slab_vert_33inShield_sidepos" x="-0.000000" y="-37.155700" z="165.830100" unit="cm"/>
+    <position name="Shield_side_1inAirboxpos" x="207.054600" y="299.161200" z="123.034625" unit="cm"/>
+    <position name="Shield_side_slab_horiz_00x1inShield_side_2pos" x="-139.136400" y="201.231500" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_100x1inShield_side_2pos" x="-139.136400" y="154.352700" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_200x1inShield_side_2pos" x="-139.136400" y="107.473900" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_300x1inShield_side_2pos" x="-139.136400" y="60.595100" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_10x1inShield_side_2pos" x="0.000000" y="201.231500" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_110x1inShield_side_2pos" x="0.000000" y="154.352700" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_210x1inShield_side_2pos" x="0.000000" y="107.473900" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_310x1inShield_side_2pos" x="0.000000" y="60.595100" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_20x1inShield_side_2pos" x="139.136400" y="201.231500" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_120x1inShield_side_2pos" x="139.136400" y="154.352700" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_220x1inShield_side_2pos" x="139.136400" y="107.473900" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_horiz_320x1inShield_side_2pos" x="139.136400" y="60.595100" z="-42.929400" unit="cm"/>
+    <position name="Shield_side_slab_vert_00x1inShield_side_2pos" x="-0.000000" y="177.792100" z="-251.579100" unit="cm"/>
+    <position name="Shield_side_slab_vert_100x1inShield_side_2pos" x="-0.000000" y="130.913300" z="-251.579100" unit="cm"/>
+    <position name="Shield_side_slab_vert_200x1inShield_side_2pos" x="-0.000000" y="84.034500" z="-251.579100" unit="cm"/>
+    <position name="Shield_side_slab_vert_300x1inShield_side_2pos" x="-0.000000" y="37.155700" z="-251.579100" unit="cm"/>
+    <position name="Shield_side_slab_vert_10x1inShield_side_2pos" x="-0.000000" y="177.792100" z="-112.442700" unit="cm"/>
+    <position name="Shield_side_slab_vert_110x1inShield_side_2pos" x="-0.000000" y="130.913300" z="-112.442700" unit="cm"/>
+    <position name="Shield_side_slab_vert_210x1inShield_side_2pos" x="-0.000000" y="84.034500" z="-112.442700" unit="cm"/>
+    <position name="Shield_side_slab_vert_310x1inShield_side_2pos" x="-0.000000" y="37.155700" z="-112.442700" unit="cm"/>
+    <position name="Shield_side_slab_vert_20x1inShield_side_2pos" x="-0.000000" y="177.792100" z="26.693700" unit="cm"/>
+    <position name="Shield_side_slab_vert_120x1inShield_side_2pos" x="-0.000000" y="130.913300" z="26.693700" unit="cm"/>
+    <position name="Shield_side_slab_vert_220x1inShield_side_2pos" x="-0.000000" y="84.034500" z="26.693700" unit="cm"/>
+    <position name="Shield_side_slab_vert_320x1inShield_side_2pos" x="-0.000000" y="37.155700" z="26.693700" unit="cm"/>
+    <position name="Shield_side_slab_vert_30x1inShield_side_2pos" x="-0.000000" y="177.792100" z="165.830100" unit="cm"/>
+    <position name="Shield_side_slab_vert_130x1inShield_side_2pos" x="-0.000000" y="130.913300" z="165.830100" unit="cm"/>
+    <position name="Shield_side_slab_vert_230x1inShield_side_2pos" x="-0.000000" y="84.034500" z="165.830100" unit="cm"/>
+    <position name="Shield_side_slab_vert_330x1inShield_side_2pos" x="-0.000000" y="37.155700" z="165.830100" unit="cm"/>
+    <position name="Shield_side_2_1inAirboxpos" x="207.054600" y="-299.161200" z="123.034625" unit="cm"/>
+    <position name="St_ver_0inShield_dwnpos" x="191.597000" y="0.000000" z="-254.779500" unit="cm"/>
+    <position name="St_ver_10inShield_dwnpos" x="144.718200" y="0.000000" z="-254.779500" unit="cm"/>
+    <position name="St_ver_20inShield_dwnpos" x="97.839400" y="0.000000" z="-254.779500" unit="cm"/>
+    <position name="St_ver_1inShield_dwnpos" x="191.597000" y="0.000000" z="-115.643100" unit="cm"/>
+    <position name="St_ver_11inShield_dwnpos" x="144.718200" y="0.000000" z="-115.643100" unit="cm"/>
+    <position name="St_ver_21inShield_dwnpos" x="97.839400" y="0.000000" z="-115.643100" unit="cm"/>
+    <position name="St_ver_2inShield_dwnpos" x="191.597000" y="0.000000" z="23.493300" unit="cm"/>
+    <position name="St_ver_12inShield_dwnpos" x="144.718200" y="0.000000" z="23.493300" unit="cm"/>
+    <position name="St_ver_22inShield_dwnpos" x="97.839400" y="0.000000" z="23.493300" unit="cm"/>
+    <position name="St_ver_3inShield_dwnpos" x="191.597000" y="0.000000" z="162.629700" unit="cm"/>
+    <position name="St_ver_13inShield_dwnpos" x="144.718200" y="0.000000" z="162.629700" unit="cm"/>
+    <position name="St_ver_23inShield_dwnpos" x="97.839400" y="0.000000" z="162.629700" unit="cm"/>
+    <position name="St_hor_0inShield_dwnpos" x="168.157600" y="-208.704600" z="-46.074900" unit="cm"/>
+    <position name="St_hor_10inShield_dwnpos" x="121.278800" y="-208.704600" z="-46.074900" unit="cm"/>
+    <position name="St_hor_20inShield_dwnpos" x="74.400000" y="-208.704600" z="-46.074900" unit="cm"/>
+    <position name="St_hor1_30inShield_dwnpos" x="57.720300" y="-208.704600" z="-46.074900" unit="cm"/>
+    <position name="St_hor_1inShield_dwnpos" x="168.157600" y="-69.568200" z="-46.074900" unit="cm"/>
+    <position name="St_hor_11inShield_dwnpos" x="121.278800" y="-69.568200" z="-46.074900" unit="cm"/>
+    <position name="St_hor_21inShield_dwnpos" x="74.400000" y="-69.568200" z="-46.074900" unit="cm"/>
+    <position name="St_hor1_31inShield_dwnpos" x="57.720300" y="-69.568200" z="-46.074900" unit="cm"/>
+    <position name="St_hor_2inShield_dwnpos" x="168.157600" y="69.568200" z="-46.074900" unit="cm"/>
+    <position name="St_hor_12inShield_dwnpos" x="121.278800" y="69.568200" z="-46.074900" unit="cm"/>
+    <position name="St_hor_22inShield_dwnpos" x="74.400000" y="69.568200" z="-46.074900" unit="cm"/>
+    <position name="St_hor1_32inShield_dwnpos" x="57.720300" y="69.568200" z="-46.074900" unit="cm"/>
+    <position name="St_hor_3inShield_dwnpos" x="168.157600" y="208.704600" z="-46.074900" unit="cm"/>
+    <position name="St_hor_13inShield_dwnpos" x="121.278800" y="208.704600" z="-46.074900" unit="cm"/>
+    <position name="St_hor_23inShield_dwnpos" x="74.400000" y="208.704600" z="-46.074900" unit="cm"/>
+    <position name="St_hor1_33inShield_dwnpos" x="57.720300" y="208.704600" z="-46.074900" unit="cm"/>
+    <position name="Shield_dwn_1inAirboxpos" x="-204.966700" y="0.000000" z="126.235025" unit="cm"/>
+    <position name="Sh_fr_bo_1inAirboxpos" x="-344.514600" y="0.000000" z="-322.232675" unit="cm"/>
+    <position name="Shield_top_airgap_1inShield_toppos" x="-68.580000" y="0.000000" z="8.742700" unit="cm"/>
+    <position name="Shield_top_1inAirboxpos" x="512.561000" y="0.000000" z="12.554625" unit="cm"/>
+    <position name="Sh_fr_tp_1inAirboxpos" x="361.932200" y="0.000000" z="-322.232675" unit="cm"/>
+    <position name="Sh_fr_sd_1inAirboxpos" x="113.711700" y="362.874700" z="-322.232675" unit="cm"/>
+    <position name="Sh_fr_sd_2inAirboxpos" x="113.711700" y="-362.874700" z="-322.232675" unit="cm"/>
+    <position name="Airbox_1inTOPpos" x="-74.700000" y="0.000000" z="430.662675" unit="cm"/>
+    <position name="FVbeamleft_1inTOPpos" x="25.839700" y="711.962400" z="434.760000" unit="cm"/>
+    <position name="FVbeamright_1inTOPpos" x="25.839700" y="-711.962400" z="434.760000" unit="cm"/>
+    <position name="AH_backair_1_1inAH_backair_1pos" x="0.000000" y="0.000000" z="-158.496000" unit="cm"/>
+    <position name="AH_backair_1_10x1inAH_backpos" x="45.720000" y="0.000000" z="-45.720000" unit="cm"/>
+    <position name="AH_backair_2_1inAH_backpos" x="-67.013100" y="0.000000" z="182.880000" unit="cm"/>
+    <position name="AH_back_1inTOPpos" x="25.839700" y="0.000000" z="1105.135800" unit="cm"/>
+    <position name="Michel_water_1inMichel_graphitepos" x="0.000000" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="Michel_graphite_1inAH_Muon_alkairpos" x="0.000000" y="0.000000" z="-574.680000" unit="cm"/>
+    <rotation name="Michel_graphite_1inAH_Muon_alkairrot" x="-0.000000" y="0.000000" z="90.000000" unit="deg"/>
+    <position name="Michel_graphite_2inAH_Muon_alkairpos" x="0.000000" y="0.000000" z="-296.560000" unit="cm"/>
+    <rotation name="Michel_graphite_2inAH_Muon_alkairrot" x="-0.000000" y="0.000000" z="90.000000" unit="deg"/>
+    <position name="Michel_BlueBox_1inAH_Muon_alkairpos" x="0.000000" y="0.000000" z="-435.620000" unit="cm"/>
+    <position name="AH_Muon_alkair_1inAH_Muon_alkpos" x="0.000000" y="0.000000" z="-45.720000" unit="cm"/>
+    <position name="AH_Muon_alk_1inTOPpos" x="-41.173400" y="0.000000" z="1994.135800" unit="cm"/>
+    <position name="ecap_1_1inAir_pipepos" x="0.000000" y="0.000000" z="10179.000000" unit="cm"/>
+    <position name="ecap_1s_11inAir_pipepos" x="0.000000" y="0.000000" z="10179.000000" unit="cm"/>
+    <position name="Air_pipe_1inDecay_pipepos" x="0.000000" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="Air_pipe_1inDecay_piperot" x="-0.000000" y="5.844170" z="90.000000" unit="deg"/>
+    <position name="M_pipe1_1inDecay_pipepos" x="0.000000" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="M_pipe1_1inDecay_piperot" x="-0.000000" y="5.844170" z="90.000000" unit="deg"/>
+    <position name="A_pipe_1inDecay_pipepos" x="0.000000" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="A_pipe_1inDecay_piperot" x="-0.000000" y="5.844170" z="90.000000" unit="deg"/>
+    <position name="M_pipe2_1inDecay_pipepos" x="0.000000" y="0.000000" z="0.000000" unit="cm"/>
+    <rotation name="M_pipe2_1inDecay_piperot" x="-0.000000" y="5.844170" z="90.000000" unit="deg"/>
+    <position name="dkcoolA_1inDecay_pipepos" x="193.252283" y="193.252283" z="0.000000" unit="cm"/>
+    <rotation name="dkcoolA_1inDecay_piperot" x="-0.000000" y="5.844170" z="90.000000" unit="deg"/>
+    <position name="dkcoolA_2inDecay_pipepos" x="193.252283" y="-193.252283" z="0.000000" unit="cm"/>
+    <rotation name="dkcoolA_2inDecay_piperot" x="-0.000000" y="5.844170" z="90.000000" unit="deg"/>
+    <position name="dkcoolA_3inDecay_pipepos" x="-193.252283" y="193.252283" z="0.000000" unit="cm"/>
+    <rotation name="dkcoolA_3inDecay_piperot" x="-0.000000" y="5.844170" z="90.000000" unit="deg"/>
+    <position name="dkcoolA_4inDecay_pipepos" x="-193.252283" y="-193.252283" z="0.000000" unit="cm"/>
+    <rotation name="dkcoolA_4inDecay_piperot" x="-0.000000" y="5.844170" z="90.000000" unit="deg"/>
+    <position name="dkcoolM_1inDecay_pipepos" x="193.252283" y="193.252283" z="0.000000" unit="cm"/>
+    <rotation name="dkcoolM_1inDecay_piperot" x="-0.000000" y="5.844170" z="90.000000" unit="deg"/>
+    <position name="dkcoolM_2inDecay_pipepos" x="193.252283" y="-193.252283" z="0.000000" unit="cm"/>
+    <rotation name="dkcoolM_2inDecay_piperot" x="-0.000000" y="5.844170" z="90.000000" unit="deg"/>
+    <position name="dkcoolM_3inDecay_pipepos" x="-193.252283" y="193.252283" z="0.000000" unit="cm"/>
+    <rotation name="dkcoolM_3inDecay_piperot" x="-0.000000" y="5.844170" z="90.000000" unit="deg"/>
+    <position name="dkcoolM_4inDecay_pipepos" x="-193.252283" y="-193.252283" z="0.000000" unit="cm"/>
+    <rotation name="dkcoolM_4inDecay_piperot" x="-0.000000" y="5.844170" z="90.000000" unit="deg"/>
+    <position name="Decay_pipe_1inTOPpos" x="1093.596885" y="0.000000" z="-10162.225587" unit="cm"/>
+    <position name="AH_topair_1inAH_toppos" x="0.000000" y="0.000000" z="0.000000" unit="cm"/>
+    <position name="AH_top_1inTOPpos" x="1043.785900" y="0.000000" z="612.607300" unit="cm"/>
+    <position name="TOP_1inMarstoppos" x="2308.347947" y="0.000000" z="22030.219515" unit="cm"/>
+    <rotation name="TOP_1inMarstoprot" x="0.000000" y="0.000000" z="-180.000000" unit="deg"/>
+  </define>
+  <materials>
+    <material name="VAC" Z="1.000000">
+      <D unit="g/cm3" value="0.000000"/>
+      <atom unit="g/mole" value="0.000000"/>
+    </material>
+    <element name="HYDROGEN_elm" formula="H" Z="1">
+      <atom unit="g/mole" value="1.007940"/>
+    </element>
+    <element name="NITROGEN_elm" formula="N" Z="7">
+      <atom unit="g/mole" value="14.006740"/>
+    </element>
+    <element name="OXYGEN_elm" formula="O" Z="8">
+      <atom unit="g/mole" value="15.999400"/>
+    </element>
+    <element name="ARGON_elm" formula="AR" Z="18">
+      <atom unit="g/mole" value="39.948000"/>
+    </element>
+    <material name="AIR">
+      <D unit="g/cm3" value="0.001210"/>
+      <fraction n="0.013000" ref="ARGON_elm"/>
+      <fraction n="0.001000" ref="HYDROGEN_elm"/>
+      <fraction n="0.746000" ref="NITROGEN_elm"/>
+      <fraction n="0.240000" ref="OXYGEN_elm"/>
+    </material>
+    <element name="IRON_elm" formula="FE" Z="26">
+      <atom unit="g/mole" value="55.845000"/>
+    </element>
+    <element name="POTASSIUM_elm" formula="K" Z="19">
+      <atom unit="g/mole" value="39.098300"/>
+    </element>
+    <element name="SILICON_elm" formula="SI" Z="14">
+      <atom unit="g/mole" value="28.085500"/>
+    </element>
+    <element name="ALUMINIUM_elm" formula="AL" Z="13">
+      <atom unit="g/mole" value="26.981538"/>
+    </element>
+    <element name="MAGNESIUM_elm" formula="MG" Z="12">
+      <atom unit="g/mole" value="24.305000"/>
+    </element>
+    <material name="GTIL">
+      <D unit="g/cm3" value="2.900000"/>
+      <fraction n="0.097200" ref="ALUMINIUM_elm"/>
+      <fraction n="0.016700" ref="HYDROGEN_elm"/>
+      <fraction n="0.161000" ref="IRON_elm"/>
+      <fraction n="0.175200" ref="MAGNESIUM_elm"/>
+      <fraction n="0.380000" ref="OXYGEN_elm"/>
+      <fraction n="0.028200" ref="POTASSIUM_elm"/>
+      <fraction n="0.141700" ref="SILICON_elm"/>
+    </material>
+    <material name="AIR0x1">
+      <D unit="g/cm3" value="0.001210"/>
+      <fraction n="0.013000" ref="ARGON_elm"/>
+      <fraction n="0.001000" ref="HYDROGEN_elm"/>
+      <fraction n="0.746000" ref="NITROGEN_elm"/>
+      <fraction n="0.240000" ref="OXYGEN_elm"/>
+    </material>
+    <element name="CARBON_elm" formula="C" Z="6">
+      <atom unit="g/mole" value="12.010700"/>
+    </element>
+    <element name="SODIUM_elm" formula="NA" Z="11">
+      <atom unit="g/mole" value="22.989770"/>
+    </element>
+    <element name="CALCIUM_elm" formula="CA" Z="20">
+      <atom unit="g/mole" value="40.078000"/>
+    </element>
+    <material name="CONC">
+      <D unit="g/cm3" value="2.350000"/>
+      <fraction n="0.030000" ref="ALUMINIUM_elm"/>
+      <fraction n="0.200000" ref="CALCIUM_elm"/>
+      <fraction n="0.030000" ref="CARBON_elm"/>
+      <fraction n="0.006000" ref="HYDROGEN_elm"/>
+      <fraction n="0.014000" ref="IRON_elm"/>
+      <fraction n="0.500000" ref="OXYGEN_elm"/>
+      <fraction n="0.010000" ref="POTASSIUM_elm"/>
+      <fraction n="0.200000" ref="SILICON_elm"/>
+      <fraction n="0.010000" ref="SODIUM_elm"/>
+    </material>
+    <material name="GRPH" Z="6.000000">
+      <D unit="g/cm3" value="1.000000"/>
+      <atom unit="g/mole" value="12.011000"/>
+    </material>
+    <material name="AL" Z="13.000000">
+      <D unit="g/cm3" value="1.000000"/>
+      <atom unit="g/mole" value="26.981539"/>
+    </material>
+    <element name="MANGANESE_elm" formula="MN" Z="25">
+      <atom unit="g/mole" value="54.938049"/>
+    </element>
+    <element name="PHOSPHORUS_elm" formula="P" Z="15">
+      <atom unit="g/mole" value="30.973761"/>
+    </element>
+    <element name="COPPER_elm" formula="CU" Z="29">
+      <atom unit="g/mole" value="63.546000"/>
+    </element>
+    <element name="CHROMIUM_elm" formula="CR" Z="24">
+      <atom unit="g/mole" value="51.996100"/>
+    </element>
+    <element name="VANADIUM_elm" formula="V" Z="23">
+      <atom unit="g/mole" value="50.941500"/>
+    </element>
+    <material name="MIX1">
+      <D unit="g/cm3" value="7.440000"/>
+      <fraction n="0.000500" ref="ALUMINIUM_elm"/>
+      <fraction n="0.000700" ref="CARBON_elm"/>
+      <fraction n="0.000400" ref="CHROMIUM_elm"/>
+      <fraction n="0.000200" ref="COPPER_elm"/>
+      <fraction n="0.993500" ref="IRON_elm"/>
+      <fraction n="0.004100" ref="MANGANESE_elm"/>
+      <fraction n="0.000200" ref="PHOSPHORUS_elm"/>
+      <fraction n="0.000200" ref="SILICON_elm"/>
+      <fraction n="0.000200" ref="VANADIUM_elm"/>
+    </material>
+    <material name="MRBL">
+      <D unit="g/cm3" value="2.700000"/>
+      <fraction n="0.400431" ref="CALCIUM_elm"/>
+      <fraction n="0.120005" ref="CARBON_elm"/>
+      <fraction n="0.479564" ref="OXYGEN_elm"/>
+    </material>
+    <element name="NICKEL_elm" formula="NI" Z="28">
+      <atom unit="g/mole" value="58.693400"/>
+    </element>
+    <material name="STST">
+      <D unit="g/cm3" value="7.920000"/>
+      <fraction n="0.190000" ref="CHROMIUM_elm"/>
+      <fraction n="0.695000" ref="IRON_elm"/>
+      <fraction n="0.020000" ref="MANGANESE_elm"/>
+      <fraction n="0.095000" ref="NICKEL_elm"/>
+    </material>
+    <material name="WATR">
+      <D unit="g/cm3" value="1.000000"/>
+      <fraction n="0.111898" ref="HYDROGEN_elm"/>
+      <fraction n="0.888102" ref="OXYGEN_elm"/>
+    </material>
+    <material name="HE" Z="2.000000">
+      <D unit="g/cm3" value="1.000000"/>
+      <atom unit="g/mole" value="4.002602"/>
+    </material>
+    <material name="AIR0x2">
+      <D unit="g/cm3" value="0.001210"/>
+      <fraction n="0.013000" ref="ARGON_elm"/>
+      <fraction n="0.001000" ref="HYDROGEN_elm"/>
+      <fraction n="0.746000" ref="NITROGEN_elm"/>
+      <fraction n="0.240000" ref="OXYGEN_elm"/>
+    </material>
+    <material name="FE" Z="26.000000">
+      <D unit="g/cm3" value="1.000000"/>
+      <atom unit="g/mole" value="55.845000"/>
+    </material>
+    <material name="CRMC">
+      <D unit="g/cm3" value="3.970000"/>
+      <fraction n="0.529251" ref="ALUMINIUM_elm"/>
+      <fraction n="0.470749" ref="OXYGEN_elm"/>
+    </material>
+    <element name="BORON_elm" formula="B" Z="5">
+      <atom unit="g/mole" value="10.811000"/>
+    </element>
+    <material name="BCH2">
+      <D unit="g/cm3" value="0.950000"/>
+      <fraction n="0.050000" ref="BORON_elm"/>
+      <fraction n="0.612000" ref="CARBON_elm"/>
+      <fraction n="0.116000" ref="HYDROGEN_elm"/>
+      <fraction n="0.222000" ref="OXYGEN_elm"/>
+    </material>
+    <material name="STCA">
+      <D unit="g/cm3" value="7.820000"/>
+      <fraction n="0.005000" ref="CARBON_elm"/>
+      <fraction n="0.995000" ref="IRON_elm"/>
+    </material>
+    <material name="CAST">
+      <D unit="g/cm3" value="7.840000"/>
+      <fraction n="0.036500" ref="CARBON_elm"/>
+      <fraction n="0.002000" ref="COPPER_elm"/>
+      <fraction n="0.934700" ref="IRON_elm"/>
+      <fraction n="0.001800" ref="MANGANESE_elm"/>
+      <fraction n="0.025000" ref="SILICON_elm"/>
+    </material>
+    <element name="SULFUR_elm" formula="S" Z="16">
+      <atom unit="g/mole" value="32.066000"/>
+    </element>
+    <material name="SHTC">
+      <D unit="g/cm3" value="2.240000"/>
+      <fraction n="0.026992" ref="ALUMINIUM_elm"/>
+      <fraction n="0.463835" ref="CALCIUM_elm"/>
+      <fraction n="0.016087" ref="IRON_elm"/>
+      <fraction n="0.018091" ref="MAGNESIUM_elm"/>
+      <fraction n="0.361747" ref="OXYGEN_elm"/>
+      <fraction n="0.100031" ref="SILICON_elm"/>
+      <fraction n="0.013217" ref="SULFUR_elm"/>
+    </material>
+    <material name="BE" Z="4.000000">
+      <D unit="g/cm3" value="1.000000"/>
+      <atom unit="g/mole" value="9.012182"/>
+    </material>
+    <element name="MOLYBDENUM_elm" formula="MO" Z="42">
+      <atom unit="g/mole" value="95.940000"/>
+    </element>
+    <material name="S316">
+      <D unit="g/cm3" value="7.920000"/>
+      <fraction n="0.170000" ref="CHROMIUM_elm"/>
+      <fraction n="0.655000" ref="IRON_elm"/>
+      <fraction n="0.020000" ref="MANGANESE_elm"/>
+      <fraction n="0.025000" ref="MOLYBDENUM_elm"/>
+      <fraction n="0.120000" ref="NICKEL_elm"/>
+      <fraction n="0.010000" ref="SILICON_elm"/>
+    </material>
+    <material name="CONC0x1">
+      <D unit="g/cm3" value="2.350000"/>
+      <fraction n="0.030000" ref="ALUMINIUM_elm"/>
+      <fraction n="0.200000" ref="CALCIUM_elm"/>
+      <fraction n="0.030000" ref="CARBON_elm"/>
+      <fraction n="0.006000" ref="HYDROGEN_elm"/>
+      <fraction n="0.014000" ref="IRON_elm"/>
+      <fraction n="0.500000" ref="OXYGEN_elm"/>
+      <fraction n="0.010000" ref="POTASSIUM_elm"/>
+      <fraction n="0.200000" ref="SILICON_elm"/>
+      <fraction n="0.010000" ref="SODIUM_elm"/>
+    </material>
+    <material name="STCA0x1">
+      <D unit="g/cm3" value="7.820000"/>
+      <fraction n="0.005000" ref="CARBON_elm"/>
+      <fraction n="0.995000" ref="IRON_elm"/>
+    </material>
+    <material name="AIR0x3">
+      <D unit="g/cm3" value="0.001210"/>
+      <fraction n="0.013000" ref="ARGON_elm"/>
+      <fraction n="0.001000" ref="HYDROGEN_elm"/>
+      <fraction n="0.746000" ref="NITROGEN_elm"/>
+      <fraction n="0.240000" ref="OXYGEN_elm"/>
+    </material>
+    <material name="AIR0x4">
+      <D unit="g/cm3" value="0.001210"/>
+      <fraction n="0.013000" ref="ARGON_elm"/>
+      <fraction n="0.001000" ref="HYDROGEN_elm"/>
+      <fraction n="0.746000" ref="NITROGEN_elm"/>
+      <fraction n="0.240000" ref="OXYGEN_elm"/>
+    </material>
+    <material name="VAC0x1" Z="1.000000">
+      <D unit="g/cm3" value="0.000000"/>
+      <atom unit="g/mole" value="0.000000"/>
+    </material>
+    <material name="CAST0x1">
+      <D unit="g/cm3" value="7.840000"/>
+      <fraction n="0.036500" ref="CARBON_elm"/>
+      <fraction n="0.002000" ref="COPPER_elm"/>
+      <fraction n="0.934700" ref="IRON_elm"/>
+      <fraction n="0.001800" ref="MANGANESE_elm"/>
+      <fraction n="0.025000" ref="SILICON_elm"/>
+    </material>
+    <material name="MIX10x1">
+      <D unit="g/cm3" value="7.440000"/>
+      <fraction n="0.000500" ref="ALUMINIUM_elm"/>
+      <fraction n="0.000700" ref="CARBON_elm"/>
+      <fraction n="0.000400" ref="CHROMIUM_elm"/>
+      <fraction n="0.000200" ref="COPPER_elm"/>
+      <fraction n="0.993500" ref="IRON_elm"/>
+      <fraction n="0.004100" ref="MANGANESE_elm"/>
+      <fraction n="0.000200" ref="PHOSPHORUS_elm"/>
+      <fraction n="0.000200" ref="SILICON_elm"/>
+      <fraction n="0.000200" ref="VANADIUM_elm"/>
+    </material>
+    <material name="STCA0x2">
+      <D unit="g/cm3" value="7.742000"/>
+      <fraction n="0.005000" ref="CARBON_elm"/>
+      <fraction n="0.995000" ref="IRON_elm"/>
+    </material>
+    <material name="STCA0x3">
+      <D unit="g/cm3" value="7.742000"/>
+      <fraction n="0.005000" ref="CARBON_elm"/>
+      <fraction n="0.995000" ref="IRON_elm"/>
+    </material>
+    <material name="STCA0x4">
+      <D unit="g/cm3" value="7.820000"/>
+      <fraction n="0.005000" ref="CARBON_elm"/>
+      <fraction n="0.995000" ref="IRON_elm"/>
+    </material>
+    <material name="STCA0x5">
+      <D unit="g/cm3" value="7.820000"/>
+      <fraction n="0.005000" ref="CARBON_elm"/>
+      <fraction n="0.995000" ref="IRON_elm"/>
+    </material>
+    <material name="AL0x1" Z="13.000000">
+      <D unit="g/cm3" value="1.000000"/>
+      <atom unit="g/mole" value="26.981539"/>
+    </material>
+    <material name="CONC0x2">
+      <D unit="g/cm3" value="2.350000"/>
+      <fraction n="0.030000" ref="ALUMINIUM_elm"/>
+      <fraction n="0.200000" ref="CALCIUM_elm"/>
+      <fraction n="0.030000" ref="CARBON_elm"/>
+      <fraction n="0.006000" ref="HYDROGEN_elm"/>
+      <fraction n="0.014000" ref="IRON_elm"/>
+      <fraction n="0.500000" ref="OXYGEN_elm"/>
+      <fraction n="0.010000" ref="POTASSIUM_elm"/>
+      <fraction n="0.200000" ref="SILICON_elm"/>
+      <fraction n="0.010000" ref="SODIUM_elm"/>
+    </material>
+    <material name="GTIL0x1">
+      <D unit="g/cm3" value="2.900000"/>
+      <fraction n="0.097200" ref="ALUMINIUM_elm"/>
+      <fraction n="0.016700" ref="HYDROGEN_elm"/>
+      <fraction n="0.161000" ref="IRON_elm"/>
+      <fraction n="0.175200" ref="MAGNESIUM_elm"/>
+      <fraction n="0.380000" ref="OXYGEN_elm"/>
+      <fraction n="0.028200" ref="POTASSIUM_elm"/>
+      <fraction n="0.141700" ref="SILICON_elm"/>
+    </material>
+    <material name="MIX2">
+      <D unit="g/cm3" value="1.840000"/>
+      <fraction n="0.105200" ref="ALUMINIUM_elm"/>
+      <fraction n="0.009200" ref="HYDROGEN_elm"/>
+      <fraction n="0.174200" ref="IRON_elm"/>
+      <fraction n="0.189600" ref="MAGNESIUM_elm"/>
+      <fraction n="0.338000" ref="OXYGEN_elm"/>
+      <fraction n="0.030500" ref="POTASSIUM_elm"/>
+      <fraction n="0.153300" ref="SILICON_elm"/>
+    </material>
+    <material name="GTIL0x2">
+      <D unit="g/cm3" value="2.900000"/>
+      <fraction n="0.097200" ref="ALUMINIUM_elm"/>
+      <fraction n="0.016700" ref="HYDROGEN_elm"/>
+      <fraction n="0.161000" ref="IRON_elm"/>
+      <fraction n="0.175200" ref="MAGNESIUM_elm"/>
+      <fraction n="0.380000" ref="OXYGEN_elm"/>
+      <fraction n="0.028200" ref="POTASSIUM_elm"/>
+      <fraction n="0.141700" ref="SILICON_elm"/>
+    </material>
+    <element name="LEAD_elm" formula="PB" Z="82">
+      <atom unit="g/mole" value="207.200000"/>
+    </element>
+    <material name="MIX3">
+      <D unit="g/cm3" value="4.800000"/>
+      <fraction n="0.533400" ref="LEAD_elm"/>
+      <fraction n="0.166100" ref="OXYGEN_elm"/>
+      <fraction n="0.047200" ref="POTASSIUM_elm"/>
+      <fraction n="0.244000" ref="SILICON_elm"/>
+      <fraction n="0.009300" ref="SODIUM_elm"/>
+    </material>
+    <material name="TI" Z="22.000000">
+      <D unit="g/cm3" value="1.000000"/>
+      <atom unit="g/mole" value="47.867000"/>
+    </material>
+    <material name="AL0x2" Z="13.000000">
+      <D unit="g/cm3" value="1.000000"/>
+      <atom unit="g/mole" value="26.981539"/>
+    </material>
+    <material name="WATR0x1">
+      <D unit="g/cm3" value="1.000000"/>
+      <fraction n="0.111898" ref="HYDROGEN_elm"/>
+      <fraction n="0.888102" ref="OXYGEN_elm"/>
+    </material>
+    <material name="CONC0x3">
+      <D unit="g/cm3" value="2.350000"/>
+      <fraction n="0.030000" ref="ALUMINIUM_elm"/>
+      <fraction n="0.200000" ref="CALCIUM_elm"/>
+      <fraction n="0.030000" ref="CARBON_elm"/>
+      <fraction n="0.006000" ref="HYDROGEN_elm"/>
+      <fraction n="0.014000" ref="IRON_elm"/>
+      <fraction n="0.500000" ref="OXYGEN_elm"/>
+      <fraction n="0.010000" ref="POTASSIUM_elm"/>
+      <fraction n="0.200000" ref="SILICON_elm"/>
+      <fraction n="0.010000" ref="SODIUM_elm"/>
+    </material>
+    <material name="AIR0x5">
+      <D unit="g/cm3" value="0.001210"/>
+      <fraction n="0.013000" ref="ARGON_elm"/>
+      <fraction n="0.001000" ref="HYDROGEN_elm"/>
+      <fraction n="0.746000" ref="NITROGEN_elm"/>
+      <fraction n="0.240000" ref="OXYGEN_elm"/>
+    </material>
+    <material name="MIX10x2">
+      <D unit="g/cm3" value="7.440000"/>
+      <fraction n="0.000500" ref="ALUMINIUM_elm"/>
+      <fraction n="0.000700" ref="CARBON_elm"/>
+      <fraction n="0.000400" ref="CHROMIUM_elm"/>
+      <fraction n="0.000200" ref="COPPER_elm"/>
+      <fraction n="0.993500" ref="IRON_elm"/>
+      <fraction n="0.004100" ref="MANGANESE_elm"/>
+      <fraction n="0.000200" ref="PHOSPHORUS_elm"/>
+      <fraction n="0.000200" ref="SILICON_elm"/>
+      <fraction n="0.000200" ref="VANADIUM_elm"/>
+    </material>
+    <material name="C" Z="6.000000">
+      <D unit="g/cm3" value="1.000000"/>
+      <atom unit="g/mole" value="12.011000"/>
+    </material>
+    <material name="GTIL0x3">
+      <D unit="g/cm3" value="2.900000"/>
+      <fraction n="0.097200" ref="ALUMINIUM_elm"/>
+      <fraction n="0.016700" ref="HYDROGEN_elm"/>
+      <fraction n="0.161000" ref="IRON_elm"/>
+      <fraction n="0.175200" ref="MAGNESIUM_elm"/>
+      <fraction n="0.380000" ref="OXYGEN_elm"/>
+      <fraction n="0.028200" ref="POTASSIUM_elm"/>
+      <fraction n="0.141700" ref="SILICON_elm"/>
+    </material>
+    <material name="AL0x3" Z="13.000000">
+      <D unit="g/cm3" value="1.000000"/>
+      <atom unit="g/mole" value="26.981539"/>
+    </material>
+  </materials>
+  <solids>
+    <tube name="Marstop" rmin="0.000000" rmax="4200.000000" z="50000.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <box name="TOP0x1" x="3280.000000" y="2200.000000" z="5816.600000" lunit="cm"/>
+    <box name="Airbox0x1" x="1219.040000" y="1023.924600" z="891.728650" lunit="cm"/>
+    <box name="Soil-bottom0x1" x="201.086600" y="1023.924600" z="644.227000" lunit="cm"/>
+    <box name="Pm3_sh200x1" x="141.086400" y="566.410400" z="19.909400" lunit="cm"/>
+    <box name="Pm3_sh20x1" x="141.086400" y="566.410400" z="23.139400" lunit="cm"/>
+    <box name="Pm3_sh00x1" x="90.886400" y="566.410400" z="19.909400" lunit="cm"/>
+    <box name="Pm3_sh0x1" x="90.886400" y="566.410400" z="23.139400" lunit="cm"/>
+    <box name="Pm3_sh0a0x1" x="47.600000" y="46.000000" z="43.418800" lunit="cm"/>
+    <box name="Pm3_sv0x1" x="357.297600" y="116.136400" z="19.909400" lunit="cm"/>
+    <box name="Pm3_sv0x3" x="357.297600" y="116.136400" z="23.139400" lunit="cm"/>
+    <box name="Pm_5_sh20x1" x="141.036400" y="566.651600" z="23.139400" lunit="cm"/>
+    <box name="Pm_5_sh10x1" x="90.836400" y="566.651600" z="23.139400" lunit="cm"/>
+    <box name="Pm5_sh1a0x1" x="70.400000" y="46.200000" z="46.278800" lunit="cm"/>
+    <box name="Pm_5_sv0x1" x="311.018800" y="139.428400" z="23.139400" lunit="cm"/>
+    <box name="Pm_7_sh20x1" x="141.036400" y="520.652800" z="23.139400" lunit="cm"/>
+    <box name="Pm_7_sh10x1" x="90.956400" y="520.652800" z="23.139400" lunit="cm"/>
+    <box name="Pm7_sh1a0x1" x="93.600000" y="23.360000" z="46.678800" lunit="cm"/>
+    <box name="Pm_7_sv0x1" x="264.580000" y="139.376400" z="23.139400" lunit="cm"/>
+    <box name="Pm_9_sh20x1" x="158.836400" y="473.852800" z="23.139400" lunit="cm"/>
+    <box name="Pm_9_sh10x1" x="118.956400" y="473.852800" z="23.139400" lunit="cm"/>
+    <box name="Pm_9_sv0x1" x="218.780000" y="139.096400" z="23.139400" lunit="cm"/>
+    <box name="Ppmask0x1" x="854.000000" y="610.000000" z="30.902000" lunit="cm"/>
+    <box name="Pmsk_hcnt0x1" x="411.000000" y="358.000000" z="30.980000" lunit="cm"/>
+    <box name="Phl_up0x1" x="244.000000" y="122.000000" z="30.980000" lunit="cm"/>
+    <box name="Ppmask_20x1" x="751.000000" y="728.000000" z="30.480000" lunit="cm"/>
+    <box name="Prepremask_2_hole_centre0x1" x="411.000000" y="358.000000" z="30.480000" lunit="cm"/>
+    <tube name="hm_10x1" rmin="0.000000" rmax="100.000000" z="1.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube" rmin="0.000000" rmax="10.000000" z="1.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x1" rmin="10.000000" rmax="20.000000" z="1.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x2" rmin="20.000000" rmax="30.000000" z="1.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x3" rmin="30.000000" rmax="40.000000" z="1.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x4" rmin="40.000000" rmax="50.000000" z="1.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x5" rmin="50.000000" rmax="60.000000" z="1.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x6" rmin="60.000000" rmax="70.000000" z="1.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x7" rmin="70.000000" rmax="80.000000" z="1.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x8" rmin="80.000000" rmax="90.000000" z="1.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x9" rmin="90.000000" rmax="100.000000" z="1.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="hm_1c0x1" rmin="0.000000" rmax="100.000000" z="0.200000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x10" rmin="0.000000" rmax="10.000000" z="0.200000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x11" rmin="10.000000" rmax="20.000000" z="0.200000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x12" rmin="20.000000" rmax="30.000000" z="0.200000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x13" rmin="30.000000" rmax="40.000000" z="0.200000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x14" rmin="40.000000" rmax="50.000000" z="0.200000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x15" rmin="50.000000" rmax="60.000000" z="0.200000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x16" rmin="60.000000" rmax="70.000000" z="0.200000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x17" rmin="70.000000" rmax="80.000000" z="0.200000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x18" rmin="80.000000" rmax="90.000000" z="0.200000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x19" rmin="90.000000" rmax="100.000000" z="0.200000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="hm_1s0x1" rmin="0.000000" rmax="100.000000" z="0.500000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x20" rmin="0.000000" rmax="10.000000" z="0.500000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x21" rmin="10.000000" rmax="20.000000" z="0.500000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x22" rmin="20.000000" rmax="30.000000" z="0.500000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x23" rmin="30.000000" rmax="40.000000" z="0.500000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x24" rmin="40.000000" rmax="50.000000" z="0.500000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x25" rmin="50.000000" rmax="60.000000" z="0.500000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x26" rmin="60.000000" rmax="70.000000" z="0.500000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x27" rmin="70.000000" rmax="80.000000" z="0.500000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x28" rmin="80.000000" rmax="90.000000" z="0.500000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x29" rmin="90.000000" rmax="100.000000" z="0.500000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <box name="Pmsk_300x1" x="218.440000" y="195.580000" z="30.480000" lunit="cm"/>
+    <tube name="Pmsk3air0x1" rmin="0.000000" rmax="38.100000" z="30.480000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <box name="Pmsk_30x1" x="218.440000" y="195.580000" z="30.480000" lunit="cm"/>
+    <tube name="Pmsk3air0x3" rmin="0.000000" rmax="63.500000" z="30.480000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <box name="Pmsk_50x1" x="218.440000" y="195.580000" z="30.480000" lunit="cm"/>
+    <tube name="Pmsk5air0x1" rmin="0.000000" rmax="50.800000" z="30.480000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <box name="Pmsk_70x1" x="218.440000" y="195.580000" z="30.480000" lunit="cm"/>
+    <tube name="Pmsk7air0x1" rmin="0.000000" rmax="38.100000" z="30.480000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <box name="Pmsk_5_s0x1" x="40.939400" y="241.858800" z="23.139400" lunit="cm"/>
+    <box name="Pmsk_7_s0x1" x="17.800000" y="241.858800" z="23.139400" lunit="cm"/>
+    <box name="Pmsk_3s00x1" x="63.508800" y="241.858800" z="19.909400" lunit="cm"/>
+    <box name="Pmsk_3_s0x1" x="63.508800" y="241.858800" z="23.139400" lunit="cm"/>
+    <box name="Al_core0x1" x="152.400000" y="152.400000" z="30.480000" lunit="cm"/>
+    <box name="Core_bot0x1" x="20.000000" y="152.400000" z="30.480000" lunit="cm"/>
+    <box name="Al_top0x1" x="217.830400" y="152.400000" z="30.480000" lunit="cm"/>
+    <box name="St_core0x1" x="197.830400" y="142.240000" z="30.480000" lunit="cm"/>
+    <box name="Core_bl20x1" x="350.230400" y="152.400000" z="30.480000" lunit="cm"/>
+    <box name="St2_core0x1" x="152.000000" y="152.000000" z="30.480000" lunit="cm"/>
+    <box name="Big_core_spacer0x1" x="370.230400" y="11.400000" z="124.920000" lunit="cm"/>
+    <box name="Small_core_spacer0x1" x="370.230400" y="6.320000" z="124.920000" lunit="cm"/>
+    <box name="Core_top_slab0x1" x="23.139400" y="138.836400" z="376.760000" lunit="cm"/>
+    <box name="slb_m2t10x1" x="23.139400" y="473.852800" z="93.960000" lunit="cm"/>
+    <box name="slb_m2t20x1" x="23.139400" y="473.852800" z="141.220000" lunit="cm"/>
+    <box name="slab_maskup_30x1" x="23.139400" y="473.852800" z="185.380000" lunit="cm"/>
+    <box name="slab_maskup_40x1" x="23.139400" y="661.368000" z="185.380000" lunit="cm"/>
+    <box name="mskd_30x1" x="23.139400" y="473.852800" z="185.380000" lunit="cm"/>
+    <box name="slab_m4b0x1" x="23.139400" y="661.368000" z="185.380000" lunit="cm"/>
+    <box name="slab_m10x1" x="684.228000" y="23.139400" z="46.460000" lunit="cm"/>
+    <box name="slab_m20x1" x="684.228000" y="23.139400" z="93.820000" lunit="cm"/>
+    <box name="slab_m30x1" x="684.228000" y="23.139400" z="185.380000" lunit="cm"/>
+    <box name="slab_bl0x1" x="138.836400" y="556.245600" z="23.139400" lunit="cm"/>
+    <box name="slab_bl20x1" x="69.418200" y="556.245600" z="23.139400" lunit="cm"/>
+    <box name="slb_m5bx0x1" x="23.139400" y="473.852800" z="171.336400" lunit="cm"/>
+    <box name="slab_m5b0x1" x="23.139400" y="473.852800" z="138.836400" lunit="cm"/>
+    <box name="slb_m5b0x1" x="23.139400" y="473.852800" z="156.636400" lunit="cm"/>
+    <box name="Back_shielding0x1" x="417.109200" y="174.720000" z="265.675800" lunit="cm"/>
+    <box name="Shield_back_slab0x1" x="370.230400" y="174.720000" z="23.139400" lunit="cm"/>
+    <box name="bck_extr0x1" x="370.230400" y="174.720000" z="13.300000" lunit="cm"/>
+    <box name="Shield_side0x1" x="417.109200" y="425.602400" z="642.594600" lunit="cm"/>
+    <box name="Shield_side_slab_horiz0x1" x="138.836400" y="23.139400" z="556.135800" lunit="cm"/>
+    <box name="Shield_side_slab_vert0x1" x="417.109200" y="23.139400" z="138.836400" lunit="cm"/>
+    <box name="Shield_side_20x1" x="417.109200" y="425.602400" z="642.594600" lunit="cm"/>
+    <box name="Shield_dwn0x1" x="406.933400" y="1023.924800" z="648.995400" lunit="cm"/>
+    <box name="St_ver0x1" x="23.139400" y="556.245600" z="138.836400" lunit="cm"/>
+    <box name="St_hor0x1" x="23.139400" y="138.836400" z="556.245600" lunit="cm"/>
+    <box name="St_hor10x1" x="10.220000" y="138.836400" z="556.245600" lunit="cm"/>
+    <box name="Sh_fr_bo0x1" x="530.011600" y="1023.924800" z="247.340000" lunit="cm"/>
+    <box name="Shield_top0x1" x="193.903600" y="1023.924800" z="916.914600" lunit="cm"/>
+    <box name="Shield_top_airgap0x1" x="56.743600" y="157.480000" z="452.720000" lunit="cm"/>
+    <box name="Sh_fr_tp0x1" x="110.000000" y="1023.924800" z="247.340000" lunit="cm"/>
+    <box name="Sh_fr_sd0x1" x="386.441000" y="298.175400" z="247.340000" lunit="cm"/>
+    <box name="FVbeamleft0x1" x="1017.946200" y="400.000000" z="900.000000" lunit="cm"/>
+    <box name="FVbeamright0x1" x="1017.946200" y="400.000000" z="900.000000" lunit="cm"/>
+    <box name="AH_back0x1" x="1017.946200" y="1023.924800" z="457.200000" lunit="cm"/>
+    <box name="AH_backair_10x1" x="926.506200" y="841.044800" z="365.760000" lunit="cm"/>
+    <box name="AH_backair_10x3" x="926.506200" y="841.044800" z="48.768000" lunit="cm"/>
+    <box name="AH_backair_20x1" x="701.040000" y="548.640000" z="91.440000" lunit="cm"/>
+    <box name="AH_Muon_alk0x1" x="883.920000" y="731.520000" z="1320.800000" lunit="cm"/>
+    <box name="AH_Muon_alkair0x1" x="701.040000" y="548.640000" z="1229.360000" lunit="cm"/>
+    <tube name="Michel_graphite0x1" rmin="0.000000" rmax="10.000000" z="40.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="Michel_water0x1" rmin="0.000000" rmax="5.000000" z="20.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <box name="Michel_BlueBox0x1" x="330.200000" y="132.080000" z="198.120000" lunit="cm"/>
+    <para name="Decay_pipe0x1" x="1553.152497" y="1553.152497" z="20293.971175" alpha="0.000000" theta="-5.844170" phi="0.000000" aunit="deg" lunit="cm"/>
+    <cutTube name="Air_pipe0x1" rmin="0.000000" rmax="200.000000" z="20400.000000" startphi="0.000000" deltaphi="360.000000" lowX="0.000000" lowY="-0.101823" lowZ="-0.994803" highX="0.000000" highY="0.101823" highZ="0.994803" aunit="deg" lunit="cm"/>
+    <tube name="ecap_10x1" rmin="0.000000" rmax="100.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x30" rmin="0.000000" rmax="10.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x31" rmin="10.000000" rmax="20.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x32" rmin="20.000000" rmax="30.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x33" rmin="30.000000" rmax="40.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x34" rmin="40.000000" rmax="50.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x35" rmin="50.000000" rmax="60.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x36" rmin="60.000000" rmax="70.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x37" rmin="70.000000" rmax="80.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x38" rmin="80.000000" rmax="90.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x39" rmin="90.000000" rmax="100.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="ecap_1s0x1" rmin="100.000000" rmax="200.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x40" rmin="100.000000" rmax="110.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x41" rmin="110.000000" rmax="120.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x42" rmin="120.000000" rmax="130.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x43" rmin="130.000000" rmax="140.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x44" rmin="140.000000" rmax="150.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x45" rmin="150.000000" rmax="160.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x46" rmin="160.000000" rmax="170.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x47" rmin="170.000000" rmax="180.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x48" rmin="180.000000" rmax="190.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="TGeoTube0x49" rmin="190.000000" rmax="200.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <cutTube name="M_pipe10x1" rmin="200.000000" rmax="201.270000" z="20400.000000" startphi="0.000000" deltaphi="360.000000" lowX="0.000000" lowY="-0.101823" lowZ="-0.994803" highX="0.000000" highY="0.101823" highZ="0.994803" aunit="deg" lunit="cm"/>
+    <cutTube name="A_pipe0x1" rmin="201.270000" rmax="221.270000" z="20400.000000" startphi="0.000000" deltaphi="360.000000" lowX="0.000000" lowY="-0.101823" lowZ="-0.994803" highX="0.000000" highY="0.101823" highZ="0.994803" aunit="deg" lunit="cm"/>
+    <cutTube name="M_pipe20x1" rmin="221.270000" rmax="222.540000" z="20400.000000" startphi="0.000000" deltaphi="360.000000" lowX="0.000000" lowY="-0.101823" lowZ="-0.994803" highX="0.000000" highY="0.101823" highZ="0.994803" aunit="deg" lunit="cm"/>
+    <tube name="dkcoolA0x1" rmin="0.000000" rmax="34.607500" z="20320.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <tube name="dkcoolM0x1" rmin="34.607500" rmax="35.560000" z="20320.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+    <box name="AH_top0x1" x="1017.946200" y="1023.924800" z="1438.574600" lunit="cm"/>
+    <box name="AH_topair0x1" x="1017.946200" y="841.044800" z="1255.694600" lunit="cm"/>
+  </solids>
+  <structure>
+    <volume name="Soil-bottom">
+      <materialref ref="GTIL"/>
+      <solidref ref="Soil-bottom0x1"/>
+    </volume>
+    <volume name="Pm3_sh20">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Pm3_sh200x1"/>
+    </volume>
+    <volume name="Pm3_sh2">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Pm3_sh20x1"/>
+    </volume>
+    <volume name="Pm3_sh0">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Pm3_sh00x1"/>
+    </volume>
+    <volume name="Pm3_sh">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Pm3_sh0x1"/>
+    </volume>
+    <volume name="Pm3_sh0a">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Pm3_sh0a0x1"/>
+    </volume>
+    <volume name="Pm3_sv">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Pm3_sv0x1"/>
+    </volume>
+    <volume name="Pm3_sv0x2">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Pm3_sv0x3"/>
+    </volume>
+    <volume name="Pm_5_sh2">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Pm_5_sh20x1"/>
+    </volume>
+    <volume name="Pm_5_sh1">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Pm_5_sh10x1"/>
+    </volume>
+    <volume name="Pm5_sh1a">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Pm5_sh1a0x1"/>
+    </volume>
+    <volume name="Pm_5_sv">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Pm_5_sv0x1"/>
+    </volume>
+    <volume name="Pm_7_sh2">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Pm_7_sh20x1"/>
+    </volume>
+    <volume name="Pm_7_sh1">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Pm_7_sh10x1"/>
+    </volume>
+    <volume name="Pm7_sh1a">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Pm7_sh1a0x1"/>
+    </volume>
+    <volume name="Pm_7_sv">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Pm_7_sv0x1"/>
+    </volume>
+    <volume name="Pm_9_sh2">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Pm_9_sh20x1"/>
+    </volume>
+    <volume name="Pm_9_sh1">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Pm_9_sh10x1"/>
+    </volume>
+    <volume name="Pm_9_sv">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Pm_9_sv0x1"/>
+    </volume>
+    <volume name="Pmsk_hcnt">
+      <materialref ref="AIR0x5"/>
+      <solidref ref="Pmsk_hcnt0x1"/>
+    </volume>
+    <volume name="Phl_up">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Phl_up0x1"/>
+    </volume>
+    <volume name="Ppmask">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Ppmask0x1"/>
+      <physvol>
+        <volumeref ref="Pmsk_hcnt"/>
+        <positionref ref="Pmsk_hcnt_1inPpmaskpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Phl_up"/>
+        <positionref ref="Phl_up_2inPpmaskpos"/>
+      </physvol>
+    </volume>
+    <volume name="hm_Al">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube"/>
+    </volume>
+    <volume name="hm_Al0x1">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube0x1"/>
+    </volume>
+    <volume name="hm_Al0x2">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube0x2"/>
+    </volume>
+    <volume name="hm_Al0x3">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube0x3"/>
+    </volume>
+    <volume name="hm_Al0x4">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube0x4"/>
+    </volume>
+    <volume name="hm_Al0x5">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube0x5"/>
+    </volume>
+    <volume name="hm_Al0x6">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube0x6"/>
+    </volume>
+    <volume name="hm_Al0x7">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube0x7"/>
+    </volume>
+    <volume name="hm_Al0x8">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube0x8"/>
+    </volume>
+    <volume name="hm_Al0x9">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube0x9"/>
+    </volume>
+    <volume name="hm_1">
+      <materialref ref="AL"/>
+      <solidref ref="hm_10x1"/>
+      <divisionvol axis="kRho" number="10" width="10.000000" offset="0.000000" unit="cm">
+        <volumeref ref="hm_Al"/>
+      </divisionvol>
+    </volume>
+    <volume name="hm_CRMC">
+      <materialref ref="CRMC"/>
+      <solidref ref="TGeoTube0x10"/>
+    </volume>
+    <volume name="hm_CRMC0x1">
+      <materialref ref="CRMC"/>
+      <solidref ref="TGeoTube0x11"/>
+    </volume>
+    <volume name="hm_CRMC0x2">
+      <materialref ref="CRMC"/>
+      <solidref ref="TGeoTube0x12"/>
+    </volume>
+    <volume name="hm_CRMC0x3">
+      <materialref ref="CRMC"/>
+      <solidref ref="TGeoTube0x13"/>
+    </volume>
+    <volume name="hm_CRMC0x4">
+      <materialref ref="CRMC"/>
+      <solidref ref="TGeoTube0x14"/>
+    </volume>
+    <volume name="hm_CRMC0x5">
+      <materialref ref="CRMC"/>
+      <solidref ref="TGeoTube0x15"/>
+    </volume>
+    <volume name="hm_CRMC0x6">
+      <materialref ref="CRMC"/>
+      <solidref ref="TGeoTube0x16"/>
+    </volume>
+    <volume name="hm_CRMC0x7">
+      <materialref ref="CRMC"/>
+      <solidref ref="TGeoTube0x17"/>
+    </volume>
+    <volume name="hm_CRMC0x8">
+      <materialref ref="CRMC"/>
+      <solidref ref="TGeoTube0x18"/>
+    </volume>
+    <volume name="hm_CRMC0x9">
+      <materialref ref="CRMC"/>
+      <solidref ref="TGeoTube0x19"/>
+    </volume>
+    <volume name="hm_1c">
+      <materialref ref="CRMC"/>
+      <solidref ref="hm_1c0x1"/>
+      <divisionvol axis="kRho" number="10" width="10.000000" offset="0.000000" unit="cm">
+        <volumeref ref="hm_CRMC"/>
+      </divisionvol>
+    </volume>
+    <volume name="hm_St">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x20"/>
+    </volume>
+    <volume name="hm_St0x1">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x21"/>
+    </volume>
+    <volume name="hm_St0x2">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x22"/>
+    </volume>
+    <volume name="hm_St0x3">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x23"/>
+    </volume>
+    <volume name="hm_St0x4">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x24"/>
+    </volume>
+    <volume name="hm_St0x5">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x25"/>
+    </volume>
+    <volume name="hm_St0x6">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x26"/>
+    </volume>
+    <volume name="hm_St0x7">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x27"/>
+    </volume>
+    <volume name="hm_St0x8">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x28"/>
+    </volume>
+    <volume name="hm_St0x9">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x29"/>
+    </volume>
+    <volume name="hm_1s">
+      <materialref ref="STST"/>
+      <solidref ref="hm_1s0x1"/>
+      <divisionvol axis="kRho" number="10" width="10.000000" offset="0.000000" unit="cm">
+        <volumeref ref="hm_St"/>
+      </divisionvol>
+    </volume>
+    <volume name="Prepremask_2_hole_centre">
+      <materialref ref="AIR0x5"/>
+      <solidref ref="Prepremask_2_hole_centre0x1"/>
+      <physvol>
+        <volumeref ref="hm_1"/>
+        <positionref ref="hm_1_1inPrepremask_2_hole_centrepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="hm_1c"/>
+        <positionref ref="hm_1c_1inPrepremask_2_hole_centrepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="hm_1s"/>
+        <positionref ref="hm_1s_1inPrepremask_2_hole_centrepos"/>
+      </physvol>
+    </volume>
+    <volume name="Ppmask_2">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Ppmask_20x1"/>
+      <physvol>
+        <volumeref ref="Prepremask_2_hole_centre"/>
+        <positionref ref="Prepremask_2_hole_centre_1inPpmask_2pos"/>
+      </physvol>
+    </volume>
+    <volume name="Pmsk3air">
+      <materialref ref="AIR0x5"/>
+      <solidref ref="Pmsk3air0x1"/>
+    </volume>
+    <volume name="Pmsk_30">
+      <materialref ref="AL0x2"/>
+      <solidref ref="Pmsk_300x1"/>
+      <physvol>
+        <volumeref ref="Pmsk3air"/>
+        <positionref ref="Pmsk3air_1inPmsk_30pos"/>
+      </physvol>
+    </volume>
+    <volume name="Pmsk3air0x2">
+      <materialref ref="AIR0x5"/>
+      <solidref ref="Pmsk3air0x3"/>
+    </volume>
+    <volume name="Pmsk_3">
+      <materialref ref="AL0x2"/>
+      <solidref ref="Pmsk_30x1"/>
+      <physvol>
+        <volumeref ref="Pmsk3air0x2"/>
+        <positionref ref="Pmsk3air_10x1inPmsk_3pos"/>
+      </physvol>
+    </volume>
+    <volume name="Pmsk5air">
+      <materialref ref="AIR0x5"/>
+      <solidref ref="Pmsk5air0x1"/>
+    </volume>
+    <volume name="Pmsk_5">
+      <materialref ref="AL0x2"/>
+      <solidref ref="Pmsk_50x1"/>
+      <physvol>
+        <volumeref ref="Pmsk5air"/>
+        <positionref ref="Pmsk5air_1inPmsk_5pos"/>
+      </physvol>
+    </volume>
+    <volume name="Pmsk7air">
+      <materialref ref="AIR0x5"/>
+      <solidref ref="Pmsk7air0x1"/>
+    </volume>
+    <volume name="Pmsk_7">
+      <materialref ref="AL0x2"/>
+      <solidref ref="Pmsk_70x1"/>
+      <physvol>
+        <volumeref ref="Pmsk7air"/>
+        <positionref ref="Pmsk7air_1inPmsk_7pos"/>
+      </physvol>
+    </volume>
+    <volume name="Pmsk_5_s">
+      <materialref ref="AL0x2"/>
+      <solidref ref="Pmsk_5_s0x1"/>
+    </volume>
+    <volume name="Pmsk_7_s">
+      <materialref ref="AL0x2"/>
+      <solidref ref="Pmsk_7_s0x1"/>
+    </volume>
+    <volume name="Pmsk_3s0">
+      <materialref ref="AL0x2"/>
+      <solidref ref="Pmsk_3s00x1"/>
+    </volume>
+    <volume name="Pmsk_3_s">
+      <materialref ref="AL0x2"/>
+      <solidref ref="Pmsk_3_s0x1"/>
+    </volume>
+    <volume name="Al_core">
+      <materialref ref="AL0x2"/>
+      <solidref ref="Al_core0x1"/>
+    </volume>
+    <volume name="Core_bot">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Core_bot0x1"/>
+    </volume>
+    <volume name="St_core">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="St_core0x1"/>
+    </volume>
+    <volume name="Al_top">
+      <materialref ref="AL0x2"/>
+      <solidref ref="Al_top0x1"/>
+      <physvol>
+        <volumeref ref="St_core"/>
+        <positionref ref="St_core_1inAl_toppos"/>
+      </physvol>
+    </volume>
+    <volume name="St2_core">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="St2_core0x1"/>
+    </volume>
+    <volume name="Core_bl2">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Core_bl20x1"/>
+      <physvol>
+        <volumeref ref="St2_core"/>
+        <positionref ref="St2_core_1inCore_bl2pos"/>
+      </physvol>
+    </volume>
+    <volume name="Big_core_spacer">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Big_core_spacer0x1"/>
+    </volume>
+    <volume name="Small_core_spacer">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Small_core_spacer0x1"/>
+    </volume>
+    <volume name="Core_top_slab">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Core_top_slab0x1"/>
+    </volume>
+    <volume name="slb_m2t1">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="slb_m2t10x1"/>
+    </volume>
+    <volume name="slb_m2t2">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="slb_m2t20x1"/>
+    </volume>
+    <volume name="slab_maskup_3">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="slab_maskup_30x1"/>
+    </volume>
+    <volume name="slab_maskup_4">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="slab_maskup_40x1"/>
+    </volume>
+    <volume name="mskd_3">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="mskd_30x1"/>
+    </volume>
+    <volume name="slab_m4b">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="slab_m4b0x1"/>
+    </volume>
+    <volume name="slab_m1">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="slab_m10x1"/>
+    </volume>
+    <volume name="slab_m2">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="slab_m20x1"/>
+    </volume>
+    <volume name="slab_m3">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="slab_m30x1"/>
+    </volume>
+    <volume name="slab_bl">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="slab_bl0x1"/>
+    </volume>
+    <volume name="slab_bl2">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="slab_bl20x1"/>
+    </volume>
+    <volume name="slb_m5bx">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="slb_m5bx0x1"/>
+    </volume>
+    <volume name="slab_m5b">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="slab_m5b0x1"/>
+    </volume>
+    <volume name="slb_m5b">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="slb_m5b0x1"/>
+    </volume>
+    <volume name="Shield_back_slab">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Shield_back_slab0x1"/>
+    </volume>
+    <volume name="bck_extr">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="bck_extr0x1"/>
+    </volume>
+    <volume name="Back_shielding">
+      <materialref ref="CONC0x3"/>
+      <solidref ref="Back_shielding0x1"/>
+      <physvol>
+        <volumeref ref="Shield_back_slab"/>
+        <positionref ref="Shield_back_slab_0inBack_shieldingpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_back_slab"/>
+        <positionref ref="Shield_back_slab_1inBack_shieldingpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_back_slab"/>
+        <positionref ref="Shield_back_slab_2inBack_shieldingpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_back_slab"/>
+        <positionref ref="Shield_back_slab_3inBack_shieldingpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_back_slab"/>
+        <positionref ref="Shield_back_slab_4inBack_shieldingpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_back_slab"/>
+        <positionref ref="Shield_back_slab_5inBack_shieldingpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_back_slab"/>
+        <positionref ref="Shield_back_slab_6inBack_shieldingpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="bck_extr"/>
+        <positionref ref="bck_extr_7inBack_shieldingpos"/>
+      </physvol>
+    </volume>
+    <volume name="Shield_side_slab_horiz">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Shield_side_slab_horiz0x1"/>
+    </volume>
+    <volume name="Shield_side_slab_vert">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Shield_side_slab_vert0x1"/>
+    </volume>
+    <volume name="Shield_side">
+      <materialref ref="CONC0x3"/>
+      <solidref ref="Shield_side0x1"/>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_0inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_10inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_20inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_30inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_1inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_11inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_21inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_31inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_2inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_12inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_22inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_32inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_0inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_10inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_20inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_30inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_1inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_11inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_21inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_31inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_2inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_12inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_22inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_32inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_3inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_13inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_23inShield_sidepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_33inShield_sidepos"/>
+      </physvol>
+    </volume>
+    <volume name="Shield_side_2">
+      <materialref ref="CONC0x3"/>
+      <solidref ref="Shield_side_20x1"/>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_00x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_100x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_200x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_300x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_10x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_110x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_210x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_310x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_20x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_120x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_220x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_horiz"/>
+        <positionref ref="Shield_side_slab_horiz_320x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_00x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_100x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_200x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_300x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_10x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_110x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_210x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_310x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_20x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_120x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_220x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_320x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_30x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_130x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_230x1inShield_side_2pos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_slab_vert"/>
+        <positionref ref="Shield_side_slab_vert_330x1inShield_side_2pos"/>
+      </physvol>
+    </volume>
+    <volume name="St_ver">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="St_ver0x1"/>
+    </volume>
+    <volume name="St_hor">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="St_hor0x1"/>
+    </volume>
+    <volume name="St_hor1">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="St_hor10x1"/>
+    </volume>
+    <volume name="Shield_dwn">
+      <materialref ref="CONC0x3"/>
+      <solidref ref="Shield_dwn0x1"/>
+      <physvol>
+        <volumeref ref="St_ver"/>
+        <positionref ref="St_ver_0inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_ver"/>
+        <positionref ref="St_ver_10inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_ver"/>
+        <positionref ref="St_ver_20inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_ver"/>
+        <positionref ref="St_ver_1inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_ver"/>
+        <positionref ref="St_ver_11inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_ver"/>
+        <positionref ref="St_ver_21inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_ver"/>
+        <positionref ref="St_ver_2inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_ver"/>
+        <positionref ref="St_ver_12inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_ver"/>
+        <positionref ref="St_ver_22inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_ver"/>
+        <positionref ref="St_ver_3inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_ver"/>
+        <positionref ref="St_ver_13inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_ver"/>
+        <positionref ref="St_ver_23inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_hor"/>
+        <positionref ref="St_hor_0inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_hor"/>
+        <positionref ref="St_hor_10inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_hor"/>
+        <positionref ref="St_hor_20inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_hor1"/>
+        <positionref ref="St_hor1_30inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_hor"/>
+        <positionref ref="St_hor_1inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_hor"/>
+        <positionref ref="St_hor_11inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_hor"/>
+        <positionref ref="St_hor_21inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_hor1"/>
+        <positionref ref="St_hor1_31inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_hor"/>
+        <positionref ref="St_hor_2inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_hor"/>
+        <positionref ref="St_hor_12inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_hor"/>
+        <positionref ref="St_hor_22inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_hor1"/>
+        <positionref ref="St_hor1_32inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_hor"/>
+        <positionref ref="St_hor_3inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_hor"/>
+        <positionref ref="St_hor_13inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_hor"/>
+        <positionref ref="St_hor_23inShield_dwnpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="St_hor1"/>
+        <positionref ref="St_hor1_33inShield_dwnpos"/>
+      </physvol>
+    </volume>
+    <volume name="Sh_fr_bo">
+      <materialref ref="CONC0x3"/>
+      <solidref ref="Sh_fr_bo0x1"/>
+    </volume>
+    <volume name="Shield_top_airgap">
+      <materialref ref="AIR0x5"/>
+      <solidref ref="Shield_top_airgap0x1"/>
+    </volume>
+    <volume name="Shield_top">
+      <materialref ref="CONC0x3"/>
+      <solidref ref="Shield_top0x1"/>
+      <physvol>
+        <volumeref ref="Shield_top_airgap"/>
+        <positionref ref="Shield_top_airgap_1inShield_toppos"/>
+      </physvol>
+    </volume>
+    <volume name="Sh_fr_tp">
+      <materialref ref="CONC0x3"/>
+      <solidref ref="Sh_fr_tp0x1"/>
+    </volume>
+    <volume name="Sh_fr_sd">
+      <materialref ref="CONC0x3"/>
+      <solidref ref="Sh_fr_sd0x1"/>
+    </volume>
+    <volume name="Airbox">
+      <materialref ref="AIR0x5"/>
+      <solidref ref="Airbox0x1"/>
+      <physvol>
+        <volumeref ref="Soil-bottom"/>
+        <positionref ref="Soil-bottom_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm3_sh20"/>
+        <positionref ref="Pm3_sh20_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm3_sh2"/>
+        <positionref ref="Pm3_sh2_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm3_sh0"/>
+        <positionref ref="Pm3_sh0_3inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm3_sh"/>
+        <positionref ref="Pm3_sh_4inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm3_sh0a"/>
+        <positionref ref="Pm3_sh0a_5inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm3_sh0a"/>
+        <positionref ref="Pm3_sh0a_6inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm3_sh0a"/>
+        <positionref ref="Pm3_sh0a_7inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm3_sh0a"/>
+        <positionref ref="Pm3_sh0a_8inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm3_sv"/>
+        <positionref ref="Pm3_sv_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm3_sv0x2"/>
+        <positionref ref="Pm3_sv_4inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm3_sv"/>
+        <positionref ref="Pm3_sv_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm3_sv0x2"/>
+        <positionref ref="Pm3_sv_3inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_5_sh2"/>
+        <positionref ref="Pm_5_sh2_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_5_sh2"/>
+        <positionref ref="Pm_5_sh2_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_5_sh1"/>
+        <positionref ref="Pm_5_sh1_3inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_5_sh1"/>
+        <positionref ref="Pm_5_sh1_4inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm5_sh1a"/>
+        <positionref ref="Pm5_sh1a_5inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm5_sh1a"/>
+        <positionref ref="Pm5_sh1a_6inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm5_sh1a"/>
+        <positionref ref="Pm5_sh1a_7inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm5_sh1a"/>
+        <positionref ref="Pm5_sh1a_8inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_5_sv"/>
+        <positionref ref="Pm_5_sv_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_5_sv"/>
+        <positionref ref="Pm_5_sv_4inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_5_sv"/>
+        <positionref ref="Pm_5_sv_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_5_sv"/>
+        <positionref ref="Pm_5_sv_3inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_7_sh2"/>
+        <positionref ref="Pm_7_sh2_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_7_sh2"/>
+        <positionref ref="Pm_7_sh2_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_7_sh1"/>
+        <positionref ref="Pm_7_sh1_3inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_7_sh1"/>
+        <positionref ref="Pm_7_sh1_4inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm7_sh1a"/>
+        <positionref ref="Pm7_sh1a_5inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm7_sh1a"/>
+        <positionref ref="Pm7_sh1a_6inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm7_sh1a"/>
+        <positionref ref="Pm7_sh1a_7inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm7_sh1a"/>
+        <positionref ref="Pm7_sh1a_8inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_7_sv"/>
+        <positionref ref="Pm_7_sv_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_7_sv"/>
+        <positionref ref="Pm_7_sv_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_7_sv"/>
+        <positionref ref="Pm_7_sv_3inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_7_sv"/>
+        <positionref ref="Pm_7_sv_4inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_9_sh2"/>
+        <positionref ref="Pm_9_sh2_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_9_sh2"/>
+        <positionref ref="Pm_9_sh2_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_9_sh1"/>
+        <positionref ref="Pm_9_sh1_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_9_sh1"/>
+        <positionref ref="Pm_9_sh1_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_9_sv"/>
+        <positionref ref="Pm_9_sv_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_9_sv"/>
+        <positionref ref="Pm_9_sv_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_9_sv"/>
+        <positionref ref="Pm_9_sv_3inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pm_9_sv"/>
+        <positionref ref="Pm_9_sv_4inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Ppmask"/>
+        <positionref ref="Ppmask_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Ppmask_2"/>
+        <positionref ref="Ppmask_2_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pmsk_30"/>
+        <positionref ref="Pmsk_30_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pmsk_3"/>
+        <positionref ref="Pmsk_3_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pmsk_5"/>
+        <positionref ref="Pmsk_5_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pmsk_5"/>
+        <positionref ref="Pmsk_5_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pmsk_7"/>
+        <positionref ref="Pmsk_7_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pmsk_7"/>
+        <positionref ref="Pmsk_7_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pmsk_5_s"/>
+        <positionref ref="Pmsk_5_s_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pmsk_5_s"/>
+        <positionref ref="Pmsk_5_s_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pmsk_7_s"/>
+        <positionref ref="Pmsk_7_s_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pmsk_7_s"/>
+        <positionref ref="Pmsk_7_s_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pmsk_3s0"/>
+        <positionref ref="Pmsk_3s0_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Pmsk_3_s"/>
+        <positionref ref="Pmsk_3_s_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Al_core"/>
+        <positionref ref="Al_core_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Al_core"/>
+        <positionref ref="Al_core_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Al_core"/>
+        <positionref ref="Al_core_3inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Al_core"/>
+        <positionref ref="Al_core_4inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Al_core"/>
+        <positionref ref="Al_core_5inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Al_core"/>
+        <positionref ref="Al_core_6inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Al_core"/>
+        <positionref ref="Al_core_7inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Al_core"/>
+        <positionref ref="Al_core_8inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_bot"/>
+        <positionref ref="Core_bot_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_bot"/>
+        <positionref ref="Core_bot_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_bot"/>
+        <positionref ref="Core_bot_3inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_bot"/>
+        <positionref ref="Core_bot_4inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_bot"/>
+        <positionref ref="Core_bot_5inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_bot"/>
+        <positionref ref="Core_bot_6inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_bot"/>
+        <positionref ref="Core_bot_7inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_bot"/>
+        <positionref ref="Core_bot_8inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Al_top"/>
+        <positionref ref="Al_top_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Al_top"/>
+        <positionref ref="Al_top_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Al_top"/>
+        <positionref ref="Al_top_3inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Al_top"/>
+        <positionref ref="Al_top_4inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Al_top"/>
+        <positionref ref="Al_top_5inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Al_top"/>
+        <positionref ref="Al_top_6inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Al_top"/>
+        <positionref ref="Al_top_7inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Al_top"/>
+        <positionref ref="Al_top_8inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_bl2"/>
+        <positionref ref="Core_bl2_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_bl2"/>
+        <positionref ref="Core_bl2_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_bl2"/>
+        <positionref ref="Core_bl2_3inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_bl2"/>
+        <positionref ref="Core_bl2_4inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_bot"/>
+        <positionref ref="Core_bot_11inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_bot"/>
+        <positionref ref="Core_bot_12inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_bot"/>
+        <positionref ref="Core_bot_13inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_bot"/>
+        <positionref ref="Core_bot_14inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Big_core_spacer"/>
+        <positionref ref="Big_core_spacer_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Big_core_spacer"/>
+        <positionref ref="Big_core_spacer_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Big_core_spacer"/>
+        <positionref ref="Big_core_spacer_3inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Small_core_spacer"/>
+        <positionref ref="Small_core_spacer_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Small_core_spacer"/>
+        <positionref ref="Small_core_spacer_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Small_core_spacer"/>
+        <positionref ref="Small_core_spacer_3inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_top_slab"/>
+        <positionref ref="Core_top_slab_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Core_top_slab"/>
+        <positionref ref="Core_top_slab_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slb_m2t1"/>
+        <positionref ref="slb_m2t1_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slb_m2t2"/>
+        <positionref ref="slb_m2t2_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskup_3"/>
+        <positionref ref="slab_maskup_3_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskup_3"/>
+        <positionref ref="slab_maskup_3_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_maskup_4"/>
+        <positionref ref="slab_maskup_4_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="mskd_3"/>
+        <positionref ref="mskd_3_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="mskd_3"/>
+        <positionref ref="mskd_3_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="mskd_3"/>
+        <positionref ref="mskd_3_3inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_m4b"/>
+        <positionref ref="slab_m4b_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_m1"/>
+        <positionref ref="slab_m1_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_m2"/>
+        <positionref ref="slab_m2_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_m3"/>
+        <positionref ref="slab_m3_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_m3"/>
+        <positionref ref="slab_m3_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_m1"/>
+        <positionref ref="slab_m1_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_m2"/>
+        <positionref ref="slab_m2_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_m3"/>
+        <positionref ref="slab_m3_3inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_m3"/>
+        <positionref ref="slab_m3_4inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_bl"/>
+        <positionref ref="slab_bl_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_bl2"/>
+        <positionref ref="slab_bl2_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_bl"/>
+        <positionref ref="slab_bl_3inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_bl2"/>
+        <positionref ref="slab_bl2_4inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slb_m5bx"/>
+        <positionref ref="slb_m5bx_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_m5b"/>
+        <positionref ref="slab_m5b_2inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_m5b"/>
+        <positionref ref="slab_m5b_3inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_m5b"/>
+        <positionref ref="slab_m5b_4inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slb_m5b"/>
+        <positionref ref="slb_m5b_5inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_m5b"/>
+        <positionref ref="slab_m5b_6inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_m5b"/>
+        <positionref ref="slab_m5b_7inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="slab_m5b"/>
+        <positionref ref="slab_m5b_8inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Back_shielding"/>
+        <positionref ref="Back_shielding_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side"/>
+        <positionref ref="Shield_side_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_side_2"/>
+        <positionref ref="Shield_side_2_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_dwn"/>
+        <positionref ref="Shield_dwn_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Sh_fr_bo"/>
+        <positionref ref="Sh_fr_bo_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Shield_top"/>
+        <positionref ref="Shield_top_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Sh_fr_tp"/>
+        <positionref ref="Sh_fr_tp_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Sh_fr_sd"/>
+        <positionref ref="Sh_fr_sd_1inAirboxpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Sh_fr_sd"/>
+        <positionref ref="Sh_fr_sd_2inAirboxpos"/>
+      </physvol>
+    </volume>
+    <volume name="FVbeamleft">
+      <materialref ref="AIR0x5"/>
+      <solidref ref="FVbeamleft0x1"/>
+    </volume>
+    <volume name="FVbeamright">
+      <materialref ref="GTIL"/>
+      <solidref ref="FVbeamright0x1"/>
+    </volume>
+    <volume name="AH_backair_10x2">
+      <materialref ref="CONC0x3"/>
+      <solidref ref="AH_backair_10x3"/>
+    </volume>
+    <volume name="AH_backair_1">
+      <materialref ref="AIR0x5"/>
+      <solidref ref="AH_backair_10x1"/>
+      <physvol>
+        <volumeref ref="AH_backair_10x2"/>
+        <positionref ref="AH_backair_1_1inAH_backair_1pos"/>
+      </physvol>
+    </volume>
+    <volume name="AH_backair_2">
+      <materialref ref="AIR0x5"/>
+      <solidref ref="AH_backair_20x1"/>
+    </volume>
+    <volume name="AH_back">
+      <materialref ref="CONC0x3"/>
+      <solidref ref="AH_back0x1"/>
+      <physvol>
+        <volumeref ref="AH_backair_1"/>
+        <positionref ref="AH_backair_1_10x1inAH_backpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="AH_backair_2"/>
+        <positionref ref="AH_backair_2_1inAH_backpos"/>
+      </physvol>
+    </volume>
+    <volume name="Michel_water">
+      <materialref ref="WATR0x1"/>
+      <solidref ref="Michel_water0x1"/>
+    </volume>
+    <volume name="Michel_graphite">
+      <materialref ref="C"/>
+      <solidref ref="Michel_graphite0x1"/>
+      <physvol>
+        <volumeref ref="Michel_water"/>
+        <positionref ref="Michel_water_1inMichel_graphitepos"/>
+      </physvol>
+    </volume>
+    <volume name="Michel_BlueBox">
+      <materialref ref="MIX10x2"/>
+      <solidref ref="Michel_BlueBox0x1"/>
+    </volume>
+    <volume name="AH_Muon_alkair">
+      <materialref ref="AIR0x5"/>
+      <solidref ref="AH_Muon_alkair0x1"/>
+      <physvol>
+        <volumeref ref="Michel_graphite"/>
+        <positionref ref="Michel_graphite_1inAH_Muon_alkairpos"/>
+        <rotationref ref="Michel_graphite_1inAH_Muon_alkairrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Michel_graphite"/>
+        <positionref ref="Michel_graphite_2inAH_Muon_alkairpos"/>
+        <rotationref ref="Michel_graphite_2inAH_Muon_alkairrot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Michel_BlueBox"/>
+        <positionref ref="Michel_BlueBox_1inAH_Muon_alkairpos"/>
+      </physvol>
+    </volume>
+    <volume name="AH_Muon_alk">
+      <materialref ref="CONC0x3"/>
+      <solidref ref="AH_Muon_alk0x1"/>
+      <physvol>
+        <volumeref ref="AH_Muon_alkair"/>
+        <positionref ref="AH_Muon_alkair_1inAH_Muon_alkpos"/>
+      </physvol>
+    </volume>
+    <volume name="ecap_Al">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube0x30"/>
+    </volume>
+    <volume name="ecap_Al0x1">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube0x31"/>
+    </volume>
+    <volume name="ecap_Al0x2">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube0x32"/>
+    </volume>
+    <volume name="ecap_Al0x3">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube0x33"/>
+    </volume>
+    <volume name="ecap_Al0x4">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube0x34"/>
+    </volume>
+    <volume name="ecap_Al0x5">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube0x35"/>
+    </volume>
+    <volume name="ecap_Al0x6">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube0x36"/>
+    </volume>
+    <volume name="ecap_Al0x7">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube0x37"/>
+    </volume>
+    <volume name="ecap_Al0x8">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube0x38"/>
+    </volume>
+    <volume name="ecap_Al0x9">
+      <materialref ref="AL"/>
+      <solidref ref="TGeoTube0x39"/>
+    </volume>
+    <volume name="ecap_1">
+      <materialref ref="AL"/>
+      <solidref ref="ecap_10x1"/>
+      <divisionvol axis="kRho" number="10" width="10.000000" offset="0.000000" unit="cm">
+        <volumeref ref="ecap_Al"/>
+      </divisionvol>
+    </volume>
+    <volume name="ecap_St">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x40"/>
+    </volume>
+    <volume name="ecap_St0x1">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x41"/>
+    </volume>
+    <volume name="ecap_St0x2">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x42"/>
+    </volume>
+    <volume name="ecap_St0x3">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x43"/>
+    </volume>
+    <volume name="ecap_St0x4">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x44"/>
+    </volume>
+    <volume name="ecap_St0x5">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x45"/>
+    </volume>
+    <volume name="ecap_St0x6">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x46"/>
+    </volume>
+    <volume name="ecap_St0x7">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x47"/>
+    </volume>
+    <volume name="ecap_St0x8">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x48"/>
+    </volume>
+    <volume name="ecap_St0x9">
+      <materialref ref="STST"/>
+      <solidref ref="TGeoTube0x49"/>
+    </volume>
+    <volume name="ecap_1s">
+      <materialref ref="STST"/>
+      <solidref ref="ecap_1s0x1"/>
+      <divisionvol axis="kRho" number="10" width="10.000000" offset="0.000000" unit="cm">
+        <volumeref ref="ecap_St"/>
+      </divisionvol>
+    </volume>
+    <volume name="Air_pipe">
+      <materialref ref="HE"/>
+      <solidref ref="Air_pipe0x1"/>
+      <physvol>
+        <volumeref ref="ecap_1"/>
+        <positionref ref="ecap_1_1inAir_pipepos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="ecap_1s"/>
+        <positionref ref="ecap_1s_11inAir_pipepos"/>
+      </physvol>
+    </volume>
+    <volume name="M_pipe1">
+      <materialref ref="STCA0x4"/>
+      <solidref ref="M_pipe10x1"/>
+    </volume>
+    <volume name="A_pipe">
+      <materialref ref="AIR0x5"/>
+      <solidref ref="A_pipe0x1"/>
+    </volume>
+    <volume name="M_pipe2">
+      <materialref ref="STCA0x4"/>
+      <solidref ref="M_pipe20x1"/>
+    </volume>
+    <volume name="dkcoolA">
+      <materialref ref="AIR0x5"/>
+      <solidref ref="dkcoolA0x1"/>
+    </volume>
+    <volume name="dkcoolM">
+      <materialref ref="STCA0x4"/>
+      <solidref ref="dkcoolM0x1"/>
+    </volume>
+    <volume name="Decay_pipe">
+      <materialref ref="CONC0x3"/>
+      <solidref ref="Decay_pipe0x1"/>
+      <physvol>
+        <volumeref ref="Air_pipe"/>
+        <positionref ref="Air_pipe_1inDecay_pipepos"/>
+        <rotationref ref="Air_pipe_1inDecay_piperot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="M_pipe1"/>
+        <positionref ref="M_pipe1_1inDecay_pipepos"/>
+        <rotationref ref="M_pipe1_1inDecay_piperot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="A_pipe"/>
+        <positionref ref="A_pipe_1inDecay_pipepos"/>
+        <rotationref ref="A_pipe_1inDecay_piperot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="M_pipe2"/>
+        <positionref ref="M_pipe2_1inDecay_pipepos"/>
+        <rotationref ref="M_pipe2_1inDecay_piperot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="dkcoolA"/>
+        <positionref ref="dkcoolA_1inDecay_pipepos"/>
+        <rotationref ref="dkcoolA_1inDecay_piperot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="dkcoolA"/>
+        <positionref ref="dkcoolA_2inDecay_pipepos"/>
+        <rotationref ref="dkcoolA_2inDecay_piperot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="dkcoolA"/>
+        <positionref ref="dkcoolA_3inDecay_pipepos"/>
+        <rotationref ref="dkcoolA_3inDecay_piperot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="dkcoolA"/>
+        <positionref ref="dkcoolA_4inDecay_pipepos"/>
+        <rotationref ref="dkcoolA_4inDecay_piperot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="dkcoolM"/>
+        <positionref ref="dkcoolM_1inDecay_pipepos"/>
+        <rotationref ref="dkcoolM_1inDecay_piperot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="dkcoolM"/>
+        <positionref ref="dkcoolM_2inDecay_pipepos"/>
+        <rotationref ref="dkcoolM_2inDecay_piperot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="dkcoolM"/>
+        <positionref ref="dkcoolM_3inDecay_pipepos"/>
+        <rotationref ref="dkcoolM_3inDecay_piperot"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="dkcoolM"/>
+        <positionref ref="dkcoolM_4inDecay_pipepos"/>
+        <rotationref ref="dkcoolM_4inDecay_piperot"/>
+      </physvol>
+    </volume>
+    <volume name="AH_topair">
+      <materialref ref="AIR0x5"/>
+      <solidref ref="AH_topair0x1"/>
+    </volume>
+    <volume name="AH_top">
+      <materialref ref="CONC0x3"/>
+      <solidref ref="AH_top0x1"/>
+      <physvol>
+        <volumeref ref="AH_topair"/>
+        <positionref ref="AH_topair_1inAH_toppos"/>
+      </physvol>
+    </volume>
+    <volume name="TOP">
+      <materialref ref="GTIL"/>
+      <solidref ref="TOP0x1"/>
+      <physvol>
+        <volumeref ref="Airbox"/>
+        <positionref ref="Airbox_1inTOPpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="FVbeamleft"/>
+        <positionref ref="FVbeamleft_1inTOPpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="FVbeamright"/>
+        <positionref ref="FVbeamright_1inTOPpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="AH_back"/>
+        <positionref ref="AH_back_1inTOPpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="AH_Muon_alk"/>
+        <positionref ref="AH_Muon_alk_1inTOPpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="Decay_pipe"/>
+        <positionref ref="Decay_pipe_1inTOPpos"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="AH_top"/>
+        <positionref ref="AH_top_1inTOPpos"/>
+      </physvol>
+    </volume>
+    <volume name="Marstop">
+      <materialref ref="GTIL"/>
+      <solidref ref="Marstop"/>
+      <physvol>
+        <volumeref ref="TOP"/>
+        <positionref ref="TOP_1inMarstoppos"/>
+        <rotationref ref="TOP_1inMarstoprot"/>
+      </physvol>
+    </volume>
+  </structure>
+  <setup name="default" version="1.0">
+    <world ref="Marstop"/>
+  </setup>
+</gdml>

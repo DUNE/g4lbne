@@ -813,8 +813,10 @@
     <tube name="Michel_graphite0x1" rmin="0.000000" rmax="10.000000" z="40.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
     <tube name="Michel_water0x1" rmin="0.000000" rmax="5.000000" z="20.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
     <box name="Michel_BlueBox0x1" x="330.200000" y="132.080000" z="198.120000" lunit="cm"/>
+<!--
     <para name="Decay_pipe0x1" x="1553.152497" y="1553.152497" z="20293.971175" alpha="0.000000" theta="-5.844170" phi="0.000000" aunit="deg" lunit="cm"/>
     <cutTube name="Air_pipe0x1" rmin="0.000000" rmax="200.000000" z="20400.000000" startphi="0.000000" deltaphi="360.000000" lowX="0.000000" lowY="-0.101823" lowZ="-0.994803" highX="0.000000" highY="0.101823" highZ="0.994803" aunit="deg" lunit="cm"/>
+-->
     <tube name="ecap_10x1" rmin="0.000000" rmax="100.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
     <tube name="TGeoTube0x30" rmin="0.000000" rmax="10.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
     <tube name="TGeoTube0x31" rmin="10.000000" rmax="20.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
@@ -837,9 +839,11 @@
     <tube name="TGeoTube0x47" rmin="170.000000" rmax="180.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
     <tube name="TGeoTube0x48" rmin="180.000000" rmax="190.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
     <tube name="TGeoTube0x49" rmin="190.000000" rmax="200.000000" z="0.600000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+<!--
     <cutTube name="M_pipe10x1" rmin="200.000000" rmax="201.270000" z="20400.000000" startphi="0.000000" deltaphi="360.000000" lowX="0.000000" lowY="-0.101823" lowZ="-0.994803" highX="0.000000" highY="0.101823" highZ="0.994803" aunit="deg" lunit="cm"/>
     <cutTube name="A_pipe0x1" rmin="201.270000" rmax="221.270000" z="20400.000000" startphi="0.000000" deltaphi="360.000000" lowX="0.000000" lowY="-0.101823" lowZ="-0.994803" highX="0.000000" highY="0.101823" highZ="0.994803" aunit="deg" lunit="cm"/>
     <cutTube name="M_pipe20x1" rmin="221.270000" rmax="222.540000" z="20400.000000" startphi="0.000000" deltaphi="360.000000" lowX="0.000000" lowY="-0.101823" lowZ="-0.994803" highX="0.000000" highY="0.101823" highZ="0.994803" aunit="deg" lunit="cm"/>
+-->
     <tube name="dkcoolA0x1" rmin="0.000000" rmax="34.607500" z="20320.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
     <tube name="dkcoolM0x1" rmin="34.607500" rmax="35.560000" z="20320.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
     <box name="AH_top0x1" x="1017.946200" y="1023.924800" z="1438.574600" lunit="cm"/>
@@ -2431,6 +2435,7 @@
         <volumeref ref="ecap_St"/>
       </divisionvol>
     </volume>
+<!--
     <volume name="Air_pipe">
       <materialref ref="HE"/>
       <solidref ref="Air_pipe0x1"/>
@@ -2443,6 +2448,8 @@
         <positionref ref="ecap_1s_11inAir_pipepos"/>
       </physvol>
     </volume>
+-->
+<!--
     <volume name="M_pipe1">
       <materialref ref="STCA0x4"/>
       <solidref ref="M_pipe10x1"/>
@@ -2455,7 +2462,8 @@
       <materialref ref="STCA0x4"/>
       <solidref ref="M_pipe20x1"/>
     </volume>
-    <volume name="dkcoolA">
+ -->
+   <volume name="dkcoolA">
       <materialref ref="AIR0x5"/>
       <solidref ref="dkcoolA0x1"/>
     </volume>
@@ -2463,6 +2471,7 @@
       <materialref ref="STCA0x4"/>
       <solidref ref="dkcoolM0x1"/>
     </volume>
+<!--     
     <volume name="Decay_pipe">
       <materialref ref="CONC0x3"/>
       <solidref ref="Decay_pipe0x1"/>
@@ -2527,6 +2536,7 @@
         <rotationref ref="dkcoolM_4inDecay_piperot"/>
       </physvol>
     </volume>
+-->
     <volume name="AH_topair">
       <materialref ref="AIR0x5"/>
       <solidref ref="AH_topair0x1"/>
@@ -2562,15 +2572,18 @@
         <volumeref ref="AH_Muon_alk"/>
         <positionref ref="AH_Muon_alk_1inTOPpos"/>
       </physvol>
+<!--
       <physvol>
         <volumeref ref="Decay_pipe"/>
         <positionref ref="Decay_pipe_1inTOPpos"/>
       </physvol>
+-->
       <physvol>
         <volumeref ref="AH_top"/>
         <positionref ref="AH_top_1inTOPpos"/>
       </physvol>
     </volume>
+<!--    
     <volume name="Marstop">
       <materialref ref="GTIL"/>
       <solidref ref="Marstop"/>
@@ -2584,4 +2597,6 @@
   <setup name="default" version="1.0">
     <world ref="Marstop"/>
   </setup>
+-->
+  </structure>
 </gdml>

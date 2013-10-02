@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.30 2013/09/27 19:14:11 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.31 2013/10/02 15:26:44 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -61,6 +61,7 @@ LBNEDetectorConstruction::LBNEDetectorConstruction()
 //
   // Used only in placing the absorber.. 
   fBeamlineAngle = -101*mrad;
+  fRotBeamlineAngle.rotateX(-fBeamlineAngle);  
 
 //  InitializeSubVolumes();  Obsolete. 
   InitializeMaterials();
@@ -69,6 +70,7 @@ LBNEDetectorConstruction::LBNEDetectorConstruction()
 //  Construct(); Not yet!  Need to read the data card first... 
   fHornCurrent = 200.*ampere*1000; // in kA, defined via Detector GUImessenger if need be
 
+  
 }
 
 
@@ -422,7 +424,13 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
    
    this->ConstructLBNEHadronAbsorber(tunnel);
    
-  fHasBeenConstructed = true;
+   if (fPlacementHandler->GetDoInstallShield()) { 
+     this->ConstructLBNEShieldingHorn1(targethorn1Phys);
+     this->ConstructLBNEShieldingHorn2(vHorn2);
+     this->ConstructLBNEShieldingBetweenHorns(tunnel);
+   }
+   
+   fHasBeenConstructed = true;
   
 //  LBNERunManager *aRunManager=(LBNERunManager*)LBNERunManager::GetRunManager();
 //  aRunManager->Initialize();
@@ -502,11 +510,11 @@ void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber(G4VPhysicalVolume *mo
      for (int i=0; i != topAbs->GetNoDaughters(); ++i) {
        G4VPhysicalVolume *pVol = topAbs->GetDaughter(i);
        G4LogicalVolume *lVol = pVol->GetLogicalVolume();
-//       std::cerr << " Daughther " << lVol->GetName();
+       std::cerr << " Daughther " << lVol->GetName();
        const G4Box *aBox = static_cast<const G4Box *>(lVol->GetSolid());
        G4ThreeVector loc = pVol->GetObjectTranslation();
-//       std::cerr << " at MARS coordinates " << loc[0] << ", " <<loc[1] << ", " << loc[2] << 
-//                     " zLength " << 2.0*aBox->GetZHalfLength() << std::endl;
+       std::cerr << " at MARS coordinates " << loc[0] << ", " <<loc[1] << ", " << loc[2] << 
+		     " zLength " << 2.0*aBox->GetZHalfLength() << std::endl;
        // Compute the maximum height, width.  Note the confusion about  X and Y X is up, vertical, in MArs  
        if ((std::abs(loc[2]) + aBox->GetZHalfLength()) > maxHalfLength)
            maxHalfLength = std::abs(loc[2]) + aBox->GetZHalfLength();
@@ -519,15 +527,13 @@ void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber(G4VPhysicalVolume *mo
      maxHalfHeight += 5.0*cm;
      maxHalfWidth += 5.0*cm;
      maxHalfLength += std::abs(maxHalfHeight*std::sin(fBeamlineAngle)) + 5.0*cm;;
-//     std::cerr << " Container volume for Hadron absorber, 1/2 width " 
-//               << maxHalfWidth << " 1/2 Height " << maxHalfHeight 
-//	       << " 1/2 length " << maxHalfLength << std::endl;
+     std::cerr << " Container volume for Hadron absorber, 1/2 width " 
+	       << maxHalfWidth << " 1/2 Height " << maxHalfHeight 
+	     << " 1/2 length " << maxHalfLength << std::endl;
      G4Box *aHABoxTop = new G4Box(G4String("HadronAbsorberTop"), maxHalfWidth, maxHalfHeight, maxHalfLength);
      G4LogicalVolume *aHATopL = 
         new G4LogicalVolume(aHABoxTop, G4Material::GetMaterial("Air"), G4String("HadronAbsorberTop"));
-     G4RotationMatrix *beamAngleRot = new G4RotationMatrix;
-     beamAngleRot->rotateX(-fBeamlineAngle);
-     const LBNEVolumePlacementData *plDecayPipe = 
+      const LBNEVolumePlacementData *plDecayPipe = 
          fPlacementHandler->Find(G4String("HadronAbsorber"), G4String("DecayPipeHall"), 
 	                         G4String("LBNEDetectorConstruction::ConstructLBNEHadronAbsorber"));
      const double zzz = maxHalfLength + plDecayPipe->fParams[2]/2 + plDecayPipe->fPosition[2] + 
@@ -536,7 +542,7 @@ void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber(G4VPhysicalVolume *mo
 //               << " Position in tunnel (center) " << plDecayPipe->fPosition[2] 
 //	       << " ZPosAbs " << zzz <<  std::endl;	 
      G4ThreeVector posTopHA(0., 0., zzz);
-     new G4PVPlacement(beamAngleRot, posTopHA, aHATopL, "HadronAbsorberTop", 
+     new G4PVPlacement(&fRotBeamlineAngle, posTopHA, aHATopL, "HadronAbsorberTop", 
   		     mother->GetLogicalVolume(), false, 1, true);
      
      G4RotationMatrix *marsRot = new G4RotationMatrix;
@@ -570,6 +576,78 @@ void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber(G4VPhysicalVolume *mo
      //
      topAbs->ClearDaughters();
 }
+
+void LBNEDetectorConstruction::ConstructLBNEShieldingHorn1(G4VPhysicalVolume *mother) {
+
+   const double in = 25.4*mm;
+//
+// Install steel shielding around the Horn1 and the target. 
+//
+// Based on Docdb 5339, page 30 and 31. 
+// See also drawing 2251.000-ME-487105 
+// 
+// We simply install steel, assumed low carbon...
+//
+   const G4String nameM = mother->GetLogicalVolume()->GetName();
+   const LBNEVolumePlacementData *plTop = 
+         fPlacementHandler->Find(G4String("ShieldingHorn1"), nameM, 
+	                         G4String("LBNEDetectorConstruction::ConstructLBNEShieldingHorn1"));
+//
+// Bottom 
+//
+   G4String bName = G4String("ShieldingHorn1Bottom"); 
+   const double bWidth = 208*in;
+   const double bHeight = 72.0*in;
+   const double bLength = plTop->fParams[2] - 2.*bHeight*std::abs(std::sin(fBeamlineAngle)) - 5.0*cm;
+   G4Box *bBox = new G4Box(bName, bWidth/2., bHeight/2., bLength/2.);
+   G4LogicalVolume *bLVol = new G4LogicalVolume(bBox, G4Material::GetMaterial(std::string("Slab_Stl")), bName); 
+   G4ThreeVector posTmp(0., 0., 0.); 
+   posTmp[1] = - 66.7*in - bHeight/2.; 
+   // MCZERO is G4 coordinate 0.0, the center of tunnel, so the above number needs to be corrected for the 
+   // shift in the center of the mother volume  
+   const double zShift = -1.0*plTop->fPosition[2];
+   const double yCorr = -1.0*zShift*std::sin(fBeamlineAngle);
+   posTmp[1]  += yCorr;
+//   std::cerr << "ConstructLBNEShieldingHorn1 .... "<< bName << " zShift bottom plate " << zShift 
+//             << " thus, y position " << posTmp[1] << " coorection " << yCorr << std::endl;
+	     
+   new G4PVPlacement(&fRotBeamlineAngle, posTmp, bLVol, bName + std::string("_P"),
+                       mother->GetLogicalVolume(), false, 1, true);
+//
+// Sides 
+//
+   G4String sName = G4String("ShieldingHorn1Side"); 
+   const double sWidth = 72.0*in;
+   const double sHeight = 270.8*in - 72.0*in; // oversize a bit, but no matter.. 
+   const double sLength = plTop->fParams[2] - 2.*bHeight*std::abs(std::sin(fBeamlineAngle)) - 5.0*cm;
+   G4Box *sBox = new G4Box(sName, sWidth/2., sHeight/2., sLength/2.);
+   G4LogicalVolume *sLVol = new G4LogicalVolume(sBox, G4Material::GetMaterial(std::string("Slab_Stl")), sName); 
+   posTmp[0] = (-32.0 - 36.0)*in;
+   posTmp[1] = sHeight/2. - 66.7*in + 1.0*cm; 
+   // MCZERO is G4 coordinate 0.0, the center of tunnel, so the above number needs to be corrected for the 
+   // shift in the center of the mother volume  
+   posTmp[1]  += yCorr;
+//   std::cerr << "ConstructLBNEShieldingHorn1 .... "<< bName << " zShift bottom plate " << zShift 
+//             << " thus, y position " << posTmp[1] << " coorection " << yCorr << std::endl;
+	     
+   new G4PVPlacement(&fRotBeamlineAngle, posTmp, sLVol, sName + std::string("_LeftP"),
+                       mother->GetLogicalVolume(), false, 1, true);
+   posTmp[0] = (+32.0 + 36.0)*in;
+   new G4PVPlacement(&fRotBeamlineAngle, posTmp, sLVol, sName + std::string("_RightP"),
+                       mother->GetLogicalVolume(), false, 2, true);
+   
+}
+
+void LBNEDetectorConstruction::ConstructLBNEShieldingHorn2(G4PVPlacement *mother) {
+
+}
+
+void LBNEDetectorConstruction::ConstructLBNEShieldingBetweenHorns(G4VPhysicalVolume *mother) {
+
+
+}
+
+
 
 LBNEDetectorMessenger::LBNEDetectorMessenger( LBNEDetectorConstruction* LBNEDet):LBNEDetector(LBNEDet)
 {

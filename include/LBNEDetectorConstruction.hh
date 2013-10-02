@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.hh,v 1.5.2.19 2013/09/25 22:58:24 lebrun Exp $
+// $Id: LBNEDetectorConstruction.hh,v 1.5.2.20 2013/10/02 15:26:38 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEDetectorConstruction_H
@@ -120,15 +120,21 @@ private:
 
 //
 //LBNE stuff
+// some of these are old remant definition from v2. Obsolete, but cost little to keep.. 
+
   void ConstructLBNEBaffle();
   void ConstructLBNEDecayPipe();
   void ConstructLBNEHadronAbsorber(G4VPhysicalVolume* vPhys);
-  void ConstructLBNEShielding();
+  void ConstructLBNEShieldingHorn1(G4VPhysicalVolume* vPhys); // And target 
+  void ConstructLBNEShieldingHorn2(G4PVPlacement* vPhys);
+  void ConstructLBNEShieldingBetweenHorns(G4VPhysicalVolume* tunnel);
   void LBNEDetermineTargetHallShieldingClosestApproach(G4int ii);
   G4double fTgtHallShield_closest_yplus;
   G4double fTgtHallShield_closest_yminus;
   G4double fTgtHallShield_closest_xplus;
   G4double fTgtHallShield_closest_xminus;
+  
+  G4RotationMatrix fRotBeamlineAngle;
 
   void ConstructLBNETargetHall();
   void ConstructLBNETarget();

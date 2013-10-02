@@ -200,6 +200,14 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      G4String value = volP->GetAbsorberGDMLFilename(); //  
      fTargetMaterial->SetDefaultValue(value);
    }  
+    { 
+     fInstallShield = new G4UIcmdWithABool("/LBNE/det/InstallShield", this);
+     G4String guidance("If true (default) install beamline rotated rectangular chunck of steel surrounding the horns \n  ");
+     fInstallShield->SetGuidance(guidance);
+     fInstallShield->SetParameterName("InstallShieldAroundHorns",true);
+     bool value = volP->GetDoInstallShield(); //  
+     fInstallShield->SetDefaultValue(value);
+   }
 }
 // Just to avoid code bloat.. 
 

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.30 2013/09/27 19:14:03 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.31 2013/10/02 15:26:38 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -218,6 +218,8 @@ public:
   inline size_t GetHorn2ZEqnChangeNumEqn() const {return fHorn2ZEqnChanges.size(); } 
   inline double GetHorn2DeltaZEntranceToZOrigin() const {return fHorn2DeltaZEntranceToZOrigin; } 
   inline double GetHorn2OuterTubeOuterRad() const {return  fHorn2OuterTubeOuterRad; }
+  inline bool GetDoInstallShield() const { return fDoInstallShield;} 
+  inline void SetDoInstallShield( bool v) { fDoInstallShield=v;}
   void SegmentTarget(); // Check the target segmentation. Assume fixed Fin size. 
   
   void RescaleHorn1Lengthwise();
@@ -496,7 +498,12 @@ private:
 // Connectors and flange downstream used only once,  so we declare and rescale them as we go  
   
   G4String fAbsorberGDMLFilename; 
+//
+// Steel shielding surrounding the horns 
+//
+  bool fDoInstallShield; // a flag to install or removing these shielding block. 
    
+     
   // a flag to check the geometry as it is constructed. 
   
   bool fCheckVolumeOverLapWC;
@@ -526,6 +533,8 @@ private:
                                 const LBNEVolumePlacementData *plInfo,  G4PVPlacement *vMother );
 									       
   void DeclareHorn2Dims(); 
+  
+  
 };
 
 #endif

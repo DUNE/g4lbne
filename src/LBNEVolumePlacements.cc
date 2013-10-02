@@ -36,6 +36,7 @@
 #include "G4SolidStore.hh"
 #include "G4GeometryManager.hh"
 #include "G4FieldManager.hh"
+#include "G4SubtractionSolid.hh"
 
 #include "G4RunManager.hh"
 #include "G4ExceptionSeverity.hh"
@@ -253,8 +254,13 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
    fDecayPipeWindowThickBeryl = fDecayPipeUpstrWindowThick;  
    fDecayPipeWindowThickAlum = 0.064*in;  // make it a bit thicker, due to curvature. 
      
-   fAbsorberGDMLFilename = G4String("./gdml/lbne_absorber_112912.gdml");
- 
+//   fAbsorberGDMLFilename = G4String("./gdml/lbne_absorber_112912.gdml");
+//
+// Received on  Sept 27 2013  a new version from Diane Reitzner 
+//
+     fAbsorberGDMLFilename = G4String("./gdml/abs_geomSept13.gdml");
+     
+     fDoInstallShield = true;
 }
 //
 // Compute the number of segments and adjust the overall length, and the spacing such that 
@@ -361,7 +367,7 @@ LBNEVolumePlacementData*
   info.fTypeName = G4String("Tubs"); // most common type of volume.. 
   std::string volumeName(name); // volumeName += std::string("_solid"); Not necessary 
   if (name == G4String("Tunnel")) {
-    info.fParams[0] = std::max((18*m), 2.0*(fDecayPipeRadius)); 
+    info.fParams[0] = std::max((18.5*m), 2.0*(fDecayPipeRadius)); 
        // Note: the total volume is 60 m. wide => plenty enough rocks. The last term is for the Hadron Absorber cavern  
     info.fParams[1] = std::max((40*m), 2.0*(fDecayPipeRadius)); // Too tall... Set by the Hadron absorber requirement 
     info.fParams[2] = fTotalLength -2.0*cm;
@@ -402,8 +408,9 @@ LBNEVolumePlacementData*
   
   } else if (name == G4String("UpstreamTargetAssembly")) {
     const LBNEVolumePlacementData *plInfo = Find(name, G4String("TargetHallAndHorn1"), G4String("Create"));
-    for (size_t k=0; k != 2; ++k) 
-      info.fParams[k] = plInfo->fParams[k] - 0.5*cm; 
+    info.fParams[0] = 64*in - 1.0*cm;
+    info.fParams[1] = 60*in - 1.0*cm; // approximate, we need room for the rotation (Horn is tilted with respect to 
+                                      // true horizontal 
     info.fParams[2] = fTargetAndBaffleLengthApprox;
     G4Box* hallBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2. );
     info.fCurrent = new G4LogicalVolume(hallBox, G4Material::GetMaterial("Air"), volumeName); 
@@ -729,6 +736,35 @@ LBNEVolumePlacementData*
             info.fTypeName = G4String("Box");
  // despite being a single copy, do the placement in a separate method. 	    
     }
+    // Adding 4 new small volumes to include the bit of graphite locate on each of the 4 corner 
+    if (name.find("TargetFinVertCorner") != std::string::npos) { // 
+         info.fParams.resize(7);
+         info.fParams[0] = fTargetFinWidth/2. - 0.025*mm; 
+         info.fParams[1] = fTargetCTubeOuterRadius - 0.025*mm; 
+         info.fParams[2] = fTargetFinLength ;
+         G4Box* aBox = new G4Box(volumeName+G4String("Box"), 
+	 			 info.fParams[0]/2, info.fParams[1]/2, info.fParams[2]/2.);
+	 info.fParams[3] = 0.;
+	 info.fParams[4] = fTargetCTubeOuterRadius + 0.250*mm;
+	 info.fParams[5] = fTargetFinLength ;
+	 G4Tubs* aTubs = new G4Tubs(volumeName+G4String("Tube"), 
+	                            info.fParams[3], info.fParams[4], info.fParams[5]/2., 0., 360.0*deg);
+	 G4ThreeVector trans(0., 0., 0.);
+        if (name == G4String("TargetFinVertCornerUpLeft")) { //
+	    trans[0] = fTargetFinWidth/4.; trans[1] = fTargetCTubeOuterRadius/2.; 
+	} else if (name == G4String("TargetFinVertCornerUpRight")) { 
+	    trans[0] = -fTargetFinWidth/4.; trans[1] = fTargetCTubeOuterRadius/2.;
+	} else if (name == G4String("TargetFinVertCornerDwnLeft")) {
+	    trans[0] = fTargetFinWidth/4.; trans[1] = -fTargetCTubeOuterRadius/2.;
+	} else if (name == G4String("TargetFinVertCornerDwnRight")){
+	    trans[0] = -fTargetFinWidth/4.; trans[1] = -fTargetCTubeOuterRadius/2.;
+	}    
+	G4RotationMatrix unitMatrix;			
+        G4Transform3D transform(unitMatrix, trans);
+	G4SubtractionSolid *aRoundCorner = new G4SubtractionSolid(volumeName, aBox, aTubs, transform);  		
+        info.fCurrent = new G4LogicalVolume(aRoundCorner, G4Material::GetMaterial(std::string("Target")), volumeName); 
+        info.fTypeName = G4String("G4SubtractionSolid");
+    }
     
     if (name == G4String("TargetAlignmentRingRight")) { // 
 	    info.fParams.resize(5);
@@ -818,8 +854,8 @@ LBNEVolumePlacementData*
     if (name == G4String("Horn1Hall")) {
       const LBNEVolumePlacementData *plInfoM = Find(name, G4String("TargetHallAndHorn1"), G4String("Create"));
        const LBNEVolumePlacementData *plInfoC = Find(name, G4String("UpstreamTargetAssembly"), G4String("Create"));
-       for (size_t k=0; k != 2; ++k) 
-        info.fParams[k] = plInfoM->fParams[k] - 0.5*cm; 
+       info.fParams[0] = 64.0*in - 1.0*cm;
+       info.fParams[1] = 50.0*in - 1.0*cm;
        info.fParams[2] = fHorn1Length + fHorn1DownstreamPlateLength;
        G4Box* hallBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2. );
        info.fCurrent = new G4LogicalVolume(hallBox, G4Material::GetMaterial("Air"), volumeName); 
@@ -973,8 +1009,10 @@ LBNEVolumePlacementData*
 	}
         info.fParams[1] = fHorn1TopUpstrOuterRad + 3.0*in;  // room for the flanges.        
         info.fParams[2] = fHorn1TopUpstrLength - 0.010*mm;
-       std::cerr << " Params for " << name << " " << info.fParams[0] << " / " << info.fParams[1] 
-		 << " / " << info.fParams[2] << std::endl;
+//        std::cerr << " Params for " << name << " " << info.fParams[0] << " / " << info.fParams[1] 
+//		 << " / " << info.fParams[2] << std::endl;
+//        std::cerr << "  .... into Horn1Hall " << plInfoM->fParams[0] << " / " << plInfoM->fParams[1] 
+//		 << " / " << plInfoM->fParams[2] << std::endl;
         G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
         info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Air")), volumeName); 
         info.fPosition[2] = -plInfoM->fParams[2]/2. + info.fParams[2]/2. + 0.005*mm; 
@@ -1366,6 +1404,10 @@ void LBNEVolumePlacements::PlaceFinalUpstrTarget(G4PVPlacement *mother) {
     LBNEVolumePlacementData *plTargetCoolingTube = Create(G4String("TargetUpstrDownstrCoolingTube"));    
     LBNEVolumePlacementData  *plTargetCoolingTubeWater = Create(G4String("TargetUpstrDownstrCoolingTubeWater"));
     LBNEVolumePlacementData *plTargetFin = Create(G4String("TargetFinVert"));
+    LBNEVolumePlacementData *plTargetFinCorUpLeft = Create(G4String("TargetFinVertCornerUpLeft"));
+    LBNEVolumePlacementData *plTargetFinCorUpRight = Create(G4String("TargetFinVertCornerUpRight"));
+    LBNEVolumePlacementData *plTargetFinCorDwnLeft = Create(G4String("TargetFinVertCornerDwnLeft"));
+    LBNEVolumePlacementData *plTargetFinCorDwnRight = Create(G4String("TargetFinVertCornerDwnRight"));
     G4String nameTgtUpDownSeg("TargetUpstrDownstrSegment");
     LBNEVolumePlacementData *plTargetUpstrDownstrSegment = Create(nameTgtUpDownSeg);
     G4PVPlacement *vSeg = 0;
@@ -1401,6 +1443,32 @@ void LBNEVolumePlacements::PlaceFinalUpstrTarget(G4PVPlacement *mother) {
     new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, plTargetFin->fCurrent, nameTgtUpDownSeg+G4String("TargetFinVert_P"), 
 				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
+					  
+    // for the generic (neither first nor last, not the fin which is split, we add the corners 
+    // Start with the one in the upper left corner
+    posTmp[0] = -fTargetFinWidth/4.; posTmp[1] = fTargetFinHeight/2. -  fTargetCTubeOuterRadius/2. + 0.125*mm;
+    posTmp[2] = 0.;    
+    new G4PVPlacement((G4RotationMatrix *) 0, 
+	                            posTmp, plTargetFinCorUpLeft->fCurrent, 
+				          nameTgtUpDownSeg+G4String("TargetFinVertCornerUpLeft_P"), 
+				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
+    posTmp[0] = fTargetFinWidth/4.; posTmp[1] = fTargetFinHeight/2. -  fTargetCTubeOuterRadius/2. + 0.125*mm;
+    new G4PVPlacement((G4RotationMatrix *) 0, 
+	                            posTmp, plTargetFinCorUpRight->fCurrent, 
+				          nameTgtUpDownSeg+G4String("TargetFinVertCornerUpRight_P"), 
+				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
+					  
+    posTmp[0] = -fTargetFinWidth/4.; posTmp[1] = -1.0*(fTargetFinHeight/2. -  fTargetCTubeOuterRadius/2. + 0.125*mm);
+    new G4PVPlacement((G4RotationMatrix *) 0, 
+	                            posTmp, plTargetFinCorDwnLeft->fCurrent, 
+				          nameTgtUpDownSeg+G4String("TargetFinVertCornerDwnLeft_P"), 
+				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
+    posTmp[0] = fTargetFinWidth/4.; posTmp[1] = -1.0*(fTargetFinHeight/2. -  fTargetCTubeOuterRadius/2. + 0.125*mm);
+    new G4PVPlacement((G4RotationMatrix *) 0, 
+	                            posTmp, plTargetFinCorDwnRight->fCurrent, 
+				          nameTgtUpDownSeg+G4String("TargetFinVertCornerDwnRight_P"), 
+				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
+   				  
     // Repeat the last few mantra for the last segments 
     if (fTargetFinLengthSplitUpstr > 0.3*mm) {
       LBNEVolumePlacementData *plTargetCoolingTubeLast = Create(G4String("TargetUpstrDownstrCoolingTubeLast"));    

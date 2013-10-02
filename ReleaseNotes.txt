@@ -59,6 +59,8 @@ Oct 1 2014
  Start installing the shielding blocks, all made of steel. They include the
  cooling pannels, where the density is a but overestimate, as the cooling tube
  are not yet implemented. Working on it.. But making a cvs commit now ..
+ 
+ Review again the target dimensions, and remove some of the empty space. 
   
 
 

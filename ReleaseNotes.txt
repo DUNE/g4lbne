@@ -47,6 +47,21 @@ creating vertices with Nan... P.L. blurry code, no doubt..
 Protons of 120 GeV now impinging on target, from a z-coordinate of -3.60, well
 upstream of the target. .. 
 
+Oct 1 2014
+
+ Adding 4 corners to the target fins. Install new and improved version of 
+ Hadron absorber via new GDML file. Scary error message from the GDML parser,
+ and a 73 micron overlap. Need to check with visualization. Meanwhile, geantino
+ reached the core of this new absorber, going 
+ 
+ Oct 2 2014 
+ 
+ Start installing the shielding blocks, all made of steel. They include the
+ cooling pannels, where the density is a but overestimate, as the cooling tube
+ are not yet implemented. Working on it.. But making a cvs commit now ..
+  
+
+
 
 
  

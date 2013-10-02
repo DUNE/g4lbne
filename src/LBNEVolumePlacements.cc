@@ -92,7 +92,7 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
   
   // No fTargetX0, Y0:  These would be surveyed point, part of the alignement 
   // realm, i.e. handled in the Surveyor class.
-  fTargetFinHeight = 21.4*mm - 0.2*mm; // It includes half of the cooling tube, which will be inside the fins
+  fTargetFinHeight = 21.4*mm - 0.005*mm; // It includes half of the cooling tube, which will be inside the fins
     // Subract 200 microns such that the segments in the He containment tube. 
                              // Drawing 7589-01-50-02 
   // The round edges (grinded 
@@ -124,7 +124,7 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
   fTargetFlangeOuterRadius= (8.24/2.)*in;;
   fTargetFlangeThick = 25.*mm;
   fTargetCTubeMaterial = std::string("Titanium"); 
-  fTargetCTubeOuterRadius = (3. + 0.4)*mm ; // Doc db 6100 
+  fTargetCTubeOuterRadius = (3. + 0.2)*mm ; // Doc db 6100 
   fTargetCTubeInnerRadius = 3.0*mm;
   fTargetCTubeUpstrLength = 9.621*in; // Length from the upstream bend to the fron the steel drawnstream flange  
   fTargetCTubeUpstrOffset = 2.32*in; // from the beam line tp to the center of the cooling tube. 
@@ -706,7 +706,7 @@ LBNEVolumePlacementData*
     //
     if (name == G4String("TargetFinVert")) { // 
             info.fParams[0] = fTargetFinWidth; 
-            info.fParams[1] = fTargetFinHeight - 2.0*fTargetCTubeOuterRadius - 0.1*mm; 
+            info.fParams[1] = fTargetFinHeight - 2.0*fTargetCTubeOuterRadius - 0.05*mm; 
             info.fParams[2] = fTargetFinLength ;
             G4Box* aBox = new G4Box(volumeName, info.fParams[0]/2, info.fParams[1]/2, info.fParams[2]/2.);
             info.fCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("Target")), volumeName); 

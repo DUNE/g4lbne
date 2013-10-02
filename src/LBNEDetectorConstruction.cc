@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.31 2013/10/02 15:26:44 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.32 2013/10/02 16:14:25 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -592,6 +592,8 @@ void LBNEDetectorConstruction::ConstructLBNEShieldingHorn1(G4VPhysicalVolume *mo
    const LBNEVolumePlacementData *plTop = 
          fPlacementHandler->Find(G4String("ShieldingHorn1"), nameM, 
 	                         G4String("LBNEDetectorConstruction::ConstructLBNEShieldingHorn1"));
+				 
+   const double horn1HeightAtMCZERO = 66.7*in;				 
 //
 // Bottom 
 //
@@ -602,15 +604,15 @@ void LBNEDetectorConstruction::ConstructLBNEShieldingHorn1(G4VPhysicalVolume *mo
    G4Box *bBox = new G4Box(bName, bWidth/2., bHeight/2., bLength/2.);
    G4LogicalVolume *bLVol = new G4LogicalVolume(bBox, G4Material::GetMaterial(std::string("Slab_Stl")), bName); 
    G4ThreeVector posTmp(0., 0., 0.); 
-   posTmp[1] = - 66.7*in - bHeight/2.; 
+   posTmp[1] = -horn1HeightAtMCZERO  - bHeight/2.; 
    // MCZERO is G4 coordinate 0.0, the center of tunnel, so the above number needs to be corrected for the 
    // shift in the center of the mother volume  
    const double zShift = -1.0*plTop->fPosition[2];
    const double yCorr = -1.0*zShift*std::sin(fBeamlineAngle);
-   posTmp[1]  += yCorr;
+   posTmp[1]  -= yCorr;
 //   std::cerr << "ConstructLBNEShieldingHorn1 .... "<< bName << " zShift bottom plate " << zShift 
-//             << " thus, y position " << posTmp[1] << " coorection " << yCorr << std::endl;
-	     
+//	     << " thus, y position " << posTmp[1] << " coorection " << yCorr << std::endl;
+//	     
    new G4PVPlacement(&fRotBeamlineAngle, posTmp, bLVol, bName + std::string("_P"),
                        mother->GetLogicalVolume(), false, 1, true);
 //
@@ -618,24 +620,30 @@ void LBNEDetectorConstruction::ConstructLBNEShieldingHorn1(G4VPhysicalVolume *mo
 //
    G4String sName = G4String("ShieldingHorn1Side"); 
    const double sWidth = 72.0*in;
-   const double sHeight = 270.8*in - 72.0*in; // oversize a bit, but no matter.. 
-   const double sLength = plTop->fParams[2] - 2.*bHeight*std::abs(std::sin(fBeamlineAngle)) - 5.0*cm;
+   const double sHeight = 270.8*in - 72.0*in - 4.0*cm; // oversize a bit, but no matter.. 
+   const double sLength = plTop->fParams[2] - 2.*sHeight*std::abs(std::sin(fBeamlineAngle)) - 5.0*cm;
    G4Box *sBox = new G4Box(sName, sWidth/2., sHeight/2., sLength/2.);
    G4LogicalVolume *sLVol = new G4LogicalVolume(sBox, G4Material::GetMaterial(std::string("Slab_Stl")), sName); 
    posTmp[0] = (-32.0 - 36.0)*in;
-   posTmp[1] = sHeight/2. - 66.7*in + 1.0*cm; 
+   posTmp[1] = sHeight/2. - horn1HeightAtMCZERO + 2.0*cm; 
    // MCZERO is G4 coordinate 0.0, the center of tunnel, so the above number needs to be corrected for the 
    // shift in the center of the mother volume  
-   posTmp[1]  += yCorr;
-//   std::cerr << "ConstructLBNEShieldingHorn1 .... "<< bName << " zShift bottom plate " << zShift 
-//             << " thus, y position " << posTmp[1] << " coorection " << yCorr << std::endl;
+   posTmp[1]  -= yCorr;
+//   std::cerr << "ConstructLBNEShieldingHorn1 .... "<< bName << " zShift side plate, left  " << zShift 
+//	     << " thus, y position " << posTmp[1] << " coorection " << yCorr 
+//	     << std::endl << " .......  X = " << posTmp[0] << " Y " << posTmp[1] << std::endl;
 	     
    new G4PVPlacement(&fRotBeamlineAngle, posTmp, sLVol, sName + std::string("_LeftP"),
                        mother->GetLogicalVolume(), false, 1, true);
    posTmp[0] = (+32.0 + 36.0)*in;
+//   std::cerr << "ConstructLBNEShieldingHorn1 .... "<< bName << " zShift side plate, Right  " << zShift 
+//	     << " thus, y position " << posTmp[1] << " coorection " << yCorr 
+//	     << std::endl << " .......  X = " << posTmp[0] << " Y " << posTmp[1] << std::endl;
+	     
    new G4PVPlacement(&fRotBeamlineAngle, posTmp, sLVol, sName + std::string("_RightP"),
                        mother->GetLogicalVolume(), false, 2, true);
-   
+//
+// Top    
 }
 
 void LBNEDetectorConstruction::ConstructLBNEShieldingHorn2(G4PVPlacement *mother) {

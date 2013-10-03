@@ -62,7 +62,14 @@ Oct 1 2014
  
  Review again the target dimensions, and remove some of the empty space. 
   
-
+ Oct 3 2014 
+ 
+ Finish the installation of the shielding blocks. One can remove them,
+ optionally.  Allow for the capability of running with a different material for
+ the inner conductor, for Horn1 and Horn2. Also allow for tweaking the thickness
+ of the Beryllium cap at the end of the Helium container vessel. 
+ 
+ 
 
 
 

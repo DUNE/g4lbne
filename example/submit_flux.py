@@ -15,6 +15,14 @@
 from optparse import OptionParser
 import sys, os, subprocess, shutil
 
+###################################################
+#
+# Determine default g4lbne directory
+# (the directory this script is in)
+#
+###################################################
+scriptdir = os.path.abspath(sys.argv[0]+"/../..")
+print "default g4lbne directory:",scriptdir
 
 ###################################################
 #
@@ -26,13 +34,13 @@ usage = "usage: %prog [options]"
 parser = OptionParser(usage=usage)
 
 parser.add_option("-g", "--g4lbne_dir", dest="g4lbne_dir",
-                  help="g4lbne directory", default="/lbne/app/users/$USER/lbne-beamsim/g4lbne")
+                  help="g4lbne directory", default=scriptdir)
 parser.add_option("-p", "--physics_list", dest="physics_list",
-                  help="Geant4 Physics List", default="QGSP");
-parser.add_option("-i", "--input", dest="input",
-                  help="Input Card", default="lbnedocdb2161v6")
+                  help="Geant4 Physics List", default="QGSP_BERT");
 parser.add_option("-m", "--macro", dest="macro",
-                  help="Template Macro", default="nubeam-G4PBeam-stdnubeam")
+                  help="Template Macro", default="Nominal")
+parser.add_option("-c", "--horn_current", dest="horn_current",
+                  help="Horn Current in kA", default=200)
 parser.add_option("-n", "--n_events", dest="n_events",
                   help="Number of events per job", default=500000)
 parser.add_option("-f", "--first_job", dest="first_job",
@@ -72,13 +80,25 @@ if not os.path.exists(macro_template):
     print "I can't find a macro at "+macro_template
     sys.exit()
 
-input_card = options.g4lbne_dir+"/inputs/"+options.input+".input"
-if not os.path.exists(macro_template):
-    print "I can't find an input card at at "+input_card
-    sys.exit()
+#input_card = options.g4lbne_dir+"/inputs/"+options.input+".input"
+#if not os.path.exists(macro_template):
+#    print "I can't find an input card at at "+input_card
+#    sys.exit()
 
 physics_list = options.physics_list
 print "Using GEANT4 physics list",physics_list
+
+###################################################
+#
+# Determine G4LBNE Version
+#
+###################################################
+#f = open(options.g4lbne_dir+"/CVS/Tag")
+#lines = f.readlines();
+#f.close()
+
+#version = lines[0].strip()[1:]
+version="v3r0p1"
 
 ###################################################
 #
@@ -91,7 +111,7 @@ if options.interactive:
 print "Using the g4lbne installed at",options.g4lbne_dir
 print "Each job will have",options.n_events,"protons on target."
 print "Using macro template:",macro_template
-print "Using input card:",input_card
+#print "Using input card:",input_card
 print "Output will be written to:",options.output_dir
 
 ###################################################
@@ -99,9 +119,9 @@ print "Output will be written to:",options.output_dir
 # Create Directories
 #
 ###################################################
-macro_dir = options.output_dir+"/"+options.input+"/"+"/"+physics_list+"/"+options.macro+"/macros/"
-flux_dir = options.output_dir+"/"+options.input+"/"+physics_list+"/"+options.macro+"/flux/"
-log_dir = options.output_dir+"/"+options.input+"/"+physics_list+"/"+options.macro+"/logfiles/"
+macro_dir = options.output_dir+"/"+version+"/"+physics_list+"/"+options.macro+"/"+str(options.horn_current)+"kA/macros/"
+flux_dir = options.output_dir+"/"+version+"/"+physics_list+"/"+options.macro+"/"+str(options.horn_current)+"kA/flux/"
+log_dir = options.output_dir+"/"+version+"/"+physics_list+"/"+options.macro+"/"+str(options.horn_current)+"kA/logfiles/"
 
 # executables have to go on /app
 macro_dir = macro_dir.replace("lbne/data","lbne/app")
@@ -129,33 +149,42 @@ if not options.interactive:
 # Loop over requested jobs
 #
 ###################################################
-file_prefix = options.input+"_"+physics_list+"_"+options.macro
+file_prefix = "g4lbne_"+version+"_"+physics_list+"_"+options.macro+"_"+str(options.horn_current)+"kA"
 for i in range(int(options.first_job),int(options.last_job)+1):
 
     # Write macro file
     oldmac = open(macro_template)    
     new_macro_filename = macro_dir+os.path.basename(macro_template).replace(".mac","_"+str(i).zfill(3)+".mac")
     newmac = open(new_macro_filename, 'w')
+    horn_current_set = False
     for s in oldmac.xreadlines():
         if s.find("/LBNE/output/OutputNtpFileName")>=0:
-            newmac.write("/LBNE/output/OutputNtpFileName "+temp_dir+file_prefix)
+            newmac.write("/LBNE/output/OutputNtpFileName "+temp_dir+file_prefix+"\n")
         elif s.find("/LBNE/rndm/setRndmSeed")>=0:
-            newmac.write("/LBNE/rndm/setRndmSeed "+str(i))
+            newmac.write("/LBNE/rndm/setRndmSeed "+str(i)+"\n")
         elif s.find("/LBNE/run/setRunID")>=0:
-            newmac.write("/LBNE/run/setRunID "+str(i))
+            newmac.write("/LBNE/run/setRunID "+str(i)+"\n")
         elif s.find("/LBNE/run/NEvents")>=0:
-            newmac.write("/LBNE/run/NEvents "+str(options.n_events))
+            newmac.write("/LBNE/run/NEvents "+str(options.n_events)+"\n")
+        elif s.find("/LBNE/det/seHornCurrent")>=0:
+            newmac.write("/LBNE/det/seHornCurrent "+str(options.horn_current)+" kA \n")
+            horn_current_set = True
         else:
             newmac.write(s);
+
+    if not horn_current_set:
+        print "ERROR: The macro "+macro_template+" does set the horn current; please add a line such as /LBNE/det/seHornCurrent 200 kA to your macro template"
+        sys.exit()
 
     # Write the script that will run on the grid
     script_filename = macro_dir+os.path.basename(macro_template).replace(".mac","_"+str(i).zfill(3)+".sh")
     wrapper = open(script_filename, 'w')
     #wrapper.write("#!/bin/sh \n\n")
     wrapper.write("source "+g4lbne_setup+" \n\n")
-    wrapper.write(g4lbne_executable+" --physicslist "+physics_list+" --input "+input_card+" "+new_macro_filename+'\n\n')
+    #wrapper.write(g4lbne_executable+" --physicslist "+physics_list+" --input "+input_card+" "+new_macro_filename+'\n\n')
+    wrapper.write(g4lbne_executable+" --physicslist "+physics_list+" "+new_macro_filename+'\n\n')
         # copy the output
-    temp_output = temp_dir+file_prefix+"_"+str(i).zfill(3)+".root"
+    temp_output = temp_dir+file_prefix+"_"+str(i).zfill(3)+"v3xxx.root"
     final_output = flux_dir+file_prefix+"_"+str(i).zfill(3)+".root"
     if options.interactive:
         wrapper.write("cp "+temp_output+" "+final_output+"\n");

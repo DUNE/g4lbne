@@ -196,8 +196,17 @@ nudata::nudata(TTree *tree)
    //Add files here
    //
   std::vector<std::string> fFileVec;
+<<<<<<< nudata.h
+<<<<<<< nudata.h
+  fFileVec.push_back("/lbne/data/users/ljf26/fluxfiles/g4lbne/v3r0p1/QGSP_BERT/test2/flux/QGSP_BERT_test2_001.root");
+=======
+  fFileVec.push_back("g4lbne_example_010.root");
+  fFileVec.push_back("g4lbne_example_011.root");
+>>>>>>> 1.5
+=======
   fFileVec.push_back("g4lbne_example_lbnedocdb2161v6_010.root");
   fFileVec.push_back("g4lbne_example_lbnedocdb2161v6_011.root");
+>>>>>>> 1.3
   
    //
    //set number of pot per file !!!!!!!!!!!!!!!!!!!!!!!!!!!!

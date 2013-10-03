@@ -1,5 +1,6 @@
 #define eventRates_cxx
 #include "eventRates.h"
+#include "OscLib/OscCalculator.cxx"
 #include <TH2.h>
 #include <TH1D.h>
 #include <TStyle.h>
@@ -18,44 +19,23 @@ int iread = 0;
 
 void eventRates::Loop()
 {
-//   In a ROOT session, you can do:
-//      Root > .L eventRates.C
-//      Root > eventRates t
-//      Root > t.GetEntry(12); // Fill t data members with entry number 12
-//      Root > t.Show();       // Show values of entry 12
-//      Root > t.Show(16);     // Read and show values of entry 16
-//      Root > t.Loop();       // Loop on all entries
-//
+  //   In a ROOT session, you can do:
+  //      Root > .L eventRates.C++  // The ++ is important because the code runs MUCH faster when compiled
+  //      Root > eventRates t
+  //      Root > t.Loop();       // Loop on all entries
+  //
 
-//     This is the loop skeleton where:
-//    jentry is the global entry number in the chain
-//    ientry is the entry number in the current Tree
-//  Note that the argument to GetEntry must be:
-//    jentry for TChain::GetEntry
-//    ientry for TTree::GetEntry and TBranch::GetEntry
-//
-//       To read only selected branches, Insert statements like:
-// METHOD1:
-//    fChain->SetBranchStatus("*",0);  // disable all branches
-//    fChain->SetBranchStatus("branchname",1);  // activate branchname
-// METHOD2: replace line
-//    fChain->GetEntry(jentry);       //read all branches
-//by  b_branchname->GetEntry(ientry); //read only this branch
-   if (fChain == 0) return;
-
-
-//????????????????????????????
-//????????????????????????????
-//
    //
-   //define the Reference pot !!!!!!!!!!!!!!!!
+   // Define the Reference pot 
    //
+
    double refpot          = 1;
    std::string potref_str = eventRates::GetPOTAsString(refpot);
 
    //
-   //make histograms 
+   // Set Histogram Binning
    //
+
    // simple binning for some alignment plots
    int nbins   = 40;
    double xmin = 0.0;
@@ -72,6 +52,10 @@ void eventRates::Loop()
   // 2.0 GeV bins up to 120 GeV
    for(int i = 0; i<(120-20)/2.0; i++)
      fastmc_bins.push_back(20.0+i*2.0);
+
+   //
+   // Declare all the histograms
+   //
 
    TH1D *fhNuMuFlux    = new TH1D("numu_flux_forplots",  
 				  "numu_flux_forplots", nbins,xmin,xmax);
@@ -115,6 +99,7 @@ void eventRates::Loop()
    TH1D *fhNuTauBarNCEventRate  = new TH1D("nutaubar_nceventrate_forplots",
 				    "nutaubar_nceventrate_forplots", nbins/2,xmin,xmax);
 
+
    TH1D *fhNuMuFlux_FastMC    = new TH1D("numu_flux",  
 					 "numu_flux",fastmc_bins.size()-1,&fastmc_bins[0]);
    TH1D *fhNuMuBarFlux_FastMC = new TH1D("numubar_flux", 
@@ -154,9 +139,110 @@ void eventRates::Loop()
    TH1D *fhNuTauBarNCEventRate_FastMC  = new TH1D("nutaubar_nceventrate",
 					   "nutaubar_nceventrate", fastmc_bins.size()-1,&fastmc_bins[0]);
 
+   double globes_low = 0;
+   double globes_high = 125.25;
+   double globes_binwidth = 0.25;
+   int globes_nbins = ( globes_high - globes_low ) / globes_binwidth;
 
+   TH1D *fhNuMuFlux_Globes    = new TH1D("numu_flux_globes",  
+					 "numu_flux_globes", globes_nbins,globes_low,globes_high);
+   TH1D *fhNuMuBarFlux_Globes = new TH1D("numubar_flux_globes", 
+				  "numubar_flux_globes", globes_nbins, globes_low, globes_high);
+   TH1D *fhNuEFlux_Globes     = new TH1D("nue_flux_globes",
+				  "nue_flux_globes", globes_nbins, globes_low, globes_high);
+   TH1D *fhNuEBarFlux_Globes  = new TH1D("nuebar_flux_globes",
+				  "nuebar_flux_globes", globes_nbins, globes_low, globes_high);
  
-   // make space for sumw2
+   TH1D *fhNuTauFlux_Globes     = new TH1D("nutau_flux_globes",
+				    "nutau_flux_globes", globes_nbins, globes_low, globes_high);
+   TH1D *fhNuTauBarFlux_Globes  = new TH1D("nutaubar_flux_globes",
+					   "nutau_flux_globes", globes_nbins, globes_low, globes_high);
+
+   TH1D *fhNuMuFluxOsc    = new TH1D("numu_fluxosc_forplots",  
+				  "numu_fluxosc_forplots", nbins,xmin,xmax);
+   TH1D *fhNuMuBarFluxOsc = new TH1D("numubar_fluxosc_forplots", 
+				  "numubar_fluxosc_forplots", nbins/2,xmin,xmax);
+   TH1D *fhNuEFluxOsc     = new TH1D("nue_fluxosc_forplots",
+				  "nue_fluxosc_forplots", nbins/2,xmin,xmax);
+   TH1D *fhNuEBarFluxOsc  = new TH1D("nuebar_fluxosc_forplots",
+				  "nuebar_fluxosc_forplots", nbins/2,xmin,xmax);
+ 
+   TH1D *fhNuTauFluxOsc     = new TH1D("nutau_fluxosc_forplots",
+				    "nutau_fluxosc_forplots", nbins/2,xmin,xmax);
+   TH1D *fhNuTauBarFluxOsc  = new TH1D("nutaubar_fluxosc_forplots",
+				    "nutaubar_fluxosc_forplots", nbins/2,xmin,xmax);   
+
+   TH1D *fhNuMuCCEventRateOsc    = new TH1D("numu_cceventrateosc_forplots",  
+				  "numu_cceventrateosc_forplots", nbins,xmin,xmax);
+   TH1D *fhNuMuBarCCEventRateOsc = new TH1D("numubar_cceventrateosc_forplots", 
+				  "numubar_cceventrateosc_forplots", nbins/2,xmin,xmax);
+   TH1D *fhNuECCEventRateOsc     = new TH1D("nue_cceventrateosc_forplots",
+				  "nue_cceventrateosc_forplots", nbins/2,xmin,xmax);
+   TH1D *fhNuEBarCCEventRateOsc  = new TH1D("nuebar_cceventrateosc_forplots",
+				  "nuebar_cceventrateosc_forplots", nbins/2,xmin,xmax);
+ 
+   TH1D *fhNuTauCCEventRateOsc     = new TH1D("nutau_cceventrateosc_forplots",
+				    "nutau_cceventrateosc_forplots", nbins/2,xmin,xmax);
+   TH1D *fhNuTauBarCCEventRateOsc  = new TH1D("nutaubar_cceventrateosc_forplots",
+				    "nutaubar_cceventrateosc_forplots", nbins/2,xmin,xmax);
+
+   TH1D *fhNuMuNCEventRateOsc    = new TH1D("numu_nceventrateosc_forplots",  
+				  "numu_nceventrateosc_forplots", nbins,xmin,xmax);
+   TH1D *fhNuMuBarNCEventRateOsc = new TH1D("numubar_nceventrateosc_forplots", 
+				  "numubar_nceventrateosc_forplots", nbins/2,xmin,xmax);
+   TH1D *fhNuENCEventRateOsc     = new TH1D("nue_nceventrateosc_forplots",
+				  "nue_nceventrateosc_forplots", nbins/2,xmin,xmax);
+   TH1D *fhNuEBarNCEventRateOsc  = new TH1D("nuebar_nceventrateosc_forplots",
+				  "nuebar_nceventrateosc_forplots", nbins/2,xmin,xmax);
+ 
+   TH1D *fhNuTauNCEventRateOsc     = new TH1D("nutau_nceventrateosc_forplots",
+				    "nutau_nceventrateosc_forplots", nbins/2,xmin,xmax);
+   TH1D *fhNuTauBarNCEventRateOsc  = new TH1D("nutaubar_nceventrateosc_forplots",
+				    "nutaubar_nceventrateosc_forplots", nbins/2,xmin,xmax);
+
+   TH1D *fhNuMuFluxOsc_FastMC    = new TH1D("numu_fluxosc",  
+					 "numu_fluxosc",fastmc_bins.size()-1,&fastmc_bins[0]);
+   TH1D *fhNuMuBarFluxOsc_FastMC = new TH1D("numubar_fluxosc", 
+					 "numubar_fluxosc", fastmc_bins.size()-1,&fastmc_bins[0]);
+   TH1D *fhNuEFluxOsc_FastMC     = new TH1D("nue_fluxosc",
+					 "nue_fluxosc", fastmc_bins.size()-1,&fastmc_bins[0]);
+   TH1D *fhNuEBarFluxOsc_FastMC  = new TH1D("nuebar_fluxosc",
+					 "nuebar_fluxosc", fastmc_bins.size()-1,&fastmc_bins[0]);
+   TH1D *fhNuTauFluxOsc_FastMC     = new TH1D("nutau_fluxosc",
+					   "nutau_fluxosc", fastmc_bins.size()-1,&fastmc_bins[0]);
+   TH1D *fhNuTauBarFluxOsc_FastMC  = new TH1D("nutaubar_fluxosc",
+					   "nutaubar_fluxosc", fastmc_bins.size()-1,&fastmc_bins[0]);
+
+   TH1D *fhNuMuCCEventRateOsc_FastMC    = new TH1D("numu_cceventrateosc",  
+					 "numu_cceventrateosc",fastmc_bins.size()-1,&fastmc_bins[0]);
+   TH1D *fhNuMuBarCCEventRateOsc_FastMC = new TH1D("numubar_cceventrateosc", 
+					 "numubar_cceventrateosc", fastmc_bins.size()-1,&fastmc_bins[0]);
+   TH1D *fhNuECCEventRateOsc_FastMC     = new TH1D("nue_cceventrateosc",
+					 "nue_cceventrateosc", fastmc_bins.size()-1,&fastmc_bins[0]);
+   TH1D *fhNuEBarCCEventRateOsc_FastMC  = new TH1D("nuebar_cceventrateosc",
+					 "nuebar_cceventrateosc", fastmc_bins.size()-1,&fastmc_bins[0]);
+   TH1D *fhNuTauCCEventRateOsc_FastMC     = new TH1D("nutau_cceventrateosc",
+					   "nutau_cceventrateosc", fastmc_bins.size()-1,&fastmc_bins[0]);
+   TH1D *fhNuTauBarCCEventRateOsc_FastMC  = new TH1D("nutaubar_cceventrateosc",
+					   "nutaubar_cceventrateosc", fastmc_bins.size()-1,&fastmc_bins[0]);
+
+   TH1D *fhNuMuNCEventRateOsc_FastMC    = new TH1D("numu_nceventrateosc",  
+					 "numu_nceventrateosc",fastmc_bins.size()-1,&fastmc_bins[0]);
+   TH1D *fhNuMuBarNCEventRateOsc_FastMC = new TH1D("numubar_nceventrateosc", 
+					 "numubar_nceventrateosc", fastmc_bins.size()-1,&fastmc_bins[0]);
+   TH1D *fhNuENCEventRateOsc_FastMC     = new TH1D("nue_nceventrateosc",
+					 "nue_nceventrateosc", fastmc_bins.size()-1,&fastmc_bins[0]);
+   TH1D *fhNuEBarNCEventRateOsc_FastMC  = new TH1D("nuebar_nceventrateosc",
+					 "nuebar_nceventrateosc", fastmc_bins.size()-1,&fastmc_bins[0]);
+   TH1D *fhNuTauNCEventRateOsc_FastMC     = new TH1D("nutau_nceventrateosc",
+					   "nutau_nceventrateosc", fastmc_bins.size()-1,&fastmc_bins[0]);
+   TH1D *fhNuTauBarNCEventRateOsc_FastMC  = new TH1D("nutaubar_nceventrateosc",
+					   "nutaubar_nceventrateosc", fastmc_bins.size()-1,&fastmc_bins[0]);
+
+   //
+   // Call Sumw2 to make sure histogram errors are propagated correctly
+   //
+ 
    fhNuMuFlux->Sumw2();   
    fhNuMuBarFlux->Sumw2();   
    fhNuEFlux->Sumw2();   
@@ -170,6 +256,27 @@ void eventRates::Loop()
    fhNuEBarFlux_FastMC->Sumw2();   
    fhNuTauFlux_FastMC->Sumw2();   
    fhNuTauBarFlux_FastMC->Sumw2();   
+
+   fhNuMuFlux_Globes->Sumw2();   
+   fhNuMuBarFlux_Globes->Sumw2();   
+   fhNuEFlux_Globes->Sumw2();   
+   fhNuEBarFlux_Globes->Sumw2();   
+   fhNuTauFlux_Globes->Sumw2();   
+   fhNuTauBarFlux_Globes->Sumw2();   
+
+   fhNuMuFluxOsc->Sumw2();   
+   fhNuMuBarFluxOsc->Sumw2();   
+   fhNuEFluxOsc->Sumw2();   
+   fhNuEBarFluxOsc->Sumw2();   
+   fhNuTauFluxOsc->Sumw2();   
+   fhNuTauBarFluxOsc->Sumw2();   
+
+   fhNuMuFluxOsc_FastMC->Sumw2();   
+   fhNuMuBarFluxOsc_FastMC->Sumw2();   
+   fhNuEFluxOsc_FastMC->Sumw2();   
+   fhNuEBarFluxOsc_FastMC->Sumw2();   
+   fhNuTauFluxOsc_FastMC->Sumw2();   
+   fhNuTauBarFluxOsc_FastMC->Sumw2();   
 
    fhNuMuCCEventRate->Sumw2();   
    fhNuMuBarCCEventRate->Sumw2();   
@@ -197,102 +304,163 @@ void eventRates::Loop()
    fhNuTauNCEventRate_FastMC->Sumw2();   
    fhNuTauBarNCEventRate_FastMC->Sumw2();   
 
+   fhNuMuCCEventRateOsc->Sumw2();   
+   fhNuMuBarCCEventRateOsc->Sumw2();   
+   fhNuECCEventRateOsc->Sumw2();   
+   fhNuEBarCCEventRateOsc->Sumw2();   
+   fhNuTauCCEventRateOsc->Sumw2();   
+   fhNuTauBarCCEventRateOsc->Sumw2();   
+   fhNuMuNCEventRateOsc->Sumw2();   
+   fhNuMuBarNCEventRateOsc->Sumw2();   
+   fhNuENCEventRateOsc->Sumw2();   
+   fhNuEBarNCEventRateOsc->Sumw2();   
+   fhNuTauNCEventRateOsc->Sumw2();   
+   fhNuTauBarNCEventRateOsc->Sumw2();   
+
+   fhNuMuCCEventRateOsc_FastMC->Sumw2();   
+   fhNuMuBarCCEventRateOsc_FastMC->Sumw2();   
+   fhNuECCEventRateOsc_FastMC->Sumw2();   
+   fhNuEBarCCEventRateOsc_FastMC->Sumw2();   
+   fhNuTauCCEventRateOsc_FastMC->Sumw2();   
+   fhNuTauBarCCEventRateOsc_FastMC->Sumw2();   
+   fhNuMuNCEventRateOsc_FastMC->Sumw2();   
+   fhNuMuBarNCEventRateOsc_FastMC->Sumw2();   
+   fhNuENCEventRateOsc_FastMC->Sumw2();   
+   fhNuEBarNCEventRateOsc_FastMC->Sumw2();   
+   fhNuTauNCEventRateOsc_FastMC->Sumw2();   
+   fhNuTauBarNCEventRateOsc_FastMC->Sumw2();   
+
+
    //
-   //Note: the units are per GeV ONLY if you divide the weight by the binwidth, when filling, see below
-   //It is a good idea to ALWAYS make the units /GeV. Then when different people have different binning
-   // you can still compare the Y-axis this also goes for using 1e12 as your reference pot.
+   // Set histogram titles
+   //
+
    std::string fluxtitle      = "Neutrinos / GeV / m^{2} / POT";
+   std::string oscfluxtitle      = "Oscillated Neutrinos / GeV / m^{2} / POT";
    std::string cceventratetitle      = "CC Events / POT";
    std::string nceventratetitle      = "CC Events / POT";
 
-   SetTitles(fhNuMuFlux,         "#nu_{#mu} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuMuBarFlux,      "#bar{#nu}_{#mu} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuEFlux,          "#nu_{e} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuEBarFlux,       "#bar{#nu}_{e} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuTauFlux,          "#nu_{tau} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuTauBarFlux,       "#bar{#nu}_{#tau} Energy (GeV)", fluxtitle);
+   SetTitles(fhNuMuFlux,         "#nu_{#mu} Energy (GeV) Energy (GeV)", "Unosc #nu_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuMuBarFlux,      "#bar{#nu}_{#mu} Energy (GeV)", "Unosc #bar{#nu}_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuEFlux,          "#nu_{e} Energy (GeV)", "Unosc #nu_{e}s / GeV / m^{2} / POT");
+   SetTitles(fhNuEBarFlux,       "#bar{#nu}_{e} Energy (GeV)", "Unosc #bar{#nu}_{e}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauFlux,          "#nu_{tau} Energy (GeV)", "Unosc #nu_{#tau}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauBarFlux,       "#bar{#nu}_{#tau} Energy (GeV)", "Unosc #bar{#nu}_{#tau}s / GeV / m^{2} / POT");
 
-   SetTitles(fhNuMuFlux_FastMC,         "#nu_{#mu} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuMuBarFlux_FastMC,      "#bar{#nu}_{#mu} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuEFlux_FastMC,          "#nu_{e} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuEBarFlux_FastMC,       "#bar{#nu}_{e} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuTauFlux_FastMC,          "#nu_{tau} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuTauBarFlux_FastMC,       "#bar{#nu}_{#tau} Energy (GeV)", fluxtitle);
+   SetTitles(fhNuMuFlux_FastMC,         "#nu_{#mu} Energy (GeV) Energy (GeV)", "Unosc #nu_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuMuBarFlux_FastMC,      "#bar{#nu}_{#mu} Energy (GeV)", "Unosc #bar{#nu}_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuEFlux_FastMC,          "#nu_{e} Energy (GeV)", "Unosc #nu_{e}s / GeV / m^{2} / POT");
+   SetTitles(fhNuEBarFlux_FastMC,       "#bar{#nu}_{e} Energy (GeV)", "Unosc #bar{#nu}_{e}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauFlux_FastMC,          "#nu_{tau} Energy (GeV)", "Unosc #nu_{#tau}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauBarFlux_FastMC,       "#bar{#nu}_{#tau} Energy (GeV)", "Unosc #bar{#nu}_{#tau}s / GeV / m^{2} / POT");
 
-   SetTitles(fhNuMuCCEventRate,         "#nu_{#mu} Energy (GeV)", "#nu_{#mu} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuMuBarCCEventRate,      "#bar{#nu}_{#mu} Energy (GeV)", "#bar{#nu}_{#mu} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuECCEventRate,          "#nu_{e} Energy (GeV)", "#nu_{e} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuEBarCCEventRate,       "#bar{#nu}_{e} Energy (GeV)", "#bar{#nu}_{e} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuTauCCEventRate,          "#nu_{#tau} Energy (GeV)", "#nu_{#tau} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuTauBarCCEventRate,       "#bar{#nu}_{#tau} Energy (GeV)", "#bar{#nu}_{#tau} CC Events / GeV / kTon /  POT");
+   SetTitles(fhNuMuFlux_Globes,         "#nu_{#mu} Energy (GeV)", "Unosc #nu_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuMuBarFlux_Globes,      "#bar{#nu}_{#mu} Energy (GeV)", "Unosc #bar{#nu}_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuEFlux_Globes,          "#nu_{e} Energy (GeV)", "Unosc #nu_{e}s / GeV / m^{2} / POT");
+   SetTitles(fhNuEBarFlux_Globes,       "#bar{#nu}_{e} Energy (GeV)", "Unosc #bar{#nu}_{e}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauFlux_Globes,          "#nu_{tau} Energy (GeV)", "Unosc #nu_{#tau}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauBarFlux_Globes,       "#bar{#nu}_{#tau} Energy (GeV)", "Unosc #bar{#nu}_{#tau}s / GeV / m^{2} / POT");
 
-   SetTitles(fhNuMuCCEventRate_FastMC,         "#nu_{#mu} Energy (GeV)", "#nu_{#mu} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuMuBarCCEventRate_FastMC,      "#bar{#nu}_{#mu} Energy (GeV)", "#bar{#nu}_{#mu} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuECCEventRate_FastMC,          "#nu_{e} Energy (GeV)", "#nu_{e} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuEBarCCEventRate_FastMC,       "#bar{#nu}_{e} Energy (GeV)", "#bar{#nu}_{e} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuTauCCEventRate_FastMC,          "#nu_{#tau} Energy (GeV)", "#nu_{#tau} CC Events / GeV / kTon / POT");
-   SetTitles(fhNuTauBarCCEventRate_FastMC,       "#bar{#nu}_{#tau} Energy (GeV)", "#bar{#nu}_{#tau} CC Events / GeV / kTon /  POT");
+   SetTitles(fhNuMuFluxOsc,         "Energy (GeV)", "Oscillated #nu_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuMuBarFluxOsc,      "Energy (GeV)", "Oscillated #bar{#nu}_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuEFluxOsc,          "Energy (GeV)", "Oscillated #nu_{e}s / GeV / m^{2} / POT");
+   SetTitles(fhNuEBarFluxOsc,       "Energy (GeV)", "Oscillated #bar{#nu}_{e}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauFluxOsc,          "Energy (GeV)", "Oscillated #nu_{#tau}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauBarFluxOsc,       "Energy (GeV)", "Oscillated #bar{#nu}_{#tau}s / GeV / m^{2} / POT");
 
-   SetTitles(fhNuMuNCEventRate,         "#nu_{#mu} Energy (GeV)", "#nu_{#mu} NC Events / GeV / kTon / POT");
-   SetTitles(fhNuMuBarNCEventRate,      "#bar{#nu}_{#mu} Energy (GeV)","#bar{#nu}_{#mu} NC Events / GeV / kTon / POT");
-   SetTitles(fhNuENCEventRate,          "#nu_{e} Energy (GeV)", "#nu_{e} NC Events / GeV / kTon / POT");
-   SetTitles(fhNuEBarNCEventRate,       "#bar{#nu}_{e} Energy (GeV)", "#bar{#nu}_{e} NC Events / GeV / kTon / POT");
-   SetTitles(fhNuTauNCEventRate,          "#nu_{#tau} Energy (GeV)", "#nu_{#tau} NC Events / GeV / kTon / POT");
-   SetTitles(fhNuTauBarNCEventRate,       "#bar{#nu}_{#tau} Energy (GeV)", "#bar{#nu}_{#tau} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuMuFluxOsc_FastMC,         "Energy (GeV)", "Oscillated #nu_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuMuBarFluxOsc_FastMC,      "Energy (GeV)", "Oscillated #bar{#nu}_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuEFluxOsc_FastMC,          "Energy (GeV)", "Oscillated #nu_{e}s / GeV / m^{2} / POT");
+   SetTitles(fhNuEBarFluxOsc_FastMC,       "Energy (GeV)", "Oscillated #bar{#nu}_{e}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauFluxOsc_FastMC,          "Energy (GeV)", "Oscillated #nu_{#tau}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauBarFluxOsc_FastMC,       "Energy (GeV)", "Oscillated #bar{#nu}_{#tau}s / GeV / m^{2} / POT");
 
-   SetTitles(fhNuMuNCEventRate_FastMC,         "#nu_{#mu} Energy (GeV)", "#nu_{#mu} NC Events / GeV / kTon / POT");
+
+   SetTitles(fhNuMuCCEventRate,         "Energy (GeV)", "#nu_{#mu} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuMuBarCCEventRate,      "Energy (GeV)", "#bar{#nu}_{#mu} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuECCEventRate,          "Energy (GeV)", "#nu_{e} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuEBarCCEventRate,       "Energy (GeV)", "#bar{#nu}_{e} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauCCEventRate,          "Energy (GeV)", "#nu_{#tau} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauBarCCEventRate,       "Energy (GeV)", "#bar{#nu}_{#tau} CC Events / GeV / kTon /  POT");
+
+   SetTitles(fhNuMuCCEventRate_FastMC,         "Energy (GeV)", "#nu_{#mu} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuMuBarCCEventRate_FastMC,      "Energy (GeV)", "#bar{#nu}_{#mu} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuECCEventRate_FastMC,          "Energy (GeV)", "#nu_{e} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuEBarCCEventRate_FastMC,       "Energy (GeV)", "#bar{#nu}_{e} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauCCEventRate_FastMC,          "Energy (GeV)", "#nu_{#tau} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauBarCCEventRate_FastMC,       "Energy (GeV)", "#bar{#nu}_{#tau} CC Events / GeV / kTon /  POT");
+
+   SetTitles(fhNuMuCCEventRateOsc,         "Energy (GeV)", "Oscillated #nu_{#mu} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuMuBarCCEventRateOsc,      "Energy (GeV)", "Oscillated #bar{#nu}_{#mu} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuECCEventRateOsc,          "Energy (GeV)", "Oscillated #nu_{e} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuEBarCCEventRateOsc,       "Energy (GeV)", "Oscillated #bar{#nu}_{e} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauCCEventRateOsc,          "Energy (GeV)", "Oscillated #nu_{#tau} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauBarCCEventRateOsc,       "Energy (GeV)", "Oscillated #bar{#nu}_{#tau} CC Events / GeV / kTon /  POT");
+
+   SetTitles(fhNuMuCCEventRateOsc_FastMC,         "Energy (GeV)", "Oscillated #nu_{#mu} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuMuBarCCEventRateOsc_FastMC,      "Energy (GeV)", "Oscillated #bar{#nu}_{#mu} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuECCEventRateOsc_FastMC,          "Energy (GeV)", "Oscillated #nu_{e} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuEBarCCEventRateOsc_FastMC,       "Energy (GeV)", "Oscillated #bar{#nu}_{e} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauCCEventRateOsc_FastMC,          "Energy (GeV)", "Oscillated #nu_{#tau} CC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauBarCCEventRateOsc_FastMC,       "Energy (GeV)", "Oscillated #bar{#nu}_{#tau} CC Events / GeV / kTon /  POT");
+
+
+   SetTitles(fhNuMuNCEventRate,         "Energy (GeV)", "#nu_{#mu} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuMuBarNCEventRate,      "Energy (GeV)","#bar{#nu}_{#mu} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuENCEventRate,          "Energy (GeV)", "#nu_{e} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuEBarNCEventRate,       "Energy (GeV)", "#bar{#nu}_{e} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauNCEventRate,          "Energy (GeV)", "#nu_{#tau} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauBarNCEventRate,       "Energy (GeV)", "#bar{#nu}_{#tau} NC Events / GeV / kTon / POT");
+
+   SetTitles(fhNuMuNCEventRate_FastMC,         "Energy (GeV)", "#nu_{#mu} NC Events / GeV / kTon / POT");
    SetTitles(fhNuMuBarNCEventRate_FastMC,      "#bar{#nu}_{#mu} Energy (GeV)","#bar{#nu}_{#mu} NC Events / GeV / kTon / POT");
    SetTitles(fhNuENCEventRate_FastMC,          "#nu_{e} Energy (GeV)", "#nu_{e} NC Events / GeV / kTon / POT");
    SetTitles(fhNuEBarNCEventRate_FastMC,       "#bar{#nu}_{e} Energy (GeV)", "#bar{#nu}_{e} NC Events / GeV / kTon / POT");
    SetTitles(fhNuTauNCEventRate_FastMC,          "#nu_{#tau} Energy (GeV)", "#nu_{#tau} NC Events / GeV / kTon / POT");
    SetTitles(fhNuTauBarNCEventRate_FastMC,       "#bar{#nu}_{#tau} Energy (GeV)", "#bar{#nu}_{#tau} NC Events / GeV / kTon / POT");
 
-   //
-   //start loop
-   //
-   Long64_t nentries = fChain->GetEntries();
-   std::cout << "Total number of Entries = " << nentries << std::endl;
+   SetTitles(fhNuMuNCEventRateOsc,         "#nu_{#mu} Energy (GeV)", "Oscillated #nu_{#mu} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuMuBarNCEventRateOsc,      "#bar{#nu}_{#mu} Energy (GeV)","Oscillated #bar{#nu}_{#mu} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuENCEventRateOsc,          "#nu_{e} Energy (GeV)", "Oscillated #nu_{e} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuEBarNCEventRateOsc,       "#bar{#nu}_{e} Energy (GeV)", "Oscillated #bar{#nu}_{e} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauNCEventRateOsc,          "#nu_{#tau} Energy (GeV)", "Oscillated #nu_{#tau} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauBarNCEventRateOsc,       "#bar{#nu}_{#tau} Energy (GeV)", "Oscillated #bar{#nu}_{#tau} NC Events / GeV / kTon / POT");
 
-   
+   SetTitles(fhNuMuNCEventRateOsc_FastMC,         "#nu_{#mu} Energy (GeV)", "Oscillated #nu_{#mu} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuMuBarNCEventRateOsc_FastMC,      "#bar{#nu}_{#mu} Energy (GeV)","Oscillated #bar{#nu}_{#mu} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuENCEventRateOsc_FastMC,          "#nu_{e} Energy (GeV)", "Oscillated #nu_{e} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuEBarNCEventRateOsc_FastMC,       "#bar{#nu}_{e} Energy (GeV)", "Oscillated #bar{#nu}_{e} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauNCEventRateOsc_FastMC,          "#nu_{#tau} Energy (GeV)", "Oscillated #nu_{#tau} NC Events / GeV / kTon / POT");
+   SetTitles(fhNuTauBarNCEventRateOsc_FastMC,       "#bar{#nu}_{#tau} Energy (GeV)", "Oscillated #bar{#nu}_{#tau} NC Events / GeV / kTon / POT");
+
+   //
+   //start loop over entries in ntuple
+   //
+
+   Long64_t nentries = fChain->GetEntries();
+   std::cout << "Total number of Entries = " << nentries << std::endl;   
 
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) 
+   //for (Long64_t jentry=0; jentry<1000;jentry++) //fast -- for testing
    {
       Long64_t ientry = LoadTree(jentry);
-      if (ientry < 0) break;
       nb = fChain->GetEntry(jentry);   nbytes += nb;
+      if (ientry < 0) break;
 
       ++iread;
       
-      if(iread % 100 == 0)
+      if(iread % 10000 == 0)
       {
 	 std::cout << "Reading Entry " << iread << std::endl;
       }
 
 
       //
-      // compute the flux at any detector location by
-      // specifying the detector coordinates and computing the
-      // detector weight for that location
-      //
-      //Call the reweighting function and give it the x, y and z coords
-      //of your detector location in cm with respect to the MC origin.
-      //For example the... 
-      // MINERVA Coords are (x,y,z)              = (0.0, 0.0, 103099.0) cm.
-      // MINOS Near Detector COORDS are  (x,y,z) = (0.0, 0.0, 103649.0) cm.
-      // MINOS Far  Detector COORDS are  (x,y,z) = (0.0, 0.0, 73534000.0) cm.
-      // NOVA  Far  Detector COORDS are  (x,y,z) = (1104000.0, -420000.0, 81045000.0)
-      // should confirm with nova the coords, these are pretty old numbers.
-      //
-      // LBNE  Far Detector COORDS are   (x,y,z) = (0.0, 0.0, 129700000.0) cm.
-      //                        
-
-      //
-      //note that these coords are the location of the MINOS ND 
-      //(almost, these are more up-to-date coords)
-      //So you can compare the MINOSND plots and the 
-      // PLOTS and they should be nearly identical
-      //this is a good check that the code works properly
+      // Compute the detector location weight
+      // This calculation needs to know the coordinates
+      // of the detector where you want to plot the flux
+      // which is set by the eventRates constructor 
       //
 
       double nuenergyatsomedet     = -999.0;
@@ -302,29 +470,24 @@ void eventRates::Loop()
       detvec.push_back(dety);
       detvec.push_back(detz);
 
-      //this function computes the dectector weight and neutrino energy at detx,y,z
+      //this function computes the location weight and neutrino energy at detx,y,z
       eventRates::GetWeight(detvec, detectorwghtatsomedet, nuenergyatsomedet);
+      
+      // Calculate the total weight, including location weight, importance weight
+      // and POT scale factor
 
-      //
-      //Note that for off-axis locations this function, eventRates::GetWeight, 
-      //becomes more and more of
-      //an approximation, this is because this function determines the weight
-      //at one point in space and normalizes to a fidicuial volume of 1 meter
-      //in radius around the beam axis. This works fine for on axis detectors
-      //because the flux within a cross section of 1 meter around the beam axis
-      //is reasonably flat as a function of neutrino energy
-      //However the farther off axis the detector the more the flux varies 
-      //across the cross sectional area of the detector
-      //
-
-      //Nimpwt is the same no matter what detector you are referring to
       double fluxwghtsomedet = (detectorwghtatsomedet*Nimpwt/3.1415)*(refpot/fTotalPOT);
+
+      // Multiply flux weights by cross sections to get event rate weights
 
       std::string current_string = "CC";
       double cceventratewghtsomedet       = fluxwghtsomedet * GetXSec((double)Ntype,(double)NenergyN[0],current_string);
 
       current_string = "NC";
       double nceventratewghtsomedet       = fluxwghtsomedet * GetXSec(Ntype,NenergyN[0],current_string);
+
+      // Get Oscillated Flavor 
+      int Ntype_osc = GetOscillatedNeutrinoType(nuenergyatsomedet);
 
       ///
       //Now fill the histograms
@@ -339,6 +502,7 @@ void eventRates::Loop()
 	 fhNuMuFlux_FastMC -> Fill(nuenergyatsomedet, fluxwghtsomedet);
 	 fhNuMuCCEventRate_FastMC -> Fill(nuenergyatsomedet, cceventratewghtsomedet);
 	 fhNuMuNCEventRate_FastMC -> Fill(nuenergyatsomedet, nceventratewghtsomedet);
+	 fhNuMuFlux_Globes-> Fill(nuenergyatsomedet, fluxwghtsomedet);
       }
       if(Ntype == 55)
       {
@@ -349,6 +513,7 @@ void eventRates::Loop()
 	 fhNuMuBarFlux_FastMC -> Fill(nuenergyatsomedet, fluxwghtsomedet);
 	 fhNuMuBarCCEventRate_FastMC -> Fill(nuenergyatsomedet, cceventratewghtsomedet);
 	 fhNuMuBarNCEventRate_FastMC -> Fill(nuenergyatsomedet, nceventratewghtsomedet);
+	 fhNuMuBarFlux_Globes-> Fill(nuenergyatsomedet, fluxwghtsomedet);
       }
       if(Ntype == 53)
       {
@@ -359,6 +524,7 @@ void eventRates::Loop()
 	 fhNuEFlux_FastMC -> Fill(nuenergyatsomedet, fluxwghtsomedet);
 	 fhNuECCEventRate_FastMC -> Fill(nuenergyatsomedet, cceventratewghtsomedet);
 	 fhNuENCEventRate_FastMC -> Fill(nuenergyatsomedet, nceventratewghtsomedet);
+	 fhNuEFlux_Globes-> Fill(nuenergyatsomedet, fluxwghtsomedet);
       }
       if(Ntype == 52)
       {
@@ -369,6 +535,7 @@ void eventRates::Loop()
 	 fhNuEBarFlux_FastMC -> Fill(nuenergyatsomedet, fluxwghtsomedet);
 	 fhNuEBarCCEventRate_FastMC -> Fill(nuenergyatsomedet, cceventratewghtsomedet);
 	 fhNuEBarNCEventRate_FastMC -> Fill(nuenergyatsomedet, nceventratewghtsomedet);
+	 fhNuEBarFlux_Globes-> Fill(nuenergyatsomedet, fluxwghtsomedet);
       }
       
       if(Ntype == 58)
@@ -380,6 +547,7 @@ void eventRates::Loop()
 	 fhNuTauFlux_FastMC -> Fill(nuenergyatsomedet, fluxwghtsomedet);
 	 fhNuTauCCEventRate_FastMC -> Fill(nuenergyatsomedet, cceventratewghtsomedet);
 	 fhNuTauNCEventRate_FastMC -> Fill(nuenergyatsomedet, nceventratewghtsomedet);
+	 fhNuTauFlux_Globes-> Fill(nuenergyatsomedet, fluxwghtsomedet);
       }
       if(Ntype == 59)
       {
@@ -390,10 +558,70 @@ void eventRates::Loop()
 	 fhNuTauBarFlux_FastMC -> Fill(nuenergyatsomedet, fluxwghtsomedet);
 	 fhNuTauBarCCEventRate_FastMC -> Fill(nuenergyatsomedet, cceventratewghtsomedet);
 	 fhNuTauBarNCEventRate_FastMC -> Fill(nuenergyatsomedet, nceventratewghtsomedet);
+	 fhNuTauBarFlux_Globes-> Fill(nuenergyatsomedet, fluxwghtsomedet);
+      }
+
+      if(Ntype_osc == 56)
+      {
+	 fhNuMuFluxOsc -> Fill(nuenergyatsomedet, fluxwghtsomedet);
+	 fhNuMuCCEventRateOsc -> Fill(nuenergyatsomedet, cceventratewghtsomedet);
+	 fhNuMuNCEventRateOsc -> Fill(nuenergyatsomedet, nceventratewghtsomedet);
+	 fhNuMuFluxOsc_FastMC -> Fill(nuenergyatsomedet, fluxwghtsomedet);
+	 fhNuMuCCEventRateOsc_FastMC -> Fill(nuenergyatsomedet, cceventratewghtsomedet);
+	 fhNuMuNCEventRateOsc_FastMC -> Fill(nuenergyatsomedet, nceventratewghtsomedet);
+      }
+      if(Ntype_osc == 55)
+      {
+	 fhNuMuBarFluxOsc -> Fill(nuenergyatsomedet, fluxwghtsomedet);
+	 fhNuMuBarCCEventRateOsc -> Fill(nuenergyatsomedet, cceventratewghtsomedet);
+	 fhNuMuBarNCEventRateOsc -> Fill(nuenergyatsomedet, nceventratewghtsomedet);
+	 fhNuMuBarFluxOsc_FastMC -> Fill(nuenergyatsomedet, fluxwghtsomedet);
+	 fhNuMuBarCCEventRateOsc_FastMC -> Fill(nuenergyatsomedet, cceventratewghtsomedet);
+	 fhNuMuBarNCEventRateOsc_FastMC -> Fill(nuenergyatsomedet, nceventratewghtsomedet);
+
+      }
+      if(Ntype_osc == 53)
+      {
+	 fhNuEFluxOsc -> Fill(nuenergyatsomedet, fluxwghtsomedet);
+	 fhNuECCEventRateOsc -> Fill(nuenergyatsomedet, cceventratewghtsomedet);
+	 fhNuENCEventRateOsc -> Fill(nuenergyatsomedet, nceventratewghtsomedet);
+	 fhNuEFluxOsc_FastMC -> Fill(nuenergyatsomedet, fluxwghtsomedet);
+	 fhNuECCEventRateOsc_FastMC -> Fill(nuenergyatsomedet, cceventratewghtsomedet);
+	 fhNuENCEventRateOsc_FastMC -> Fill(nuenergyatsomedet, nceventratewghtsomedet);
+      }
+      if(Ntype_osc == 52)
+      {
+	 fhNuEBarFluxOsc -> Fill(nuenergyatsomedet, fluxwghtsomedet);
+	 fhNuEBarCCEventRateOsc -> Fill(nuenergyatsomedet, cceventratewghtsomedet);
+	 fhNuEBarNCEventRateOsc -> Fill(nuenergyatsomedet, nceventratewghtsomedet);
+	 fhNuEBarFluxOsc_FastMC -> Fill(nuenergyatsomedet, fluxwghtsomedet);
+	 fhNuEBarCCEventRateOsc_FastMC -> Fill(nuenergyatsomedet, cceventratewghtsomedet);
+	 fhNuEBarNCEventRateOsc_FastMC -> Fill(nuenergyatsomedet, nceventratewghtsomedet);
+
+      }
+      
+      if(Ntype_osc == 58)
+      {
+	 fhNuTauFluxOsc -> Fill(nuenergyatsomedet, fluxwghtsomedet);
+	 fhNuTauCCEventRateOsc -> Fill(nuenergyatsomedet, cceventratewghtsomedet);
+	 fhNuTauNCEventRateOsc -> Fill(nuenergyatsomedet, nceventratewghtsomedet);
+	 fhNuTauFluxOsc_FastMC -> Fill(nuenergyatsomedet, fluxwghtsomedet);
+	 fhNuTauCCEventRateOsc_FastMC -> Fill(nuenergyatsomedet, cceventratewghtsomedet);
+	 fhNuTauNCEventRateOsc_FastMC -> Fill(nuenergyatsomedet, nceventratewghtsomedet);
+
+      }
+      if(Ntype_osc == 59)
+      {
+	 fhNuTauBarFluxOsc -> Fill(nuenergyatsomedet, fluxwghtsomedet);
+	 fhNuTauBarCCEventRateOsc -> Fill(nuenergyatsomedet, cceventratewghtsomedet);
+	 fhNuTauBarNCEventRateOsc -> Fill(nuenergyatsomedet, nceventratewghtsomedet);
+	 fhNuTauBarFluxOsc_FastMC -> Fill(nuenergyatsomedet, fluxwghtsomedet);
+	 fhNuTauBarCCEventRateOsc_FastMC -> Fill(nuenergyatsomedet, cceventratewghtsomedet);
+	 fhNuTauBarNCEventRateOsc_FastMC -> Fill(nuenergyatsomedet, nceventratewghtsomedet);
       }
    }//end loop over entries
 
-   // normalize by bin width
+   // normalize by bin width for plots but not for fastmc
    fhNuMuFlux->Scale(1.0,"width");
    fhNuMuCCEventRate->Scale(1.0,"width");
    fhNuMuNCEventRate->Scale(1.0,"width");
@@ -418,55 +646,41 @@ void eventRates::Loop()
    fhNuTauBarCCEventRate->Scale(1.0,"width");
    fhNuTauBarNCEventRate->Scale(1.0,"width");
 
-   //fhNuMuFlux_FastMC->Scale(1.0,"width");
-   //fhNuMuCCEventRate_FastMC->Scale(1.0,"width");
-   //fhNuMuNCEventRate_FastMC->Scale(1.0,"width");
+   fhNuMuFluxOsc->Scale(1.0,"width");
+   fhNuMuCCEventRateOsc->Scale(1.0,"width");
+   fhNuMuNCEventRateOsc->Scale(1.0,"width");
 
-   //fhNuMuBarFlux_FastMC->Scale(1.0,"width");
-   //fhNuMuBarCCEventRate_FastMC->Scale(1.0,"width");
-   //fhNuMuBarNCEventRate_FastMC->Scale(1.0,"width");
+   fhNuMuBarFluxOsc->Scale(1.0,"width");
+   fhNuMuBarCCEventRateOsc->Scale(1.0,"width");
+   fhNuMuBarNCEventRateOsc->Scale(1.0,"width");
 
-   //fhNuEFlux_FastMC->Scale(1.0,"width");
-   //fhNuECCEventRate_FastMC->Scale(1.0,"width");
-   //fhNuENCEventRate_FastMC->Scale(1.0,"width");
+   fhNuEFluxOsc->Scale(1.0,"width");
+   fhNuECCEventRateOsc->Scale(1.0,"width");
+   fhNuENCEventRateOsc->Scale(1.0,"width");
 
-   //fhNuEBarFlux_FastMC->Scale(1.0,"width");
-   //fhNuEBarCCEventRate_FastMC->Scale(1.0,"width");
-   //fhNuEBarNCEventRate_FastMC->Scale(1.0,"width");
+   fhNuEBarFluxOsc->Scale(1.0,"width");
+   fhNuEBarCCEventRateOsc->Scale(1.0,"width");
+   fhNuEBarNCEventRateOsc->Scale(1.0,"width");
 
-   //fhNuTauFlux_FastMC->Scale(1.0,"width");
-   //fhNuTauCCEventRate_FastMC->Scale(1.0,"width");
-   //fhNuTauNCEventRate_FastMC->Scale(1.0,"width");
+   fhNuTauFluxOsc->Scale(1.0,"width");
+   fhNuTauCCEventRateOsc->Scale(1.0,"width");
+   fhNuTauNCEventRateOsc->Scale(1.0,"width");
 
-   //fhNuTauBarFlux_FastMC->Scale(1.0,"width");
-   //fhNuTauBarCCEventRate_FastMC->Scale(1.0,"width");
-   //fhNuTauBarNCEventRate_FastMC->Scale(1.0,"width");
+   fhNuTauBarFluxOsc->Scale(1.0,"width");
+   fhNuTauBarCCEventRateOsc->Scale(1.0,"width");
+   fhNuTauBarNCEventRateOsc->Scale(1.0,"width");
+
+   fhNuMuFlux_Globes->Scale(1.0,"width");
+   fhNuMuBarFlux_Globes->Scale(1.0,"width");
+   fhNuEFlux_Globes->Scale(1.0,"width");
+   fhNuEBarFlux_Globes->Scale(1.0,"width");
+   fhNuTauFlux_Globes->Scale(1.0,"width");
+   fhNuTauBarFlux_Globes->Scale(1.0,"width");
 
    //
-   //draw and save histograms
+   // Style histograms
    //
 
-   TCanvas *c1 = new TCanvas("c1","Canvas 1",1);
-   TCanvas *c2 = new TCanvas("c2","Canvas 2",1);
-   TCanvas *c3 = new TCanvas("c3","Canvas 3",1);
-   TCanvas *c4 = new TCanvas("c4","Canvas 4",1);
-   TCanvas *c5 = new TCanvas("c5","Canvas 5",1);
-
-   TCanvas *c6 = new TCanvas("c6","Canvas 6",1);
-   TCanvas *c7 = new TCanvas("c7","Canvas 7",1);
-   TCanvas *c8 = new TCanvas("c8","Canvas 8",1);
-   TCanvas *c9 = new TCanvas("c9","Canvas 9",1);
-   TCanvas *c10 = new TCanvas("c10","Canvas 10",1);
-   TCanvas *c11 = new TCanvas("c11","Canvas 11",1);
-   TCanvas *c12 = new TCanvas("c12","Canvas 12",1);
-   TCanvas *c13 = new TCanvas("c13","Canvas 13",1);
-   TCanvas *c14 = new TCanvas("c14","Canvas 14",1);
-   TCanvas *c15 = new TCanvas("c15","Canvas 15",1);
-   TCanvas *c16 = new TCanvas("c16","Canvas 16",1);
-   TCanvas *c17 = new TCanvas("c17","Canvas 17",1);
-   TCanvas *c18 = new TCanvas("c18","Canvas 18",1);
-
-   // Style
    TGaxis::SetMaxDigits(2);
    fhNuMuFlux_FastMC->GetYaxis()->SetTitleOffset(1.4);
    fhNuMuBarFlux_FastMC->GetYaxis()->SetTitleOffset(1.4);
@@ -489,139 +703,11 @@ void eventRates::Loop()
    fhNuTauNCEventRate_FastMC->GetYaxis()->SetTitleOffset(1.4);
    fhNuTauBarNCEventRate_FastMC->GetYaxis()->SetTitleOffset(1.4);
 
-   //drawing histograms
-   //
-   {
-     ffilename = ffilename + "_" + detectorname;
-      
-     c1->cd();
-     fhNuMuFlux->Draw();
-     std::string cpath1 = ffilename + "_" + fhNuMuFlux->GetName() + ".eps";
-     std::string cpath2 = ffilename + "_" + fhNuMuFlux->GetName() + ".png";
-     c1->SaveAs(cpath1.c_str());
-     c1->SaveAs(cpath2.c_str());
-
-     c2->cd();
-     fhNuMuBarFlux->Draw();
-     cpath1 = ffilename + "_" + fhNuMuBarFlux->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuMuBarFlux->GetName() + ".png";
-     c2->SaveAs(cpath1.c_str());
-     c2->SaveAs(cpath2.c_str());
-
-     c3->cd();
-     fhNuEFlux->Draw();
-     cpath1 = ffilename + "_" + fhNuEFlux->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuEFlux->GetName() + ".png";
-     c3->SaveAs(cpath1.c_str());
-     c3->SaveAs(cpath2.c_str());
+   // save histograms to file
+   ffilename = ffilename + "_" + detectorname;
      
-     c4->cd();
-     fhNuEBarFlux->Draw();
-     cpath1 = ffilename + "_" + fhNuEBarFlux->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuEBarFlux->GetName() + ".png";
-     c4->SaveAs(cpath1.c_str());
-     c4->SaveAs(cpath2.c_str());      
 
-     c5->cd();
-     fhNuTauFlux->Draw();
-     cpath1 = ffilename + "_" + fhNuTauFlux->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuTauFlux->GetName() + ".png";
-     c5->SaveAs(cpath1.c_str());
-     c5->SaveAs(cpath2.c_str());
-     
-     c6->cd();
-     fhNuTauBarFlux->Draw();
-     cpath1 = ffilename + "_" + fhNuTauBarFlux->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuTauBarFlux->GetName() + ".png";
-     c6->SaveAs(cpath1.c_str());
-     c6->SaveAs(cpath2.c_str());      
-
-     c7->cd();
-     fhNuMuCCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuMuCCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuMuCCEventRate->GetName() + ".png";
-     c7->SaveAs(cpath1.c_str());
-     c7->SaveAs(cpath2.c_str());
-
-     c8->cd();
-     fhNuMuBarCCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuMuBarCCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuMuBarCCEventRate->GetName() + ".png";
-     c8->SaveAs(cpath1.c_str());
-     c8->SaveAs(cpath2.c_str());
-
-     c9->cd();
-     fhNuECCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuECCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuECCEventRate->GetName() + ".png";
-     c9->SaveAs(cpath1.c_str());
-     c9->SaveAs(cpath2.c_str());
-     
-     c10->cd();
-     fhNuEBarCCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuEBarCCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuEBarCCEventRate->GetName() + ".png";
-     c10->SaveAs(cpath1.c_str());
-     c10->SaveAs(cpath2.c_str());      
-
-     c11->cd();
-     fhNuTauCCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuTauCCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuTauCCEventRate->GetName() + ".png";
-     c11->SaveAs(cpath1.c_str());
-     c11->SaveAs(cpath2.c_str());
-     
-     c12->cd();
-     fhNuTauBarCCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuTauBarCCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuTauBarCCEventRate->GetName() + ".png";
-     c12->SaveAs(cpath1.c_str());
-     c12->SaveAs(cpath2.c_str());      
-
-     c13->cd();
-     fhNuMuNCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuMuNCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuMuNCEventRate->GetName() + ".png";
-     c13->SaveAs(cpath1.c_str());
-     c13->SaveAs(cpath2.c_str());
-
-     c14->cd();
-     fhNuMuBarNCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuMuBarNCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuMuBarNCEventRate->GetName() + ".png";
-     c14->SaveAs(cpath1.c_str());
-     c14->SaveAs(cpath2.c_str());
-
-     c15->cd();
-     fhNuENCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuENCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuENCEventRate->GetName() + ".png";
-     c15->SaveAs(cpath1.c_str());
-     c15->SaveAs(cpath2.c_str());
-     
-     c16->cd();
-     fhNuEBarNCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuEBarNCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuEBarNCEventRate->GetName() + ".png";
-     c16->SaveAs(cpath1.c_str());
-     c16->SaveAs(cpath2.c_str());      
-
-     c17->cd();
-     fhNuTauNCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuTauNCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuTauNCEventRate->GetName() + ".png";
-     c17->SaveAs(cpath1.c_str());
-     c17->SaveAs(cpath2.c_str());
-     
-     c18->cd();
-     fhNuTauBarNCEventRate->Draw();
-     cpath1 = ffilename + "_" + fhNuTauBarNCEventRate->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuTauBarNCEventRate->GetName() + ".png";
-     c18->SaveAs(cpath1.c_str());
-     c18->SaveAs(cpath2.c_str());      
-   }
-
-// Save histograms to a root file
+   // Save histograms to a root file
    TFile f((ffilename+".root").c_str(),"recreate");
    fhNuMuFlux->Write();
    fhNuMuBarFlux->Write();
@@ -641,6 +727,24 @@ void eventRates::Loop()
    fhNuEBarNCEventRate->Write();
    fhNuTauNCEventRate->Write();
    fhNuTauBarNCEventRate->Write();
+   fhNuMuFluxOsc->Write();
+   fhNuMuBarFluxOsc->Write();
+   fhNuEFluxOsc->Write();
+   fhNuEBarFluxOsc->Write();
+   fhNuTauFluxOsc->Write();
+   fhNuTauBarFluxOsc->Write();
+   fhNuMuCCEventRateOsc->Write();
+   fhNuMuBarCCEventRateOsc->Write();
+   fhNuECCEventRateOsc->Write();
+   fhNuEBarCCEventRateOsc->Write();
+   fhNuTauCCEventRateOsc->Write();
+   fhNuTauBarCCEventRateOsc->Write();
+   fhNuMuNCEventRateOsc->Write();
+   fhNuMuBarNCEventRateOsc->Write();
+   fhNuENCEventRateOsc->Write();
+   fhNuEBarNCEventRateOsc->Write();
+   fhNuTauNCEventRateOsc->Write();
+   fhNuTauBarNCEventRateOsc->Write();
    f.Close();
 
    TFile g((ffilename+"_fastmc.root").c_str(),"recreate");
@@ -662,8 +766,40 @@ void eventRates::Loop()
    fhNuEBarNCEventRate_FastMC->Write();
    fhNuTauNCEventRate_FastMC->Write();
    fhNuTauBarNCEventRate_FastMC->Write();
+
+   fhNuMuFluxOsc_FastMC->Write();
+   fhNuMuBarFluxOsc_FastMC->Write();
+   fhNuEFluxOsc_FastMC->Write();
+   fhNuEBarFluxOsc_FastMC->Write();
+   fhNuTauFluxOsc_FastMC->Write();
+   fhNuTauBarFluxOsc_FastMC->Write();
+   fhNuMuCCEventRateOsc_FastMC->Write();
+   fhNuMuBarCCEventRateOsc_FastMC->Write();
+   fhNuECCEventRateOsc_FastMC->Write();
+   fhNuEBarCCEventRateOsc_FastMC->Write();
+   fhNuTauCCEventRateOsc_FastMC->Write();
+   fhNuTauBarCCEventRateOsc_FastMC->Write();
+   fhNuMuNCEventRateOsc_FastMC->Write();
+   fhNuMuBarNCEventRateOsc_FastMC->Write();
+   fhNuENCEventRateOsc_FastMC->Write();
+   fhNuEBarNCEventRateOsc_FastMC->Write();
+   fhNuTauNCEventRateOsc_FastMC->Write();
+   fhNuTauBarNCEventRateOsc_FastMC->Write();
    g.Close();
-      
+
+   // Write Globes files
+   ofstream myfile;
+   myfile.open((ffilename+"_globes_flux.txt").c_str());
+   for(int i = 0; i<globes_nbins; i++) {
+     myfile<<fhNuMuFlux_Globes->GetBinCenter(i+1)<<" "<<
+       fhNuEFlux_Globes->GetBinContent(i+1)<<" "<<
+       fhNuMuFlux_Globes->GetBinContent(i+1)<<" "<<
+       fhNuTauFlux_Globes->GetBinContent(i+1)<<" "<<
+       fhNuEBarFlux_Globes->GetBinContent(i+1)<<" "<<
+       fhNuMuBarFlux_Globes->GetBinContent(i+1)<<" "<<
+       fhNuTauBarFlux_Globes->GetBinContent(i+1)<<" "<<std::endl;
+   }
+   
 }
 
 //-------------------------------------------------------------------------------------
@@ -832,7 +968,7 @@ double eventRates::GetWeight(const std::vector<double> xdet,
    const double k0mass  =    0.49767;
    const double mumass  =    0.105658389;
    const double taumass =    1.77682;
-   
+
    //these are geant codes not PDG
    const int    nue     =  53;
    const int    nuebar  =  52;
@@ -1108,35 +1244,73 @@ void eventRates::ReadXSecsFromFiles() {
   }
 }
 
+double eventRates::GetOscillatedNeutrinoType(double E) {
 
+      double osc_L = TMath::Sqrt(detx * detx + dety * dety + detz * detz);
+      int flavbefore = 0;
+      const int    nue     =  53;
+      const int    nuebar  =  52;
+      const int    numu    =  56;
+      const int    numubar =  55;
+      const int    nutau    =  58; 
+      const int    nutaubar =  59; 
+      if (Ntype == nuebar) flavbefore = -12;
+      else if (Ntype == numubar) flavbefore = -14;
+      else if (Ntype == nutaubar) flavbefore = -16;
+      else if (Ntype == nue) flavbefore = 12;
+      else if (Ntype == numu) flavbefore = 14;
+      else if (Ntype == nutau) flavbefore = 16;
+      else {
+	std::cout<<"WARNING: unrecognized neutrino type: "<<Ntype<<std::endl;
+      }
 
+      osc::OscCalculator calculator;
+      calculator.SetRho(2.8); // from LBNE Snowmass Document
+      calculator.SetL(osc_L);
+      calculator.SetDmsq21(7.50e-5); // PDG 2013
+      calculator.SetDmsq32(0.00232); // PDG 2013
+      calculator.SetTh12(0.591); // PDG 2013
+      calculator.SetTh13(0.05); // PDG 2013
+      calculator.SetTh23(0.785); // Maximal
+      calculator.SetdCP(0);
 
+      double P_e = 0;
+      double P_t = 0;
+      double P_m = 0;
 
+      if(flavbefore<0) {
+	P_e = calculator.P(flavbefore, -12, E);
+	P_m = calculator.P(flavbefore, -14, E);
+	P_t = calculator.P(flavbefore, -16, E);
+      }
+      else {
+	P_e = calculator.P(flavbefore, 12, E);
+	P_m = calculator.P(flavbefore, 14, E);
+	P_t = calculator.P(flavbefore, 16, E);
+      }
 
+      // throw a random number to determine which neutrino is produced     
+      double random_number = rand3->Rndm();
 
+      int ntype_oscillated;
+      if(flavbefore <0) {
+	if(random_number < P_e)
+	  ntype_oscillated = nuebar;
+	else if(random_number < P_e + P_t)
+	  ntype_oscillated = nutaubar;
+	else
+	  ntype_oscillated = numubar;
+      }
+      else {
+	if(random_number < P_e)
+	  ntype_oscillated = nue;
+	else if(random_number < P_e + P_t)
+	  ntype_oscillated = nutau;
+	else
+	  ntype_oscillated = numu;
+      }
 
+      return ntype_oscillated;
 
-
-
-
-
-
-
-
-
-
-
-
-/*
-   Long64_t nentries = fChain->GetEntriesFast();
-
-   Long64_t nbytes = 0, nb = 0;
-   for (Long64_t jentry=0; jentry<nentries;jentry++) 
-   {
-      Long64_t ientry = LoadTree(jentry);
-      if (ientry < 0) break;
-      nb = fChain->GetEntry(jentry);   nbytes += nb;
-      // if (Cut(ientry) < 0) continue;
-   }
-*/
+}
 

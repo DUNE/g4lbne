@@ -10,10 +10,15 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+
 //ROOT
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+#include <TRandom3.h>
 
 class eventRates {
 public :
@@ -28,6 +33,8 @@ public :
    double detx;     // detector location
    double dety;
    double detz;
+
+   TRandom3 *rand3;
 
    // Declaration of leaf types
  //LBNEDataNtp_t   *data;
@@ -161,7 +168,8 @@ public :
    TBranch        *b_data_tptype;   //!
    TBranch        *b_data_tgen;   //!
 
-   eventRates(TTree *tree=0);
+   eventRates(std::string version = "v2r4p1", std::string macro = "Nominal", std::string current = "200kA", std::string location = "LBNEFD", std::string physics_list = "QGSP_BERT", int n_files = 250, double pot_per_file = 100000);
+
    virtual ~eventRates();
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
@@ -185,6 +193,9 @@ public :
 		    std::string current);
 
    void ReadXSecsFromFiles(  );
+   
+   double GetOscillatedNeutrinoType(double E);
+
 
  private:
 
@@ -199,325 +210,98 @@ public :
 #endif
 
 #ifdef eventRates_cxx
-eventRates::eventRates(TTree *tree)
+
+eventRates::eventRates(std::string version, std::string macro, std::string current, std::string location, std::string physics_list, int n_files, double potperfile)
 {
+  // simulation = G4PBeam (default) or Fluka
+  // macro = Nominal, etc
+  // location = LBNEFD (default), LBNEND, etc 
+  // physics_list = QGSP_BERT (default), QGSP, FTFP_BERT, etc
+  // n_files = 250 (default)
+  // potperfile = 100000 (default)
 
   // Read the cross-sections from files
   ReadXSecsFromFiles();
 
-//????????????????????????????
-//????????????????????????????
-//
-   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   //
-   //Add files here
-   //
-  std::vector<std::string> fFileVec;
-
-  std::string simulation = "G4PBeam";
-  //std::string simulation = "Fluka";
-  std::string geometry = "CD1-CDR_GeoRHC";
+  // Set detector coordinates based on requested detector location
+  detectorname = location;
+  if(location=="LBNEND") {
+    detx = 0.0;
+    dety = 0.0;
+    detz = 45900.0;
+  }
   
-  //detectorname = "LBNEND";
-  //detx = 0.0;
-  //dety = 0.0;
-  //detz = 47915.0;
-
-
-  //detectorname  = "LBNEFD";
-  //detx = 0.0;
-  //dety = 0.0;
-  //detz = 129700000.0;
-   
-  //detectorname  = "LBNEFD_XSHIFT21";
-  // detx = 2100.0;
-  // dety = 0.0;
-  //detz = 129700000.0; 
-
-   //detectorname  = "LBNEFD_XSHIFT500";
-   //detx = 50000.0;
-   //dety = 0.0;
-   //detz = 129700000.0; 
-
-   detectorname  = "LBNEFD_XSHIFT2000";
-   detx = 200000.0;
-   dety = 0.0;
-   detz = 129700000.0; 
-
-  std::string physics_list = "QGSP";
-  
-  std::string physics_list_file_path1 = "";
-  std::string physics_list_file_path2 = "";
-  if(physics_list != "QGSP") {
-    physics_list_file_path1 = "/"+physics_list;
-    physics_list_file_path2 = "_"+physics_list;
+  if(location=="LBNEFD") {
+    detx = 0.0;
+    dety = 0.0;
+    detz = 129700000.0;
   }
 
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_001.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_002.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_003.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_004.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_005.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_006.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_007.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_008.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_009.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_010.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_011.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_012.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_013.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_014.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_015.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_016.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_017.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_018.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_019.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_020.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_021.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_022.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_023.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_024.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_025.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_026.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_027.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_028.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_029.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_030.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_031.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_032.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_033.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_034.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_035.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_036.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_037.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_038.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_039.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_040.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_041.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_042.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_043.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_044.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_045.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_046.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_047.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_048.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_049.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_050.root").c_str());
+  if(location=="LBNEFDX21") {
+    detx = 2100.0;
+    dety = 0.0;
+    detz = 129700000.0; 
+  }
+  if(location=="LBNEFDX-21") {
+    detx = -2100.0;
+    dety = 0.0;
+    detz = 129700000.0; 
+  }
+  if(location=="LBNEFDY21") {
+    detx = 0.0;
+    dety = 2100.0;
+    detz = 129700000.0; 
+  }
+  if(location=="LBNEFDY-21") {
+    detx = 0.0;
+    dety = -2100.0;
+    detz = 129700000.0; 
+  }
+  if(location == "LBNEFDX500") {
+    detx = 50000.0;
+    dety = 0.0;
+    detz = 129700000.0; 
+  }
+  if(location == "LBNEFDX2000") {
+    detx = 200000.0;
+    dety = 0.0;
+    detz = 129700000.0; 
+  }
+  
+  // get user name from environment
+  std::string username(getenv("USER"));
 
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_051.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_052.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_053.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_054.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_055.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_056.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_057.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_058.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_059.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_060.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_061.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_062.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_063.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_064.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_065.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_066.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_067.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_068.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_069.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_070.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_071.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_072.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_073.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_074.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_075.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_076.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_077.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_078.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_079.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_080.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_081.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_082.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_083.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_084.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_085.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_086.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_087.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_088.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_089.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_090.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_091.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_092.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_093.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_094.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_095.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_096.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_097.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_098.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_099.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_100.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_101.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_102.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_103.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_104.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_105.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_106.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_107.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_108.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_109.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_110.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_111.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_112.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_113.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_114.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_115.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_116.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_117.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_118.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_119.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_120.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_121.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_122.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_123.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_124.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_125.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_126.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_127.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_128.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_129.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_130.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_131.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_132.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_133.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_134.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_135.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_136.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_137.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_138.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_139.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_140.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_141.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_142.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_143.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_144.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_145.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_146.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_147.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_148.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_149.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_150.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_151.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_152.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_153.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_154.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_155.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_156.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_157.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_158.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_159.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_160.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_161.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_162.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_163.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_164.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_165.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_166.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_167.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_168.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_169.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_170.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_171.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_172.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_173.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_174.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_175.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_176.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_177.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_178.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_179.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_180.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_181.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_182.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_183.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_184.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_185.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_186.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_187.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_188.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_189.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_190.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_191.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_192.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_193.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_194.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_195.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_196.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_197.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_198.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_199.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_200.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_201.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_202.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_203.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_204.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_205.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_206.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_207.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_208.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_209.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_210.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_211.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_212.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_213.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_214.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_215.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_216.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_217.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_218.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_219.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_220.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_221.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_222.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_223.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_224.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_225.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_226.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_227.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_228.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_229.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_230.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_231.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_232.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_233.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_234.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_235.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_236.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_237.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_238.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_239.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_240.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_241.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_242.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_243.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_244.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_245.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_246.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_247.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_248.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_249.root").c_str());
-   fFileVec.push_back(("/lbne/data/users/ljf26/fluxfiles/g4lbne/"+geometry+physics_list_file_path1+"/nubeam-"+simulation+"-stdnubeam/flux/"+geometry+physics_list_file_path2+"_nubeam-"+simulation+"-stdnubeam_250.root").c_str());
+  std::string flux_dir = "/lbne/data/users/"+username+"/fluxfiles/g4lbne/"+version+"/"+physics_list+"/"+macro+"/"+current+"/flux/";
 
-   //
-   //set number of pot per file !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   //
-   double potperfile = 100000.0;
-   fTotalPOT  = potperfile*(double)fFileVec.size();
+  std::vector<std::string> fFileVec;
 
-   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   //set the filename prefix for saving histogram plots 
-   //
-   ffilename = "g4lbne_"+geometry+"_"+physics_list;
-   if(simulation=="Fluka")
-     ffilename = "fluka_"+geometry+"_"+physics_list;
-   
+  int start_index = 1;
+  int end_index = n_files;
+  
+  for(int i = start_index; i<= end_index; i++) {
+    
+    // convert index into zero-padded string
+    std::ostringstream ss;
+    ss << std::setw( 3 ) << std::setfill( '0' ) << i;
+    std::string index_string = ss.str();
+    
+    std::string flux_file = flux_dir + "g4lbne_"+version+"_"+physics_list+"_"+macro+"_"+current+"_"+index_string+".root";
+    
+    // check that the file exists and is a valid root file
+    TFile f(flux_file.c_str());
+    if (!f.IsZombie())
+      fFileVec.push_back(flux_file.c_str());
+  }
+
+  //set number of pot per file !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  //
+  fTotalPOT  = potperfile*(double)fFileVec.size();
+
+  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  //set the filename prefix for saving histogram plots 
+  //
+  ffilename = flux_dir + "histos_g4lbne_"+version+"_"+physics_list+"_"+macro+"_"+current;
+
    //
    //????????????????????????????
    //????????????????????????????
@@ -525,30 +309,15 @@ eventRates::eventRates(TTree *tree)
    fChain = new TChain("nudata");
    for(std::vector<std::string>::const_iterator sit = fFileVec.begin(); sit != fFileVec.end(); ++sit)
    {
-      fChain -> Add(sit -> c_str());
+     fChain -> Add(sit -> c_str());
    }
 
    Init(fChain);
 
+   // initialize random numbers used for oscillation calculations
+   rand3 = new TRandom3(0); 
 
 }
-/*
-eventRates::eventRates(TTree *tree)
-{
-// if parameter tree is not specified (or zero), connect the file
-// used to generate this class and read the Tree.
-   if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("g4lbne_example_le010z185i_NumiDPHelium_110.root");");
-      if (!f) {
-         f = new TFile("g4lbne_example_le010z185i_NumiDPHelium_110.root");
-      }
-      tree = (TTree*)gDirectory->Get("nudata");
-
-   }
-   Init(tree);
-}
-*/
-
 
 eventRates::~eventRates()
 {

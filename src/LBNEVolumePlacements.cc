@@ -176,7 +176,7 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
                                                    // by increasing the thickness.                  // 
   fTargetAlignRingSpacing = 243.6*mm; // Such we can have 5 alignment rings over the entire distance. 
   fMaxNumAlignRings = 5; // assiming a target length of ~ 1 m. long 
-  fTargetBerylDownstrWindowThick = 1.0*mm; // ???? pure guess 
+  fTargetBerylDownstrWindowThick = 0.5*mm; // Docdb 6100 
   fTargetBerylDownstrWindowRadius = fTargetHeContTubeInnerRadius + fTargetHeContTubeThickness; 
   fTargetBerylUpstrWindowThick = 1.0*mm; // pure guess 
   fTargetBerylUpstrWindowRadius = 0.8425*in/2.; // ???? Again, guessing... 
@@ -959,7 +959,7 @@ LBNEVolumePlacementData*
             const LBNEVolumePlacementData *plInfoM = Find(name, G4String("Horn1TargetDownstrHelium"), G4String("Create"));
            info.fParams[0] = 0.; 
            info.fParams[1] = fTargetHeContTubeInnerRadius-0.010*mm; 
-           info.fParams[2] = 0.5*mm; // Docdb 6100
+           info.fParams[2] = fTargetBerylDownstrWindowThick; // Nominal value 
            G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
            info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Beryllium")), volumeName); 
 	   info.fPosition[2] = plInfoM->fParams[2]/2 - info.fParams[2] - 0.5*mm;

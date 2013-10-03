@@ -97,6 +97,18 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      SetMyUnitsAndConditions(fHorn1Length, value);
    }
    {
+     fHorn1InnerCondMat = new G4UIcmdWithAString("/LBNE/det/Horn1InnerConductorMaterial", this);
+     G4String guidance("Material for the inner conductor  \n  ");
+     guidance += std::string(" Aluminum is the base line and default. This option should only be used \n");
+     guidance += std::string(" for studying the relevance of the material budget.  \n  " );
+     guidance += std::string(" That is, run with a fictious Horn with air or vacuum as material carrying 200kA   \n  " );      
+     fHorn1InnerCondMat->SetGuidance(guidance);
+     fHorn1InnerCondMat->SetParameterName("Horn1InnerCondMaterial",true);
+     G4String value = volP->GetHorn1InnerConductorMaterial(); //  
+     fHorn1InnerCondMat->SetDefaultValue(value);
+   }
+
+   {
      fTargetSLengthGraphite = new G4UIcmdWithADoubleAndUnit("/LBNE/det/GraphiteTargetLength", this);
      G4String guidance("Length of the Graphite Target.\n  ");
      guidance += std::string(" Note: the length of the indiviudal fins are fixed to 2 cm. So, we will re-adjusted  \n");
@@ -117,6 +129,7 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      G4String value = volP->GetTargetMaterialName(); //  
      fTargetMaterial->SetDefaultValue(value);
    }
+   
    {
      fTargetDensity = new G4UIcmdWithADoubleAndUnit("/LBNE/det/GraphiteTargetLength", this);
      G4String guidance("Density of the target. Only relevant for the graphite target. \n  ");
@@ -138,6 +151,17 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      double value = volP->GetTargetLengthIntoHorn(); //  
      SetMyUnitsAndConditions(fTargetLengthIntoHorn, value);
    }
+    {
+     fTargetBerylCapThickness = new G4UIcmdWithADoubleAndUnit("/LBNE/det/TargetBerylliumCapThickness", this);
+     G4String guidance("Thickness of the Beryllium cap, downstream end of the target Helium containment vessel .\n  ");
+     guidance += std::string(" Use to study the relevance of adding/removing material in the target \n");
+     fTargetBerylCapThickness->SetGuidance(guidance);
+     fTargetBerylCapThickness->SetParameterName("TargetBerylliumCapThickness",true);
+     double value = volP->GetTargetBerylDownstrWindowThick(); //  
+     SetMyUnitsAndConditions(fTargetBerylCapThickness, value);
+   }
+  
+   
     {
      fHorn1RadialRescale = new G4UIcmdWithADouble("/LBNE/det/Horn1RadialRescale", this);
      G4String guidance("A ratio between the actual radii for this run over the nominal values for Horn1 \n  ");
@@ -186,6 +210,17 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      double value = volP->GetHorn2LongPosition(); //  
      
      SetMyUnitsAndConditions(fHorn2LongPosition, value);
+   }
+   {
+     fHorn2InnerCondMat = new G4UIcmdWithAString("/LBNE/det/Horn2InnerConductorMaterial", this);
+     G4String guidance("Material for the inner conductor  \n  ");
+     guidance += std::string(" Aluminum is the base line and default. This option should only be used \n");
+     guidance += std::string(" for studying the relevance of the material budget.  \n  " );
+     guidance += std::string(" That is, run with a fictious Horn with air or vacuum as material carrying 200kA   \n  " );      
+     fHorn2InnerCondMat->SetGuidance(guidance);
+     fHorn2InnerCondMat->SetParameterName("Horn2InnerCondMaterial",true);
+     G4String value = volP->GetHorn2InnerConductorMaterial(); //  
+     fHorn2InnerCondMat->SetDefaultValue(value);
    }
   
    {
@@ -261,6 +296,12 @@ void LBNEPlacementMessenger::SetNewValue(G4UIcommand* command,  G4String newValu
      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
      volP->SetTargetDensity(cmdWD->GetNewDoubleValue(newValue));
    }
+   if (command == fTargetBerylCapThickness) {
+     G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
+     std::cout << " !!! You have chosen a unusual thickness for the target He tube cap " 
+              << newValue << " \n  .... Please check that the volume don't overlap in the listing..  " << std::endl;
+     volP->SetTargetBerylDownstrWindowThick(cmdWD->GetNewDoubleValue(newValue));
+   }
    if (command == fTargetMaterial) {
      std::cout << " !!! You have chosen to use " << newValue << " as target material " << std::endl;
      volP->SetTargetMaterialName(newValue);
@@ -270,6 +311,12 @@ void LBNEPlacementMessenger::SetNewValue(G4UIcommand* command,  G4String newValu
      volP->SetTargetLengthIntoHorn(cmdWD->GetNewDoubleValue(newValue));
      volP->SegmentTarget();
    }
+   if (command == fHorn1InnerCondMat) {
+    std::cout << " You are now using non-standard material " << newValue 
+              << " for the Horn1 Inner Conductor material " << std::endl;
+    volP->SetHorn1InnerConductorMaterial(newValue);
+   }
+   
    if (command == fHorn1RadialRescale) {
      G4UIcmdWithADouble* cmdWD = dynamic_cast<G4UIcmdWithADouble*> (command);
      volP->SetHorn1RadialRescale(cmdWD->GetNewDoubleValue(newValue));
@@ -289,6 +336,11 @@ void LBNEPlacementMessenger::SetNewValue(G4UIcommand* command,  G4String newValu
      G4UIcmdWithADouble* cmdWD = dynamic_cast<G4UIcmdWithADouble*> (command);
      volP->SetHorn2LongRescale(cmdWD->GetNewDoubleValue(newValue));
      volP->RescaleHorn2Lengthwise();
+   }
+   if (command == fHorn2InnerCondMat) {
+    std::cout << " You are now using non-standard material " << newValue 
+              << " for the Horn2 Inner Conductor material " << std::endl;
+    volP->SetHorn2InnerConductorMaterial(newValue);
    }
    if (command == fHorn2LongPosition) {
      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);

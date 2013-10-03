@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.32 2013/10/02 16:14:25 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.33 2013/10/03 18:02:26 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -458,17 +458,27 @@ void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber(G4VPhysicalVolume *mo
      parser.Read( filename );
      G4LogicalVolume *topAbs = parser.GetVolume( "TOP" );
      // We dump the volume hierarchy.  Hoopefully not too deep, 
-     /*
+/*
      for (int i=0; i != topAbs->GetNoDaughters(); ++i) {
         G4VPhysicalVolume *pVol = topAbs->GetDaughter(i);
         G4LogicalVolume *lVol = pVol->GetLogicalVolume();
 	std::cerr << " Top level daughter # " << i << " Name " << lVol->GetName() 
 	          << " at " << pVol->GetObjectTranslation() << std::endl;
-        for (int ii=0; ii != lVol->GetNoDaughters(); ++ii) {
+ 	   if (lVol->GetName().find("Airbox") != std::string::npos) {
+	     G4Box *aBox = static_cast<G4Box*>(lVol->GetSolid());
+	     std::cerr << " Airbox size " << aBox->GetXHalfLength() 
+	               << " / " << aBox->GetYHalfLength() << " / " << aBox->GetZHalfLength() << std::endl; 
+	   }
+       for (int ii=0; ii != lVol->GetNoDaughters(); ++ii) {
           G4VPhysicalVolume *pVol2 = lVol->GetDaughter(ii);
           G4LogicalVolume *lVol2 = pVol2->GetLogicalVolume();
 	  std::cerr << "  .. 2nd level daughter # " << ii << " Name " << lVol2->GetName()
 	   << " at " << pVol2->GetObjectTranslation() << std::endl;
+	   if (lVol2->GetName().find("Airbox") != std::string::npos) {
+	     G4Box *aBox = static_cast<G4Box*>(lVol2->GetSolid());
+	     std::cerr << " Airbox size " << aBox->GetXHalfLength() 
+	               << " / " << aBox->GetYHalfLength() << " / " << aBox->GetZHalfLength() << std::endl; 
+	   }
          for (int iii=0; iii != lVol2->GetNoDaughters(); ++iii) {
            G4VPhysicalVolume *pVol3 = lVol2->GetDaughter(iii);
            G4LogicalVolume *lVol3 = pVol3->GetLogicalVolume();
@@ -494,8 +504,7 @@ void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber(G4VPhysicalVolume *mo
 	}
       }
     }
-*/	    
-       
+*/       
     
 //     const G4Box *topSol = static_cast<const G4Box *>(topAbs->GetSolid());
 //     const double marsTopWidth = topSol->GetYHalfLength();
@@ -643,16 +652,192 @@ void LBNEDetectorConstruction::ConstructLBNEShieldingHorn1(G4VPhysicalVolume *mo
    new G4PVPlacement(&fRotBeamlineAngle, posTmp, sLVol, sName + std::string("_RightP"),
                        mother->GetLogicalVolume(), false, 2, true);
 //
-// Top    
+// Top. Simply put about 2m of steel 
+//
+   G4String tName = G4String("ShieldingHorn1Top"); 
+   const double tWidth = 208*in;
+   const double tHeight = 94.0*in;
+   const double tLength = plTop->fParams[2] - 2.*tHeight*std::abs(std::sin(fBeamlineAngle)) - 5.0*cm;
+   G4Box *tBox = new G4Box(tName, tWidth/2., tHeight/2., tLength/2.);
+   G4LogicalVolume *tLVol = new G4LogicalVolume(tBox, G4Material::GetMaterial(std::string("Slab_Stl")), tName); 
+   
+   posTmp[0] =0.; 
+   posTmp[1] += sHeight/2. + tHeight/2. + 4.0*cm; 
+   new G4PVPlacement(&fRotBeamlineAngle, posTmp, tLVol, bName + std::string("_P"),
+                       mother->GetLogicalVolume(), false, 1, true);
+ 
+   
 }
 
 void LBNEDetectorConstruction::ConstructLBNEShieldingHorn2(G4PVPlacement *mother) {
 
+   const double in = 25.4*mm;
+//
+// Install steel shielding around the Horn2 and the target. 
+//
+// Based on Docdb 5339, page 30 and 31. 
+// See also drawing 2251.000-ME-487105 
+// 
+// We simply install steel, assumed low carbon...
+//
+   const G4String nameM = mother->GetLogicalVolume()->GetName();
+   const LBNEVolumePlacementData *plTop = 
+         fPlacementHandler->Find(G4String("ShieldingHorn2"), nameM, 
+	                         G4String("LBNEDetectorConstruction::ConstructLBNEShieldingHorn2"));
+				 
+   const double horn2Height = 60.6*in;				 
+//
+// Bottom 
+//
+   G4String bName = G4String("ShieldingHorn2Bottom"); 
+   const double bWidth = 168*in;
+   const double bHeight = 52.0*in;
+   const double bLength = plTop->fParams[2] - 2.*bHeight*std::abs(std::sin(fBeamlineAngle)) - 5.0*cm;
+   G4Box *bBox = new G4Box(bName, bWidth/2., bHeight/2., bLength/2.);
+   G4LogicalVolume *bLVol = new G4LogicalVolume(bBox, G4Material::GetMaterial(std::string("Slab_Stl")), bName); 
+   G4ThreeVector posTmp(0., 0., 0.); 
+   posTmp[1] = -horn2Height  - bHeight/2.; 
+   // MCZERO is G4 coordinate 0.0, the center of tunnel, so the above number needs to be corrected for the 
+   // shift in the center of the mother volume  
+   const double zShift = -1.0*plTop->fPosition[2];
+   const double yCorr = -1.0*zShift*std::sin(fBeamlineAngle);
+   posTmp[1]  -= yCorr;
+//   std::cerr << "ConstructLBNEShieldingHorn2 .... "<< bName << " zShift bottom plate " << zShift 
+//	     << " thus, y position " << posTmp[1] << " coorection " << yCorr << std::endl;
+//	     
+   new G4PVPlacement(&fRotBeamlineAngle, posTmp, bLVol, bName + std::string("_P"),
+                       mother->GetLogicalVolume(), false, 1, true);
+//
+// Sides 
+//
+   G4String sName = G4String("ShieldingHorn2Side"); 
+   const double sWidth = 52.0*in;
+   const double sHeight = 256.8*in - 52.0*in - 4.0*cm; // oversize a bit, but no matter.. 
+   const double sLength = plTop->fParams[2] - 2.*sHeight*std::abs(std::sin(fBeamlineAngle)) - 5.0*cm;
+   G4Box *sBox = new G4Box(sName, sWidth/2., sHeight/2., sLength/2.);
+   G4LogicalVolume *sLVol = new G4LogicalVolume(sBox, G4Material::GetMaterial(std::string("Slab_Stl")), sName); 
+   posTmp[0] = (-32.0 - 26.0)*in;
+   posTmp[1] = sHeight/2. - horn2Height + 2.0*cm; 
+   // MCZERO is G4 coordinate 0.0, the center of tunnel, so the above number needs to be corrected for the 
+   // shift in the center of the mother volume  
+   posTmp[1]  -= yCorr;
+//   std::cerr << "ConstructLBNEShieldingHorn2 .... "<< bName << " zShift side plate, left  " << zShift 
+//	     << " thus, y position " << posTmp[1] << " coorection " << yCorr 
+//	     << std::endl << " .......  X = " << posTmp[0] << " Y " << posTmp[1] << std::endl;
+	     
+   new G4PVPlacement(&fRotBeamlineAngle, posTmp, sLVol, sName + std::string("_LeftP"),
+                       mother->GetLogicalVolume(), false, 1, true);
+   posTmp[0] = (+32.0 + 26.0)*in;
+//   std::cerr << "ConstructLBNEShieldingHorn2 .... "<< bName << " zShift side plate, Right  " << zShift 
+//	     << " thus, y position " << posTmp[1] << " coorection " << yCorr 
+//	     << std::endl << " .......  X = " << posTmp[0] << " Y " << posTmp[1] << std::endl;
+	     
+   new G4PVPlacement(&fRotBeamlineAngle, posTmp, sLVol, sName + std::string("_RightP"),
+                       mother->GetLogicalVolume(), false, 2, true);
+//
+// Top. Simply put about 2m of steel 
+//
+   G4String tName = G4String("ShieldingHorn2Top"); 
+   const double tWidth = 168*in;
+   const double tHeight = 94.0*in;
+   const double tLength = plTop->fParams[2] - 2.*tHeight*std::abs(std::sin(fBeamlineAngle)) - 5.0*cm;
+   G4Box *tBox = new G4Box(tName, tWidth/2., tHeight/2., tLength/2.);
+   G4LogicalVolume *tLVol = new G4LogicalVolume(tBox, G4Material::GetMaterial(std::string("Slab_Stl")), tName); 
+   
+   posTmp[0] =0.; 
+   posTmp[1] += sHeight/2. + tHeight/2. + 4.0*cm; 
+   new G4PVPlacement(&fRotBeamlineAngle, posTmp, tLVol, bName + std::string("_P"),
+                       mother->GetLogicalVolume(), false, 1, true);
+ 
+
 }
 
 void LBNEDetectorConstruction::ConstructLBNEShieldingBetweenHorns(G4VPhysicalVolume *mother) {
-
-
+//
+// We have to construct a mother volume located in the tunnel, in between the 2 horns 
+// Based on the Horn1 and Honr 2 placements. 
+//
+   const double in = 25.4*mm;
+   const G4String nameM = mother->GetLogicalVolume()->GetName();
+   if (nameM != G4String("Tunnel")) {
+     std::cerr 
+     << " Unexpected Mother volume in LBNEDetectorConstruction::ConstructLBNEShieldingBetweenHorns !" << std::endl;
+     exit(2);
+   }
+   const LBNEVolumePlacementData *plMother = 
+         fPlacementHandler->Find(G4String("ShieldingBetweenHorns"), nameM, 
+	                         G4String("LBNEDetectorConstruction::ConstructLBNEShieldingBetweenHorns"));
+   const LBNEVolumePlacementData *plH1 = 
+         fPlacementHandler->Find(G4String("ShieldingBetweenHornsHorn"), G4String("TargetHallAndHorn1"), 
+	                         G4String("LBNEDetectorConstruction::ConstructLBNEShieldingHorn1"));
+   const LBNEVolumePlacementData *plH2 = 
+         fPlacementHandler->Find(G4String("ShieldingBetweenHornsHorn"), G4String("Horn2Hall"), 
+	                         G4String("LBNEDetectorConstruction::ConstructLBNEShieldingBetweenHorns"));
+   const double zStart = plH1->fPosition[2] + plH1->fParams[2]/2.0 + 5.0*cm;
+   const double zEnd = plH2->fPosition[2] - plH2->fParams[2]/2.0 - 5.0*cm;
+   const double lengthTop = zEnd - zStart;
+//   std::cerr << " Length of the Horn1 to Horn2 corridor " << lengthTop << std::endl;
+   const double widthTop = plMother->fParams[0] - 10.0*cm;
+   const double heightTop = plMother->fParams[1] - 10.0*cm;
+   G4String topNameBetween = G4String("Horn1ToHorn2Corridor");
+   G4Box *topBox = new G4Box(topNameBetween, widthTop/2., heightTop/2.,lengthTop/2.);
+   G4LogicalVolume *topLevVol = new G4LogicalVolume(topBox, G4Material::GetMaterial(std::string("Air")), topNameBetween); 
+   G4ThreeVector posTopLevel (0., 0., 0.5*(zStart + zEnd));
+   G4PVPlacement *vTopLevel = new G4PVPlacement((G4RotationMatrix *) 0, posTopLevel, 
+                                                topLevVol , topNameBetween + std::string("_P"),
+                                                mother->GetLogicalVolume(), false, 1, true);
+//		       
+// Now we proceed with the shielding blocks. 
+//  
+   const double beamlineHeight = 0.5*(60.6 + 66.7)*in; // we take the average between Horn1 and Horn2. 				 
+//
+// Bottom 
+//
+   G4String bName = G4String("ShieldingHornCorridorBottom"); 
+   const double bWidth = 168*in; // take the width of Horn2.  
+   const double bHeight = 52.0*in;
+   const double bLength = lengthTop - 2.*bHeight*std::abs(std::sin(fBeamlineAngle)) - 5.0*cm;
+   G4Box *bBox = new G4Box(bName, bWidth/2., bHeight/2., bLength/2.);
+   G4LogicalVolume *bLVol = new G4LogicalVolume(bBox, G4Material::GetMaterial(std::string("Slab_Stl")), bName); 
+   G4ThreeVector posTmp(0., 0., 0.); 
+   posTmp[1] = -beamlineHeight  - bHeight/2.; 
+//   std::cerr << "ConstructLBNEShieldingHorn2 .... "<< bName << " zShift bottom plate " << zShift 
+//	     << " thus, y position " << posTmp[1] << " coorection " << yCorr << std::endl;
+//	     
+   new G4PVPlacement(&fRotBeamlineAngle, posTmp, bLVol, bName + std::string("_P"),
+                       vTopLevel->GetLogicalVolume(), false, 1, true);
+//
+// Sides 
+//
+   G4String sName = G4String("ShieldingHornCorridorSide"); 
+   const double sWidth = 52.0*in;
+   const double sHeight = 256.8*in - 52.0*in - 5.0*cm ; // approximate  
+   const double sLength = lengthTop - 2.*sHeight*std::abs(std::sin(fBeamlineAngle)) - 5.0*cm;
+   G4Box *sBox = new G4Box(sName, sWidth/2., sHeight/2., sLength/2.);
+   G4LogicalVolume *sLVol = new G4LogicalVolume(sBox, G4Material::GetMaterial(std::string("Slab_Stl")), sName); 
+   posTmp[0] = (-32.0 - 26.0)*in;
+   posTmp[1] = sHeight/2. - beamlineHeight + 2.0*cm; 
+//   std::cerr << "ConstructLBNEShieldingBetweenHorns .... "<< sName  
+//	   <<  "   X pos. = " << posTmp[0] << " Y " << posTmp[1] << std::endl;
+   new G4PVPlacement(&fRotBeamlineAngle, posTmp, sLVol, sName + std::string("_LeftP"),
+                       vTopLevel->GetLogicalVolume(), false, 1, true);
+   posTmp[0] = (+32.0 + 26.0)*in;
+   new G4PVPlacement(&fRotBeamlineAngle, posTmp, sLVol, sName + std::string("_RightP"),
+                       vTopLevel->GetLogicalVolume(), false, 2, true);
+//
+// Top. Simply put about 2m of steel 
+//
+   G4String tName = G4String("ShieldingHornCorridorTop"); 
+   const double tWidth = 168*in;
+   const double tHeight = 94.0*in;
+   const double tLength = lengthTop - 2.*tHeight*std::abs(std::sin(fBeamlineAngle)) - 5.0*cm;
+   G4Box *tBox = new G4Box(tName, tWidth/2., tHeight/2., tLength/2.);
+   G4LogicalVolume *tLVol = new G4LogicalVolume(tBox, G4Material::GetMaterial(std::string("Slab_Stl")), tName); 
+   
+   posTmp[0] =0.; 
+   posTmp[1] += sHeight/2. + tHeight/2. + 4.0*cm; 
+   new G4PVPlacement(&fRotBeamlineAngle, posTmp, tLVol, bName + std::string("_P"),
+                       vTopLevel->GetLogicalVolume(), false, 1, true);
 }
 
 

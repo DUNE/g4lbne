@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.31 2013/10/02 15:26:38 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.32 2013/10/03 18:02:17 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -145,6 +145,8 @@ public:
   inline double GetDecayPipeUpstrWindowThick()  const { return fDecayPipeUpstrWindowThick; }
   inline double GetDecayPipeLongPosition()  const { return fDecayPipeLongPosition; }
   inline G4String GetDecayPipeGas() const {return fDecayPipeGas; }
+  inline G4String GetHorn1InnerConductorMaterial() const {return fHorn1InnerCondMat; }
+  inline G4String GetHorn2InnerConductorMaterial() const {return fHorn2InnerCondMat; }
   inline double GetAbsorberHallZ()  const { return fAbsorberHallZ; }
   inline double GetHorn1Length()  const { return fHorn1Length; }
   inline double GetBaffleLength() const  { return fBaffleLength; }
@@ -165,6 +167,8 @@ public:
   inline void SetDecayPipeLongPosition(double l) {fDecayPipeLongPosition=l;}
   inline void SetDecayPipeUpstrWindowThick(double l) {fDecayPipeUpstrWindowThick=l;}
   inline void SetDecayPipeGas(G4String &name) {fDecayPipeGas = name;}
+  inline void SetHorn1InnerConductorMaterial(G4String &name) {fHorn1InnerCondMat = name;}
+  inline void SetHorn2InnerConductorMaterial(G4String &name) {fHorn2InnerCondMat = name;}
   inline void SetTotalLength(double l) {fTotalLength=l;}
   inline void SetWaterLayerThickInHorns(double l) { fWaterLayerThickInHorns = l;}
   inline void SetHorn1Length(double l) { fHorn1Length = l;}
@@ -182,6 +186,8 @@ public:
   inline void SetTargetMaterialName(G4String &aName) { fTargetMaterialName = aName; }
   inline double GetTargetLengthIntoHorn() const { return fTargetLengthIntoHorn; }
   inline void SetTargetLengthIntoHorn(double l) { fTargetLengthIntoHorn = l; }
+  inline double GetTargetBerylDownstrWindowThick() const { return fTargetBerylDownstrWindowThick;}
+  inline void SetTargetBerylDownstrWindowThick(double t) { fTargetBerylDownstrWindowThick = t;}
 //
 // Interface to the Messenger, Horn1 parameters  
 //
@@ -425,6 +431,8 @@ private:
   G4double fHorn1InnerConnectorLength;
   G4double fHorn1InnerConnectorPosition;
   
+  G4String fHorn1InnerCondMat; // so that we can study the relevance of thinning the conductor. 
+  
   std::vector<LBNEHornRadialEquation> fHorn1Equations;
   //
   // ==========================================================
@@ -493,6 +501,7 @@ private:
 // 
 // Other dimensions in PlaceFinalDecayPipeSnout
 //
+  G4String fHorn2InnerCondMat; // so that we can study the relevance of thinning the conductor. 
 
 //
 // Connectors and flange downstream used only once,  so we declare and rescale them as we go  

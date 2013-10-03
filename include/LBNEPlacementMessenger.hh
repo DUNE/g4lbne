@@ -39,15 +39,18 @@ private:
 //
   G4UIcmdWithADoubleAndUnit* fTargetSLengthGraphite; 
   G4UIcmdWithADoubleAndUnit* fTargetLengthIntoHorn;
+  G4UIcmdWithADoubleAndUnit* fTargetBerylCapThickness;
   G4UIcmdWithAString* fTargetMaterial;
   G4UIcmdWithADoubleAndUnit* fTargetDensity;
 //
   G4UIcmdWithADouble* fHorn1RadialRescale;   
   G4UIcmdWithADouble* fHorn1LongRescale; 
+  G4UIcmdWithAString* fHorn1InnerCondMat;
 //  
   G4UIcmdWithADouble* fHorn2RadialRescale;   
   G4UIcmdWithADouble* fHorn2LongRescale; 
   G4UIcmdWithADoubleAndUnit* fHorn2LongPosition; // from the origin MCZero to the middle of Horn 2 
+  G4UIcmdWithAString* fHorn2InnerCondMat;
 //
   G4UIcmdWithADoubleAndUnit* fDecayPipeLength;
   G4UIcmdWithADoubleAndUnit* fDecayPipeRadius;

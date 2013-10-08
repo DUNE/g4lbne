@@ -131,10 +131,10 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
    }
    
    {
-     fTargetDensity = new G4UIcmdWithADoubleAndUnit("/LBNE/det/GraphiteTargetLength", this);
+     fTargetDensity = new G4UIcmdWithADoubleAndUnit("/LBNE/det/TargetDensity", this);
      G4String guidance("Density of the target. Only relevant for the graphite target. \n  ");
      fTargetDensity->SetGuidance(guidance);
-     fTargetDensity->SetParameterName("GraphiteTargetLength",true);
+     fTargetDensity->SetParameterName("TargetDensity",true);
      double value = volP->GetTargetDensity(); //  
      fTargetDensity->SetDefaultValue (value);
      fTargetDensity->SetDefaultUnit ("g/cm3");
@@ -146,10 +146,23 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      G4String guidance("Length of the Graphite Target into the horn.\n  ");
      guidance += std::string(" More specifically, the length of graphite from MCZERO to the dowstream tip of graphite. \n");
      guidance += std::string(" FNAL Drawing number 8875. 112-ME-363092  " ); 
+     guidance += std::string(" !!! Judged too confusing, discontinued command !!!!  " ); 
      fTargetLengthIntoHorn->SetGuidance(guidance);
      fTargetLengthIntoHorn->SetParameterName("TargetLengthIntoHorn",true);
      double value = volP->GetTargetLengthIntoHorn(); //  
      SetMyUnitsAndConditions(fTargetLengthIntoHorn, value);
+   }
+   {
+     fTargetLengthOutsideHorn = new G4UIcmdWithADoubleAndUnit("/LBNE/det/TargetLengthOutsideHorn", this);
+     G4String guidance("Length of the Graphite Target outside the horn.\n  ");
+     guidance += std::string(" More specifically, the length of graphite from the most upstream point on \n ");
+     guidance += std::string(" the 1rst vertical fin  to MCZERO. \n");
+     guidance += std::string(" FNAL Drawing number 8875. 112-ME-363092  " ); 
+     fTargetLengthOutsideHorn->SetGuidance(guidance);
+     fTargetLengthOutsideHorn->SetParameterName("TargetLengthOutsideHorn",true);
+     double value = volP->GetTargetLengthIntoHorn(); //  
+     double valueL = volP->GetTargetSLengthGraphite(); //  
+     SetMyUnitsAndConditions(fTargetLengthIntoHorn, valueL - value);
    }
     {
      fTargetBerylCapThickness = new G4UIcmdWithADoubleAndUnit("/LBNE/det/TargetBerylliumCapThickness", this);
@@ -181,6 +194,16 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      fHorn1LongRescale->SetGuidance(guidance);
      fHorn1LongRescale->SetParameterName("Horn1LongRescale",true);
      fHorn1LongRescale->SetDefaultValue(1.0);
+   }
+    { 
+     fHorn1RadialSafetyMargin = new G4UIcmdWithADoubleAndUnit("/LBNE/det/TargetAndHorn1RadialSafety", this);
+     G4String guidance(" A back door command to re-adjust the tolerance on the minimum distance  \n  ");
+     guidance += std::string(" between the tip of the Target Helium tube and the Horn 1 inner conductor.   " ); 
+     guidance += std::string(" To be used exclusively for target misalignment studies.   \n");
+     fHorn1RadialSafetyMargin->SetGuidance(guidance);
+     fHorn1RadialSafetyMargin->SetParameterName("TargetAndHorn1RadialSafety",true);
+     const double valDef = volP->GetHorn1RadialSafetyMargin();
+     SetMyUnitsAndConditions(fHorn1RadialSafetyMargin, valDef);
    }
     {
      fHorn2RadialRescale = new G4UIcmdWithADouble("/LBNE/det/Horn2RadialRescale", this);
@@ -308,13 +331,34 @@ void LBNEPlacementMessenger::SetNewValue(G4UIcommand* command,  G4String newValu
    }
    if (command == fTargetLengthIntoHorn) {
      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
+     std::cout << " !!! You have chosen the seemingly confusing way to define the length of the target which \n "
+               << " the horn.  This command should be deprecated. Please use TargetLengthOutsideHorn " << std::endl;     
      volP->SetTargetLengthIntoHorn(cmdWD->GetNewDoubleValue(newValue));
+     volP->SegmentTarget();
+   }
+   if (command == fTargetLengthOutsideHorn) {
+     G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
+     double valueL = volP->GetTargetSLengthGraphite(); //  
+     volP->SetTargetLengthIntoHorn(valueL - cmdWD->GetNewDoubleValue(newValue) + 25.3*mm); //last number emprically set 
+     // to have the first fin target at coord 0.3mm, to follow the convention. 
      volP->SegmentTarget();
    }
    if (command == fHorn1InnerCondMat) {
     std::cout << " You are now using non-standard material " << newValue 
               << " for the Horn1 Inner Conductor material " << std::endl;
     volP->SetHorn1InnerConductorMaterial(newValue);
+   }
+   if (command == fHorn1RadialSafetyMargin ) {
+     G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
+     const double val =   cmdWD->GetNewDoubleValue(newValue);    
+     std::cout << " You are changing the safety margin in the minimum distance between \n";
+     std::cout << " the downstream tip of the target and Horn1 inner conductor, from \n"; 
+     std::cout << " the defult of 2.5 mm down to " << val << std::endl;
+     if (val < 0.) {
+      G4Exception("LBNEPlacementMessenger::SetNewValue ", " ", FatalErrorInArgument,
+           " The value the Horn radial safet margin can not be nergative ");
+     }      
+     volP->SetHorn1RadialSafetyMargin(val);
    }
    
    if (command == fHorn1RadialRescale) {

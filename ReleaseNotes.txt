@@ -69,6 +69,20 @@ Oct 1 2014
  the inner conductor, for Horn1 and Horn2. Also allow for tweaking the thickness
  of the Beryllium cap at the end of the Helium container vessel. 
  
+ Oct 6-8 2014 
+ 
+ Add a command card to define the "length of target outside Horn1", by popular
+ demand. Add a command data card to overwrite the radial safety margin between 
+ the downstream end of the target and the inner conductor. 
+ Review the way the target Helium container is misaligned. We now allow
+ the upstream end to be misaligned with respect to the canister. 
+ The slope between the virtual downstream/upstream end of the target
+ is determined by the length of graphite + 10 cm, the approximate length
+ reserved for the last alignment ring and the return cooling pipe. 
+ 
+ 
+ 
+   
  
 
 

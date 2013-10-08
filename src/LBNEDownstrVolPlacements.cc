@@ -249,7 +249,8 @@ void LBNEVolumePlacements::DeclareHorn1Dims() {
                           // Drawing 8875.112 -MD-363097 The 3 cm is the MCZERO offset, per verbal discussion 
                               // with J. Hylen. The 5 microns if to avoid G4 volume overlaps.  
 			      
-  fHorn1RadialSafetyMargin = 2.9*mm; // per agreement between Jim H. and Alberto M., Aug. 22 2013. 
+//  fHorn1RadialSafetyMargin = 2.9*mm; // per agreement between Jim H. and Alberto M., Aug. 22 2013. 
+  fHorn1RadialSafetyMargin = 2.5*mm; // per agreement between Jim H. and Alberto M., Oct 4 2013 
   
   fHorn1IOTransInnerRad = 2.520*in/2. - fHorn1RadialSafetyMargin/2. ; // last term is the 
   fHorn1IOTransOuterRad = 16.250*in/2.;
@@ -324,7 +325,7 @@ void LBNEVolumePlacements::DeclareHorn1Dims() {
 // Except the big connedtors rings downsream (max dim are 23.5 in 
      
   fHorn1OuterTubeOuterRad =  13.750*in/2.0;
-  fHorn1OuterTubeInnerRad =  11.750*in/2.0; // checked with drawing 396094
+  fHorn1OuterTubeInnerRad =  11.750*in/2.0; // checked with drawing 364094
  // 
 
   //

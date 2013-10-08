@@ -63,6 +63,13 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
     // declaration of some constant which should not impact the physics at all, 
     // but are needed to build the G4 geometry. 
    fDecayPipeLength=203.7*m; // CDR, Vol 2 LBNE Doc Db 4317-v25
+   fDecayPipeLengthCorrection = -1996*mm;  // Thic correction 
+   // comes about the fact that the Hadron absorber had to be placed a bit recessed with respect to 
+   // end of the decay pipe to avoid volume overlaps. The Hadron absorber is tilte by the beamline angle,
+   // as it has be vertical for mechanical reasons. The value above for that correction has been obtained empirically 
+   // by running geantino down the beam line. The shift makes sense, based on the height of the Hadron Absorber 
+   // enclosure.
+   fDecayPipeLength += fDecayPipeLengthCorrection;
    const double aRockLength = 2.0*(fDecayPipeLength + 160.*m ); 
       // Approximate.. 150 m. is for the target hall, Horn1 + horn2, and the Hadron absorber hall + muon alcove. 
    fTotalLength = aRockLength;
@@ -85,7 +92,9 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
 // 
 // The following quantity can be changed via messenger command. 
 // 
-  fTargetLengthIntoHorn = 50.0*cm; //  LBNE Doc 6100, page 7 
+  fTargetLengthIntoHorn = fTargetSLengthGraphite - 350.*mm + 25.3; //  Integration drawing 8875.000-ME-363028
+   //last number emprically set 
+     // to have the first fin target at coord 0.3mm, to follow the convention. 
   
   fTargetMaterialName = G4String("Graphite");
   fTargetDensity =  1.78*g/cm3; // Assume density of POCO ZXF-5Q  graphite
@@ -323,6 +332,7 @@ void LBNEVolumePlacements::SegmentTarget() {
 			    // NUMI Drawing 8875.000-ME-363028 with 2 mm margin of error. 
   fTargetZ0Upstr = (-1.0* (fTargetSLength - fTargetLengthIntoHorn))/2. ;
   fTargetZ0Downstr = fTargetLengthIntoHorn/2. ;
+//  std::cerr << " Target after segmentation " <<  fTargetSLengthGraphite << std::endl;
   
 } 
 
@@ -1178,6 +1188,9 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
       G4ThreeVector deltaUpstrRight(0., 0., 0.); 
       G4ThreeVector deltaDownstrLeft(0., 0., 0.); 
       G4ThreeVector deltaDownstrRight(0., 0., 0.); 
+      std::vector<double> deltaUpstr(3, 0.); 
+      std::vector<double> deltaDownstr(3, 0.); 
+      std::vector<double> deltaSlopes(2, 0.); 
       // This code could be optimize a bit, by removing extra vector copies.. 
       for(std::vector<LBNESurveyedPt>::const_iterator itSurv = theSurvey->begin(); 
             itSurv != theSurvey->end(); itSurv++) {
@@ -1190,9 +1203,6 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
 		else if (itSurv->GetName().find("Right") !=  std::string::npos) deltaDownstrRight = itSurv->GetPosition(); 
 	      } 
        }
-      std::vector<double> deltaUpstr(3, 0.); 
-      std::vector<double> deltaDownstr(3, 0.); 
-      std::vector<double> deltaSlopes(2, 0.); 
       for (size_t k=0; k != 3; ++k)  {
          if ((std::abs(deltaUpstrLeft[k]) > 2.0e-3*mm) && (std::abs(deltaUpstrLeft[k]) > 2.0e-3*mm)) 
 	   deltaUpstr[k] = 0.5*(deltaUpstrLeft[k] + deltaUpstrRight[k]);
@@ -1205,22 +1215,38 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
 	 // Special case for the Helium tube that contains the target segments: 
 	 // Only the dowstream measurements make sense 
 	 if ((name == "TargetUpstrDownstrHeContainer") || (name == "Horn1TargetDownstrHeContainer"))  { 
-	   if (std::abs(deltaUpstr[k]) >  2.0e-3*mm) {
-	     std::cerr << " LBNEVolumePlacements::PlaceFinal The upstream section of the He Container is misaligned." << std::endl; 
-	     std::cerr << "   This makes little sense from a mechanical point of view. " << std::endl; 
-	     std::cerr << "   Suggested action: misaling the target canister instead. " << std::endl;
-	     std::cerr << "   Meanwhile, setting the deltaUpstream to 0. " << std::endl;
-	     deltaUpstr[k] = 0.;
-	   }
+//	   if (std::abs(deltaUpstr[k]) >  2.0e-3*mm) {
+//	     std::cerr << " LBNEVolumePlacements::PlaceFinal The upstream section of the He Container is misaligned." << std::endl; 
+//	     std::cerr << "   This makes little sense from a mechanical point of view. " << std::endl; 
+//	     std::cerr << "   Suggested action: misaling the target canister instead. " << std::endl;
+//	     std::cerr << "   Meanwhile, setting the deltaUpstream to 0. " << std::endl;
+//	     deltaUpstr[k] = 0.;
+//	   }
 	 }
 	 if (k != 2) {// Case by case for composite volumes..
 	      if (surveyedPtName == std::string("HeTube")) { 
-	        deltaSlopes[k] = deltaDownstr[k]/(fTargetHeContTubeLengthUpstr + fTargetHeContTubeLengthInHorn);
+	        const LBNEVolumePlacementData *plInfoAltUpstr= this->Find("Misalignments", "TargetUpstrDownstrHeContainer", 
+	                                        "LBNEVolumePlacements::PlaceFinal" );
+						
+                 const double trueLengthUpstrHeTube = plInfoAltUpstr->fParams[2];
+		 // Definition of the eefective length of the target for misalignment purpose. 
+	         deltaSlopes[k] = (deltaDownstr[k] - deltaUpstr[k]) /(fTargetSLengthGraphite + 10.0*cm); 
+                 const double posEndDwnstrHeTube = deltaUpstr[k] + (trueLengthUpstrHeTube)*deltaSlopes[k];
 	        if (name == G4String("TargetUpstrDownstrHeContainer")) {
-	          info.fPosition[k] += 0.5 * fTargetHeContTubeLengthUpstr * deltaSlopes[k];
+	          info.fPosition[k] += deltaUpstr[k] +
+		                       0.5*(trueLengthUpstrHeTube)*deltaSlopes[k];
+		  
 	        } else if (name == G4String("Horn1TargetDownstrHeContainer")) {
-	           info.fPosition[k] += 0.5 * fTargetHeContTubeLengthInHorn * deltaSlopes[k]; 
+	           const LBNEVolumePlacementData *plInfoAltDwnstr= 
+		          this->Find("Misalignments", name, 
+	                                        "LBNEVolumePlacements::PlaceFinal" );
+                   const double trueLengthDwnstrHeTube =  plInfoAltDwnstr->fParams[2];
+	           info.fPosition[k] += posEndDwnstrHeTube  + 0.5*trueLengthDwnstrHeTube*deltaSlopes[k];
+					// Ingore the small gap in between the two volumes. 
 	        }
+		std::cerr << " Misaligning Target He tube, coordinate " << k 
+		          << " deltaSlope " << deltaSlopes[k] << " New Position " << info.fPosition[k] 
+			  << " for volume named " << name << std::endl;
 		//
 		
 	      } else if (surveyedPtName == std::string("Horn1")) {

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.33 2013/10/03 18:02:26 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.34 2013/10/08 16:35:45 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -506,13 +506,13 @@ void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber(G4VPhysicalVolume *mo
     }
 */       
     
-//     const G4Box *topSol = static_cast<const G4Box *>(topAbs->GetSolid());
-//     const double marsTopWidth = topSol->GetYHalfLength();
-//     const double marsTopHeight = topSol->GetXHalfLength();
-//     const double marsTopLength = topSol->GetZHalfLength();
-//     std::cerr << " Dimension of top level Hadron absorber MARS container, X " << topSol->GetXHalfLength() << 
-//         " Y  "  << topSol->GetYHalfLength() <<   " Z  "  << topSol->GetZHalfLength() << std::endl;
-//     std::cerr << " Number of daughters for TOP " << topAbs->GetNoDaughters() << std::endl;
+     const G4Box *topSol = static_cast<const G4Box *>(topAbs->GetSolid());
+     const double marsTopWidth = topSol->GetYHalfLength();
+     const double marsTopHeight = topSol->GetXHalfLength();
+     const double marsTopLength = topSol->GetZHalfLength();
+     std::cerr << " Dimension of top level Hadron absorber MARS container, X " << topSol->GetXHalfLength() << 
+	 " Y  "  << topSol->GetYHalfLength() <<   " Z  "  << topSol->GetZHalfLength() << std::endl;
+     std::cerr << " Number of daughters for TOP " << topAbs->GetNoDaughters() << std::endl;
      double maxHalfHeight = -1.0;
      double maxHalfWidth = -1.0;
      double maxHalfLength = -1.0;
@@ -549,8 +549,14 @@ void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber(G4VPhysicalVolume *mo
          std::abs(maxHalfHeight*std::sin(fBeamlineAngle)) +  5.0*cm;	
 //     std::cerr << " half length Decay Pipe " << plDecayPipe->fParams[2]/2 
 //               << " Position in tunnel (center) " << plDecayPipe->fPosition[2] 
-//	       << " ZPosAbs " << zzz <<  std::endl;	 
-     G4ThreeVector posTopHA(0., 0., zzz);
+//	       << " ZPosAbs " << zzz <<  std::endl;
+// One must adjust the height of the Absorber such the the beam line crosses the center of the 3 rth Core block in it's 
+// center.. 
+//
+     const double yyy = 2.3*m; // Adjusted by hand, looking Geantino's Acuracy: for crossing of block 3 and 4 
+                               // Average of crossing -4 mm . Min Max average is 0.6 mm.  
+     G4ThreeVector posTopHA(0., yyy, zzz);
+     
      new G4PVPlacement(&fRotBeamlineAngle, posTopHA, aHATopL, "HadronAbsorberTop", 
   		     mother->GetLogicalVolume(), false, 1, true);
      

@@ -39,6 +39,7 @@ private:
 //
   G4UIcmdWithADoubleAndUnit* fTargetSLengthGraphite; 
   G4UIcmdWithADoubleAndUnit* fTargetLengthIntoHorn;
+  G4UIcmdWithADoubleAndUnit* fTargetLengthOutsideHorn;
   G4UIcmdWithADoubleAndUnit* fTargetBerylCapThickness;
   G4UIcmdWithAString* fTargetMaterial;
   G4UIcmdWithADoubleAndUnit* fTargetDensity;
@@ -46,6 +47,7 @@ private:
   G4UIcmdWithADouble* fHorn1RadialRescale;   
   G4UIcmdWithADouble* fHorn1LongRescale; 
   G4UIcmdWithAString* fHorn1InnerCondMat;
+  G4UIcmdWithADoubleAndUnit* fHorn1RadialSafetyMargin; 
 //  
   G4UIcmdWithADouble* fHorn2RadialRescale;   
   G4UIcmdWithADouble* fHorn2LongRescale; 

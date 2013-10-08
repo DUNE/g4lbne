@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.32 2013/10/03 18:02:17 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.33 2013/10/08 16:35:40 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -161,7 +161,8 @@ public:
  // Interface to the Messenger command 
  
   inline void SetDecayPipeLength(double l) {
-     fDecayPipeLength=l; fTotalLength = 2.0*(fDecayPipeLength + 160.*m );
+     const double lCorr = l + fDecayPipeLengthCorrection;
+     fDecayPipeLength=lCorr; fTotalLength = 2.0*(fDecayPipeLength + 160.*m );
   }
   inline void SetDecayPipeRadius(double l) {fDecayPipeRadius=l;}
   inline void SetDecayPipeLongPosition(double l) {fDecayPipeLongPosition=l;}
@@ -188,6 +189,9 @@ public:
   inline void SetTargetLengthIntoHorn(double l) { fTargetLengthIntoHorn = l; }
   inline double GetTargetBerylDownstrWindowThick() const { return fTargetBerylDownstrWindowThick;}
   inline void SetTargetBerylDownstrWindowThick(double t) { fTargetBerylDownstrWindowThick = t;}
+  inline void SetHorn1RadialSafetyMargin(double t) { fHorn1RadialSafetyMargin = t;}
+  inline double GetHorn1RadialSafetyMargin() const { return fHorn1RadialSafetyMargin;}
+  
 //
 // Interface to the Messenger, Horn1 parameters  
 //
@@ -264,7 +268,8 @@ private:
   G4double fTargetHallZ;
   G4double fAbsorberHallZ;
   G4double fDecayHallZ;
-  G4double fDecayPipeLength; // equal the above for now.. 
+  G4double fDecayPipeLength; 
+  G4double fDecayPipeLengthCorrection;
   G4double fDecayPipeRadius;
   G4double fDecayPipeUpstrWindowThick;
   G4double fDecayPipeWallThick;

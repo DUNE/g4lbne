@@ -80,6 +80,22 @@ Oct 1 2014
  is determined by the length of graphite + 10 cm, the approximate length
  reserved for the last alignment ring and the return cooling pipe. 
  
+ Oct 14-15
+ 
+ Modify the generation of the proton beam generation.  By default, we now starts
+ at z = -3.6 m., using the Courant Snider parameters from the baseline beam
+ design, by John Jonstone. The sigma of the beam is now 1.302 mm, as we are a
+ bit upstream of the beam waste, for a 20 pi mm mr emittance at 120 GeV/c. 
+ The typical angles are of the order of 20 to 40 micro-radians. 
+ 
+ Also add ~250 m of rock downstream of the muon alcove and the (still absent)
+ near detector geometry. This can be adjusted via the command card 
+ /LBNE/det/LengthOfRockDownstr 
+ 
+ Veryfied, that by default, the first vertical fin of the target starts at
+ Z=-350.058 mm (the extra 58 microns is a long story, not worth worrying about).
+ 
+ 
  
  
    

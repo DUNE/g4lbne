@@ -1,6 +1,9 @@
+
 This is an informal, code level, release note:
 
 v3r0 : gemoetry complete, see LBNE doc 7922 for status. 
+
+v3r0p4:
 
 Sept 23 - 25: 
 a. adjust the Z offset for Volume TargetHallAndHorn1 and Hron2Hall such
@@ -95,7 +98,7 @@ Oct 1 2014
  Veryfied, that by default, the first vertical fin of the target starts at
  Z=-350.058 mm (the extra 58 microns is a long story, not worth worrying about).
  
- 
+<end changes contained in v3r0p4> 
  
  
    

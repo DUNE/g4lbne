@@ -61,6 +61,7 @@ LBNEPrimaryGeneratorAction::LBNEPrimaryGeneratorAction() :
     fBeamOffsetX(0.0),
     fBeamOffsetY(0.0),
     fBeamOffsetZ(-3.6*m), // beam divergence assumed to be very small... 
+                          // If old way of defining the beam!.. See below. 
                           // Should place well in front of the baffle, 
 			  // hopefully not too much air in the way.. 
     fBeamMaxValX(1.0*m),  // No truncation of the beam by default. 
@@ -69,7 +70,16 @@ LBNEPrimaryGeneratorAction::LBNEPrimaryGeneratorAction() :
     fBeamSigmaY(1.3*mm),
     fBeamAngleTheta(0.0),
     fBeamAnglePhi(0.0),
-
+    fUseCourantSniderParams(true),
+    fUseJustSigmaCoord(false),
+    fBeamEmittanceX(20.), // In pi mm mRad (Fermi units of emittance) 
+    fBeamEmittanceY(20.),
+    fBeamBetaFunctionX(64.842), // in meter, assuming a 120 GeV beam 
+    fBeamBetaFunctionY(64.842), // in meter, assuming a 120 GeV beam // John Jonstone, e-mail, Oct 11
+    fBeamBetaFunctionAt120(64.842), // in meter, assuming a 120 GeV beam 
+    fBeamBetaFunctionAt80(43.228), // in meter, assuming a 120 GeV beam 
+    fBeamBetaFunctionAt60(32.421), // in meter, assuming a 120 GeV beam 
+    
     fUseGeantino(false),
     fUseMuonGeantino(false),
     fZOriginGeantino(-515.), // Upstream of target.
@@ -81,7 +91,15 @@ LBNEPrimaryGeneratorAction::LBNEPrimaryGeneratorAction() :
    fPrimaryMessenger = new LBNEPrimaryMessenger(this);
    G4int n_particle = 1;
    fParticleGun = new G4ParticleGun(n_particle);
-   
+   //
+   // Test the estimate fo the beta function 
+   //
+//   std::cerr << " Pz BetaFunc " << std::endl;
+//   for (int iPz=0; iPz !=100; iPz++) 
+//     std::cerr << " " << (50.0 + iPz*1.0) << " " <<
+//               GetBetaFunctionvsBeamEnergy((50.0 + iPz*1.0)) << std:: endl;
+//	       
+   // Other CourantSnider functions set down below. 
 }
 //---------------------------------------------------------------------------------------
 LBNEPrimaryGeneratorAction::~LBNEPrimaryGeneratorAction()
@@ -93,6 +111,14 @@ LBNEPrimaryGeneratorAction::~LBNEPrimaryGeneratorAction()
 void LBNEPrimaryGeneratorAction::SetProtonBeam()
 {
 
+   // Make sure we have a consistent way to define the beam 
+
+   if ((fUseCourantSniderParams && fUseJustSigmaCoord) ||
+       ((!fUseCourantSniderParams) && (!fUseJustSigmaCoord)) ) {
+     G4Exception("LBNEPrimaryGeneratorAction::SetProtonBeam", " ", 
+                FatalErrorInArgument,
+    "Attempting to refdefined both CourantSnider parameters and beam spot size.  Please choose one!..."  );
+   } 
    G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
  
   if (fUseGeantino) {
@@ -102,8 +128,9 @@ void LBNEPrimaryGeneratorAction::SetProtonBeam()
     fParticleGun->SetParticleDefinition(particleTable->FindParticle("mu+"));
   }
   else fParticleGun->SetParticleDefinition(particleTable->FindParticle("proton"));
-  const double pEkin = 
-    std::sqrt(fProtonMomentumMag*fProtonMomentumMag + 0.938272*GeV*0.938272*GeV) - 0.938272*GeV;
+  
+  const double eBeam = std::sqrt(fProtonMomentumMag*fProtonMomentumMag + 0.938272*GeV*0.938272*GeV); 
+  const double pEkin = eBeam - 0.938272*GeV;
   fParticleGun->SetParticleEnergy(pEkin);
   // This needs to be implemented via data cards!!!
   G4ThreeVector beamPosition(0., 0., fBeamOffsetZ);
@@ -131,6 +158,37 @@ void LBNEPrimaryGeneratorAction::SetProtonBeam()
 	    << spaces << "   Beam Max, d|Y|    = " << fBeamMaxValY/mm << " mm" << std::endl
 	    << spaces << "   Direction         = " << fParticleGun->GetParticleMomentumDirection() << std::endl;
 
+  if (fUseCourantSniderParams) {
+     
+     const double gammaLorentz = eBeam/(0.938272*GeV);
+     const double betaLorentz = std::sqrt(1.0 - 1.0/(gammaLorentz*gammaLorentz));
+     const double betaGammaLorentz = gammaLorentz*betaLorentz;
+     
+     const double betaFuncStarX = (std::abs(fProtonMomentumMag - 120.*GeV) < 0.1) ? 
+                              fBeamBetaFunctionX : 
+			      GetBetaFunctionvsBeamEnergy(fProtonMomentumMag/GeV); // in meters, not mm 
+     const double betaFuncStarY = (std::abs(fProtonMomentumMag - 120.*GeV) < 0.1) ? 
+                              fBeamBetaFunctionY : 
+			      GetBetaFunctionvsBeamEnergy(fProtonMomentumMag/GeV);
+			         
+     fBeamAlphaFunctionX = -(fBeamOffsetZ/m)/betaFuncStarX;
+     fBeamAlphaFunctionY = -(fBeamOffsetZ/m)/betaFuncStarY;
+     
+     fBeamBetaFuncGenX = betaFuncStarX + ((fBeamOffsetZ/m)*(fBeamOffsetZ/m))/betaFuncStarX;// in meters
+     fBeamBetaFuncGenY = betaFuncStarY + ((fBeamOffsetZ/m)*(fBeamOffsetZ/m))/betaFuncStarY;
+     
+     fBeamSigmaX = std::sqrt( 1.0e3 * fBeamBetaFuncGenX/m * fBeamEmittanceX/ (6.0*betaGammaLorentz)); // in mm 
+     fBeamSigmaY = std::sqrt(  1.0e3 * fBeamBetaFuncGenY/m * fBeamEmittanceY/ (6.0*betaGammaLorentz));
+     std::cout << spaces << "Re-Configuring the Proton beam using Courant-Snider parameters " << std::endl;
+     std::cout << spaces << "  Beta function X at Point of creation " << fBeamBetaFuncGenX << " m " << std::endl;
+     std::cout << spaces << "  Beta function Y at Point of creation " << fBeamBetaFuncGenY << " m " << std::endl;
+     std::cout << spaces << "  Alpha function X at Point of creation " << fBeamAlphaFunctionX << std::endl;
+     std::cout << spaces << "  Alpha function Y at Point of creation " << fBeamAlphaFunctionY << std::endl;
+     std::cout << spaces << "  Sigma X at Point of creation " << fBeamSigmaX << " mm " << std::endl;
+     std::cout << spaces << "  Sigma Y at Point of creation " << fBeamSigmaY << " mm " << std::endl;
+     
+  }
+  
 }
 
 
@@ -208,6 +266,19 @@ void LBNEPrimaryGeneratorAction::CloseNtuple()
    fCurrentPrimaryNo=0;
 }
 
+double LBNEPrimaryGeneratorAction::GetBetaFunctionvsBeamEnergy(double pz){
+ 
+                         // quadratic interpolation, based on the e-mail from 
+                                     // John Jostone. 
+
+ // Define and slove a set of quadratic equation. 
+ const double betaSecond80 = (fBeamBetaFunctionAt120 + 2.0*fBeamBetaFunctionAt60 - 
+                                   3.0*fBeamBetaFunctionAt80)/2400.;
+ const double betaPrime80 = (1.0/40.)*(fBeamBetaFunctionAt120 - fBeamBetaFunctionAt80 - betaSecond80*1600.); 
+ 
+ const double dp = pz - 80.;
+ return (fBeamBetaFunctionAt80 + betaPrime80*dp + betaSecond80*dp*dp); 
+}
 //---------------------------------------------------------------------------------------
 void LBNEPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
@@ -261,9 +332,10 @@ void LBNEPrimaryGeneratorAction::GenerateG4ProtonBeam(G4Event* anEvent)
    
 
 // If nothing else is set, use a proton beam
-    G4double x0;
-    G4double y0; 
-    G4double z0;
+    G4double x0 = 0.;
+    G4double y0 = 0.; 
+    G4double z0 = 0.;
+    
     do 
     {
        x0 = G4RandGauss::shoot(0.0, fBeamSigmaX);
@@ -273,8 +345,10 @@ void LBNEPrimaryGeneratorAction::GenerateG4ProtonBeam(G4Event* anEvent)
     {
        y0 = G4RandGauss::shoot(0.0, fBeamSigmaY);
     }
-    while(std::abs(x0) > fBeamMaxValY);
-    y0 = G4RandGauss::shoot(fBeamOffsetY, fBeamSigmaY );
+    while(std::abs(y0) > fBeamMaxValY);
+    
+    const double xFromEmitt = x0;
+    const double yFromEmitt = y0;
     z0 = fBeamOffsetZ;
 
     if(!fBeamOnTarget){
@@ -298,98 +372,37 @@ void LBNEPrimaryGeneratorAction::GenerateG4ProtonBeam(G4Event* anEvent)
        x0 += (dx/dz)*z0;
        y0 += (dy/dz)*z0;
     }
+    double phaseX = 0.;
+    double phaseY = 0.;
+    if (fUseCourantSniderParams) { // The tails in the dx, dy distribution not quite Gaussian, 
+                                   // but this is small error. 
+        phaseX = 2.0*M_PI*G4RandFlat::shoot();
+	const double amplX = xFromEmitt/std::cos(phaseX);
+	dx += (std::sin(phaseX)*amplX - fBeamAlphaFunctionX*xFromEmitt)/(fBeamBetaFuncGenX*m); // in radian (mm/mm) 
+        phaseY = 2.0*M_PI*G4RandFlat::shoot();
+	const double amplY = yFromEmitt/std::cos(phaseY);
+	dy += (std::sin(phaseY)*amplY - fBeamAlphaFunctionY*yFromEmitt)/(fBeamBetaFuncGenY*m);
+    }
+
+//    if (std::abs(y0) > 5.0) {
+//      std::cerr << " !!!!!.... Anomalously large y0 " << y0 << " dy " << dy << " Phase y " << phaseY << std::endl;
+//    }
 
     fProtonN = fCurrentPrimaryNo;
     fProtonOrigin   = G4ThreeVector(x0, y0, z0);
-    fProtonMomentum = G4ThreeVector(0, 0, fProtonMomentumMag);
+    fProtonMomentum = G4ThreeVector(dx*fProtonMomentumMag, dy*fProtonMomentumMag, dz*fProtonMomentumMag);
     fProtonIntVertex = G4ThreeVector(-9999.,-9999.,-9999.);
     fWeight=1.; //for primary protons set weight and tgen
     fTgen=0;
     
     fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
     fParticleGun->SetParticleMomentumDirection(direction);
+    //
+    // Backdoor to create lots of beam particle, records data on where we are on the target.. 
+    //
+    // G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+    // fParticleGun->SetParticleDefinition(particleTable->FindParticle("geantino"));
     fParticleGun->GeneratePrimaryVertex(anEvent);
-
-
-/* ORIGNAL G4NUMI Basic proton beam
-
-// If nothing else is set, use a basic proton beam
-     G4double x0;
-     G4double y0; 
-     G4double z0;
-     G4double sigmax=fLBNEData->GetBeamSigmaX();
-     G4double sigmay=fLBNEData->GetBeamSigmaY();
-     
-     x0 = G4RandGauss::shoot(fLBNEData->GetBeamXPosition(),sigmax);
-     y0 = G4RandGauss::shoot(fLBNEData->GetBeamYPosition(),sigmay);
-     z0 = fLBNEData->GetBeamZPosition();
-    
-     fProtonOrigin   = G4ThreeVector(x0, y0, z0);
-     fProtonMomentum = G4ThreeVector(0, 0, fLBNEData->GetProtonMomentum());
-     fProtonIntVertex = G4ThreeVector(-9999.,-9999.,-9999.);
-     fWeight=1.; //for primary protons set weight and tgen
-     fTgen=0;
-     
-     fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
-     fParticleGun->GeneratePrimaryVertex(anEvent);
-
-
-*/
-
-
-/* from LBNE sim
-// If nothing else is set, use a proton beam
-    G4double x0;
-    G4double y0; 
-    G4double z0;
-    G4double sigmax=fLBNEData->beamSigmaX;
-    G4double sigmay=fLBNEData->beamSigmaY;
-    
-    x0 = G4RandGauss::shoot(fLBNEData->beamPosition[0],sigmax);
-    y0 = G4RandGauss::shoot(fLBNEData->beamPosition[1],sigmay);
-    z0 = fLBNEData->beamPosition[2];
-
-    G4double dx, dy, dz;
-    do 
-    {
-      dx = G4RandGauss::shoot(0.0, fLBNEData->beamSigDx);
-    }
-    while(abs(dx) > fLBNEData->beamMaxDx);
-    
-    do 
-    {
-      dy = G4RandGauss::shoot(0.0, fLBNEData->beamSigDy);
-    }
-    while(abs(dy) > fLBNEData->beamMaxDy);
-    
-    dz = sqrt(1.0 - (dx*dx + dy*dy));
-    G4ThreeVector direction(dx, dy, dz);
-
-
-    if(fLBNEData->beamOnTarget) 
-    {
-       //G4double zDist = fLBNEData->TargetZ0[0] - z0;
-       //x0 += (dx/dz)*zDist;
-       //y0 += (dy/dz)*zDist;
-       //z0 += zDist;
-       x0 += (dx/dz)*z0;
-       y0 += (dy/dz)*z0;
-
-    }
-
-    fProtonN = fCurrentPrimaryNo;
-    
-    fProtonOrigin   = G4ThreeVector(x0, y0, z0);
-    //fProtonMomentum = G4ThreeVector(0, 0, fLBNEData->protonMomentum);
-    fProtonMomentum = fLBNEData->protonMomentum*direction;
-    fProtonIntVertex = G4ThreeVector(-9999.,-9999.,-9999.);
-    fWeight=1.; //for primary protons set weight and tgen
-    fTgen=0;
-    
-    fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
-    fParticleGun->SetParticleMomentumDirection(direction);
-    fParticleGun->GeneratePrimaryVertex(anEvent);
-*/
 }
 //
 // Used to begug geometry, and/or, Radiography of the detector. 

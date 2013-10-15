@@ -266,6 +266,14 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      bool value = volP->GetDoInstallShield(); //  
      fInstallShield->SetDefaultValue(value);
    }
+    { 
+     fLengthOfRockDownstr = new G4UIcmdWithADoubleAndUnit("/LBNE/det/LengthOfRockDownstr", this);
+     G4String guidance(" The length of rock  downstream of the muon alcove. \n  ");
+     fLengthOfRockDownstr->SetGuidance(guidance);
+     fLengthOfRockDownstr->SetParameterName("LengthOfRockDownstr",true);
+     const double valDef = volP->GetLengthOfRockDownstreamAlcove();
+     SetMyUnitsAndConditions(fLengthOfRockDownstr, valDef);
+   }
 }
 // Just to avoid code bloat.. 
 
@@ -392,6 +400,10 @@ void LBNEPlacementMessenger::SetNewValue(G4UIcommand* command,  G4String newValu
    }
    if (command == fAbsorberGDMLFilename) {
           volP->SetAbsorberGDMLFilename(newValue);
+   }
+   if (command == fLengthOfRockDownstr) {
+     G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
+     volP->SetLengthOfRockDownstreamAlcove(cmdWD->GetNewDoubleValue(newValue));
    }
 
 }

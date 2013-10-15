@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.33 2013/10/08 16:35:40 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.34 2013/10/15 19:17:52 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -157,12 +157,19 @@ public:
    
   inline void SetTotalLengthOfRock(double l) { fTotalLength = l;}
   inline double GetTotalLengthOfRock() const { return fTotalLength;}
+  inline void SetLengthOfRockDownstreamAlcove(double l) {
+   fLengthOfRockDownstr = 2.0*l; // Downstream and upstream, actually, the latter does not matter.
+   const double aRockLength = 2.0*(fDecayPipeLength + 160.*m ); // before digging the tunnel. 
+      // Approximate.. 150 m. is for the target hall, Horn1 + horn2, and the Hadron absorber hall + muon alcove. 
+   fTotalLength = aRockLength+fLengthOfRockDownstr;
+  }
+  inline double GetLengthOfRockDownstreamAlcove() const { return fLengthOfRockDownstr;}
   
  // Interface to the Messenger command 
  
   inline void SetDecayPipeLength(double l) {
      const double lCorr = l + fDecayPipeLengthCorrection;
-     fDecayPipeLength=lCorr; fTotalLength = 2.0*(fDecayPipeLength + 160.*m );
+     fDecayPipeLength=lCorr; fTotalLength = 2.0*(fDecayPipeLength + 160.*m + fLengthOfRockDownstr);
   }
   inline void SetDecayPipeRadius(double l) {fDecayPipeRadius=l;}
   inline void SetDecayPipeLongPosition(double l) {fDecayPipeLongPosition=l;}
@@ -170,7 +177,7 @@ public:
   inline void SetDecayPipeGas(G4String &name) {fDecayPipeGas = name;}
   inline void SetHorn1InnerConductorMaterial(G4String &name) {fHorn1InnerCondMat = name;}
   inline void SetHorn2InnerConductorMaterial(G4String &name) {fHorn2InnerCondMat = name;}
-  inline void SetTotalLength(double l) {fTotalLength=l;}
+  inline void SetTotalLength(double l) {fTotalLength=l;} // dangerous! Possible conflict with length of rock downstream 
   inline void SetWaterLayerThickInHorns(double l) { fWaterLayerThickInHorns = l;}
   inline void SetHorn1Length(double l) { fHorn1Length = l;}
   inline void SetBaffleLength(double l) { fBaffleLength = l;}
@@ -265,6 +272,7 @@ private:
   // Useful lengths/dimensions, gotten from the messenger class, or set internally.  
 
   G4double fTotalLength;
+  G4double fLengthOfRockDownstr;
   G4double fTargetHallZ;
   G4double fAbsorberHallZ;
   G4double fDecayHallZ;

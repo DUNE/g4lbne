@@ -72,7 +72,8 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
    fDecayPipeLength += fDecayPipeLengthCorrection;
    const double aRockLength = 2.0*(fDecayPipeLength + 160.*m ); 
       // Approximate.. 150 m. is for the target hall, Horn1 + horn2, and the Hadron absorber hall + muon alcove. 
-   fTotalLength = aRockLength;
+   fLengthOfRockDownstr = 2.0*250.0*m; // to absorb muons.. 
+   fTotalLength = aRockLength+fLengthOfRockDownstr;
    fDecayPipeRadius = 4.0*m/2.;
    fDecayPipeUpstrWindowThick = 1.3*mm; // After discussion with Alberto M., Sept 3 2013. Material is Berylium 
    fDecayPipeWallThick = 12.5*mm; // CDR, March 2012, Vol-2, p 3.130 
@@ -380,7 +381,7 @@ LBNEVolumePlacementData*
     info.fParams[0] = std::max((18.5*m), 2.0*(fDecayPipeRadius)); 
        // Note: the total volume is 60 m. wide => plenty enough rocks. The last term is for the Hadron Absorber cavern  
     info.fParams[1] = std::max((40*m), 2.0*(fDecayPipeRadius)); // Too tall... Set by the Hadron absorber requirement 
-    info.fParams[2] = fTotalLength -2.0*cm;
+    info.fParams[2] = fTotalLength - fLengthOfRockDownstr -2.0*cm;
     std::cerr << " Total half length of the tunnel " << info.fParams[2]/2. << std::endl;
     std::cerr << " Total half Height of the tunnel " << info.fParams[1]/2. << std::endl;
     std::cerr << " Total half Width of the tunnel " << info.fParams[0]/2. << std::endl;
@@ -1250,9 +1251,9 @@ G4PVPlacement* LBNEVolumePlacements::PlaceFinal(const G4String &name, G4VPhysica
 		//
 		
 	      } else if (surveyedPtName == std::string("Horn1")) {
-	        const double fTotalLength = fHorn1TopUpstrLength + fHorn1TopDownstrLength;
+	        const double aTotalLength = fHorn1TopUpstrLength + fHorn1TopDownstrLength;
 		
-	        deltaSlopes[k] = (deltaDownstr[k] - deltaUpstr[k])/fTotalLength;
+	        deltaSlopes[k] = (deltaDownstr[k] - deltaUpstr[k])/aTotalLength;
                 if(name == G4String("Horn1TopLevelUpstr")) {
 		  info.fPosition[k] += deltaUpstr[k] + deltaSlopes[k]*(fHorn1TopUpstrLength/2.) ;
 	      	} else if(name == G4String("Horn1TopLevelDownstr")) {

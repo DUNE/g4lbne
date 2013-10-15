@@ -33,6 +33,10 @@ private:
   G4UIcmdWithADoubleAndUnit*    fBeamMaxValYCmd;
   G4UIcmdWithADoubleAndUnit*    fBeamThetaCmd;
   G4UIcmdWithADoubleAndUnit*    fBeamPhiCmd;
+  G4UIcmdWithADoubleAndUnit*    fBeamBetaFunctionX;
+  G4UIcmdWithADoubleAndUnit*    fBeamBetaFunctionY;
+  G4UIcmdWithADoubleAndUnit*    fBeamEmittanceX;
+  G4UIcmdWithADoubleAndUnit*    fBeamEmittanceY;
   G4UIcmdWithABool*             fCorrectForAngleCmd;
   G4UIcmdWithADoubleAndUnit*    fProtonMomentum;
   G4UIcmdWithABool*             fBeamOnTargetCmd;

@@ -110,6 +110,43 @@ LBNEPrimaryMessenger::LBNEPrimaryMessenger(LBNEPrimaryGeneratorAction* RA)
   fBeamOnTargetCmd->SetGuidance("If true, forces beam to hit the center");
   fBeamOnTargetCmd->SetGuidance("of target. Any x or y offsets supplied");
   fBeamOnTargetCmd->SetGuidance("via messenger are ignored");
+  
+  fBeamBetaFunctionX = new G4UIcmdWithADoubleAndUnit("/LBNE/primary/beamBetaFunctionX", this);
+  fBeamBetaFunctionX->SetGuidance(
+   "LBNE beam line X beta function at the the target (MCZERO) delived by the Fermilab Main Injector ");
+  fBeamBetaFunctionX->SetParameterName("beamBetaFunctionX",true);
+  fBeamBetaFunctionX->SetDefaultValue (64.842); // ugly, but the primary geenrator class not yet instantiated. 
+  fBeamBetaFunctionX->SetDefaultUnit ("m");
+  fBeamBetaFunctionX->SetUnitCandidates ("m");
+  fBeamBetaFunctionX->AvailableForStates(G4State_Idle);
+  
+  fBeamBetaFunctionY = new G4UIcmdWithADoubleAndUnit("/LBNE/primary/beamBetaFunctionY", this);
+  fBeamBetaFunctionX->SetGuidance(
+   "LBNE beam line Y beta function at the the target (MCZERO) delived by the Fermilab Main Injector ");
+  fBeamBetaFunctionY->SetParameterName("beamBetaFunctionY",true);
+  fBeamBetaFunctionY->SetDefaultValue (64.842); // ugly, but the primary geenrator class not yet instantiated. 
+  fBeamBetaFunctionY->SetDefaultUnit ("m");
+  fBeamBetaFunctionY->SetUnitCandidates ("m");
+  fBeamBetaFunctionY->AvailableForStates(G4State_Idle);
+
+  fBeamEmittanceX = new G4UIcmdWithADoubleAndUnit("/LBNE/primary/beamEmittanceX", this);
+  fBeamEmittanceX->SetGuidance(
+   "LBNE beam line X Emittance, in pi mm mRad, Fermi units. ");
+  fBeamEmittanceX->SetParameterName("beamEmittanceX",true);
+  fBeamEmittanceX->SetDefaultValue (20.); // ugly, but the primary geenrator class not yet instantiated. 
+  fBeamEmittanceX->SetDefaultUnit ("mm"); // a lie, but define a unit will only bring more confusion. 
+  fBeamEmittanceX->SetUnitCandidates ("mm");
+  fBeamEmittanceX->AvailableForStates(G4State_Idle);
+  
+  fBeamEmittanceY = new G4UIcmdWithADoubleAndUnit("/LBNE/primary/beamEmittanceY", this);
+  fBeamEmittanceY->SetGuidance(
+   "LBNE beam line Y Emittance, in pi mm mRad, Fermi units. ");
+  fBeamEmittanceY->SetParameterName("beamEmittanceY",true);
+  fBeamEmittanceY->SetDefaultValue (20.); // ugly, but the primary geenrator class not yet instantiated. 
+  fBeamEmittanceY->SetDefaultUnit ("mm"); // a lie, but define a unit will only bring more confusion. 
+  fBeamEmittanceY->SetUnitCandidates ("mm");
+  fBeamEmittanceY->AvailableForStates(G4State_Idle);
+  
     
   fUseGeantino  = new G4UIcmdWithoutParameter("/LBNE/primary/useGeantino",this);
   fUseGeantino->SetGuidance("Using a Geantino at the Primary, to study absorption");
@@ -197,10 +234,12 @@ void LBNEPrimaryMessenger::SetNewValue(G4UIcommand* cmd, G4String val)
     fPrimaryAction->SetBeamOffsetY(fBeamOffsetYCmd->GetNewDoubleValue(val));   
   }
   if(cmd == fBeamSigmaXCmd){
-    fPrimaryAction->SetBeamSigmaX(fBeamSigmaXCmd->GetNewDoubleValue(val));   
+    fPrimaryAction->SetBeamSigmaX(fBeamSigmaXCmd->GetNewDoubleValue(val)); 
+    fPrimaryAction->SetUseJustSigmaCoord(true); 
   }
   if(cmd == fBeamSigmaYCmd){
     fPrimaryAction->SetBeamSigmaY(fBeamSigmaYCmd->GetNewDoubleValue(val));   
+    fPrimaryAction->SetUseJustSigmaCoord(true); 
   }
   if(cmd == fBeamMaxValXCmd){
     fPrimaryAction->SetBeamMaxValX(fBeamMaxValXCmd->GetNewDoubleValue(val));   
@@ -246,7 +285,32 @@ void LBNEPrimaryMessenger::SetNewValue(G4UIcommand* cmd, G4String val)
       fPrimaryAction->SetUseMuonGeantino(true);
    } else if (cmd ==  fProtonMomentum ) {
       G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (cmd);
-      fPrimaryAction->SetProtonMomentum( cmdWD->GetNewDoubleValue(val));
+      const double pz =  cmdWD->GetNewDoubleValue(val);
+      fPrimaryAction->SetProtonMomentum( pz);
+      double bf = fPrimaryAction->GetBetaFunctionvsBeamEnergy(pz);
+      fPrimaryAction->SetBeamBetaFunctionX(bf);
+      fPrimaryAction->SetBeamBetaFunctionY(bf);
+   }
+   
+   else if (cmd ==  fBeamBetaFunctionX ) {
+      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (cmd);
+      fPrimaryAction->SetBeamBetaFunctionX(cmdWD->GetNewDoubleValue(val));
+      fPrimaryAction->SetUseCourantSniderParams(true);
+   }
+   else if (cmd ==  fBeamBetaFunctionY ) {
+      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (cmd);
+      fPrimaryAction->SetBeamBetaFunctionY(cmdWD->GetNewDoubleValue(val));
+      fPrimaryAction->SetUseCourantSniderParams(true);
+   }
+   else if (cmd ==  fBeamEmittanceX ) {      
+      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (cmd);
+      fPrimaryAction->SetBeamEmittanceX(cmdWD->GetNewDoubleValue(val));
+      fPrimaryAction->SetUseCourantSniderParams(true);
+   }
+   else if (cmd ==  fBeamEmittanceY ) {      
+      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (cmd);
+      fPrimaryAction->SetBeamEmittanceY(cmdWD->GetNewDoubleValue(val));
+      fPrimaryAction->SetUseCourantSniderParams(true);
    }
    
 }

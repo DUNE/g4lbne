@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 // LBNEAnalysis.cc
 //
-// $Id: LBNEAnalysis.cc,v 1.3.2.4 2013/09/12 13:25:30 lebrun Exp $
+// $Id: LBNEAnalysis.cc,v 1.3.2.5 2013/10/15 19:17:43 lebrun Exp $
 //----------------------------------------------------------------------
 
 #include <vector>
@@ -272,6 +272,7 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
    fLBNEOutNtpData->protonPx             = protonMomentum[0];
    fLBNEOutNtpData->protonPy             = protonMomentum[1];
    fLBNEOutNtpData->protonPz             = protonMomentum[2];
+//   std::cerr << " protonOrigin " << protonOrigin << " momentum " << protonMomentum << std::endl;
    
    LBNEVolumePlacements *volDB = LBNEVolumePlacements::Instance();
    

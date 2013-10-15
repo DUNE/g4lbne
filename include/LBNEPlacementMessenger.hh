@@ -60,6 +60,8 @@ private:
   G4UIcmdWithADoubleAndUnit* fDecayPipeUpstreamWindowThickness;
   G4UIcmdWithAString* fDecayPipeGas; // Air or Helium supported 
   
+  G4UIcmdWithADoubleAndUnit* fLengthOfRockDownstr;
+
    G4UIcmdWithAString* fAbsorberGDMLFilename;
  
   G4UIcmdWithABool* fInstallShield; // if true (default), we place roated chunk of steel surround Horns

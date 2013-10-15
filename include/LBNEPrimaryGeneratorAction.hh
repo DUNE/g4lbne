@@ -65,12 +65,29 @@ class LBNEPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
   void SetBeamPhi(G4double phi) { fBeamAnglePhi = phi; }
   void SetProtonMomentum(G4double p) {fProtonMomentumMag = p;}
   
+  inline void SetUseCourantSniderParams(G4bool t) {fUseCourantSniderParams = t;}
+  inline void SetUseJustSigmaCoord(G4bool t) {fUseJustSigmaCoord = t;}
+  
+  inline G4bool GetUseCourantSniderParams() { return fUseCourantSniderParams;}
+  inline G4bool GetUseJustSigmaCoord() {return fUseJustSigmaCoord;}
+  
+  inline void SetBeamEmittanceX(G4double t) {fBeamEmittanceX = t;}
+  inline void SetBeamEmittanceY(G4double t) {fBeamEmittanceY = t;}
+  inline void SetBeamBetaFunctionX(G4double t) {fBeamBetaFunctionX = t;}
+  inline void SetBeamBetaFunctionY(G4double t) {fBeamBetaFunctionY = t;}
+  
   inline double GetBeamSigmaX() const { return fBeamSigmaX; }
   inline double GetBeamSigmaY() const { return fBeamSigmaY; }
   inline double GetBeamOffsetX() const { return fBeamOffsetX; }
   inline double GetBeamOffsetY() const { return fBeamOffsetY; }
   inline double GetBeamMaxValX() const { return fBeamMaxValX; }
   inline double GetBeamMaxValY() const { return fBeamMaxValY; }
+  
+  inline double GetBeamEmittanceX() const { return fBeamEmittanceX;} 
+  inline double GetBeamBetaFunctionX() const { return fBeamBetaFunctionX;}
+  
+  inline double GetBeamEmittanceY() const { return fBeamEmittanceY;} 
+  inline double GetBeamBetaFunctionY() const { return fBeamBetaFunctionY;}
   
 private:
 
@@ -110,6 +127,25 @@ private:
   G4double fBeamSigmaY;
   G4double fBeamAngleTheta;
   G4double fBeamAnglePhi;
+  
+  G4bool fUseCourantSniderParams; // new way to set the Proton beam paramters 
+  G4bool fUseJustSigmaCoord;// Old way One and only of these flags should be set to true. 
+  
+  G4double fBeamEmittanceX; // 95 % value
+  G4double fBeamEmittanceY;
+  G4double fBeamBetaFunctionX; // in meters. Assumed to be at the waist point, (beta*)  
+  G4double fBeamBetaFunctionY;
+  G4double fBeamBetaFunctionAt120; // in meters 
+  G4double fBeamBetaFunctionAt80; // in meters 
+  G4double fBeamBetaFunctionAt60;
+  
+  // We are at a waste, so aplha = 0 and gamma = 1/beta (or close to it. ) 
+  // Except that we generate the beam upstream. So we need the alpha 
+  
+  G4double fBeamAlphaFunctionX; // The alha at the place where the beam is generated. 
+  G4double fBeamAlphaFunctionY; // The alha at the place where the beam is generated. 
+  G4double fBeamBetaFuncGenX; // Actually used at the place where the beam is generated 
+  G4double fBeamBetaFuncGenY; 
  
   G4bool fUseGeantino;
   G4bool fUseMuonGeantino;
@@ -130,7 +166,10 @@ public:
    
    inline bool GetUseMuonGeantino() const { return fUseMuonGeantino; }
    inline bool GetUseGeantino() const { return fUseGeantino; }
- 
+   
+   double GetBetaFunctionvsBeamEnergy(double pz); 
+                         // quadratic interpolation, based on the e-mail from 
+                                     // John Jostone. 
    
 };
 

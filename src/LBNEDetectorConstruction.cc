@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.34 2013/10/08 16:35:45 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.35 2013/10/15 19:17:43 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -324,7 +324,9 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   
   fRockX = 60.0*m;
   fRockY = 60.0*m;
-  fRockLength = fPlacementHandler->GetTotalLengthOfRock() + 4.0*cm; 
+  fRockLength = fPlacementHandler->GetTotalLengthOfRock() + 4.0*cm;
+//  std::cerr << "  ............  fRockLength " << fRockLength << std::endl;
+   
       // See LBNEVolumePlacements constructor. 
   G4Box* ROCK_solid = new G4Box("ROCK_solid",fRockX/2, fRockY/2, fRockLength/2);
   G4LogicalVolume *RockLogical = 
@@ -338,7 +340,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   // First create the Target Hall, Pipe Hall, and Absorber Hall, and then
   // connect them together.
   fPlacementHandler->SetTotalLengthOfRock(fRockLength);
-  fPlacementHandler->Create(G4String("Tunnel")); // Material is rock oversized.. 
+  fPlacementHandler->Create(G4String("Tunnel")); 
   G4VPhysicalVolume* tunnel = fPlacementHandler->PlaceFinal(G4String("Tunnel"), fRock ); // like Rock, oversized. Air. 
   fPlacementHandler->Create(G4String("TargetHallAndHorn1"));
 // 

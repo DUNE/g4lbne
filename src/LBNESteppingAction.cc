@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNESteppingAction.cc
-// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.12 2013/09/27 19:14:11 lebrun Exp $
+// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.13 2013/10/15 19:17:43 lebrun Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -497,17 +497,36 @@ void LBNESteppingAction::StudyCheckOverlap(const G4Step * theStep) {
 //
    G4Track * theTrack = theStep->GetTrack();
    if ((theTrack->GetParticleDefinition()->GetParticleName()).find("geantino") == std::string::npos) return;
+   if( theTrack->GetNextVolume() == 0 ) {
+        if (pRunManager->GetCurrentEvent()->GetEventID() < 3) 
+	   std::cout << " Out of world with track length  = " << theTrack->GetTrackLength()  << std::endl; 
+       return;
+   }
    G4StepPoint* prePtr = theStep->GetPreStepPoint();
    if (prePtr == 0) return;
    G4StepPoint* postPtr = theStep->GetPostStepPoint();
-   if (postPtr == 0) return;
-   if (postPtr->GetPhysicalVolume() == 0) return;
+   if (postPtr == 0) {
+        if (pRunManager->GetCurrentEvent()->GetEventID() < 3) 
+	   std::cout << " No Post Point, Last step at Z = " << prePtr->GetPosition()[2] << " r " <<            
+	      std::sqrt(prePtr->GetPosition()[0]*prePtr->GetPosition()[0] +
+	         prePtr->GetPosition()[1]*prePtr->GetPosition()[1]) << std::endl; 
+ 
+       return;
+   }
+   if (postPtr->GetPhysicalVolume() == 0) {
+        if (pRunManager->GetCurrentEvent()->GetEventID() < 3) 
+	   std::cout << " No Post Point Volume Last step at Z = " << prePtr->GetPosition()[2] << " r " <<            
+	      std::sqrt(prePtr->GetPosition()[0]*prePtr->GetPosition()[0] +
+	         prePtr->GetPosition()[1]*prePtr->GetPosition()[1]) << std::endl; 
+   
+    return;
+   }
    if (prePtr->GetPhysicalVolume() == 0) return;
    G4LogicalVolume *volPost = postPtr->GetPhysicalVolume()->GetLogicalVolume();
    G4LogicalVolume *volPre = prePtr->GetPhysicalVolume()->GetLogicalVolume();
    if (volPre == 0) return;
    if (volPost == 0) return;
-   std::string volNamePost(volPost->GetName());
+  std::string volNamePost(volPost->GetName());
    std::string volNamePre(volPre->GetName());
    if (pRunManager->GetCurrentEvent()->GetEventID() < 3) 
      std::cout << " at Z = " << prePtr->GetPosition()[2] << " r " << 

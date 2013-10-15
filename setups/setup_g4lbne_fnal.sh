@@ -1,4 +1,7 @@
 
+# Setup grid submit tools
+source /grid/fermiapp/products/lbne/etc/setups.sh
+setup jobsub_tools
 
 if [ -z "${G4LBNE_IS_SETUP}" ]; then
     

@@ -1,0 +1,48 @@
+#-----------------------------------------------------------------------------------
+#
+# An example script for running the Standard Neutrino Beam simulation in G4LBNE
+# using a Geant4 generated proton beam. P. Lebrun
+#
+# Place here the commands that modify the default geometry. 
+# We are at Geant4 stage call "PreInit" 
+# 
+
+/LBNE/det/seHornCurrent 200 kA
+
+/LBNE/det/construct
+#
+#exit
+/run/initialize
+#
+# We are at Geant4 stage "idle" 
+#
+/event/verbose 0
+/tracking/verbose 0
+#
+#
+# Primary vertex setting 
+#
+# Allows the RunID, which is included in the
+# output file name(s), to be set at runtime.
+#
+/LBNE/run/setRunID 10
+/LBNE/rndm/setRndmSeed 10
+#
+# If NOT using an external hadron file then this establishes how 
+# many particles(protons) to use during the simulation. To be consistent 
+# with past neutrino ntuples each run uses 500000 or 100000 protons
+#
+/LBNE/run/NEvents 10000
+/LBNE/output/OutputNtpFileName example/g4lbne_example
+#
+# This will place Geant4 in the stage "EventProc", i.e. ,simulating events. 
+#
+/run/beamOn 
+#
+exit
+#
+#NOTE: To debug problems grep for "PROBLEM" in the output of the simulation
+# "PROBLEM" statements are printed when there is a problem.
+#
+
+

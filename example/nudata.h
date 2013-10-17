@@ -175,7 +175,7 @@ public :
 		  const std::string &xtitle = "", 
 		  const std::string &ytitle = "");
    
-   double nudata::GetWeight(const std::vector<double> xdet,
+   double GetWeight(const std::vector<double> xdet,
 			    double& nu_wght, 
 			    double& nu_energy);
 
@@ -196,17 +196,8 @@ nudata::nudata(TTree *tree)
    //Add files here
    //
   std::vector<std::string> fFileVec;
-<<<<<<< nudata.h
-<<<<<<< nudata.h
-  fFileVec.push_back("/lbne/data/users/ljf26/fluxfiles/g4lbne/v3r0p1/QGSP_BERT/test2/flux/QGSP_BERT_test2_001.root");
-=======
-  fFileVec.push_back("g4lbne_example_010.root");
-  fFileVec.push_back("g4lbne_example_011.root");
->>>>>>> 1.5
-=======
-  fFileVec.push_back("g4lbne_example_lbnedocdb2161v6_010.root");
-  fFileVec.push_back("g4lbne_example_lbnedocdb2161v6_011.root");
->>>>>>> 1.3
+  fFileVec.push_back("g4lbne_example_010v3xxx.root");
+  fFileVec.push_back("g4lbne_example_011v3xxx.root");
   
    //
    //set number of pot per file !!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -217,7 +208,7 @@ nudata::nudata(TTree *tree)
    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    //set the filename prefix for saving histogram plots 
    //
-   ffilename = "g4lbne_fluxexample_le010z185i_NumiDPHelium";
+   ffilename = "g4lbne_fluxexample_";
   
 
 //

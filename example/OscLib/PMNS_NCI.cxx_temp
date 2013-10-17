@@ -1,0 +1,117 @@
+PMNS_NSI.cxx
+00001 
+00002 // $Id: PMNS_NCI.cxx_temp,v 1.1 2013/10/17 22:18:11 ljf26 Exp $
+00003 //
+00004 // Implementation of oscillations of neutrinos in matter in a
+00005 // three-neutrino framework with NSI.
+00006 
+00007 //......................................................................
+00008 //
+00009 // Throughout I have taken:
+00010 //   - L to be the neutrino flight distance in km
+00011 //   - E to be the neutrino energy in GeV
+00012 //   - Dmij to be the differences between the mass-squares in eV^2
+00013 //   - Ne to be the electron number density in mole/cm^3
+00014 //   - theta12,theta23,theta13,deltaCP to be in radians
+00015 //   - NSI parameters are dimensionless
+00016 //
+00017 // This  class inherits from the PMNSOpt class
+00018 //
+00019 // joao.coelho@tufts.edu
+00021 
+00022 #include "OscLib/func/PMNS_NSI.h"
+00023 
+00024 // Just pull in all the cxx files from MatrixDecomp. This way we don't have
+00025 // another library to worry about building and linking everywhere.
+00026 //#include "OscLib/func/MatrixDecomp/zhetrd3.cxx"
+00027 //#include "OscLib/func/MatrixDecomp/zheevc3.cxx"
+00028 #include "OscLib/func/MatrixDecomp/zheevh3.h"
+00029 //#include "OscLib/func/MatrixDecomp/zheevq3.cxx"
+00030 
+00031 #include <cstdlib>
+00032 #include <cassert>
+00033 
+00034 using namespace osc;
+00035 
+00036 //......................................................................
+00037 
+00038 PMNS_NSI::PMNS_NSI() 
+00039 {
+00040   this->SetMix(0.,0.,0.,0.);
+00041   this->SetDeltaMsqrs(0.,0.);
+00042   this->SetNSI(0.,0.,0.,0.,0.,0.,0.,0.,0.);
+00043   this->ResetToFlavour(1);
+00044   fCachedNe = 0.0;
+00045   fCachedE =  1.0;
+00046   fCachedAnti = 1;
+00047 }
+00048 
+00049 PMNS_NSI::~PMNS_NSI(){
+00050 }
+00051 
+00052 //......................................................................
+00053 
+00054 void PMNS_NSI::SetNSI(double eps_ee,    double eps_emu,    double eps_etau,
+00055                        double eps_mumu,  double eps_mutau,  double eps_tautau,
+00056                        double delta_emu, double delta_etau, double delta_mutau) 
+00057 {
+00058 
+00059   fEps_ee     = eps_ee;
+00060   fEps_mumu   = eps_mumu;
+00061   fEps_tautau = eps_tautau;
+00062   fEps_emu    = eps_emu   * complex(cos(delta_emu) ,   sin(delta_emu));
+00063   fEps_etau   = eps_etau  * complex(cos(delta_etau) ,  sin(delta_etau));
+00064   fEps_mutau  = eps_mutau * complex(cos(delta_mutau) , sin(delta_mutau));
+00065 
+00066   fResetNSI = true;
+00067 
+00068 }
+00069 
+00070 //......................................................................
+00075 void PMNS_NSI::SolveHam(double E, double Ne, int anti)
+00076 {
+00077 
+00078   // Check if anything has changed before recalculating
+00079   if(Ne!=fCachedNe || E!=fCachedE || anti!=fCachedAnti || !fBuiltHlv || fResetNSI){
+00080     fCachedNe = Ne;
+00081     fCachedE = E;
+00082     fCachedAnti = anti;
+00083     fResetNSI = false;
+00084     this->BuildHlv();
+00085   }
+00086   else return;
+00087 
+00088   double lv = 2 * kGeV2eV*E / fDm31;  // Osc. length in eV^-1 
+00089   double kr2GNe = kK2*M_SQRT2*kGf*Ne; // Matter potential in eV
+00090 
+00091   // Finish build Hamiltonian in matter with dimension of eV
+00092   complex A[3][3];
+00093   for(int i=0;i<3;i++){
+00094     A[i][i] = fHlv[i][i]/lv;
+00095     for(int j=i+1;j<3;j++){
+00096       if(anti>0) A[i][j] = fHlv[i][j]/lv;
+00097       else       A[i][j] = conj(fHlv[i][j])/lv;
+00098     }
+00099   }
+00100   if(anti>0){
+00101     A[0][0] += kr2GNe * (1 + fEps_ee);
+00102     A[0][1] += kr2GNe * fEps_emu;
+00103     A[0][2] += kr2GNe * fEps_etau;
+00104     A[1][1] += kr2GNe * fEps_mumu;
+00105     A[1][2] += kr2GNe * fEps_mutau;
+00106     A[2][2] += kr2GNe * fEps_tautau;
+00107   }
+00108   else{
+00109     A[0][0] -= kr2GNe * (1 + fEps_ee);
+00110     A[0][1] -= kr2GNe * fEps_emu;
+00111     A[0][2] -= kr2GNe * fEps_etau;
+00112     A[1][1] -= kr2GNe * fEps_mumu;
+00113     A[1][2] -= kr2GNe * fEps_mutau;
+00114     A[2][2] -= kr2GNe * fEps_tautau;
+00115   }
+00116 
+00117   // Solve Hamiltonian for eigensystem using the GLoBES method
+00118   zheevh3(A,fEvec,fEval);
+00119 
+00120 }
+00121 

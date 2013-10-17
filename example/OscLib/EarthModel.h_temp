@@ -1,0 +1,55 @@
+00001 
+00002 
+00003 
+00004 
+00005 
+00006 
+00007 #ifndef EARTHMODEL_H
+00008 #define EARTHMODEL_H
+00009 #include <list>
+00010 #include <vector>
+00011 
+00012 namespace osc {
+00013   class EarthModel 
+00014   {
+00015   public:
+00021     EarthModel(const char* which, double tol);
+00022 
+00028     double Ne(double r);
+00029 
+00035     double Density(double r);
+00036 
+00041     double ZoverA(double r);
+00042     
+00051     void GetLayers(std::vector<double>& rlo, 
+00052                    std::vector<double>& rhi,
+00053                    std::vector<double>& ne);
+00054 
+00062     void LineProfile(double prodL, double cosQ, double rdet,
+00063                      std::list<double>& Ls,
+00064                      std::list<double>& Ns);
+00065   private:
+00066     void   InitPREM();
+00067     void   InitStacey();
+00068     double DensityPREM(double r);
+00069     double DensityStacey(double r);
+00070     double AveNe(double r1, double r2, int nsample);
+00071     void   MakeLayers(double tol);
+00072     int    IntersectLineAndCircle(double  x1, double  y1,
+00073                                   double  x2, double  y2,
+00074                                   double  r,
+00075                                   double* xa, double* ya,
+00076                                   double* xb, double* yb);
+00077   private:
+00078     int                 fModelID;    
+00079     double              fRouterCore; 
+00080     double              fRearth;     
+00081     std::vector<double> fRregion;    
+00082 
+00083     std::vector<double> fRlo;    
+00084     std::vector<double> fRhi;    
+00085     std::vector<double> fNe;     
+00086   };
+00087 }
+00088 #endif
+00089 

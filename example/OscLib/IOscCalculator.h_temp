@@ -1,0 +1,83 @@
+00001 #ifndef IOSCCALCULATOR_H
+00002 #define IOSCCALCULATOR_H
+00003 
+00004 #include "TMD5.h"
+00005 
+00007 //                                                                      //
+00008 // \file    IOscCalculator.h                                            //
+00009 //                                                                      //
+00010 // \brief   General interface to oscillation calculators                //
+00011 // \author  Christopher Backhouse - bckhouse@caltech.edu                //
+00012 //                                                                      //
+00014 
+00016 namespace osc
+00017 {
+00019   class IOscCalculator
+00020   {
+00021   public:
+00022     virtual ~IOscCalculator() {}
+00023 
+00025     virtual double P(int flavBefore, int flavAfter, double E) = 0;
+00026 
+00030     virtual TMD5* GetParamsHash() const {return 0;}
+00031   };
+00032 
+00034   class NoOscillations: public IOscCalculator
+00035   {
+00036   public:
+00037     virtual double P(int from, int to, double /*E*/)
+00038     {
+00039       if(from == to) return 1;
+00040       return 0;
+00041     }
+00042 
+00044     virtual TMD5* GetParamsHash() const override
+00045     {
+00046       TMD5* ret = new TMD5;
+00047       const char* txt = "NoOscillations";
+00048       ret->Update((unsigned char*)txt, strlen(txt));
+00049       ret->Final();
+00050       return ret;
+00051     }
+00052   };
+00053 
+00055   class IOscCalculatorAdjustable : public IOscCalculator
+00056   {
+00057   public:
+00058     // These setters are left unimplemented here, since calculators may want
+00059     // to compute additional values when these are set.
+00060     virtual void SetL     (double L     ) = 0;
+00061     virtual void SetRho   (double rho   ) = 0;
+00062     virtual void SetDmsq21(double dmsq21) = 0;
+00063     virtual void SetDmsq32(double dmsq32) = 0;
+00064     virtual void SetTh12  (double th12  ) = 0;
+00065     virtual void SetTh13  (double th13  ) = 0;
+00066     virtual void SetTh23  (double th23  ) = 0;
+00067     virtual void SetdCP   (double dCP   ) = 0;
+00068 
+00069     virtual double GetL     () const { return fL      ; }
+00070     virtual double GetRho   () const { return fRho    ; }
+00071     virtual double GetDmsq21() const { return fDmsq21 ; }
+00072     virtual double GetDmsq32() const { return fDmsq32 ; }
+00073     virtual double GetTh12  () const { return fTh12   ; }
+00074     virtual double GetTh13  () const { return fTh13   ; }
+00075     virtual double GetTh23  () const { return fTh23   ; }
+00076     virtual double GetdCP   () const { return fdCP    ; }
+00077 
+00078   protected:
+00083     TMD5* GetParamsHashDefault(const std::string& txt) const;
+00084 
+00085     // Set by the user. Generally useful to derived classes
+00086     double fRho; // density (g/cm^3)
+00087     double fL; // baseline (km)
+00088     double fDmsq21;
+00089     double fDmsq32;
+00090     double fTh12;
+00091     double fTh13;
+00092     double fTh23;
+00093     double fdCP;
+00094   };
+00095 
+00096 } // namespace
+00097 
+00098 #endif

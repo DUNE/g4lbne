@@ -1,0 +1,54 @@
+00001 #ifndef OSCCALCULATORGENERAL_H
+00002 #define OSCCALCULATORGENERAL_H
+00003 
+00004 #include "OscLib/func/IOscCalculator.h"
+00005 
+00006 namespace osc
+00007 {
+00008 
+00019   class OscCalculatorGeneral: public IOscCalculatorAdjustable
+00020   {
+00021   public:
+00022     OscCalculatorGeneral();
+00023     virtual ~OscCalculatorGeneral();
+00024 
+00025     // Baseline in km
+00026     virtual void SetL(double L) {fL = L;}
+00027     // Density in g/cm^3
+00028     virtual void SetRho(double rho) {fRho = rho;}
+00029     // in eV^2
+00030     virtual void SetDmsq21(double dmsq21) {fDmsq21 = dmsq21;}
+00031     // This is a signed quantity, use a negative value for inverted hierarchy
+00032     virtual void SetDmsq32(double dmsq32) {fDmsq32 = dmsq32;}
+00033     // In radians
+00034     virtual void SetTh12(double th12);
+00035     virtual void SetTh13(double th13);
+00036     virtual void SetTh23(double th23);
+00037     virtual void SetdCP(double dCP);
+00038 
+00039     void SetNSIEpsilonMuTau(double emutau) {fEMuTau = emutau;}
+00040     double GetNSIEpsilonMuTau() const {return fEMuTau;}
+00041 
+00042     virtual double P(int from, int to, double E);
+00043 
+00044     virtual TMD5* GetParamsHash() const override
+00045     {
+00046       // Default isn't good enough if we need to consider NSI
+00047       if(fEMuTau) return 0;
+00048       return IOscCalculatorAdjustable::GetParamsHashDefault("General");
+00049     }
+00050 
+00051     struct Priv;
+00052   protected:
+00053     Priv* const d;
+00054 
+00055     double fEMuTau;
+00056 
+00057   private:
+00058     OscCalculatorGeneral(const OscCalculatorGeneral&);
+00059     OscCalculatorGeneral& operator=(const OscCalculatorGeneral&);
+00060   };
+00061 
+00062 } // end namespace
+00063 
+00064 #endif

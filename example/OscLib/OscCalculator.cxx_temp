@@ -1,0 +1,471 @@
+00001 
+00002 //                                                                      //
+00003 // \file OscCalculator.cxx                                              //
+00004 //                                                                      //
+00005 // Class with methods for calculating all things related to oscillation //
+00006 // probabilities.                                                       //
+00007 // <rbpatter@caltech.edu>                                               //
+00008 //                                                                      //
+00010 #include "OscLib/func/OscCalculator.h"
+00011 
+00012 #include <iostream>
+00013 #include <cmath>
+00014 
+00015 #include "TF1.h"
+00016 #include "TMath.h"
+00017 
+00018 namespace osc {
+00019 
+00020   OscCalculator::OscCalculator()
+00021   { 
+00022 
+00023     // put some sensible defaults here...
+00024 
+00025     fRho = 2.75; // g/cm^3
+00026     fL = 810; // km
+00027     fDmsq21 = 7.59E-5; // eV^2
+00028     fDmsq32 = 2.43E-3; //eV^2
+00029     fTh12 = 0.601;
+00030     fTh13 = 0.0;
+00031     fTh23 = 7.85398163397448279e-01; // pi/4
+00032     fdCP = 0;
+00033 
+00034     fUpdated = false;
+00035   }
+00036 
+00037 
+00038   OscCalculator::~OscCalculator()
+00039   {
+00040   }
+00041 
+00042 
+00043   double OscCalculator::P(int flavBefore, int flavAfter, double E) {
+00044     bool antinu = (flavBefore<0&&flavAfter<0);
+00045     if (antinu) {
+00046       flavBefore *= -1;
+00047       flavAfter  *= -1;
+00048     }
+00049     if      (flavBefore==12&&flavAfter==12) return P_ee(E,antinu);
+00050     else if (flavBefore==12&&flavAfter==14) return P_em(E,antinu);
+00051     else if (flavBefore==12&&flavAfter==16) return P_et(E,antinu);
+00052     else if (flavBefore==14&&flavAfter==12) return P_me(E,antinu);
+00053     else if (flavBefore==14&&flavAfter==14) return P_mm(E,antinu);
+00054     else if (flavBefore==14&&flavAfter==16) return P_mt(E,antinu);
+00055     else if (flavBefore==16&&flavAfter==12) return P_te(E,antinu);
+00056     else if (flavBefore==16&&flavAfter==14) return P_tm(E,antinu);
+00057     else if (flavBefore==16&&flavAfter==16) return P_tt(E,antinu);
+00058     else return 0;
+00059   }
+00060 
+00061   double OscCalculator::P_ee(double E, bool antinu) { return P_internal_ee(E,antinu,0); }
+00062   double OscCalculator::P_em(double E, bool antinu) { return P_internal_me(E,antinu,1); }
+00063   double OscCalculator::P_et(double E, bool antinu) { return P_internal_te(E,antinu,1); }
+00064 
+00065   double OscCalculator::P_me(double E, bool antinu) { return P_internal_me(E,antinu,0); }
+00066   double OscCalculator::P_mm(double E, bool antinu) { return 1-P_me(E,antinu)-P_mt(E,antinu); }
+00067   double OscCalculator::P_mt(double E, bool antinu) { return P_internal_mt(E,antinu,0); }
+00068 
+00069   double OscCalculator::P_te(double E, bool antinu) { return P_internal_te(E,antinu,0); }
+00070   double OscCalculator::P_tm(double E, bool antinu) { return P_internal_mt(E,antinu,1); }
+00071   double OscCalculator::P_tt(double E, bool antinu) { return 1 - P_te(E,antinu) - P_tm(E,antinu); }
+00072 
+00073   TF1* OscCalculator::GetTF1(int flavBefore, int flavAfter) {
+00074     TF1 *theTF1 = new TF1(Form("OscCalculatorFunction_%d_%d_%p",flavBefore,flavAfter,this),
+00075                           this,&osc::OscCalculator::P_wrapper,0,120,2,"OscCalculator","P_wrapper");
+00076     theTF1->SetParameters(flavBefore,flavAfter);
+00077     theTF1->SetNpx(1000);
+00078     return theTF1;
+00079   }
+00080 
+00081   double OscCalculator::P_wrapper(double *x, double *p) {
+00082     // function for use by TF1
+00083     int flavBefore = int(p[0]);
+00084     int flavAfter  = int(p[1]);
+00085     bool antinu = (flavBefore<0&&flavAfter<0);
+00086     if (antinu) {
+00087       flavBefore *= -1;
+00088       flavAfter  *= -1;
+00089     } 
+00090 
+00091     double (osc::OscCalculator::*P_xx)(double,bool);
+00092     if      (flavBefore==12&&flavAfter==12) P_xx = &osc::OscCalculator::P_ee;
+00093     else if (flavBefore==12&&flavAfter==14) P_xx = &osc::OscCalculator::P_em;
+00094     else if (flavBefore==12&&flavAfter==16) P_xx = &osc::OscCalculator::P_et;
+00095     else if (flavBefore==14&&flavAfter==12) P_xx = &osc::OscCalculator::P_me;
+00096     else if (flavBefore==14&&flavAfter==14) P_xx = &osc::OscCalculator::P_mm;
+00097     else if (flavBefore==14&&flavAfter==16) P_xx = &osc::OscCalculator::P_mt;
+00098     else if (flavBefore==16&&flavAfter==12) P_xx = &osc::OscCalculator::P_te;
+00099     else if (flavBefore==16&&flavAfter==14) P_xx = &osc::OscCalculator::P_tm;
+00100     else if (flavBefore==16&&flavAfter==16) P_xx = &osc::OscCalculator::P_tt;
+00101     else P_xx = &osc::OscCalculator::P_null;
+00102 
+00103     return (this->*P_xx)(x[0],antinu);
+00104   }
+00105 
+00106   // -----------------------------------------------
+00107 
+00108 
+00109   void OscCalculator::UpdateBasic() {
+00110     if (fUpdated) return;
+00111 
+00112     fDmsq31 = fDmsq21 + fDmsq32;
+00113     if (fDmsq31!=0) {
+00114       falpha =fDmsq21 / fDmsq31;
+00115     }
+00116     else {
+00117       std::cerr << "OscCalculator::UpdateBasic() -- fDmsq31 should never be zero, but it is" << std::endl;
+00118       falpha = 0;
+00119     }
+00120     fsin_th12 = sin(fTh12);
+00121     fsin_th13 = sin(fTh13);
+00122     fsin_th23 = sin(fTh23);
+00123     fcos_th12 = cos(fTh12);
+00124     fcos_th13 = cos(fTh13);
+00125     fcos_th23 = cos(fTh23);
+00126     fsin_2th12 = sin(2*fTh12);
+00127     fsin_2th13 = sin(2*fTh13);
+00128     fsin_2th23 = sin(2*fTh23);
+00129     fcos_2th12 = cos(2*fTh12);
+00130     fcos_2th13 = cos(2*fTh13);
+00131     fcos_2th23 = cos(2*fTh23);
+00132     fsin_sq_th12 = fsin_th12*fsin_th12;
+00133     fsin_sq_th13 = fsin_th13*fsin_th13;
+00134     fsin_sq_th23 = fsin_th23*fsin_th23;
+00135     fcos_sq_th12 = fcos_th12*fcos_th12;
+00136     fcos_sq_th13 = fcos_th13*fcos_th13;
+00137     fcos_sq_th23 = fcos_th23*fcos_th23;
+00138     fsin_sq_2th12 = fsin_2th12*fsin_2th12;
+00139     fsin_sq_2th13 = fsin_2th13*fsin_2th13;
+00140     fsin_sq_2th23 = fsin_2th23*fsin_2th23;
+00141     fcos_sq_2th12 = fcos_2th12*fcos_2th12;
+00142     fcos_sq_2th13 = fcos_2th13*fcos_2th13;
+00143     fcos_sq_2th23 = fcos_2th23*fcos_2th23;
+00144 
+00145     static const double ZperA = 0.5; // e- per nucleon
+00146     static const double G_F = 1.16637E-23; // eV^-2
+00147     static const double hbar_c_eV_cm = 1.97326938E-5; // eV-cm
+00148 
+00149     fV = TMath::Sqrt2()*G_F*fRho*ZperA*TMath::Na()*hbar_c_eV_cm*hbar_c_eV_cm*hbar_c_eV_cm;
+00150 
+00151     fUpdated = true;
+00152   }
+00153 
+00154 
+00155   void OscCalculator::UpdateEDep(double E, bool antinu, bool fliptime) {
+00156 
+00157     static const double hbar_c_eV_km = 1.97326938E-10; // eV-km
+00158     static const double eVPerGeV = 1E9;
+00159 
+00160     int s = (antinu)?-1:1;
+00161     int t = (fliptime)?-1:1;
+00162 
+00163     fA = s*2*fV*E*eVPerGeV/fDmsq31;
+00164     fD = fDmsq31*fL/(4*E*eVPerGeV*hbar_c_eV_km);
+00165 
+00166     fdCPproxy = s*t*fdCP;
+00167     fsin_dCPproxy = sin(fdCPproxy);
+00168     fcos_dCPproxy = cos(fdCPproxy);
+00169 
+00170     if (falpha!=0) {
+00171       fC12 = TMath::Sqrt(fsin_sq_2th12+(fcos_2th12 - fA/falpha)*(fcos_2th12 - fA/falpha));
+00172     }
+00173     else {
+00174       std::cerr << "OscCalculator::UpdateEDep() -- falpha should never be zero, but it is" << std::endl;
+00175       fC12 = 1;
+00176     }
+00177     fC13 = TMath::Sqrt(fsin_sq_2th13+(fA-fcos_2th13)*(fA-fcos_2th13));
+00178   }
+00179 
+00180 
+00181 
+00182   // --------------------------------------------
+00183 
+00184   double OscCalculator::P_internal_me(double E, bool antinu, bool fliptime) {
+00185 
+00186     UpdateBasic();
+00187     UpdateEDep(E,antinu,fliptime);
+00188 
+00189     double cosC13D = cos(fC13*fD);
+00190     double sinC13D = sin(fC13*fD);
+00191     double sin1pAD = sin((fA+1)*fD);
+00192     double cos1pAD = cos((fA+1)*fD);
+00193     double sinAD = sin(fA*fD);
+00194     double sinAm1D = sin((fA-1)*fD);
+00195     double cosdpD = cos(fdCPproxy+fD);
+00196     double sinApam2D = sin((fA+falpha-2)*fD);
+00197     double cosApam2D = cos((fA+falpha-2)*fD);
+00198     double cosaC12D = cos(falpha*fC12*fD);
+00199     double sinaC12D = sin(falpha*fC12*fD);
+00200 
+00201     // This is coming straight from the MINOS NueAna package...
+00202 
+00203     // First we calculate the terms for the alpha expansion (good to all orders in th13)
+00204 
+00205     // Leading order term 
+00206     double p1 = fsin_sq_th23*fsin_sq_2th13*sinC13D*sinC13D/(fC13*fC13);
+00207 
+00208     // Terms that appear at order alpha
+00209     double p2Inner =
+00210       fD*cosC13D*(1-fA*fcos_2th13)/fC13 - 
+00211       fA*sinC13D*(fcos_2th13-fA)/(fC13*fC13); 
+00212 
+00213     double p2 = -2*fsin_sq_th12*fsin_sq_th23*fsin_sq_2th13*sinC13D/(fC13*fC13)*p2Inner*falpha;
+00214 
+00215     double p3Inner =
+00216       -fsin_dCPproxy*(cosC13D - cos1pAD)*fC13 
+00217       + fcos_dCPproxy*(fC13*sin1pAD - (1-fA*fcos_2th13)*sinC13D);
+00218 
+00219     double p3 = fsin_2th12*fsin_2th23*fsin_th13*sinC13D/(fA*fC13*fC13)*p3Inner*falpha;
+00220 
+00221     //  p1 + p2 + p3 is the complete contribution for this expansion
+00222   
+00223     // Now for the expansion in orders of sin(th13) (good to all order alpha) 
+00224 
+00225     double pa1 = 0.0, pa2 = 0.0;
+00226     if (fabs(falpha)>1E-10) {
+00227       // leading order term
+00228       pa1 = fcos_th23*fcos_th23*fsin_sq_2th12*sinaC12D*sinaC12D/(fC12*fC12);
+00229 
+00230       // the first order in s13 term
+00231       double t1 = (fcos_2th12 - fA/falpha)/fC12 
+00232         - falpha*fA*fC12*fsin_sq_2th12/(2*(1-falpha)*fC12*fC12);
+00233       double t2 = -fcos_dCPproxy*(sinApam2D-sinaC12D*t1);
+00234       double t3 = -(cosaC12D-cosApam2D)*fsin_dCPproxy;
+00235       double denom = (1-fA-falpha+fA*falpha*fcos_th12*fcos_th12)*fC12;
+00236       double t4 = fsin_2th12*fsin_2th23*(1-falpha)*sinaC12D/denom;
+00237 
+00238       pa2 = t4*(t3+t2)*fsin_th13;
+00239     }
+00240     // pa1+pa2 is the complete contribution from this expansion
+00241 
+00242     // Now we need to add the two expansions and subtract off the terms that are
+00243     // in both (falpha^1, s13^1)
+00244 
+00245     double t1 = sinAD*cosdpD*sinAm1D/(fA*(fA-1));
+00246     double repeated = 2*falpha*fsin_2th12*fsin_2th23*fsin_th13*t1;
+00247 
+00248     // Calculate the total probability
+00249     double totalP = p1+p2+p3 + (pa1+pa2) - repeated;
+00250     return totalP;
+00251   }
+00252 
+00253   // --------------------------------------------
+00254 
+00255   double OscCalculator::P_internal_te(double E, bool antinu, bool fliptime) {
+00256 
+00257     UpdateBasic();
+00258     UpdateEDep(E,antinu,fliptime);
+00259 
+00260     double cosC13D = cos(fC13*fD);
+00261     double sinC13D = sin(fC13*fD);
+00262     double sin1pAD = sin((fA+1)*fD);
+00263     double cos1pAD = cos((fA+1)*fD);
+00264     double sinAD = sin(fA*fD);
+00265     double sinAm1D = sin((fA-1)*fD);
+00266     double cosdpD = cos(fdCPproxy+fD);
+00267     double sinApam2D = sin((fA+falpha-2)*fD);
+00268     double cosApam2D = cos((fA+falpha-2)*fD);
+00269     double cosaC12D = cos(falpha*fC12*fD);
+00270     double sinaC12D = sin(falpha*fC12*fD);
+00271 
+00272     // This is coming straight from the MINOS NueAna package...
+00273 
+00274     // First we calculate the terms for the alpha expansion (good to all orders in th13)
+00275 
+00276     // Leading order term 
+00277     double p1 = fcos_sq_th23*fsin_sq_2th13*sinC13D*sinC13D/(fC13*fC13);
+00278 
+00279     // Terms that appear at order alpha
+00280     double p2Inner =
+00281       fD*cosC13D*(1-fA*fcos_2th13)/fC13 - 
+00282       fA*sinC13D*(fcos_2th13-fA)/(fC13*fC13); 
+00283 
+00284     double p2 = -2*fsin_sq_th12*fcos_sq_th23*fsin_sq_2th13*sinC13D/(fC13*fC13)*p2Inner*falpha;
+00285 
+00286     double p3Inner =
+00287       -fsin_dCPproxy*(cosC13D - cos1pAD)*fC13 
+00288       + fcos_dCPproxy*(fC13*sin1pAD - (1-fA*fcos_2th13)*sinC13D);
+00289 
+00290     double p3 = fsin_2th12*(-fsin_2th23)*fsin_th13*sinC13D/(fA*fC13*fC13)*p3Inner*falpha;
+00291 
+00292     //  p1 + p2 + p3 is the complete contribution for this expansion
+00293   
+00294     // Now for the expansion in orders of sin(th13) (good to all order falpha) 
+00295 
+00296     double pa1 = 0.0, pa2 = 0.0;
+00297     if (fabs(falpha)>1E-10) {
+00298       // leading order term
+00299       pa1 = fsin_th23*fsin_th23*fsin_sq_2th12*sinaC12D*sinaC12D/(fC12*fC12);
+00300 
+00301       // the first order in s13 term
+00302       double t1 = (fcos_2th12 - fA/falpha)/fC12 
+00303         - falpha*fA*fC12*fsin_sq_2th12/(2*(1-falpha)*fC12*fC12);
+00304       double t2 = -fcos_dCPproxy*(sinApam2D-sinaC12D*t1);
+00305       double t3 = -(cosaC12D-cosApam2D)*fsin_dCPproxy;
+00306       double denom = (1-fA-falpha+fA*falpha*fcos_th12*fcos_th12)*fC12;
+00307       double t4 = fsin_2th12*(-fsin_2th23)*(1-falpha)*sinaC12D/denom;
+00308 
+00309       pa2 = t4*(t3+t2)*fsin_th13;
+00310     }
+00311     // pa1+pa2 is the complete contribution from this expansion
+00312 
+00313     // Now we need to add the two expansions and subtract off the terms that are
+00314     // in both (falpha^1, s13^1)
+00315 
+00316     double t1 = sinAD*cosdpD*sinAm1D/(fA*(fA-1));
+00317     double repeated = 2*falpha*fsin_2th12*(-fsin_2th23)*fsin_th13*t1;
+00318 
+00319     // Calculate the total probability
+00320     double totalP = p1+p2+p3 + (pa1+pa2) - repeated;
+00321     return totalP;
+00322   }
+00323 
+00324   // --------------------------------------------
+00325 
+00326   double OscCalculator::P_internal_ee(double E, bool antinu, bool fliptime) {
+00327 
+00328     UpdateBasic();
+00329     UpdateEDep(E,antinu,fliptime);
+00330 
+00331     double cosC13D = cos(fC13*fD);
+00332     double sinC13D = sin(fC13*fD);
+00333     double sinaC12D = sin(falpha*fC12*fD);
+00334 
+00335     // This is coming straight from the MINOS NueAna package...
+00336 
+00337     // First we calculate the terms for the alpha expansion (good to all orders in th13)
+00338 
+00339     // Leading order term 
+00340     double p1 = 1 - fsin_sq_2th13*sinC13D*sinC13D/(fC13*fC13);
+00341 
+00342     // Terms that appear at order alpha
+00343     double p2Inner =
+00344       fD*cosC13D*(1-fA*fcos_2th13)/fC13 -
+00345       fA*sinC13D*(fcos_2th13-fA)/(fC13*fC13);
+00346 
+00347     double p2 = 2*fsin_th12*fsin_th12*fsin_sq_2th13*sinC13D/(fC13*fC13)*p2Inner*falpha;
+00348 
+00349     //  p1 + p2 is the complete contribution for this expansion
+00350 
+00351     // Now for the expansion in orders of sin(th13) (good to all order alpha)
+00352 
+00353     double pa1 = 1.0, pa2 = 0.0;
+00354     if (fabs(falpha)>1E-10) {
+00355       // leading order term
+00356       pa1 = 1 - fsin_sq_2th12*sinaC12D*sinaC12D/(fC12*fC12);
+00357     }
+00358     // pa1 is the complete contribution from this expansion, there is no order s13^1 term
+00359 
+00360     // Now we need to add the two expansions and subtract off the terms that are
+00361     // in both (falpha^1, s13^1)
+00362 
+00363     double repeated = 1;
+00364 
+00365     //  Calculate the total probability
+00366     double totalP = p1+p2 + (pa1+pa2) - repeated;
+00367     return totalP;
+00368   }
+00369 
+00370 
+00371   // --------------------------------------------
+00372 
+00373   double OscCalculator::P_internal_mt(double E, bool antinu, bool fliptime) {
+00374 
+00375     UpdateBasic();
+00376     UpdateEDep(E,antinu,fliptime);
+00377 
+00378     double cosC13D = cos(fC13*fD);
+00379     double sinC13D = sin(fC13*fD);
+00380     double sin1pAD = sin((fA+1)*fD);
+00381     double cos1pAD = cos((fA+1)*fD);
+00382     double sinAD = sin(fA*fD);
+00383     double sinAm1D = sin((fA-1)*fD);
+00384     double cosAm1D = cos((fA-1)*fD);
+00385     double sinApam2D = sin((fA+falpha-2)*fD);
+00386     double cosApam2D = cos((fA+falpha-2)*fD);
+00387     double cosaC12D = cos(falpha*fC12*fD);
+00388     double sinaC12D = sin(falpha*fC12*fD);
+00389     double sin1pAmCD = sin(0.5*(fA+1-fC13)*fD);
+00390     double sin1pApCD = sin(0.5*(fA+1+fC13)*fD);
+00391     double sinD = sin(fD);
+00392     double sin2D = sin(2*fD);
+00393     double cosaC12pApam2D = cos((falpha*fC12+fA+falpha-2)*fD);
+00394 
+00395     // This is coming straight from the MINOS NueAna package...
+00396 
+00397     // First we calculate the terms for the alpha expansion (good to all orders in th13)
+00398 
+00399     // Leading order term 
+00400     double pmt_0 = 0.5*fsin_sq_2th23;
+00401     pmt_0 *= (1 - (fcos_2th13-fA)/fC13)*sin1pAmCD*sin1pAmCD 
+00402       +  (1 + (fcos_2th13-fA)/fC13)*sin1pApCD*sin1pApCD
+00403       - 0.5*fsin_sq_2th13*sinC13D*sinC13D/(fC13*fC13);
+00404 
+00405     // Terms that appear at order alpha
+00406     double t0, t1, t2, t3;
+00407     t0 = (fcos_th12*fcos_th12-fsin_th12*fsin_th12*fsin_th13*fsin_th13
+00408           *(1+2*fsin_th13*fsin_th13*fA+fA*fA)/(fC13*fC13))*cosC13D*sin1pAD*2;
+00409     t1 = 2*(fcos_th12*fcos_th12*fcos_th13*fcos_th13-fcos_th12*fcos_th12*fsin_th13*fsin_th13
+00410             +fsin_th12*fsin_th12*fsin_th13*fsin_th13
+00411             +(fsin_th12*fsin_th12*fsin_th13*fsin_th13-fcos_th12*fcos_th12)*fA);
+00412     t1 *= sinC13D*cos1pAD/fC13;
+00413 
+00414     t2 =  fsin_th12*fsin_th12*fsin_sq_2th13*sinC13D/(fC13*fC13*fC13);
+00415     t2 *= fA/fD*sin1pAD+fA/fD*(fcos_2th13-fA)/fC13*sinC13D
+00416       - (1-fA*fcos_2th13)*cosC13D;
+00417 
+00418     double pmt_1 = -0.5*fsin_sq_2th23*fD*(t0+t1+t2);   
+00419 
+00420     t0 = cosC13D-cos1pAD;
+00421     t1 = 2*fcos_th13*fcos_th13*fsin_dCPproxy*sinC13D/fC13*t0;
+00422     t2 = -fcos_2th23*fcos_dCPproxy*(1+fA)*t0*t0;
+00423 
+00424     t3  = fcos_2th23*fcos_dCPproxy*(sin1pAD+(fcos_2th13-fA)/fC13*sinC13D);
+00425     t3 *= (1+2*fsin_th13*fsin_th13*fA + fA*fA)*sinC13D/fC13 - (1+fA)*sin1pAD;
+00426 
+00427     pmt_1 += (t1+t2+t3)*fsin_th13*fsin_2th12*fsin_2th23/(2*fA*fcos_th13*fcos_th13);
+00428     pmt_1 *= falpha;
+00429 
+00430     //  pmt_0 + pmt_1 is the complete contribution for this expansion
+00431 
+00432     // Now for the expansion in orders of sin(th13) (good to all order alpha)
+00433 
+00434     // Leading order term
+00435     double pmt_a0 =  0.5*fsin_sq_2th23;
+00436 
+00437     pmt_a0 *= 1 - 0.5*fsin_sq_2th12*sinaC12D*sinaC12D/(fC12*fC12)
+00438       - cosaC12pApam2D
+00439       - (1 - (fcos_2th12 - fA/falpha)/fC12)*sinaC12D*sinApam2D;
+00440             
+00441     double denom = (1-fA-falpha+fA*falpha*fcos_th12*fcos_th12)*fC12;
+00442 
+00443     t0 = (cosaC12D-cosApam2D)*(cosaC12D-cosApam2D);
+00444     t1 = (fcos_2th12 - fA/falpha)/fC12*sinaC12D+sinApam2D;
+00445     t2 = ((fcos_2th12 - fA/falpha)/fC12+2*(1-falpha)/(falpha*fA*fC12))*sinaC12D + sinApam2D;
+00446 
+00447     t3 = (falpha*fA*fC12)/2*fcos_2th23*fcos_dCPproxy*(t0 + t1*t2);
+00448     t3 += fsin_dCPproxy*(1-falpha)*(cosaC12D-cosApam2D)*sinaC12D;
+00449 
+00450     double pmt_a1 = fsin_th13*fsin_2th12*fsin_2th23/denom*t3;
+00451 
+00452     // pmt_a1+pmt_a2 is the complete contribution from this expansion
+00453 
+00454     // Now we need to add the two expansions and subtract off the terms that are
+00455     // in both (falpha^1, s13^1)
+00456 
+00457     t1 = fsin_dCPproxy*sinD*sinAD*sinAm1D/(fA*(fA-1));
+00458     t2 = -1/(fA-1)*fcos_dCPproxy*sinD*(fA*sinD-sinAD*cosAm1D/fA)*fcos_2th23/denom;
+00459 
+00460     t0 =  2*falpha*fsin_2th12*fsin_2th23*fsin_th13*(t1+t2);
+00461 
+00462     t1 = fsin_sq_2th23*sinD*sinD 
+00463       - falpha*fsin_sq_2th23*fcos_th12*fcos_th12*fD*sin2D;
+00464 
+00465     double repeated = t0+t1;
+00466 
+00467     //  Calculate the total probability
+00468     double totalP = pmt_0 + pmt_1 + pmt_a0 + pmt_a1 - repeated;
+00469 
+00470     return totalP;
+00471   }
+00472 }//namespace

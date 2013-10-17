@@ -1,0 +1,135 @@
+00001 
+00002 
+00003 
+00004 
+00005 
+00006 
+00007 
+00008 
+00009 
+00010 
+00011 
+00012 
+00013 
+00014 
+00015 
+00016 
+00017 
+00018 
+00019 
+00020 
+00021 
+00022 
+00023 
+00024 
+00025 
+00026 
+00027 
+00028 
+00029 
+00030 
+00031 
+00032 #ifndef PMNS_H
+00033 #define PMNS_H
+00034 #include <list>
+00035 #include <complex>
+00036 
+00037 namespace osc {
+00038   class PMNS {
+00039   public:
+00040     PMNS();
+00041     
+00049     PMNS(double th12,
+00050          double th23,
+00051          double th13,
+00052          double deltacp,
+00053          double dms12,
+00054          double dms23);
+00055     
+00057     void PrintMix() const;
+00058     
+00060     void PrintDeltaMsqrs() const;
+00061     
+00065     double P(int i, int j) const;
+00066     
+00072     void SetMix(double th12, double th23, double th13, double deltacp);
+00073     
+00081     void SetMixBWCP(double th1, double th2, double th3, double deltacp);
+00082     
+00086     void SetDeltaMsqrs(double dm21, double dm32);
+00087     
+00092     void PropVacuum(double L, double E, int anti);
+00093     
+00099     void PropMatter(double L, double E, double Ne, int anti);
+00100     void PropMatter(const std::list<double>& L,
+00101                     double                   E,
+00102                     const std::list<double>& Ne,
+00103                     int anti);
+00104     
+00107     void Reset();
+00108     
+00109   private:
+00110     // A shorthand...
+00111     typedef std::complex<double> complex;
+00112     
+00113   private:
+00118     void Multi(complex A[][3], const complex B[][3], const complex C[][3]);
+00119     
+00127     void EvalEqn2(complex A[][3],
+00128                   const complex U[][3],
+00129                   const complex Udagg[][3],
+00130                   const double  dmsqr[][3],
+00131                   double L,
+00132                   double E); 
+00133     
+00142     void EvalEqn5(complex       twoEH[][3],
+00143                   const complex U[][3],
+00144                   const complex Udagg[][3],
+00145                   const double  dmsqr[][3],
+00146                   double        E,
+00147                   double        Gf,
+00148                   double        Ne);
+00149     
+00155     void EvalEqn10(complex       A[][3],
+00156                    const complex U[][3],
+00157                    const complex X[][3],
+00158                    const complex Udagg[][3]);
+00159     
+00167     void EvalEqn11(complex X[][3],
+00168                    double L, double E, 
+00169                    const complex twoEH[][3],
+00170                    const double  Msqr[],
+00171                    const double  dMsqr[][3]);
+00172     
+00178     void EvalEqn21(double Msqr[],
+00179                    double alpha,
+00180                    double beta,
+00181                    double gamma);
+00182     
+00193     void EvalEqn22(double& alpha,
+00194                    double& beta,
+00195                    double& gamma,
+00196                    double  E,
+00197                    double  Gf,
+00198                    double  Ne,
+00199                    const double dmsqr[][3],
+00200                    const complex U[][3]);
+00201     
+00208     void SortEigenvalues(double       dMsqr[][3],
+00209                          const double dmsqr[][3],
+00210                          const double MsqrVac[],
+00211                          double       Msqr[]);
+00212     
+00214     void DumpMatrix(const complex M[][3]) const;
+00215     
+00216   private:
+00217     double  fdmsqr[3][3]; 
+00218     complex fU[3][3];     
+00219     complex fUdagg[3][3];
+00220     complex fUstar[3][3];
+00221     complex fUtran[3][3];
+00222     complex fA[3][3];     
+00223   };
+00224 }
+00225 #endif
+00226 

@@ -1,0 +1,98 @@
+00001 
+00002 
+00003 
+00004 
+00005 
+00006 
+00007 
+00008 
+00009 
+00010 
+00011 
+00012 
+00013 
+00014 
+00015 
+00016 
+00017 
+00018 
+00019 
+00020 
+00021 
+00022 
+00023 
+00024 
+00025 
+00026 
+00027 
+00028 
+00029 
+00030 
+00031 
+00032 #ifndef PMNSOPT_H
+00033 #define PMNSOPT_H
+00034 #include <list>
+00035 #include <complex>
+00036 
+00037 // Some useful complex numbers
+00038 static std::complex<double> zero(0.0,0.0);
+00039 static std::complex<double> one (1.0,0.0);
+00040 
+00041 // Unit conversion constants
+00042 static const double kKm2eV  = 5.06773103202e+09; 
+00043 static const double kK2     = 4.62711492217e-09; 
+00044 static const double kGeV2eV = 1.0e+09;           
+00045 
+00046 //G_F in units of GeV^-2
+00047 static const double kGf     = 1.166371e-5;
+00048 
+00049 namespace osc {
+00051   class PMNSOpt {
+00052   public:
+00053     PMNSOpt();
+00054     virtual ~PMNSOpt();
+00055 
+00061     virtual void SetMix(double th12, double th23, double th13, double deltacp);
+00062 
+00066     virtual void SetDeltaMsqrs(double dm21, double dm32);
+00067 
+00073     virtual void PropMatter(double L, double E, double Ne, int anti=1);
+00074     virtual void PropMatter(const std::list<double>& L,
+00075                     double                   E,
+00076                     const std::list<double>& Ne,
+00077                     int anti);
+00078 
+00083     virtual void PropVacuum(double L, double E, int anti=1);
+00084 
+00087     virtual double P(int flv) const;
+00088 
+00092     virtual void ResetToFlavour(int flv=1);
+00093 
+00094   protected:
+00095     // A shorthand...
+00096     typedef std::complex<double> complex;
+00097 
+00100     virtual void BuildHlv();
+00101 
+00106     virtual void SolveHam(double E, double Ne, int anti);
+00107 
+00111     virtual void SetVacuumEigensystem(double E, int anti);
+00112 
+00113     double  fDm21;          
+00114     double  fDm31;          
+00115     double  fTheta12;       
+00116     double  fTheta23;       
+00117     double  fTheta13;       
+00118     double  fDeltaCP;       
+00119     complex fHlv[3][3];     
+00120     complex fEvec[3][3];    
+00121     double  fEval[3];       
+00122     complex fNuState[3];    
+00123     double  fCachedNe;      
+00124     double  fCachedE;       
+00125     int     fCachedAnti;    
+00126     bool    fBuiltHlv;      
+00127   };
+00128 }
+00129 #endif
+00130 

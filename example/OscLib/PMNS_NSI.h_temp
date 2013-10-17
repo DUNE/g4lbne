@@ -1,0 +1,43 @@
+00001 
+00002 
+00003 
+00004 
+00005 
+00006 
+00007 
+00008 
+00009 
+00010 
+00011 
+00012 
+00013 #ifndef PMNS_NSI_H
+00014 #define PMNS_NSI_H
+00015 #include <list>
+00016 #include <complex>
+00017 
+00018 #include "OscLib/func/PMNSOpt.h"
+00019 
+00020 namespace osc {
+00021   class PMNS_NSI : public PMNSOpt {
+00022   public:
+00023     PMNS_NSI();
+00024     virtual ~PMNS_NSI();
+00025     
+00026     void SetNSI(double eps_ee,      double eps_emu,      double eps_etau,
+00027                 double eps_mumu,    double eps_mutau,    double eps_tautau,
+00028                 double delta_emu=0, double delta_etau=0, double delta_mutau=0);
+00029 
+00030   protected:
+00035     virtual void SolveHam(double E, double Ne, int anti);
+00036     
+00037     double  fEps_ee;        
+00038     double  fEps_mumu;      
+00039     double  fEps_tautau;    
+00040     complex fEps_emu;       
+00041     complex fEps_etau;      
+00042     complex fEps_mutau;     
+00043     bool    fResetNSI;      
+00044   };
+00045 }
+00046 #endif
+00047 

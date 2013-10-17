@@ -1,0 +1,122 @@
+00001 #ifndef OSCCALCULATOR_H
+00002 #define OSCCALCULATOR_H
+00003 
+00005 //                                                                      //
+00006 // \file   OscCalculator.h                                              //
+00007 //                                                                      //
+00008 // \brief  Class with methods for calculating all things                //
+00009 //         related to oscillation probabilities.                        //
+00010 // \author <rbpatter@caltech.edu>                                       //
+00011 //                                                                      //
+00013 
+00014 #include "OscLib/func/IOscCalculator.h"
+00015 
+00016 class TF1;
+00017 
+00018 namespace osc
+00019 {
+00020 
+00021   class OscCalculator : public IOscCalculatorAdjustable
+00022   {
+00023   public:
+00024     OscCalculator();
+00025     virtual ~OscCalculator();
+00026 
+00028     double P(int flavBefore, int flavAfter, double E);
+00029 
+00030     double P_me(double E, bool antinu=false);
+00031     double P_mm(double E, bool antinu=false);
+00032     double P_mt(double E, bool antinu=false);
+00033     double P_ee(double E, bool antinu=false);
+00034     double P_em(double E, bool antinu=false);
+00035     double P_et(double E, bool antinu=false);
+00036     double P_te(double E, bool antinu=false);
+00037     double P_tm(double E, bool antinu=false);
+00038     double P_tt(double E, bool antinu=false);
+00039 
+00040     double P_null(double, bool) { return 0; }
+00041 
+00042     void SetL     (double L     ) { fL      = L;      fUpdated = false; }
+00043     void SetRho   (double rho   ) { fRho    = rho ? rho : 1e-10; fUpdated = false;}
+00044     void SetDmsq21(double dmsq21) { fDmsq21 = dmsq21; fUpdated = false; }
+00045     void SetDmsq32(double dmsq32) { fDmsq32 = dmsq32; fUpdated = false; }
+00046     void SetTh12  (double th12  ) { fTh12   = th12;   fUpdated = false; }
+00047     void SetTh13  (double th13  ) { fTh13   = th13;   fUpdated = false; }
+00048     void SetTh23  (double th23  ) { fTh23   = th23;   fUpdated = false; }
+00049     void SetdCP   (double dCP   ) { fdCP    = dCP;    fUpdated = false; }
+00050 
+00051     // Get a TF1 for a give channel's P(E).  Reconfigurations of
+00052     // the osc parameters do not require a new TF1.  (The TF1 just
+00053     // accesses the same underlying functions.)  Thus, you need
+00054     // a new OscCalculator if you want two configurations for
+00055     // the same channel.  Having multiple channels (TF1s) from a
+00056     // single OscCalculator is fine, though.
+00057     //
+00058     // NOTE: It's up to you to delete the returned object.
+00059     TF1 *GetTF1(int flavBefore, int flavAfter);
+00060 
+00061     // You shouldn't call this ever.  It needs to be public, though,
+00062     // so TF1 can access it.
+00063     double P_wrapper(double *x, double *p);
+00064 
+00065     virtual TMD5* GetParamsHash() const override
+00066     {
+00067       return IOscCalculatorAdjustable::GetParamsHashDefault("OscCalc");
+00068     }
+00069 
+00070   private:
+00071     // Update derived parameters when required
+00072     void UpdateBasic();
+00073     void UpdateEDep(double E, bool antinu, bool fliptime);
+00074 
+00075     double P_internal_ee(double E, bool antinu, bool fliptime);
+00076     double P_internal_me(double E, bool antinu, bool fliptime);
+00077     double P_internal_te(double E, bool antinu, bool fliptime);
+00078     double P_internal_mt(double E, bool antinu, bool fliptime);
+00079 
+00080     // Flags
+00081     bool fUpdated;
+00082 
+00083     // Calculated from user parameters once (non-E-dependent)
+00084     double fDmsq31;
+00085     double fsin_th12;
+00086     double fsin_th13;
+00087     double fsin_th23;
+00088     double fcos_th12;
+00089     double fcos_th13;
+00090     double fcos_th23;
+00091     double fsin_2th12;
+00092     double fsin_2th13;
+00093     double fsin_2th23;
+00094     double fcos_2th12;
+00095     double fcos_2th13;
+00096     double fcos_2th23;
+00097     double fsin_sq_th12;
+00098     double fsin_sq_th13;
+00099     double fsin_sq_th23;
+00100     double fcos_sq_th12;
+00101     double fcos_sq_th13;
+00102     double fcos_sq_th23;
+00103     double fsin_sq_2th12;
+00104     double fsin_sq_2th13;
+00105     double fsin_sq_2th23;
+00106     double fcos_sq_2th12;
+00107     double fcos_sq_2th13;
+00108     double fcos_sq_2th23;
+00109     double falpha;
+00110     double fV;
+00111 
+00112     // Calculated from user parameters every time (E-dependent)
+00113     double fA;
+00114     double fD;
+00115     double fC12;
+00116     double fC13;
+00117     double fdCPproxy;
+00118     double fsin_dCPproxy;
+00119     double fcos_dCPproxy;
+00120 
+00121   };
+00122 
+00123 }
+00124 
+00125 #endif

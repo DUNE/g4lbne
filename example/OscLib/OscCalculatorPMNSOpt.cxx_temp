@@ -1,0 +1,50 @@
+00001 #include "OscCalculatorPMNSOpt.h"
+00002 
+00003 #include <cassert>
+00004 #include <cstdlib>
+00005 
+00006 namespace osc
+00007 {
+00008   OscCalculatorPMNSOpt::OscCalculatorPMNSOpt()
+00009     : fMixDirty(true), fDmDirty(true), fPropDirty(true), fPrevAnti(0)
+00010   {
+00011   }
+00012 
+00013   OscCalculatorPMNSOpt::~OscCalculatorPMNSOpt()
+00014   {
+00015   }
+00016 
+00017   double OscCalculatorPMNSOpt::P(int flavBefore, int flavAfter, double E)
+00018   {
+00019     const int anti = (flavBefore > 0) ? +1 : -1;
+00020     assert(flavAfter/anti > 0);
+00021     if(anti != fPrevAnti) fPropDirty = true;
+00022 
+00023     int i = -1, j = -1;
+00024     if(abs(flavBefore) == 12) i = 0;
+00025     if(abs(flavBefore) == 14) i = 1;
+00026     if(abs(flavBefore) == 16) i = 2;
+00027     if(abs(flavAfter) == 12) j = 0;
+00028     if(abs(flavAfter) == 14) j = 1;
+00029     if(abs(flavAfter) == 16) j = 2;
+00030     assert(i >= 0 && j >= 0);
+00031 
+00032     if(fMixDirty){
+00033       fPMNSOpt.SetMix(fTh12, fTh23, fTh13, fdCP);
+00034       fMixDirty = false;
+00035     }
+00036     if(fDmDirty){
+00037       fPMNSOpt.SetDeltaMsqrs(fDmsq21, fDmsq32);
+00038       fDmDirty = false;
+00039     }
+00040 
+00041 
+00042     fPMNSOpt.ResetToFlavour(i);
+00043     // Assume Z/A=0.5
+00044     const double Ne = fRho/2;
+00045     fPMNSOpt.PropMatter(fL, E, Ne, anti);
+00046     return fPMNSOpt.P(j);
+00047   }
+00048 } // namespace
+
+

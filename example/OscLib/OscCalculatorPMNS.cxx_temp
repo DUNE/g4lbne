@@ -1,0 +1,59 @@
+00001 
+00002 // \file    OscCalculatorPMNS.cxx 
+00003 // \brief   Source file for PMNS oscillation calculation
+00004 // \version $Id: OscCalculatorPMNS.cxx_temp,v 1.1 2013/10/17 22:18:11 ljf26 Exp $
+00005 // \author  
+00007 #include "OscLib/func/OscCalculatorPMNS.h"
+00008 
+00009 #include <cassert>
+00010 #include <cstdlib>
+00011 
+00012 namespace osc
+00013 {
+00014   OscCalculatorPMNS::OscCalculatorPMNS()
+00015     : fMixDirty(true), fDmDirty(true), fPropDirty(true), fPrevAnti(0)
+00016   {
+00017   }
+00018 
+00019   OscCalculatorPMNS::~OscCalculatorPMNS()
+00020   {
+00021   }
+00022 
+00023   double OscCalculatorPMNS::P(int flavBefore, int flavAfter, double E)
+00024   {
+00025     const int anti = (flavBefore > 0) ? +1 : -1;
+00026     assert(flavAfter/anti > 0);
+00027     if(anti != fPrevAnti) fPropDirty = true;
+00028 
+00029     int i = -1, j = -1;
+00030     if(abs(flavBefore) == 12) i = 0;
+00031     if(abs(flavBefore) == 14) i = 1;
+00032     if(abs(flavBefore) == 16) i = 2;
+00033     if(abs(flavAfter) == 12) j = 0;
+00034     if(abs(flavAfter) == 14) j = 1;
+00035     if(abs(flavAfter) == 16) j = 2;
+00036     assert(i >= 0 && j >= 0);
+00037 
+00038     if(fMixDirty){
+00039       fPMNS.SetMix(fTh12, fTh23, fTh13, fdCP);
+00040       fMixDirty = false;
+00041     }
+00042     if(fDmDirty){
+00043       fPMNS.SetDeltaMsqrs(fDmsq21, fDmsq32);
+00044       fDmDirty = false;
+00045     }
+00046 
+00047     if(fPropDirty || E != fPrevE){
+00048       fPMNS.Reset();
+00049       // Assume Z/A=0.5
+00050       const double Ne = fRho/2;
+00051       fPMNS.PropMatter(fL, E, Ne, anti);
+00052 
+00053       fPropDirty = false;
+00054       fPrevE = E;
+00055       fPrevAnti = anti;
+00056     }
+00057 
+00058     return fPMNS.P(i, j);
+00059   }
+00060 } // namespace

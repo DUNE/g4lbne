@@ -1,0 +1,49 @@
+00001 #ifndef OSC_OSCCALCULATORPMNSOPT_H
+00002 #define OSC_OSCCALCULATORPMNSOPT_H
+00003 
+00005 //                                                                      //
+00006 // \file OscCalculatorPMNSOpt.h                                         //
+00007 //                                                                      //
+00008 // Adapt the PMNSOpt calculator to standard interface                   //
+00009 // <bckhouse@caltech.edu>                                               //
+00010 //                                                                      //
+00012 
+00013 #include "IOscCalculator.h"
+00014 #include "PMNSOpt.h"
+00015 
+00016 namespace osc
+00017 {
+00021   class OscCalculatorPMNSOpt: public IOscCalculatorAdjustable
+00022   {
+00023   public:
+00024     OscCalculatorPMNSOpt();
+00025     virtual ~OscCalculatorPMNSOpt();
+00026 
+00027     virtual double P(int flavBefore, int flavAfter, double E);
+00028 
+00029     virtual void SetL     (double L     ){fPropDirty = true; fL      = L;}
+00030     virtual void SetRho   (double rho   ){fPropDirty = true; fRho    = rho;}
+00031     virtual void SetDmsq21(double dmsq21){fDmDirty   = true; fDmsq21 = dmsq21;}
+00032     virtual void SetDmsq32(double dmsq32){fDmDirty   = true; fDmsq32 = dmsq32;}
+00033     virtual void SetTh12  (double th12  ){fMixDirty  = true; fTh12   = th12;}
+00034     virtual void SetTh13  (double th13  ){fMixDirty  = true; fTh13   = th13;}
+00035     virtual void SetTh23  (double th23  ){fMixDirty  = true; fTh23   = th23;}
+00036     virtual void SetdCP   (double dCP   ){fMixDirty  = true; fdCP    = dCP;}
+00037 
+00038     virtual TMD5* GetParamsHash() const override
+00039     {
+00040       return IOscCalculatorAdjustable::GetParamsHashDefault("PMNSOpt");
+00041     }
+00042   protected:
+00043     PMNSOpt fPMNSOpt;
+00044 
+00045     bool fMixDirty;
+00046     bool fDmDirty;
+00047     bool fPropDirty;
+00048     double fPrevE;
+00049     int fPrevAnti;
+00050   };
+00051 
+00052 } // namespace
+00053 
+00054 #endif

@@ -1,0 +1,239 @@
+00001 
+00002 // \file    OscCalculatorGeneral.cxx 
+00003 // \brief   Source file for general oscillation calculation
+00004 // \version $Id: OscCalculatorGeneral.cxx_temp,v 1.1 2013/10/17 22:18:11 ljf26 Exp $
+00005 // \author  
+00007 #include "OscLib/func/OscCalculatorGeneral.h"
+00008 
+00009 #include <boost/numeric/ublas/vector.hpp>
+00010 #include <boost/numeric/ublas/matrix.hpp>
+00011 
+00012 #include <vector>
+00013 
+00014 #include <cassert>
+00015 #include <complex>
+00016 
+00017 namespace osc
+00018 {
+00019   const unsigned int kNumFlavours = 3;
+00020 
+00021   namespace ublas = boost::numeric::ublas;
+00022   typedef std::complex<double> val_t;
+00023   typedef ublas::bounded_array<val_t, kNumFlavours> alloc_t;
+00024   // Should be a c_matrix, but get ambiguity in triple multiplication
+00025   typedef ublas::bounded_matrix<val_t, kNumFlavours, kNumFlavours> ComplexMat;
+00026   typedef ublas::c_vector<val_t, kNumFlavours> ComplexVec;
+00027   typedef ublas::unit_vector<val_t, alloc_t> UnitVec;
+00028   const ublas::zero_matrix<val_t, alloc_t> kZeroMat(kNumFlavours, kNumFlavours);
+00029   const ublas::identity_matrix<val_t, alloc_t> kIdentity(kNumFlavours);
+00030 
+00031   // Private data. Doing it this way avoids having to expose complex numbers,
+00032   // matrices etc. to the user.
+00033   struct OscCalculatorGeneral::Priv
+00034   {
+00035     Priv() :
+00036       atmos(kIdentity),
+00037       react(kIdentity),
+00038       solar(kIdentity),
+00039       pmns(kZeroMat),
+00040       dirty(true)
+00041     {
+00042     }
+00043 
+00044     double c13, s13;
+00045     std::complex<double> phase;
+00046 
+00047     ComplexMat atmos, react, solar;
+00048     ComplexMat pmns;
+00049 
+00050     bool dirty;
+00051   };
+00052 
+00053 
+00054   OscCalculatorGeneral::OscCalculatorGeneral()
+00055     : d(new OscCalculatorGeneral::Priv), fEMuTau(0)
+00056   {
+00057   }
+00058 
+00059   OscCalculatorGeneral::~OscCalculatorGeneral()
+00060   {
+00061     delete d;
+00062   }
+00063 
+00064 
+00065   void OscCalculatorGeneral::SetTh23(double th23)
+00066   {
+00067     fTh23 = th23;
+00068     d->atmos(2, 2) = d->atmos(1, 1) = cos(th23);
+00069     d->atmos(1, 2) = sin(th23);
+00070     d->atmos(2, 1) = -d->atmos(1, 2);
+00071     d->dirty = true;
+00072   }
+00073 
+00074   void OscCalculatorGeneral::SetTh13(double th13)
+00075   {
+00076     fTh13 = th13;
+00077     d->c13 = cos(th13);
+00078     d->s13 = sin(th13);
+00079 
+00080     d->react(2, 2) = d->react(0, 0) = d->c13;
+00081     d->react(0, 2) = d->s13*d->phase;
+00082     d->react(2, 0) = -std::conj(d->react(0, 2));
+00083     d->dirty = true;
+00084   }
+00085 
+00086   void OscCalculatorGeneral::SetTh12(double th12)
+00087   {
+00088     fTh12 = th12;
+00089     d->solar(1, 1) = d->solar(0, 0) = cos(th12);
+00090     d->solar(0, 1) = sin(th12);
+00091     d->solar(1, 0) = -d->solar(0, 1);
+00092     d->dirty = true;
+00093   }
+00094 
+00095   void OscCalculatorGeneral::SetdCP(double delta)
+00096   {
+00097     fdCP = delta;
+00098 
+00099     d->phase = std::polar(1.0, -delta);
+00100 
+00101     d->react(2, 2) = d->react(0, 0) = d->c13;
+00102     d->react(0, 2) = d->s13*d->phase;
+00103     d->react(2, 0) = -std::conj(d->react(0, 2));
+00104     d->dirty = true;
+00105   }
+00106 
+00107   ComplexMat GetPMNS(OscCalculatorGeneral::Priv* d)
+00108   {
+00109     if(d->dirty){
+00110       ublas::noalias(d->pmns) = ublas::prod(d->atmos, ublas::prod<ComplexMat>(d->react, d->solar));
+00111       d->dirty = false;
+00112     }
+00113     return d->pmns;
+00114   }
+00115 
+00116 
+00117   // U is the PMNS matrix
+00118   // mSq are the squared masses. Pick an arbitrary zero and use the dmsqs
+00119   // E is the neutrino energy
+00120   ComplexMat VacuumHamiltonian(const ComplexMat& U, std::vector<double> mSq, double E)
+00121   {
+00122     // Conversion factor for units
+00123     E /= 4*1.267;
+00124 
+00125     assert(mSq.size() == kNumFlavours);
+00126 
+00127     ComplexMat H = kZeroMat;
+00128 
+00129     // Loop over rows and columns of the output
+00130     for(unsigned int a = 0; a < kNumFlavours; ++a){
+00131       for(unsigned int b = 0; b < kNumFlavours; ++b){
+00132         // Form sum over mass states
+00133         for(unsigned int i = 0; i < kNumFlavours; ++i){
+00134           H(a, b) += U(a, i)*mSq[i]/(2*E)*std::conj(U(b, i));
+00135         }
+00136       }
+00137     }
+00138 
+00139     return H;
+00140   }
+00141 
+00142 
+00143   // This is calculated assuming matter neutrinos. So far, this can simply be
+00144   // converted to antineutrinos by taking a minus sign.
+00145   ComplexMat MatterHamiltonianComponent(double Ne, double emutau)
+00146   {
+00147     // Need to convert avogadro's constant so that the total term comes out in
+00148     // units of inverse distance. Note that Ne will be specified in g/cm^-3
+00149     // I put the following into Wolfram Alpha:
+00150     // (fermi coupling constant)*((avogadro number)/cm^3)*(reduced planck constant)^2*(speed of light)^2
+00151     // And then multiplied by 1000 because we specify L in km not m.
+00152     const double GF = 1.368e-4;
+00153 
+00154     ComplexMat H = kZeroMat;
+00155 
+00156     H(0, 0) = sqrt(2)*GF*Ne;
+00157 
+00158     // Ignoring conjugates here because we assume e_mutau is real
+00159     H(1, 2) = H(2, 1) = emutau*sqrt(2)*GF*Ne;
+00160 
+00161     return H;
+00162   }
+00163 
+00164 
+00165   /* TODO: maybe look at
+00166      http://en.wikipedia.org/wiki/Baker%E2%80%93Campbell%E2%80%93Hausdorff_formula
+00167      and
+00168      http://en.wikipedia.org/wiki/Pad%C3%A9_approximant
+00169      http://en.wikipedia.org/wiki/Pad%C3%A9_table
+00170   */
+00171   ComplexMat MatrixExp(const ComplexMat& m2)
+00172   {
+00173     // We use the identity e^(a*b) = (e^a)^b
+00174     // First: ensure the exponent is really small, 65536 = 2^16
+00175     ComplexMat m = m2/65536;
+00176 
+00177     // To first order e^x = 1+x
+00178     ComplexMat ret = kIdentity+m;
+00179 
+00180     // Raise the result to the power 65536, by squaring it 16 times
+00181     for(int n = 0; n < 16; ++n) ret = ublas::prod(ret, ret);
+00182 
+00183     return ret;
+00184   }
+00185 
+00186 
+00187   ComplexVec EvolveState(ComplexVec A, const ComplexMat& H, double L)
+00188   {
+00189     const std::complex<double> i = std::complex<double>(0, 1);
+00190 
+00191     return ublas::prod(MatrixExp(-H*L*i), A);
+00192   }
+00193 
+00194   void conjugate_elements(ComplexMat& m)
+00195   {
+00196     for(unsigned int i = 0; i < kNumFlavours; ++i)
+00197       for(unsigned int j = 0; j < kNumFlavours; ++j)
+00198         m(i, j) = std::conj(m(i, j));
+00199   }
+00200 
+00201   double OscCalculatorGeneral::P(int from, int to, double E)
+00202   {
+00203     const int af = abs(from);
+00204     const int at = abs(to);
+00205     assert(af == 12 || af == 14 || af == 16);
+00206     assert(at == 12 || at == 14 || at == 16);
+00207 
+00208     // No matter<->antimatter transitions
+00209     if(af*at < 0) return 0;
+00210 
+00211     ComplexMat U = GetPMNS(d);
+00212     // P(a->b|U) = P(abar->bbar|U*)
+00213     if(from < 0) conjugate_elements(U);
+00214 
+00215     ComplexVec initState = UnitVec(kNumFlavours, 1); // Display accelerator bias
+00216     if(af == 12) initState = UnitVec(kNumFlavours, 0);
+00217     if(af == 16) initState = UnitVec(kNumFlavours, 2);
+00218 
+00219     std::vector<double> mSq;
+00220     mSq.push_back(0);
+00221     mSq.push_back(fDmsq21);
+00222     mSq.push_back(fDmsq21 + fDmsq32);
+00223 
+00224     ComplexMat H = VacuumHamiltonian(U, mSq, E);
+00225     ComplexMat Hm = MatterHamiltonianComponent(fRho, fEMuTau);
+00226     // So far, contribution to the antineutrino Hamiltonian is just the negative
+00227     // If there were to be any complex stuff here, would have to think about
+00228     // how it transformed with antineutrinos.
+00229     if(from < 0) H += -1*Hm; else H += Hm;
+00230 
+00231     ComplexVec finalState = EvolveState(initState, H, fL);
+00232 
+00233     if(at == 12) return std::norm(finalState(0));
+00234     if(at == 14) return std::norm(finalState(1));
+00235     if(at == 16) return std::norm(finalState(2));
+00236 
+00237     assert(0 && "Not reached");
+00238   }
+00239 
+00240 } // namespace

@@ -1,0 +1,525 @@
+00001 
+00002 // $Id: PMNS.cxx_temp,v 1.1 2013/10/17 22:18:11 ljf26 Exp $
+00003 //
+00004 // Implementation of oscillations of neutrinos in matter in an
+00005 // three-neutrino framework based on the following reference:
+00006 //
+00007 //......................................................................
+00008 //
+00009 // PHYSICAL REVIEW D       VOLUME 22, NUMBER 11          1 DECEMBER 1980
+00010 //
+00011 //             Matter effects on three-neutrino oscillation
+00012 //
+00013 //                      V. Barger and K. Whisnant
+00014 //    Physics Department, U. of Wisconsin, Madison, Wisconsin 53706
+00015 //
+00016 //                            S. Pakvasa
+00017 //   Physics Department, U. of Hawaii at Manoa, Honolulu, Hawaii 96822
+00018 //
+00019 //                         R.J.N. Phillips
+00020 //        Rutherford Laboratory, Chilton, Didcot, Oxon, England
+00021 //                    (Received 4 August 1980)
+00022 //
+00023 //                            22 2718
+00024 //                            --
+00025 //......................................................................
+00026 //
+00027 // Throughout I have taken:
+00028 //   - L to be the neutrino flight distance in km
+00029 //   - E to be the neutrino energy in GeV
+00030 //   - dmsqr to be the differences between the mass-squares in eV^2
+00031 //   - Ne to be the electron number density in mole/cm^3
+00032 //   - theta12,theta23,theta13,deltaCP to be in radians
+00033 //
+00034 // messier@indiana.edu
+00036 #include "OscLib/func/PMNS.h"
+00037 #include <cstdlib>
+00038 #include <iostream>
+00039 #include <cassert>
+00040 using namespace osc;
+00041 
+00042 // Some useful complex numbers
+00043 static std::complex<double> zero(0.0,0.0);
+00044 static std::complex<double> one (1.0,0.0);
+00045 
+00046 // Unit conversion constants
+00047 static const double kK1     = 2.53386551601e-00; 
+00048 static const double kK2     = 4.62711492217e-09; 
+00049 static const double kGeV2eV = 1.0E9;             
+00050 
+00051 //......................................................................
+00052 
+00053 PMNS::PMNS() 
+00054 {
+00055   this->SetMix(0.,0.,0.,0.);
+00056   this->SetDeltaMsqrs(0.,0.);
+00057   this->Reset();
+00058 }
+00059 
+00060 //......................................................................
+00061 
+00062 PMNS::PMNS(double th12, double th23, double th13, double deltacp,
+00063            double dms21, double dms32)
+00064 {
+00065   this->SetMix(th12, th23, th13, deltacp);
+00066   this->SetDeltaMsqrs(dms21, dms32);
+00067   this->Reset();
+00068 }
+00069 
+00070 //......................................................................
+00071 
+00072 void PMNS::DumpMatrix(const complex M[][3]) const
+00073 {
+00074   std::cout 
+00075     <<"| "<<M[0][0]<<"\t"<<M[0][1]<<"\t"<<M[0][2]<<" |\n"
+00076     <<"| "<<M[1][0]<<"\t"<<M[1][1]<<"\t"<<M[1][2]<<" |\n"
+00077     <<"| "<<M[2][0]<<"\t"<<M[2][1]<<"\t"<<M[2][2]<<" |\n"
+00078     <<std::endl;
+00079 }
+00080 
+00081 //......................................................................
+00082 
+00083 void PMNS::PrintMix() const { this->DumpMatrix(fU); }
+00084 
+00085 //......................................................................
+00086 
+00087 void PMNS::SetMix(double th12, double th23, double th13, double deltacp) 
+00088 {
+00089   register int i, j;
+00090   double  s12, s23, s13, c12, c23, c13;
+00091   complex idelta(0.0,deltacp);
+00092   
+00093   s12 = sin(th12);  s23 = sin(th23);  s13 = sin(th13);
+00094   c12 = cos(th12);  c23 = cos(th23);  c13 = cos(th13);
+00095   
+00096   fU[0][0] =  c12*c13;
+00097   fU[0][1] =  s12*c13;
+00098   fU[0][2] =  s13*exp(-idelta);
+00099   
+00100   fU[1][0] = -s12*c23-c12*s23*s13*exp(idelta);
+00101   fU[1][1] =  c12*c23-s12*s23*s13*exp(idelta);
+00102   fU[1][2] =  s23*c13;
+00103   
+00104   fU[2][0] =  s12*s23-c12*c23*s13*exp(idelta);
+00105   fU[2][1] = -c12*s23-s12*c23*s13*exp(idelta);
+00106   fU[2][2] =  c23*c13;
+00107   
+00108   // Compute derived forms of the mixing matrix
+00109   for (i=0; i<3; ++i) {
+00110     for (j=0; j<3; ++j) {
+00111       fUtran[i][j] = fU[j][i];
+00112       fUstar[i][j] = conj(fU[i][j]);
+00113       fUdagg[i][j] = conj(fU[j][i]);
+00114     }
+00115   }
+00116 }
+00117 
+00126 void PMNS::SetMixBWCP(double th1, double th2, double th3, double d) 
+00127 {
+00128   int i, j;
+00129   double s1, s2, s3, c1, c2, c3;
+00130   complex id(0.0,d);
+00131   s1 = sin(th1);  s2 = sin(th2);  s3 = sin(th3);
+00132   c1 = cos(th1);  c2 = cos(th2);  c3 = cos(th3);
+00133   
+00134   fU[0][0] =  c1;
+00135   fU[0][1] =  s1*c3;
+00136   fU[0][2] =  s1*s3;
+00137 
+00138   fU[1][0] = -s1*c2;
+00139   fU[1][1] =  c1*c2*c3+s2*s3*exp(id);
+00140   fU[1][2] =  c1*c2*s3-s2*c3*exp(id);
+00141 
+00142   fU[2][0] = -s1*s2;
+00143   fU[2][1] =  c1*s2*c3-c2*s3*exp(id);
+00144   fU[2][2] =  c1*s2*s3+c2*c3*exp(id);
+00145 
+00146   // Compute derived forms of the mixing matrix
+00147   for (i=0; i<3; ++i) {
+00148     for (j=0; j<3; ++j) {
+00149       fUtran[i][j] = fU[j][i];
+00150       fUstar[i][j] = conj(fU[i][j]);
+00151       fUdagg[i][j] = conj(fU[j][i]);
+00152     }
+00153   }
+00154 }
+00155 
+00156 //......................................................................
+00157 
+00158 void PMNS::PrintDeltaMsqrs() const
+00159 {
+00160   std::cout 
+00161     <<"|"<<fdmsqr[0][0]<<"\t"<<fdmsqr[0][1]<<"\t"<<fdmsqr[0][2]<<"|\n" 
+00162     <<"|"<<fdmsqr[1][0]<<"\t"<<fdmsqr[1][1]<<"\t"<<fdmsqr[1][2]<<"|\n" 
+00163     <<"|"<<fdmsqr[2][0]<<"\t"<<fdmsqr[2][1]<<"\t"<<fdmsqr[2][2]<<"|"
+00164     << std::endl;
+00165 }
+00166 
+00167 //......................................................................
+00172 void PMNS::SetDeltaMsqrs(double dm21, double dm32) 
+00173 {
+00174   double eps = 5.0E-9;
+00175   double msqr[3];
+00176   
+00177   msqr[0] = 0.0;
+00178   msqr[1] = dm21;
+00179   msqr[2] = dm21+dm32;
+00180   
+00181   // Degeneracies cause problems with diagonalization, so break them
+00182   // ever so slightly
+00183   if (dm21==0.0) {msqr[0] -= 0.5*eps; msqr[1] += 0.5*eps; }
+00184   if (dm32==0.0) {msqr[1] -= 0.5*eps; msqr[2] += 0.5*eps; }
+00185 
+00186   // Assign the mass splittings fdmsqr_ij = msqr_i - msqr_j by
+00187   // convention
+00188   for (register int i=0; i<3; ++i) {
+00189     for (register int j=0; j<3; ++j) {
+00190       // A somewhat subtle point: Barger et al. refer to the sign of
+00191       // m1-m2 being positive which implies dm^2_12>0 and
+00192       // dm^2_21<0. The labeling in more common use is to assume m3 is
+00193       // heaviest such that dm_12<0 and dm_21>0. Rather than reverse
+00194       // all the indices in all the equations, flip the signs here.
+00195       fdmsqr[i][j] = -(msqr[i] - msqr[j]);
+00196     }
+00197   }
+00198 }
+00199 
+00200 //......................................................................
+00204 void PMNS::Multi(complex A[][3], const complex B[][3], const complex C[][3]) 
+00205 {
+00206   register int i, j, k;
+00207   for (i=0; i<3; ++i) {
+00208     for (j=0; j<3; ++j) {
+00209       A[i][j] = zero;
+00210       for (k=0; k<3; ++k) {
+00211         A[i][j] += B[i][k]*C[k][j];
+00212       }
+00213     }
+00214   }
+00215 }
+00216 
+00217 //......................................................................
+00224 void PMNS::EvalEqn2(complex       A[][3],
+00225                    const complex U[][3],
+00226                    const complex Udagg[][3],
+00227                    const double  dmsqr[][3],
+00228                    double L,
+00229                    double E) 
+00230 {
+00231   register int a, b, i;
+00232   for (a=0; a<3; ++a) {
+00233     for (b=0; b<3; ++b) {
+00234       A[a][b] = zero;
+00235       for (i=0; i<3; ++i) {
+00236         complex phase(0.0,-kK1*dmsqr[i][0]*L/E);
+00237         A[a][b] += U[a][i]*exp(phase)*Udagg[i][b];
+00238       }
+00239     }
+00240   }
+00241 }
+00242 
+00243 //......................................................................
+00247 void PMNS::EvalEqn5(complex       twoEH[][3],
+00248                    const complex U[][3],
+00249                    const complex Udagg[][3],
+00250                    const double  dmsqr[][3],
+00251                    double        E,
+00252                    double        Gf,
+00253                    double        Ne)
+00254 {
+00255   register int j, k;
+00256   double       k2r2GNeE = kK2*2.0*M_SQRT2*Gf*Ne*(kGeV2eV*E);
+00257   for (k=0; k<3; ++k) {
+00258     for (j=0; j<3; ++j) {
+00259       twoEH[k][j] = zero;
+00260       if (k==j) twoEH[k][j] = dmsqr[j][0];
+00261       twoEH[k][j] -= k2r2GNeE*U[0][j]*Udagg[k][0];
+00262     }
+00263   }
+00264 }
+00265 
+00266 //......................................................................
+00273 void PMNS::EvalEqn10(complex       A[][3],
+00274                     const complex U[][3],
+00275                     const complex X[][3],
+00276                     const complex Udagg[][3])
+00277 {
+00278   complex tmp[3][3];
+00279   this->Multi(tmp, X, Udagg);
+00280   this->Multi(A,   U, tmp);
+00281 }
+00282 
+00283 //......................................................................
+00288 void PMNS::EvalEqn11(complex X[][3],
+00289                     double L,
+00290                     double E, 
+00291                     const complex twoEH[][3],
+00292                     const double  Msqr[],
+00293                     const double  dMsqr[][3]) 
+00294 {
+00295   // The identity matrix
+00296   static const double One[3][3] = {{1.,0.,0.},
+00297                                    {0.,1.,0.},
+00298                                    {0.,0.,1.}
+00299   };
+00300   register int a, b, k;
+00301   complex phase;
+00302   complex EHM0[3][3];
+00303   complex EHM1[3][3];
+00304   complex EHM2[3][3];
+00305   complex EHM21[3][3];
+00306   complex EHM20[3][3];
+00307   complex EHM10[3][3];
+00308 
+00309   // There are three matrices which can apper inside the product on
+00310   // j!=k. Calculate them before hand
+00311   for (a=0; a<3; ++a) {
+00312     for (b=0; b<3; ++b) {
+00313       EHM0[a][b] = twoEH[a][b]-Msqr[0]*One[a][b];
+00314       EHM1[a][b] = twoEH[a][b]-Msqr[1]*One[a][b];
+00315       EHM2[a][b] = twoEH[a][b]-Msqr[2]*One[a][b];
+00316     }
+00317   }
+00318   this->Multi(EHM21,EHM2,EHM1);
+00319   this->Multi(EHM20,EHM2,EHM0);
+00320   this->Multi(EHM10,EHM1,EHM0);
+00321 
+00322   // Refer to Msqr_j as dMsqr[j][0] since only mass differences matter
+00323   for (a=0; a<3; ++a) {
+00324     for (b=0; b<3; ++b) {
+00325       X[a][b] = zero;
+00326       for (k=0; k<3; ++k) {
+00327         phase = exp(complex(0.0,-kK1*dMsqr[k][0]*L/E));
+00328         if (k==0) {
+00329           X[a][b] += (EHM21[a][b]/(dMsqr[k][2]*dMsqr[k][1]))*phase;
+00330         }
+00331         else if (k==1) { 
+00332           X[a][b] += (EHM20[a][b]/(dMsqr[k][2]*dMsqr[k][0]))*phase;
+00333         }
+00334         else if (k==2) {
+00335           X[a][b] += (EHM10[a][b]/(dMsqr[k][1]*dMsqr[k][0]))*phase;
+00336         } // Switch for product on j!=k
+00337       } // Sum on k
+00338     } // Loop on b
+00339   } // Loop on a
+00340 }
+00341 
+00342 //......................................................................
+00343 // 
+00344 // Find the matter eigenvalues Msqr given the variables found in
+00345 // Eqn.22. This is Eqn.21 from Barger et. al.
+00346 //
+00347 void PMNS::EvalEqn21(double Msqr[],
+00348                     double alpha,
+00349                     double beta,
+00350                     double gamma)
+00351 {
+00352   double arg;      // Argument of the acos()
+00353   double theta0;   // First of the three roots of acos()
+00354   double theta1;   // Second of the three roots of acos()
+00355   double theta2;   // Third of the three roots of acos()
+00356   double fac;      // Factor in front of cos() terms
+00357   double constant; // Offset for all eigenvalues
+00358   static const double k2PiOver3 = 2.0*M_PI/3.0;
+00359   double alpha2           = alpha*alpha;
+00360   double alpha3           = alpha*alpha2;
+00361   double alpha2Minus3beta = alpha2-3.0*beta;
+00362 
+00363   arg =
+00364     (2.0*alpha3 - 9.0*alpha*beta + 27.0*gamma)/
+00365     (2.0*pow(alpha2Minus3beta,1.5));
+00366 
+00367   // Occasionally round off errors mean that arg wanders outside of
+00368   // its allowed range. If its way off (1 part per billion), stop the
+00369   // program. Otherwise, set it to its real value.
+00370   if (fabs(arg)>1.0) {
+00371     if (fabs(arg-1.0)>1.E-9) abort();
+00372     if (arg<-1.0) arg = -1.00;
+00373     if (arg>+1.0) arg = +1.00;
+00374   }
+00375   
+00376   // The three roots, find the first by computing the acos() the
+00377   // others are nearby
+00378   theta0 = acos(arg)/3.0;
+00379   theta1 = theta0-k2PiOver3;
+00380   theta2 = theta0+k2PiOver3;
+00381   
+00382   // The multiplier and offset
+00383   fac      = -2.0*sqrt(alpha2Minus3beta)/3.0;
+00384   constant = -alpha/3.0; // The constant offset m1^2 is irrelevant
+00385   
+00386   // And the eigenvalues themselves
+00387   Msqr[0] = fac*cos(theta0) + constant;
+00388   Msqr[1] = fac*cos(theta1) + constant;
+00389   Msqr[2] = fac*cos(theta2) + constant;
+00390 }
+00391 
+00397 void PMNS::EvalEqn22(double& alpha,
+00398                     double& beta,
+00399                     double& gamma,
+00400                     double  E,
+00401                     double  Gf,
+00402                     double  Ne,
+00403                     const double  dmsqr[][3],
+00404                     const complex U[][3]) 
+00405 {
+00406   // 2*sqrt(2)*Gf*Ne*E in units of eV^2
+00407   double k2r2EGNe = kK2*2.0*M_SQRT2*Gf*Ne*(kGeV2eV*E);
+00408   
+00409   alpha = k2r2EGNe + dmsqr[0][1] + dmsqr[0][2];
+00410   
+00411   beta  =
+00412     dmsqr[0][1]*dmsqr[0][2] + 
+00413     k2r2EGNe*(dmsqr[0][1]*(1.0-norm(U[0][1])) + 
+00414               dmsqr[0][2]*(1.0-norm(U[0][2])));
+00415 
+00416   gamma = k2r2EGNe*dmsqr[0][1]*dmsqr[0][2]*norm(U[0][0]);
+00417 }
+00418 
+00419 //......................................................................
+00423 void PMNS::SortEigenvalues(double       dMsqr[][3],
+00424                           const double dmsqr[][3],
+00425                           const double MsqrVac[],
+00426                           double       Msqr[]) 
+00427 {
+00428   int i, j, k;
+00429   double best, delta;
+00430   double MsqrTmp[3] = {-99.9E9,-99.9E9,-99.9E9};
+00431   int flg[3] = {0,0,0};
+00432 
+00433   // Attempt to figure out which of the eigenvalues match between
+00434   // dmsqr and MsqrVac
+00435   for (i=0; i<3; ++i) {
+00436     best =  1.E30;
+00437     k    = -1;
+00438     for (j=0; j<3; ++j) {
+00439       delta = fabs(MsqrVac[i] - dmsqr[j][0]);
+00440       if (delta<best) { best = delta; k = j; }
+00441     }
+00442     if (best>1.E-9) abort();
+00443     if (k<0 || k>2) abort();
+00444     flg[k] = 1;
+00445     MsqrTmp[i] = Msqr[k];
+00446   }
+00447   // Check that each eigenvalue is used
+00448   for (i=0; i<3; ++i) if (flg[i]!=1) abort();
+00449   
+00450   for (i=0; i<3; ++i) {
+00451     Msqr[i] = MsqrTmp[i];
+00452     for (j=0; j<3; ++j) {
+00453       dMsqr[i][j] = (MsqrTmp[i] - MsqrTmp[j]);
+00454     }
+00455   }
+00456 }
+00457 
+00462 void PMNS::PropVacuum(double L, double E, int anti) 
+00463 {
+00464   register int i, j;
+00465   complex A[3][3];
+00466   complex Aout[3][3];
+00467 
+00468   if      (anti>0) this->EvalEqn2(A, fU,     fUdagg, fdmsqr, L, E);
+00469   else if (anti<0) this->EvalEqn2(A, fUstar, fUtran, fdmsqr, L, E);
+00470   else abort();
+00471   this->Multi(Aout, A, fA);
+00472   for (i=0; i<3; ++i) {
+00473     for (j=0; j<3; ++j) {
+00474       fA[i][j] = Aout[i][j];
+00475     }
+00476   }
+00477 }
+00478 
+00483 void PMNS::PropMatter(double L, double E, double Ne, int anti) 
+00484 {
+00485   static const double  Gf = 1.166371E-5; // G_F in units of GeV^-2
+00486   register int i, j;
+00487   complex twoEH[3][3];
+00488   complex X[3][3];
+00489   double  Msqr[3];
+00490   double  MsqrV[3];
+00491   double  dMsqr[3][3];
+00492   double  alpha,  beta,  gamma;
+00493   double  alpha0, beta0, gamma0;
+00494   complex A[3][3];
+00495   complex Aout[3][3];
+00496   
+00497   // Find the transition matrix. The series of steps are to:
+00498   if (anti>0) {
+00499     // [1] Find the matter Hamiltonian in the mass basis...
+00500     this->EvalEqn5(twoEH, fU, fUdagg, fdmsqr, E, Gf, Ne);
+00501 
+00502     // [2] Find the eigenvalues and sort them.
+00503     this->EvalEqn22(alpha, beta, gamma, E, Gf, Ne, fdmsqr, fU);
+00504     this->EvalEqn21(Msqr,  alpha, beta, gamma);
+00505 
+00506     // Repeat the above, but for vacuum (Ne=0.0) to sort out the order
+00507     // of the eigenvalues
+00508     this->EvalEqn22(alpha0, beta0, gamma0, E, 0.0, 0.0, fdmsqr, fU);
+00509     this->EvalEqn21(MsqrV, alpha0, beta0, gamma0);
+00510     this->SortEigenvalues(dMsqr, fdmsqr, MsqrV, Msqr);
+00511 
+00512     // [3] Evaluate the transition matrix
+00513     this->EvalEqn11(X, L, E, twoEH, Msqr, dMsqr);
+00514     this->EvalEqn10(A, fU, X, fUdagg);
+00515   }
+00516   else if (anti<0) {
+00517     // As above, but make required substitutions for anti-neutrinos:
+00518     // Gf=>-Gf, U=>Ustar, U^dagger=>U^dagger^*=U^T
+00519     this->EvalEqn5(twoEH, fUstar, fUtran, fdmsqr, E, -Gf, Ne);
+00520     this->EvalEqn22(alpha, beta, gamma, E, -Gf, Ne, fdmsqr, fUstar);
+00521     this->EvalEqn21(Msqr,  alpha, beta, gamma);
+00522     this->EvalEqn22(alpha0, beta0, gamma0, E, 0.0, 0.0, fdmsqr, fUstar);
+00523     this->EvalEqn21(MsqrV, alpha0, beta0, gamma0);
+00524     this->SortEigenvalues(dMsqr, fdmsqr, MsqrV, Msqr);
+00525     this->EvalEqn11(X, L, E, twoEH, Msqr, dMsqr);
+00526     this->EvalEqn10(A, fUstar, X, fUtran);
+00527   }
+00528   else abort();
+00529   
+00530   // [4] Apply the transition matrix to the matrix we started with...
+00531   this->Multi(Aout, A, fA);
+00532   for (i=0; i<3; ++i) {
+00533     for (j=0; j<3; ++j) {
+00534       fA[i][j] = Aout[i][j];
+00535     }
+00536   }
+00537 }
+00538 
+00539 //......................................................................
+00543 void PMNS::PropMatter(const std::list<double>& L,
+00544                       double                   E,
+00545                       const std::list<double>& Ne,
+00546                       int anti) 
+00547 {
+00548   if (L.size()!=Ne.size()) abort();
+00549   std::list<double>::const_iterator Li  (L.begin());
+00550   std::list<double>::const_iterator Lend(L.end());
+00551   std::list<double>::const_iterator Ni  (Ne.begin());
+00552   for (; Li!=Lend; ++Li, ++Ni) {
+00553     // For very low densities, use vacumm
+00554     static const double kRhoCutoff = 1.0E-6; // Ne in moles/cm^3
+00555     if (*Ni<kRhoCutoff) this->PropVacuum(*Li, E, anti);
+00556     else                this->PropMatter(*Li, E, *Ni, anti);
+00557   }
+00558 }
+00559 
+00560 //......................................................................
+00565 void PMNS::Reset() 
+00566 {
+00567   register int i, j;
+00568   for (i=0; i<3; ++i) {
+00569     for (j=0; j<3; ++j) {
+00570       if (i==j) fA[i][j] = one;
+00571       else      fA[i][j] = zero;
+00572     }
+00573   }
+00574 }
+00575 
+00576 //......................................................................
+00582 double PMNS::P(int i, int j) const
+00583 {
+00584   assert(i>=0 && i<3);
+00585   assert(j>=0 && j<3);
+00586   return norm(fA[i][j]);
+00587 }
+00588 

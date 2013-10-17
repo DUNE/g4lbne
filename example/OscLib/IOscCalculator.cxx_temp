@@ -1,0 +1,16 @@
+00001 #include "OscLib/func/IOscCalculator.h"
+00002 
+00003 namespace osc
+00004 {
+00005   TMD5* IOscCalculatorAdjustable::GetParamsHashDefault(const std::string& txt) const
+00006   {
+00007     TMD5* ret = new TMD5;
+00008     ret->Update((unsigned char*)txt.c_str(), txt.size());
+00009     const int kNumParams = 8;
+00010     double buf[kNumParams] = {fRho, fL, fDmsq21, fDmsq32,
+00011                               fTh12, fTh13, fTh23, fdCP};
+00012     ret->Update((unsigned char*)buf, sizeof(double)*kNumParams);
+00013     ret->Final();
+00014     return ret;
+00015   }
+00016 }

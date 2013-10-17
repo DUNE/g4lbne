@@ -1,0 +1,49 @@
+00001 #ifndef OSC_OSCCALCULATORPMNS_H
+00002 #define OSC_OSCCALCULATORPMNS_H
+00003 
+00005 //                                                                      //
+00006 // \file   OscCalculatorPMNS.h                                          //
+00007 //                                                                      //
+00008 // \brief  Adapt the PMNS calculator to standard interface              //
+00009 // \author <bckhouse@caltech.edu>                                       //
+00010 //                                                                      //
+00012 
+00013 #include "OscLib/func/IOscCalculator.h"
+00014 #include "OscLib/func/PMNS.h"
+00015 
+00016 namespace osc
+00017 {
+00019   class OscCalculatorPMNS: public IOscCalculatorAdjustable
+00020   {
+00021   public:
+00022     OscCalculatorPMNS();
+00023     virtual ~OscCalculatorPMNS();
+00024 
+00025     virtual double P(int flavBefore, int flavAfter, double E);
+00026 
+00027     virtual void SetL     (double L     ){fPropDirty = true; fL      = L;}
+00028     virtual void SetRho   (double rho   ){fPropDirty = true; fRho    = rho;}
+00029     virtual void SetDmsq21(double dmsq21){fDmDirty   = true; fDmsq21 = dmsq21;}
+00030     virtual void SetDmsq32(double dmsq32){fDmDirty   = true; fDmsq32 = dmsq32;}
+00031     virtual void SetTh12  (double th12  ){fMixDirty  = true; fTh12   = th12;}
+00032     virtual void SetTh13  (double th13  ){fMixDirty  = true; fTh13   = th13;}
+00033     virtual void SetTh23  (double th23  ){fMixDirty  = true; fTh23   = th23;}
+00034     virtual void SetdCP   (double dCP   ){fMixDirty  = true; fdCP    = dCP;}
+00035 
+00036     virtual TMD5* GetParamsHash() const override
+00037     {
+00038       return IOscCalculatorAdjustable::GetParamsHashDefault("PMNS");
+00039     }
+00040   protected:
+00041     PMNS fPMNS;
+00042 
+00043     bool fMixDirty;
+00044     bool fDmDirty;
+00045     bool fPropDirty;
+00046     double fPrevE;
+00047     int fPrevAnti;
+00048   };
+00049 
+00050 } // namespace
+00051 
+00052 #endif

@@ -3,6 +3,7 @@
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
+#include <TGaxis.h>
 #include <iomanip>
 #include <iostream>
 #include <fstream>
@@ -17,7 +18,7 @@ int iread = 0;
 void nudata::Loop()
 {
 //   In a ROOT session, you can do:
-//      Root > .L nudata.C
+//      Root > .L nudata.C++
 //      Root > nudata t
 //      Root > t.GetEntry(12); // Fill t data members with entry number 12
 //      Root > t.Show();       // Show values of entry 12
@@ -61,36 +62,38 @@ void nudata::Loop()
 
    //!!!!!!!!!!!!!!!!!!
    //"name" the detector location that you are plotting the flux at
-   // This example is plotting the flux at the LBNE Far Detector using 
+   // if you have a 2 detector experiment you might want to create a near
+   // and a far set of histograms.
+   // This example is plotting the flux at the MINOS Near Detector using 
    // the detector weight and energy that is contained within the flux ntuple
-   // also using the a detector weight computed independently
-   //!!!!!!!!!!!!!!!!!!!
+   // and SOME OTHER DETECTOR LOCATION which will use the reweighting
+   // code to compute the detertor weight and energy
 
-   std::string detectorname  = "LBNEFD_A";
+   std::string detectorname  = "MINOSND";
    
-   TH1F *fhTotalFluxLBNEFD_A   = new TH1F(("totalfluxat"   + detectorname).c_str(),  
+   TH1F *fhTotalFluxMINOSND   = new TH1F(("totalfluxat"   + detectorname).c_str(),  
 					 ("totalfluxat"   + detectorname).c_str(), nbins,xmin,xmax);
-   TH1F *fhNuMuFluxLBNEFD_A    = new TH1F(("numufluxat"    + detectorname).c_str(),  
+   TH1F *fhNuMuFluxMINOSND    = new TH1F(("numufluxat"    + detectorname).c_str(),  
 					 ("numufluxat"    + detectorname).c_str(), nbins,xmin,xmax);
-   TH1F *fhNuMuBarFluxLBNEFD_A = new TH1F(("numubarfluxat" + detectorname).c_str(), 
+   TH1F *fhNuMuBarFluxMINOSND = new TH1F(("numubarfluxat" + detectorname).c_str(), 
 					 ("numubarfluxat" + detectorname).c_str(), nbins,xmin,xmax);
-   TH1F *fhNuEFluxLBNEFD_A     = new TH1F(("nuefluxat"     + detectorname).c_str(),
+   TH1F *fhNuEFluxMINOSND     = new TH1F(("nuefluxat"     + detectorname).c_str(),
 					 ("nuefluxat"     + detectorname).c_str(), nbins,xmin,xmax);
-   TH1F *fhNuEBarFluxLBNEFD_A  = new TH1F(("nuebarfluxat"  + detectorname).c_str(),
+   TH1F *fhNuEBarFluxMINOSND  = new TH1F(("nuebarfluxat"  + detectorname).c_str(),
 					 ("nuebarfluxat"  + detectorname).c_str(), nbins,xmin,xmax);
    
 
-   detectorname  = "LBNEFD_B";
+   detectorname  = "SOMEDETECTOR";
    
-   TH1F *fhTotalFluxLBNEFD_B   = new TH1F(("totalfluxat"   + detectorname).c_str(),  
+   TH1F *fhTotalFluxSOMEDETECTOR   = new TH1F(("totalfluxat"   + detectorname).c_str(),  
 					      ("totalfluxat"   + detectorname).c_str(), nbins,xmin,xmax);
-   TH1F *fhNuMuFluxLBNEFD_B    = new TH1F(("numufluxat"    + detectorname).c_str(),  
+   TH1F *fhNuMuFluxSOMEDETECTOR    = new TH1F(("numufluxat"    + detectorname).c_str(),  
 					      ("numufluxat"    + detectorname).c_str(), nbins,xmin,xmax);
-   TH1F *fhNuMuBarFluxLBNEFD_B = new TH1F(("numubarfluxat" + detectorname).c_str(), 
+   TH1F *fhNuMuBarFluxSOMEDETECTOR = new TH1F(("numubarfluxat" + detectorname).c_str(), 
 					      ("numubarfluxat" + detectorname).c_str(), nbins,xmin,xmax);
-   TH1F *fhNuEFluxLBNEFD_B     = new TH1F(("nuefluxat"     + detectorname).c_str(),
+   TH1F *fhNuEFluxSOMEDETECTOR     = new TH1F(("nuefluxat"     + detectorname).c_str(),
 					      ("nuefluxat"     + detectorname).c_str(), nbins,xmin,xmax);
-   TH1F *fhNuEBarFluxLBNEFD_B  = new TH1F(("nuebarfluxat"  + detectorname).c_str(),
+   TH1F *fhNuEBarFluxSOMEDETECTOR  = new TH1F(("nuebarfluxat"  + detectorname).c_str(),
 					      ("nuebarfluxat"  + detectorname).c_str(), nbins,xmin,xmax);
 
    //
@@ -99,17 +102,17 @@ void nudata::Loop()
    // you can still compare the Y-axis this also goes for using 1e12 as your reference pot.
    std::string fluxtitle      = "Neutrinos/GeV/m^{2}/"     + potref_str + "POT";
 
-   SetTitles(fhTotalFluxLBNEFD_A,        "All Neutrino Energy (GeV)", fluxtitle);
-   SetTitles(fhNuMuFluxLBNEFD_A,         "#nu_{#mu} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuMuBarFluxLBNEFD_A,      "#bar{#nu}_{#mu} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuEFluxLBNEFD_A,          "#nu_{e} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuEBarFluxLBNEFD_A,       "#bar{#nu}_{e} Energy (GeV)", fluxtitle);
+   SetTitles(fhTotalFluxMINOSND,        "All Neutrino Energy (GeV)", fluxtitle);
+   SetTitles(fhNuMuFluxMINOSND,         "#nu_{#mu} Energy (GeV)", fluxtitle);
+   SetTitles(fhNuMuBarFluxMINOSND,      "#bar{#nu}_{#mu} Energy (GeV)", fluxtitle);
+   SetTitles(fhNuEFluxMINOSND,          "#nu_{e} Energy (GeV)", fluxtitle);
+   SetTitles(fhNuEBarFluxMINOSND,       "#bar{#nu}_{e} Energy (GeV)", fluxtitle);
 
-   SetTitles(fhTotalFluxLBNEFD_B,        "All Neutrino Energy (GeV)", fluxtitle);
-   SetTitles(fhNuMuFluxLBNEFD_B,         "#nu_{#mu} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuMuBarFluxLBNEFD_B,      "#bar{#nu}_{#mu} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuEFluxLBNEFD_B,          "#nu_{e} Energy (GeV)", fluxtitle);
-   SetTitles(fhNuEBarFluxLBNEFD_B,       "#bar{#nu}_{e} Energy (GeV)", fluxtitle);
+   SetTitles(fhTotalFluxSOMEDETECTOR,        "All Neutrino Energy (GeV)", fluxtitle);
+   SetTitles(fhNuMuFluxSOMEDETECTOR,         "#nu_{#mu} Energy (GeV)", fluxtitle);
+   SetTitles(fhNuMuBarFluxSOMEDETECTOR,      "#bar{#nu}_{#mu} Energy (GeV)", fluxtitle);
+   SetTitles(fhNuEFluxSOMEDETECTOR,          "#nu_{e} Energy (GeV)", fluxtitle);
+   SetTitles(fhNuEBarFluxSOMEDETECTOR,       "#bar{#nu}_{e} Energy (GeV)", fluxtitle);
 
    //
    //start loop
@@ -128,7 +131,7 @@ void nudata::Loop()
 
       ++iread;
       
-      if(iread % 10000 == 0)
+      if(iread % 1000 == 0)
       {
 	 std::cout << "Reading Entry " << iread << std::endl;
       }
@@ -140,13 +143,15 @@ void nudata::Loop()
 
       //
       //To use the detector weight and energy that is stored in the flux ntuple
-      // you must know what detector index [0] of the arrays NenergyF 
-      // and NWtFar corresponds to.
+      // you must know what detector index [0] of the arrays NenergyN 
+      // and NWtNear corresponds to.
       // The g4lbne input file that you used contains the x, y and z corrdinates
-      // of the detector that corresponds to the NenergyF[0] and NWtFar[0] values
+      // of the detector that corresponds to the NenergyN[0] and NWtNear[0] values
       // in the flux ntuple.
       // Look under the "FluxArea" section of the input file you used to generate flux 
       // flux files you are now looping over.
+      // In this particular example the input file le010z185i_NumiDPHelium.input
+      // was used. 
       // The Flux Area parameters in that file are
       //
       //FluxArea       1
@@ -160,11 +165,14 @@ void nudata::Loop()
       // FluxAreaZ0far  735.34E3
       // FluxAreaRfar   1.0
       //...
-
-      double nuenergyatlbnefd     = NenergyF[0];
-      double detectorwghtatlbnefd = NWtFar[0];
+      // These coordinates correspond to the MINOS near and Minos far detectors
+      // So the NenergyN[0] and NWtNear[0] values stored in the flux ntuples in this
+      // example correspond to the MINOS NEAR DETECTOR.
+      //
+      double nuenergyatminosnd     = NenergyN[0];
+      double detectorwghtatminosnd = NWtNear[0];
       //Nimpwt is the same no matter what detector you are referring to
-      double fluxwghtlbnefd      = (detectorwghtatlbnefd*Nimpwt/3.1415)*(refpot/fTotalPOT);
+      double fluxwghtminosnd       = (detectorwghtatminosnd*Nimpwt/3.1415)*(refpot/fTotalPOT);
 
 
       //
@@ -188,11 +196,14 @@ void nudata::Loop()
       //
       double detx = 0.0;
       double dety = 0.0;
-      double detz = 129700000.0; 
+      double detz = 103649.0; 
       //
-      //note that these coords are the location of the LBNE FD 
-      //So you can compare the LBNEFD_A plots and the 
-      //LBNEFD_B PLOTS and they should be nearly identical
+      //note that these coords are the location of the MINOS ND 
+      //(almost, these are more up-to-date coords)
+      //So you can compare the MINOSND plots and the 
+      //SOMEDETECTOR PLOTS and they should be nearly identical
+      //this is a good check that the code works properly
+      //
 
       double nuenergyatsomedet     = -999.0;
       double detectorwghtatsomedet = -999.0;
@@ -202,7 +213,7 @@ void nudata::Loop()
       detvec.push_back(detz);
 
       //this function computes the dectector weight and neutrino energy at detx,y,z
-      nudata::GetWeight(detvec, detectorwghtatsomedet, nuenergyatsomedet);
+      GetWeight(detvec, detectorwghtatsomedet, nuenergyatsomedet);
 
       //
       //Note that for off-axis locations this function, nudata::GetWeight, 
@@ -218,35 +229,34 @@ void nudata::Loop()
 
       //Nimpwt is the same no matter what detector you are referring to
       double fluxwghtsomedet = (detectorwghtatsomedet*Nimpwt/3.1415)*(refpot/fTotalPOT);
-
       ///
       //Now fill the histograms
       //
 
-      fhTotalFluxLBNEFD_A      -> Fill(nuenergyatlbnefd, fluxwghtlbnefd/binwidth);
-      fhTotalFluxLBNEFD_B -> Fill(nuenergyatsomedet, fluxwghtsomedet/binwidth);
+      fhTotalFluxMINOSND      -> Fill(nuenergyatminosnd, fluxwghtminosnd/binwidth);
+      fhTotalFluxSOMEDETECTOR -> Fill(nuenergyatsomedet, fluxwghtsomedet/binwidth);
       //
       //by neutrino type
       //
       if(Ntype == 56)
       {
-	 fhNuMuFluxLBNEFD_A      -> Fill(nuenergyatlbnefd, fluxwghtlbnefd/binwidth);
-	 fhNuMuFluxLBNEFD_B -> Fill(nuenergyatsomedet, fluxwghtsomedet/binwidth);
+	 fhNuMuFluxMINOSND      -> Fill(nuenergyatminosnd, fluxwghtminosnd/binwidth);
+	 fhNuMuFluxSOMEDETECTOR -> Fill(nuenergyatsomedet, fluxwghtsomedet/binwidth);
       }
       if(Ntype == 55)
       {
-	 fhNuMuBarFluxLBNEFD_A      -> Fill(nuenergyatlbnefd, fluxwghtlbnefd/binwidth);
-	 fhNuMuBarFluxLBNEFD_B -> Fill(nuenergyatsomedet, fluxwghtsomedet/binwidth);
+	 fhNuMuBarFluxMINOSND      -> Fill(nuenergyatminosnd, fluxwghtminosnd/binwidth);
+	 fhNuMuBarFluxSOMEDETECTOR -> Fill(nuenergyatsomedet, fluxwghtsomedet/binwidth);
       }
       if(Ntype == 53)
       {
-	 fhNuEFluxLBNEFD_A      -> Fill(nuenergyatlbnefd, fluxwghtlbnefd/binwidth);
-	 fhNuEFluxLBNEFD_B -> Fill(nuenergyatsomedet, fluxwghtsomedet/binwidth);
+	 fhNuEFluxMINOSND      -> Fill(nuenergyatminosnd, fluxwghtminosnd/binwidth);
+	 fhNuEFluxSOMEDETECTOR -> Fill(nuenergyatsomedet, fluxwghtsomedet/binwidth);
       }
       if(Ntype == 52)
       {
-	 fhNuEBarFluxLBNEFD_A      -> Fill(nuenergyatlbnefd, fluxwghtlbnefd/binwidth);
-	 fhNuEBarFluxLBNEFD_B -> Fill(nuenergyatsomedet, fluxwghtsomedet/binwidth);
+	 fhNuEBarFluxMINOSND      -> Fill(nuenergyatminosnd, fluxwghtminosnd/binwidth);
+	 fhNuEBarFluxSOMEDETECTOR -> Fill(nuenergyatsomedet, fluxwghtsomedet/binwidth);
       }
 
 
@@ -272,43 +282,44 @@ void nudata::Loop()
    TGaxis::SetMaxDigits(2);
 
    //
-   //drawing for LBNEFD_A histograms
+   //drawing for MINOSND histograms
    //
    {
-      
-     c1->cd();
-     fhTotalFluxLBNEFD_A->Draw();
 
-     std::string cpath1 = ffilename + "_" + fhTotalFluxLBNEFD_A->GetName() + ".eps";
-     std::string cpath2 = ffilename + "_" + fhTotalFluxLBNEFD_A->GetName() + ".png";
+
+     c1->cd();
+     fhTotalFluxMINOSND->Draw();
+
+     std::string cpath1 = ffilename + "_" + fhTotalFluxMINOSND->GetName() + ".eps";
+     std::string cpath2 = ffilename + "_" + fhTotalFluxMINOSND->GetName() + ".png";
      c1->SaveAs(cpath1.c_str());
      c1->SaveAs(cpath2.c_str());
      
      c2->cd();
-     fhNuMuFluxLBNEFD_A->Draw();
-     cpath1 = ffilename + "_" + fhNuMuFluxLBNEFD_A->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuMuFluxLBNEFD_A->GetName() + ".png";
+     fhNuMuFluxMINOSND->Draw();
+     cpath1 = ffilename + "_" + fhNuMuFluxMINOSND->GetName() + ".eps";
+     cpath2 = ffilename + "_" + fhNuMuFluxMINOSND->GetName() + ".png";
      c2->SaveAs(cpath1.c_str());
      c2->SaveAs(cpath2.c_str());
 
      c3->cd();
-     fhNuMuBarFluxLBNEFD_A->Draw();
-     cpath1 = ffilename + "_" + fhNuMuBarFluxLBNEFD_A->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuMuBarFluxLBNEFD_A->GetName() + ".png";
+     fhNuMuBarFluxMINOSND->Draw();
+     cpath1 = ffilename + "_" + fhNuMuBarFluxMINOSND->GetName() + ".eps";
+     cpath2 = ffilename + "_" + fhNuMuBarFluxMINOSND->GetName() + ".png";
      c3->SaveAs(cpath1.c_str());
      c3->SaveAs(cpath2.c_str());
 
      c4->cd();
-     fhNuEFluxLBNEFD_A->Draw();
-     cpath1 = ffilename + "_" + fhNuEFluxLBNEFD_A->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuEFluxLBNEFD_A->GetName() + ".png";
+     fhNuEFluxMINOSND->Draw();
+     cpath1 = ffilename + "_" + fhNuEFluxMINOSND->GetName() + ".eps";
+     cpath2 = ffilename + "_" + fhNuEFluxMINOSND->GetName() + ".png";
      c4->SaveAs(cpath1.c_str());
      c4->SaveAs(cpath2.c_str());
      
      c5->cd();
-     fhNuEBarFluxLBNEFD_A->Draw();
-     cpath1 = ffilename + "_" + fhNuEBarFluxLBNEFD_A->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuEBarFluxLBNEFD_A->GetName() + ".png";
+     fhNuEBarFluxMINOSND->Draw();
+     cpath1 = ffilename + "_" + fhNuEBarFluxMINOSND->GetName() + ".eps";
+     cpath2 = ffilename + "_" + fhNuEBarFluxMINOSND->GetName() + ".png";
      c5->SaveAs(cpath1.c_str());
      c5->SaveAs(cpath2.c_str());
 
@@ -316,62 +327,62 @@ void nudata::Loop()
 
 
    //
-   //drawing for LBNEFD_B histograms
+   //drawing for SOMEDETECTOR histograms
    //
    {
-      
-     c6->cd();
-     fhTotalFluxLBNEFD_B->Draw();
 
-     std::string cpath1 = ffilename + "_" + fhTotalFluxLBNEFD_B->GetName() + ".eps";
-     std::string cpath2 = ffilename + "_" + fhTotalFluxLBNEFD_B->GetName() + ".png";
+     c6->cd();
+     fhTotalFluxSOMEDETECTOR->Draw();
+
+     std::string cpath1 = ffilename + "_" + fhTotalFluxSOMEDETECTOR->GetName() + ".eps";
+     std::string cpath2 = ffilename + "_" + fhTotalFluxSOMEDETECTOR->GetName() + ".png";
      c6->SaveAs(cpath1.c_str());
      c6->SaveAs(cpath2.c_str());
      
      c7->cd();
-     fhNuMuFluxLBNEFD_B->Draw();
-     cpath1 = ffilename + "_" + fhNuMuFluxLBNEFD_B->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuMuFluxLBNEFD_B->GetName() + ".png";
+     fhNuMuFluxSOMEDETECTOR->Draw();
+     cpath1 = ffilename + "_" + fhNuMuFluxSOMEDETECTOR->GetName() + ".eps";
+     cpath2 = ffilename + "_" + fhNuMuFluxSOMEDETECTOR->GetName() + ".png";
      c7->SaveAs(cpath1.c_str());
      c7->SaveAs(cpath2.c_str());
 
      c8->cd();
-     fhNuMuBarFluxLBNEFD_B->Draw();
-     cpath1 = ffilename + "_" + fhNuMuBarFluxLBNEFD_B->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuMuBarFluxLBNEFD_B->GetName() + ".png";
+     fhNuMuBarFluxSOMEDETECTOR->Draw();
+     cpath1 = ffilename + "_" + fhNuMuBarFluxSOMEDETECTOR->GetName() + ".eps";
+     cpath2 = ffilename + "_" + fhNuMuBarFluxSOMEDETECTOR->GetName() + ".png";
      c8->SaveAs(cpath1.c_str());
      c8->SaveAs(cpath2.c_str());
 
      c9->cd();
-     fhNuEFluxLBNEFD_B->Draw();
-     cpath1 = ffilename + "_" + fhNuEFluxLBNEFD_B->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuEFluxLBNEFD_B->GetName() + ".png";
+     fhNuEFluxSOMEDETECTOR->Draw();
+     cpath1 = ffilename + "_" + fhNuEFluxSOMEDETECTOR->GetName() + ".eps";
+     cpath2 = ffilename + "_" + fhNuEFluxSOMEDETECTOR->GetName() + ".png";
      c9->SaveAs(cpath1.c_str());
      c9->SaveAs(cpath2.c_str());
      
      c10->cd();
-     fhNuEBarFluxLBNEFD_B->Draw();
-     cpath1 = ffilename + "_" + fhNuEBarFluxLBNEFD_B->GetName() + ".eps";
-     cpath2 = ffilename + "_" + fhNuEBarFluxLBNEFD_B->GetName() + ".png";
+     fhNuEBarFluxSOMEDETECTOR->Draw();
+     cpath1 = ffilename + "_" + fhNuEBarFluxSOMEDETECTOR->GetName() + ".eps";
+     cpath2 = ffilename + "_" + fhNuEBarFluxSOMEDETECTOR->GetName() + ".png";
      c10->SaveAs(cpath1.c_str());
      c10->SaveAs(cpath2.c_str());      
-
+     
    }
 
 // Save histograms to a root file
    TFile f("flux_histograms.root","recreate");
-   fhTotalFluxLBNEFD_A->Write();
-   fhNuMuFluxLBNEFD_A->Write();
-   fhNuMuBarFluxLBNEFD_A->Write();
-   fhNuEFluxLBNEFD_A->Write();
-   fhNuEBarFluxLBNEFD_A->Write();
-   fhTotalFluxLBNEFD_B->Write();
-   fhNuMuFluxLBNEFD_B->Write();
-   fhNuMuBarFluxLBNEFD_B->Write();
-   fhNuEFluxLBNEFD_B->Write();
-   fhNuEBarFluxLBNEFD_B->Write();
+   fhTotalFluxMINOSND->Write();
+   fhNuMuFluxMINOSND->Write();
+   fhNuMuBarFluxMINOSND->Write();
+   fhNuEFluxMINOSND->Write();
+   fhNuEBarFluxMINOSND->Write();
+   fhTotalFluxSOMEDETECTOR->Write();
+   fhNuMuFluxSOMEDETECTOR->Write();
+   fhNuMuBarFluxSOMEDETECTOR->Write();
+   fhNuEFluxSOMEDETECTOR->Write();
+   fhNuEBarFluxSOMEDETECTOR->Write();
    f.Close();
-      
+
 }
 
 //-------------------------------------------------------------------------------------
@@ -557,9 +568,9 @@ double nudata::GetWeight(const std::vector<double> xdet,
       cout <<"nudata::GetWeight - Wrong parent type!! "<< ptype << " = "
 	   << ptype << " Decay code = " << Ndecay <<endl;
       
-     return;
+     return -999;
    }
-   
+
    double parent_energy = sqrt(pdPx*pdPx +
 			       pdPy*pdPy +
 			       pdPz*pdPz + 

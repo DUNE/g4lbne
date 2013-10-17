@@ -98,7 +98,7 @@ print "Using GEANT4 physics list",physics_list
 #f.close()
 
 #version = lines[0].strip()[1:]
-version="v3r0p1"
+version="v3r0p4"
 
 ###################################################
 #

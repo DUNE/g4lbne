@@ -2,7 +2,7 @@
 # Setup grid submit tools if not on a grid node
 if [ -z "${_CONDOR_SCRATCH_DIR}" ]; then
     echo "_CONDOR_SCRATCH_DIR is not set... so I'm assuming we're not running on a grid node.... Setting up jobsub tools."
-    source /grid/fermiapp/products/lbne/etc/setups.sh
+    source /grid/fermiapp/products/common/etc/setups.sh
     setup jobsub_tools
 fi
 

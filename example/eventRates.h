@@ -168,7 +168,7 @@ public :
    TBranch        *b_data_tptype;   //!
    TBranch        *b_data_tgen;   //!
 
-   eventRates(std::string version = "v2r4p1", std::string macro = "Nominal", std::string current = "200kA", std::string location = "LBNEFD", std::string physics_list = "QGSP_BERT", int n_files = 250, double pot_per_file = 100000);
+   eventRates(std::string user = "beam", std::string version = "v2r4p1", std::string macro = "Nominal", std::string current = "200kA", std::string location = "LBNEFD", std::string physics_list = "QGSP_BERT", int n_files = 250, double pot_per_file = 100000);
 
    virtual ~eventRates();
    virtual Int_t    Cut(Long64_t entry);
@@ -211,7 +211,7 @@ public :
 
 #ifdef eventRates_cxx
 
-eventRates::eventRates(std::string version, std::string macro, std::string current, std::string location, std::string physics_list, int n_files, double potperfile)
+eventRates::eventRates(std::string user, std::string version, std::string macro, std::string current, std::string location, std::string physics_list, int n_files, double potperfile)
 {
   // simulation = G4PBeam (default) or Fluka
   // macro = Nominal, etc
@@ -227,6 +227,51 @@ eventRates::eventRates(std::string version, std::string macro, std::string curre
   detectorname = location;
   if(location=="LBNEND") {
     detx = 0.0;
+    dety = 0.0;
+    detz = 45900.0;
+  }
+  if(location=="LBNEND0.2DEG") {
+    detx = 160;
+    dety = 0.0;
+    detz = 45900.0;
+  }
+  if(location=="LBNEND0.4DEG") {
+    detx = 320;
+    dety = 0.0;
+    detz = 45900.0;
+  }
+  if(location=="LBNEND0.6DEG") {
+    detx = 481;
+    dety = 0.0;
+    detz = 45900.0;
+  }
+  if(location=="LBNEND0.8DEG") {
+    detx = 641;
+    dety = 0.0;
+    detz = 45900.0;
+  }
+  if(location=="LBNEND1DEG") {
+    detx = 801;
+    dety = 0.0;
+    detz = 45900.0;
+  }
+  if(location=="LBNEND2DEG") {
+    detx = 1602;
+    dety = 0.0;
+    detz = 45900.0;
+  }
+  if(location=="LBNEND3DEG") {
+    detx = 2406;
+    dety = 0.0;
+    detz = 45900.0;
+  }
+  if(location=="LBNEND4DEG") {
+    detx = 3210;
+    dety = 0.0;
+    detz = 45900.0;
+  }
+  if(location=="LBNEND5DEG") {
+    detx = 4015;
     dety = 0.0;
     detz = 45900.0;
   }
@@ -268,11 +313,9 @@ eventRates::eventRates(std::string version, std::string macro, std::string curre
     detz = 129700000.0; 
   }
   
-  // get user name from environment
-  std::string username(getenv("USER"));
-
-  std::string flux_dir = "/lbne/data/users/"+username+"/fluxfiles/g4lbne/"+version+"/"+physics_list+"/"+macro+"/"+current+"/flux/";
-
+  std::string flux_dir = "/lbne/data/users/"+user+"/fluxfiles/g4lbne/"+version+"/"+physics_list+"/"+macro+"/"+current+"/flux/";
+  if(user=="beam")
+    flux_dir = "/lbne/data/beam/fluxfiles/g4lbne/"+version+"/"+physics_list+"/"+macro+"/"+current+"/flux/";
   std::vector<std::string> fFileVec;
 
   int start_index = 1;

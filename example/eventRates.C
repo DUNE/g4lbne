@@ -340,25 +340,25 @@ void eventRates::Loop()
    std::string cceventratetitle      = "CC Events / POT";
    std::string nceventratetitle      = "CC Events / POT";
 
-   SetTitles(fhNuMuFlux,         "#nu_{#mu} Energy (GeV) Energy (GeV)", "Unosc #nu_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuMuFlux,         "#nu_{#mu} Energy (GeV) ", "Unosc #nu_{#mu}s / GeV / m^{2} / POT");
    SetTitles(fhNuMuBarFlux,      "#bar{#nu}_{#mu} Energy (GeV)", "Unosc #bar{#nu}_{#mu}s / GeV / m^{2} / POT");
    SetTitles(fhNuEFlux,          "#nu_{e} Energy (GeV)", "Unosc #nu_{e}s / GeV / m^{2} / POT");
    SetTitles(fhNuEBarFlux,       "#bar{#nu}_{e} Energy (GeV)", "Unosc #bar{#nu}_{e}s / GeV / m^{2} / POT");
-   SetTitles(fhNuTauFlux,          "#nu_{tau} Energy (GeV)", "Unosc #nu_{#tau}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauFlux,          "#nu_{#tau} Energy (GeV)", "Unosc #nu_{#tau}s / GeV / m^{2} / POT");
    SetTitles(fhNuTauBarFlux,       "#bar{#nu}_{#tau} Energy (GeV)", "Unosc #bar{#nu}_{#tau}s / GeV / m^{2} / POT");
 
-   SetTitles(fhNuMuFlux_FastMC,         "#nu_{#mu} Energy (GeV) Energy (GeV)", "Unosc #nu_{#mu}s / GeV / m^{2} / POT");
+   SetTitles(fhNuMuFlux_FastMC,         "#nu_{#mu} Energy (GeV) ", "Unosc #nu_{#mu}s / GeV / m^{2} / POT");
    SetTitles(fhNuMuBarFlux_FastMC,      "#bar{#nu}_{#mu} Energy (GeV)", "Unosc #bar{#nu}_{#mu}s / GeV / m^{2} / POT");
    SetTitles(fhNuEFlux_FastMC,          "#nu_{e} Energy (GeV)", "Unosc #nu_{e}s / GeV / m^{2} / POT");
    SetTitles(fhNuEBarFlux_FastMC,       "#bar{#nu}_{e} Energy (GeV)", "Unosc #bar{#nu}_{e}s / GeV / m^{2} / POT");
-   SetTitles(fhNuTauFlux_FastMC,          "#nu_{tau} Energy (GeV)", "Unosc #nu_{#tau}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauFlux_FastMC,          "#nu_{#tau} Energy (GeV)", "Unosc #nu_{#tau}s / GeV / m^{2} / POT");
    SetTitles(fhNuTauBarFlux_FastMC,       "#bar{#nu}_{#tau} Energy (GeV)", "Unosc #bar{#nu}_{#tau}s / GeV / m^{2} / POT");
 
    SetTitles(fhNuMuFlux_Globes,         "#nu_{#mu} Energy (GeV)", "Unosc #nu_{#mu}s / GeV / m^{2} / POT");
    SetTitles(fhNuMuBarFlux_Globes,      "#bar{#nu}_{#mu} Energy (GeV)", "Unosc #bar{#nu}_{#mu}s / GeV / m^{2} / POT");
    SetTitles(fhNuEFlux_Globes,          "#nu_{e} Energy (GeV)", "Unosc #nu_{e}s / GeV / m^{2} / POT");
    SetTitles(fhNuEBarFlux_Globes,       "#bar{#nu}_{e} Energy (GeV)", "Unosc #bar{#nu}_{e}s / GeV / m^{2} / POT");
-   SetTitles(fhNuTauFlux_Globes,          "#nu_{tau} Energy (GeV)", "Unosc #nu_{#tau}s / GeV / m^{2} / POT");
+   SetTitles(fhNuTauFlux_Globes,          "#nu_{#tau} Energy (GeV)", "Unosc #nu_{#tau}s / GeV / m^{2} / POT");
    SetTitles(fhNuTauBarFlux_Globes,       "#bar{#nu}_{#tau} Energy (GeV)", "Unosc #bar{#nu}_{#tau}s / GeV / m^{2} / POT");
 
    SetTitles(fhNuMuFluxOsc,         "Energy (GeV)", "Oscillated #nu_{#mu}s / GeV / m^{2} / POT");

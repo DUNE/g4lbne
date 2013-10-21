@@ -13,6 +13,7 @@
 #include <TLegend.h>
 #include <TCanvas.h>
 #include <TMath.h>
+#include <plotUtils.C>
 
 int axis_title_font_x = 22;
 int axis_title_font_y = 32;
@@ -24,85 +25,77 @@ int ratio_marker = 20;
 int ratio_line_width = 1;
 int ratio_color = 1;
 
-void stringReplaceAll(std::string& str, const std::string& from, const std::string& to) {
-    size_t start_pos = 0;
-    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
-        str.replace(start_pos, from.length(), to);
-        start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
-    }
-}
-
-void drawRatio( TH1* hist1, TH1 *hist2, std::string ytitle){
-
-  TH1* tmp1 = (TH1*)hist1->Clone("tmp1");
-  TH1* tmp2 = (TH1*)hist2->Clone("tmp2");
-
-  if( tmp1->GetSumw2N() == 0 ) tmp1->Sumw2();
-  if( tmp2->GetSumw2N() == 0 )   tmp2->Sumw2();
-
-  TH1 *ratio = (TH1*)tmp2->Clone("ratio");
-  ratio->Divide(tmp1, tmp2);
-
-  for(int i = 0; i<tmp2->GetNbinsX(); i++) {
-    // use central value fractional errors for ratio errors
-    if(hist2->GetBinContent(i+1) !=0)
-      ratio->SetBinError(i+1,ratio->GetBinContent(i+1)*hist2->GetBinError(i+1)/hist2->GetBinContent(i+1));
-    else
-      ratio->SetBinError(i+1,0);
-  }
-
-  ytitle[0]=toupper(ytitle[0]);
-  ratio->GetYaxis()->SetTitle((ytitle).c_str());
-  //ratio->GetXaxis()->SetTitleSize(axis_title_size_x);
-  //ratio->GetYaxis()->SetTitleSize(axis_title_size_y);
-  //ratio->GetXaxis()->SetLabelFont(axis_label_font);
-  //ratio->GetYaxis()->SetLabelFont(axis_label_font);
-  //ratio->GetXaxis()->SetLabelSize(axis_label_size);
-  //ratio->GetYaxis()->SetLabelSize(axis_label_size);
-  ratio->GetXaxis()->CenterTitle(kTRUE);
-  ratio->SetMarkerStyle(ratio_marker);
-  //ratio->SetLineWidth(ratio_line_width);
-  //ratio->SetLineColor(ratio_color);
-
-  ratio->SetMinimum(0.8);
-  ratio->SetMaximum(1.2);
-  ratio->DrawCopy("X0");
-  
-  {
-    double lowX = ratio->GetBinLowEdge(1);
-    double highX = ratio->GetBinLowEdge(ratio->GetNbinsX() ) + ratio->GetBinWidth(ratio->GetNbinsX() );
-    TF1 *line = new TF1("oneLine","1.0", lowX, highX);
-    line->SetLineStyle(2);
-    line->SetLineWidth(3);
-    line->SetLineColor(3);
-    line->DrawCopy("same");
-    delete line;
-  }
-
-  gPad->Update();
-
-  delete tmp1;
-  delete tmp2;
-  delete ratio;
-}
 
 
-void eventRateComparison(std::string osc, std::string macro1, std::string macro2, std::string version1, std::string version2, std::string current1, std::string current2, std::string loc1, std::string loc2, std::string plist1, std::string plist2,std::string descriptor1, std::string descriptor2) {
+void eventRateComparison(std::string osc, std::string macro, std::string user, std::string version, std::string current, std::string ndloc, std::string fdloc, std::string plist, std::string descriptor) {
 
   // inputs:
   // osc: "oscillated" or "unoscillated"
-  // macro1/macro2: macros used for the two samples you want to compare
-  // version1/version2: g4lbne versions you want to compare
-  // current1/current2: horn currents
-  // loc1/loc2: name of locations you want to compare
-  // plist1/plist2: physics lists of samples you want to compare
-  // descriptor1/descriptor2: label that will be used in plot legends for the two samples
+  // macro: list of macros you want to compare (sep by "/")
+  // version: list of versions you want to compare (sep by "/")
+  // current: list of currents you want to compare (sep by "/")
+  // ndloc: list of near detector locations you want to compare (sep by "/")
+  // fdloc: list of far detector locations you want to compare (sep by "/")
+  // plist: list of physics lists you want to compare (sep by "/")
+  // descriptor: list of descriptors of the variations you're comparing (sep by "/")
+  // All lists must have the same length
+  std::vector<std::string> macros = split(macro,'/');
+  std::vector<std::string> users = split(user,'/');
+  std::vector<std::string> versions = split(version,'/');
+  std::vector<std::string> currents = split(current,'/');
+  std::vector<std::string> ndlocs = split(ndloc,'/');
+  std::vector<std::string> fdlocs = split(fdloc,'/');
+  std::vector<std::string> plists = split(plist,'/');
+  std::vector<std::string> descriptors = split(descriptor,'/');
+
+  std::cout<<"user directories "<<users[0]<<std::endl;
+  std::cout<<"versions "<<versions[0]<<std::endl;
+  std::cout<<"macros "<<macros[0]<<std::endl;
+  std::cout<<"currents "<<currents[0]<<std::endl;
+  std::cout<<"plists "<<plists[0]<<std::endl;
+  std::cout<<"ndlocs "<<ndlocs[0]<<std::endl;
+  std::cout<<"fdlocs "<<fdlocs[0]<<std::endl;
+
+  double n_plots = macros.size();
+  if(users.size()!=n_plots) {
+    std::cout<<"You specified a different number of macros and users"<<std::endl;
+    return;
+  }
+  if(versions.size()!=n_plots) {
+    std::cout<<"You specified a different number of versions and macros"<<std::endl;
+    return;
+  }
+  if(currents.size()!=n_plots) {
+    std::cout<<"You specified a different number of horn currents and macros"<<std::endl;
+    return;
+  }
+  if(versions.size()!=n_plots) {
+    std::cout<<"You specified a different number of g4lbne versions and macros"<<std::endl;
+    return;
+  }
+  if(ndlocs.size()!=n_plots) {
+    std::cout<<"You specified a different number of macros and near detector locations"<<std::endl;
+    return;
+  }
+  if(fdlocs.size()!=n_plots) {
+    std::cout<<"You specified a different number of macros and far detector locations"<<std::endl;
+    return;
+  }
+  if(descriptors.size()!=n_plots) {
+    std::cout<<"You specified a different number of variation descriptors and macros"<<std::endl;
+    return;
+  }  
+
+  if(n_plots>10) {
+    std::cout<<"I can't handle more than 10 variations... only plotting first 10 variatons"<<std::endl;
+    n_plots=10;
+  }
 
   std::string current_polarity = "FHC";
-  if(current1.find("-")!=string::npos) current_polarity = "RHC";
+  if(currents[0].find("-")!=string::npos) current_polarity = "RHC";
 
   gStyle->SetTitleOffset(1.3,"X");
-  gStyle->SetTitleOffset(1.3,"Y");
+  gStyle->SetTitleOffset(1.5,"Y");
   gStyle->SetLabelOffset(0.015,"X");
   gStyle->SetLabelOffset(0.015,"Y");
   gStyle->SetTitleSize(0.06,"X");
@@ -120,56 +113,52 @@ void eventRateComparison(std::string osc, std::string macro1, std::string macro2
   gStyle->SetCanvasBorderMode(0);
   gStyle->SetPadTopMargin(0.09);
   gStyle->SetPadBottomMargin(0.15);
-  gStyle->SetPadLeftMargin(0.15);
-  gStyle->SetPadRightMargin(0.15);
+  gStyle->SetPadLeftMargin(0.2);
+  gStyle->SetPadRightMargin(0.05);
   gStyle->SetFrameLineWidth(2);
   gStyle->SetHistLineWidth(2);
 
 
-  std::string detector = loc1;
-
-  std::string username(getenv("USER"));
+  std::string ndetector = ndlocs[0];
+  std::string fdetector = fdlocs[0];
 
   // open histogram files
   // also open "fastmc" version of files, which have more finely binned histos
 
-  TFile *f1, *f1_fastmc, *f2, *f2_fastmc;
+  std::vector<TFile*> nf;
+  std::vector<TFile*> nf_fastmc;
+  std::vector<TFile*> ff;
+  std::vector<TFile*> ff_fastmc;
 
-  std::string nom_histo_directory = "/lbne/data/users/"+username+"/fluxfiles/g4lbne/"+version1+"/"+plist1+"/"+macro1+"/"+current1+"/flux/";
-  std::string var_histo_directory = "/lbne/data/users/"+username+"/fluxfiles/g4lbne/"+version2+"/"+plist2+"/"+macro2+"/"+current2+"/flux/";
-  
-  std::string nom_histo_file = nom_histo_directory+"histos_g4lbne_"+version1+"_"+plist1+"_"+macro1+"_"+current1+"_"+loc1;
-  std::string var_histo_file = var_histo_directory+"histos_g4lbne_"+version2+"_"+plist2+"_"+macro2+"_"+current2+"_"+loc2;
 
-  if(version1.find("v2")!= std::string::npos) {
-    macro_w_current1 = macro1+"_"+current_polarity;
-    nom_histo_directory = "/lbne/data/users/"+username+"/fluxfiles/g4lbne/"+version1+"/"+macro_w_current1+"/"+plist1+"/nubeam-G4PBeam-stdnubeam/flux/";  
-    nom_histo_file = nom_histo_directory+"histos_g4lbne_"+macro_w_current1+"_"+plist1+"_"+loc1;
-  }
+  std::vector<std::string> histo_directory;
+  std::vector<std::string> nhisto_file;
+  std::vector<std::string> fhisto_file;
+  for(int i = 0; i<n_plots; i++) {
+    histo_directory.push_back("/lbne/data/users/"+users[i]+"/fluxfiles/g4lbne/"+versions[i]+"/"+plists[i]+"/"+macros[i]+"/"+currents[i]+"/flux/");
+    if(user[i]=="beam") {
+      histo_directory[i] = "/lbne/data/beam/fluxfiles/g4lbne/"+versions[i]+"/"+plists[i]+"/"+macros[i]+"/"+currents[i]+"/flux/";
+    }
+    nhisto_file.push_back(histo_directory[i]+"histos_g4lbne_"+versions[i]+"_"+plists[i]+"_"+macros[i]+"_"+currents[i]+"_"+ndlocs[i]);
+    fhisto_file.push_back(histo_directory[i]+"histos_g4lbne_"+versions[i]+"_"+plists[i]+"_"+macros[i]+"_"+currents[i]+"_"+fdlocs[i]);
+    
+    if(versions[i].find("v2")!= std::string::npos) {
+      macro_w_current = macros[i]+"_"+current_polarity;
+      histo_directory[i] = "/lbne/data/users/"+users[i]+"/fluxfiles/g4lbne/"+versions[i]+"/"+macro_w_current+"/"+plists[i]+"/nubeam-G4PBeam-stdnubeam/flux/";  
+      nhisto_file = histo_directory[i]+"histos_g4lbne_"+macro_w_current+"_"+plists[i]+"_"+ndlocs[i];
+      fhisto_file = histo_directory[i]+"histos_g4lbne_"+macro_w_current+"_"+plists[i]+"_"+fdlocs[i];
+    }
 
-  if(version2.find("v2") != std::string::npos) {
-    macro_w_current2 = macro2+"_"+current_polarity;
-    var_histo_directory = "/lbne/data/users/"+username+"/fluxfiles/g4lbne/"+version2+"/"+macro_w_current2+"/"+plist2+"/nubeam-G4PBeam-stdnubeam/flux/";  
-    var_histo_file = nom_histo_directory+"histos_g4lbne_"+macro_w_current2+"_"+plist2+"_"+loc2;
-  }
+    nf.push_back(new TFile((nhisto_file[i]+".root").c_str()));
+    nf_fastmc.push_back(new TFile((nhisto_file[i]+"_fastmc.root").c_str()));
+    
+    ff.push_back(new TFile((fhisto_file[i]+".root").c_str()));
+    ff_fastmc.push_back(new TFile((fhisto_file[i]+"_fastmc.root").c_str()));
 
-  f1 = new TFile((nom_histo_file+".root").c_str());
-  f1_fastmc = new TFile((nom_histo_file+"_fastmc.root").c_str());
+  }    
 
-  f2 = new TFile((var_histo_file+".root").c_str());
-  f2_fastmc = new TFile((var_histo_file+"_fastmc.root").c_str());
-
-  int n_plots = 2;
-
-  if(descriptor1==descriptor2)
-    n_plots = 1;
-
-  std::cout<<"NPLOTS "<<n_plots<<std::endl;
-
-  std::vector< TH1D* > h1;
-  std::vector< TH1D* > h2;
-  std::vector< TH1D* > h1_fastmc;
-  std::vector< TH1D* > h2_fastmc;
+  std::vector< std::vector< std::vector< TH1D* > > > hists;
+  std::vector< std::vector< std::vector< TH1D* > > > hists_fastmc;
 
   std::vector<std::string> histo_names;
   std::string short_osc = "Osc";
@@ -215,296 +204,378 @@ void eventRateComparison(std::string osc, std::string macro1, std::string macro2
     histo_names.push_back("nutaubar_nceventrateosc_forplots");
   }
 
-  for(int i = 0; i<18; i++) {
-    h1.push_back((TH1D*)f1->Get(histo_names[i].c_str()));
-    h2.push_back((TH1D*)f2->Get(histo_names[i].c_str()));
+  for(int loc = 0; loc<3; loc++) {
+    std::vector< std::vector< TH1D*> > blah1;
+    std::vector< std::vector< TH1D*> > blah2;
 
-    std::string fastmc_name = histo_names[i];
-    stringReplaceAll(fastmc_name,"_forplots","");
-    h1_fastmc.push_back((TH1D*)f1_fastmc->Get(fastmc_name.c_str()));
-    h2_fastmc.push_back((TH1D*)f2_fastmc->Get(fastmc_name.c_str()));
+    hists.push_back(blah1);
+    hists_fastmc.push_back(blah2);
+    for(int var = 0; var<n_plots; var++) {
+      std::vector<TH1D*> blah3;
+      std::vector<TH1D*> blah4;
+      hists[loc].push_back(blah3);
+      hists_fastmc[loc].push_back(blah4);
+      for(int i = 0; i<18; i++) {
+	if(loc==0) {
+	  hists[loc][var].push_back((TH1D*)nf[var]->Get(histo_names[i].c_str()));
+	  
+	  std::string fastmc_name = histo_names[i];
+	  stringReplaceAll(fastmc_name,"_forplots","");
+	  hists_fastmc[loc][var].push_back((TH1D*)nf_fastmc[var]->Get(fastmc_name.c_str()));
+	}
+	if(loc==1) {
+	  hists[loc][var].push_back((TH1D*)ff[var]->Get(histo_names[i].c_str()));
+	  
+	  std::string fastmc_name = histo_names[i];
+	  stringReplaceAll(fastmc_name,"_forplots","");
+	      hists_fastmc[loc][var].push_back((TH1D*)ff_fastmc[var]->Get(fastmc_name.c_str()));
+	}
+	if(loc==2) {
+	  string blah = histo_names[i];
+	  TH1D *temp = (TH1D*)hists[0][var][i]->Clone((blah+"_nf").c_str());
+	  hists[loc][var].push_back(temp);
+	  hists[loc][var][i]->Divide(hists[1][var][i]);	  
+	  std::string fastmc_name = histo_names[i];
+	  stringReplaceAll(fastmc_name,"_forplots","");
+	  hists_fastmc[loc][var].push_back((TH1D*)(hists_fastmc[0][var][i]->Clone((fastmc_name+"_nf").c_str())));
+	  hists_fastmc[loc][var][i]->Divide(hists_fastmc[1][var][i]);
+	}
+	
+      }
+    }
   }
-
-  cout<<f1_fastmc->GetName()<<endl;
-  cout<<f2_fastmc->GetName()<<endl;
-
- TLegend *leg = new TLegend(0.4,0.6,0.85,0.8);
- leg->SetFillColor(0);
- leg->SetBorderSize(0);
- leg->AddEntry(h1[0],descriptor1.c_str(),"l");
- if(n_plots>1)
-   leg->AddEntry(h2[0],descriptor2.c_str(),"l");
-
- TCanvas *c1 = new TCanvas("flux","flux",1500,900);
- c1->Divide(3,2);
-
- TCanvas *c2 = new TCanvas("cceventrate","cceventrate",1500,900);
- c2->Divide(3,2);
- 
- TCanvas *c3 = new TCanvas("nceventrate","nceventrate",1500,900);
- c3->Divide(3,2);
- 
- TCanvas *c4 = new TCanvas("flux_ratio","flux_ratio",1500,900);
- c4->Divide(3,2);
- 
- TCanvas *c5 = new TCanvas("cceventrate_ratio","cceventrate_ratio",1500,900);
- c5->Divide(3,2);
- 
- TCanvas *c6 = new TCanvas("nceventrate_ratio","nceventrate_ratio",1500,900);
- c6->Divide(3,2);
- 
- std::vector<std::string> nu_names;
- nu_names.push_back("#nu_{#mu}");
- nu_names.push_back("#bar{#nu}_{#mu}");
- nu_names.push_back("#nu_{e}");
- nu_names.push_back("#bar{#nu}_{e}");
- nu_names.push_back("#nu_{#tau}");
- nu_names.push_back("#bar{#nu}_{#tau}");
-
- std::vector<std::string> nu_names_simple;
- nu_names_simple.push_back("numu");
- nu_names_simple.push_back("numubar");
- nu_names_simple.push_back("nue");
- nu_names_simple.push_back("nuebar");
- nu_names_simple.push_back("nutau");
- nu_names_simple.push_back("nutaubar");
- 
- for(int i = 0; i<18; i++) {
-   h1[i]->UseCurrentStyle();
-   h2[i]->UseCurrentStyle();
- }
-
- for(int i = 0; i<6; i++) {
-   c1->cd(i+1);
-   h1[i]->Sumw2();
-   h1[i]->SetLineWidth(3);
-   h1[i]->SetMaximum(TMath::Max(h1[i]->GetMaximum(),h2[i]->GetMaximum())*1.1);
-   h1[i]->Draw("histe");
-   h2[i]->SetLineColor(2);
-   if(n_plots>1)
-     h2[i]->Draw("histsame");
-   if ((current_polarity=="FHC" && i==0) || (current_polarity=="RHC" && i==1))
-     leg->Draw();
-   
-   c4->cd(i+1);
-   std::string ytitle = osc+" "+nu_names[i]+"s  "+descriptor2+" / "+descriptor1;
-   if(n_plots>1)
-     drawRatio( h2[i], h1[i],ytitle);
-   
- }
-
-  double n_kton = 34;
-  if(detector == "LBNEND") n_kton = 0.018;
-
-  for(int i = 0; i<6; i++) {
-    c2->cd(i+1);
-    //gPad->SetLogx(1);
-    //h1[i+6]->GetXaxis()->SetRange(2,40);
-    std::string title = osc + " " + nu_names[i]+" CC Events / GeV / 34 kTon / 3.25#times10^{21} POT";
-    if(detector=="LBNEND")
-      title = nu_names[i]+"ND CC Events / GeV / 18 ton / 3.25#times10^{21} POT";
-    
-    h1[i+6]->GetYaxis()->SetTitle(title.c_str());
-    h1[i+6]->Scale(3.25e21*n_kton);
-    h2[i+6]->Scale(3.25e21*n_kton);
-    for(int j = 0; j< h1[i+6]->GetNbinsX(); j++) {
-      h1[i+6]->SetBinError(j+1,TMath::Sqrt(h1[i+6]->GetBinContent(j+1)));
-    }
-    h1[i]->SetLineWidth(3);
-    h1[i]->SetMaximum(TMath::Max(h1[i]->GetMaximum(),h2[i]->GetMaximum())*1.1);
-    h1[i+6]->Draw("histe");
-    h2[i+6]->SetLineColor(2);
-    if(n_plots>1)
-      h2[i+6]->Draw("histsame");
-   if ((current_polarity=="FHC" && i==6) || (current_polarity=="RHC" && i==7))
-     leg->Draw();
-
-    c5->cd(i+1);
-    std::string ratio_ytitle = short_osc+" "+nu_names[i]+" CC events  "+descriptor2+" / "+descriptor1;
-    if(n_plots>1)
-      drawRatio( h2[i+6], h1[i+6],ratio_ytitle);
-    
-  }
-
-  for(int i = 0; i<6; i++) {
-    c3->cd(i+1);
-    h1[i+12]->Scale(3.25e21*n_kton);
-    h2[i+12]->Scale(3.25e21*n_kton);
-    std::string title = osc + " " + nu_names[i]+" NC Events / GeV / 34 kTon / 3.25#times10^{21} POT";
-    if(detector=="LBNEND")
-      title = nu_names[i]+" ND NC Events / GeV / 18 ton / 3.25#times10^{21} POT";
-    h1[i+12]->GetXaxis()->SetTitle(title.c_str());
-    for(int j = 0; j< h1[i+6]->GetNbinsX(); j++) {
-      h1[i+12]->SetBinError(j+1,TMath::Sqrt(h1[i+6]->GetBinContent(j+1)));
-    }
-    h1[i]->SetLineWidth(3);
-    h1[i]->SetMaximum(TMath::Max(h1[i]->GetMaximum(),h2[i]->GetMaximum())*1.1);
-    h1[i+12]->Draw("histe");
-    h2[i+12]->SetLineColor(2);
-    if(n_plots > 1)
-      h2[i+12]->Draw("histsame");
-    if ((current_polarity=="FHC" && i==12) || (current_polarity=="RHC" && i==12))
-      leg->Draw();
-
-    c6->cd(i+1);
-    std::string ratio_ytitle = short_osc+" "+nu_names[i]+" NC events  "+descriptor2+" / "+descriptor1;
-    if(n_plots>1)
-      drawRatio( h2[i+12], h1[i+12],ratio_ytitle);
-  }
-
-  std::string variation = descriptor1+"_vs_"+descriptor2;
-  if(n_plots==1) variation = descriptor1;
-
-  system(("mkdir -p eventRateComparisons/"+variation).c_str());
-
-  filename = "g4lbne_"+version2+"_"+plist2+"_"+macro2+"_"+current2+"_"+loc2+"_"+osc+"_vs_"+descriptor1;
-
-  c1->Print((var_histo_directory+"comp_flux_"+filename+".eps").c_str());
-  c1->Print((var_histo_directory+"comp_flux_"+filename+".png").c_str());
-
-  c2->Print((var_histo_directory+"comp_cceventrate_"+filename+".eps").c_str());
-  c2->Print((var_histo_directory+"comp_cceventrate_"+filename+".png").c_str());
-
-  c3->Print((var_histo_directory+"comp_nceventrate_"+filename+".eps").c_str());
-  c3->Print((var_histo_directory+"comp_nceventrate_"+filename+".png").c_str());
-
-  if(n_plots>1) {
-    c4->Print((var_histo_directory+"comp_flux_ratios_"+filename+".eps").c_str());
-    c4->Print((var_histo_directory+"comp_flux_ratios_"+filename+".png").c_str());
-    
-    c5->Print((var_histo_directory+"comp_cceventrate_ratios_"+filename+".eps").c_str());
-    c5->Print((var_histo_directory+"comp_cceventrate_ratios_"+filename+".png").c_str());
-    
-    c6->Print((var_histo_directory+"comp_nceventrate_ratios_"+filename+".eps").c_str());
-    c6->Print((var_histo_directory+"comp_nceventrate_ratios_"+filename+".png").c_str());
-  }    
-
-  // integrate over several energy ranges and make a text file
-  if(n_plots>1) {
-    int bin0 = -1;
-    int bin0point5 = -1;
-    int bin2 = -1;
-    int bin5 = -1;
-    int bin20 = -1;
-    int bin120 = -1; 
-
-    for(int i = 0 ; i < h1_fastmc[0]->GetNbinsX()+1; i++) {
-      if(h1_fastmc[0]->GetBinLowEdge(i)==0)
-	bin0=i; 
-      if(h1_fastmc[0]->GetBinLowEdge(i)==0.5)
-	bin0point5=i; 
-      if(h1_fastmc[0]->GetBinLowEdge(i)==2)
-	bin2=i; 
-      if(h1_fastmc[0]->GetBinLowEdge(i)==5)
-	bin5=i; 
-      if(h1_fastmc[0]->GetBinLowEdge(i)==20)
-	bin20=i; 
-      if(h1_fastmc[0]->GetBinLowEdge(i)==120)
-	bin120=i; 
-    }
-    if(bin0==-1)
-      std::cout<<"ERROR: 0 is not a bin edge."<<std::endl;
-    if(bin0point5==-1)
-      std::cout<<"ERROR: 0.5 is not a bin edge."<<std::endl;
-    if(bin0==-1)
-      std::cout<<"ERROR: 2 is not a bin edge."<<std::endl;
-    if(bin0==-1)
-      std::cout<<"ERROR: 5 is not a bin edge."<<std::endl;
-    if(bin0==-1)
-      std::cout<<"ERROR: 20 is not a bin edge."<<std::endl;
-    if(bin0==-1)
-      std::cout<<"ERROR: 120 is not a bin edge."<<std::endl;
-    
-    double ratio_0to0point5[18];
-    double ratio_0point5to2[18];
-    double ratio_2to5[18];
-    double ratio_5to20[18];
-    double ratio_20to120[18];
-    double ratio_0to20[18];
-    double ratio_0to120[18];
-    for(int i=0; i<18; i++) {
-      if(h1_fastmc[i]->Integral(bin0,bin0point5-1)!=0)
-	ratio_0to0point5[i] = h2_fastmc[i]->Integral(bin0,bin0point5-1)/
-	  h1_fastmc[i]->Integral(bin0,bin0point5-1);
-      else
-	ratio_0to0point5[i] = 1;
-      
-      if(h1_fastmc[i]->Integral(bin0point5,bin2-1)!=0)
-	ratio_0point5to2[i] = h2_fastmc[i]->Integral(bin0point5,bin2-1)/
-	  h1_fastmc[i]->Integral(bin0point5,bin2-1);
-      else
-	ratio_0point5to2[i] = 1;
-      
-      if(h1_fastmc[i]->Integral(bin2,bin5-1)!=0)
-	ratio_2to5[i] = h2_fastmc[i]->Integral(bin2,bin5-1)/
-	  h1_fastmc[i]->Integral(bin2,bin5-1);
-      else
-	ratio_2to5[i] = 1;
-      
-      if(h1_fastmc[i]->Integral(bin5,bin20-1)!=0)
-	ratio_5to20[i] = h2_fastmc[i]->Integral(bin5,bin20-1)/
-	  h1_fastmc[i]->Integral(bin5,bin20-1);
-      else
-	ratio_5to20[i] = 1;
-      
-      if(h1_fastmc[i]->Integral(bin20,bin120-1)!=0)
-	ratio_20to120[i] = h2_fastmc[i]->Integral(bin20,bin120-1)/
-	  h1_fastmc[i]->Integral(bin20,bin120-1);
-      else
-	ratio_20to120[i] = 1;
-      
-      if(h1_fastmc[i]->Integral(bin0,bin20-1)!=0)
-	ratio_0to20[i] = h2_fastmc[i]->Integral(bin0,bin20-1)/
-	  h1_fastmc[i]->Integral(bin0,bin20-1);
-      else
-	ratio_0to20[i] = 1;
-
-      if(h1_fastmc[i]->Integral(bin0,bin120-1)!=0)
-	ratio_0to120[i] = h2_fastmc[i]->Integral(bin0,bin120-1)/
-	  h1_fastmc[i]->Integral(bin0,bin120-1);
-      else
-	ratio_0to120[i] = 1;
-    }
   
+  TLegend *leg = new TLegend(0.4,0.6,0.85,0.8);
+  leg->SetFillStyle(0);
+  leg->SetBorderSize(0);
+  for(int var = 0; var<n_plots; var++) 
+    leg->AddEntry(hists[0][var][0],descriptors[var].c_str(),"l");
+
+  TLegend *rleg = new TLegend(0.35,0.66,0.8,0.85);
+  rleg->SetFillStyle(0);
+  rleg->SetBorderSize(0);
+  for(int var = 1; var<n_plots; var++) 
+    rleg->AddEntry(hists[0][var][0],descriptors[var].c_str(),"l");
+
+  TCanvas *c1 = new TCanvas("flux","flux",2000,1200);
+  c1->Divide(3,2);
   
-    ofstream myfile;
-    myfile.open((var_histo_directory+"comp_flux_summary_"+filename+".txt").c_str());
-    myfile << "                0-0.5   0.5-2  2-5      5-20    20-120  0-20     0-120"<<std::endl;
-    myfile<<std::setprecision(4)<<fixed;
-    for(int i = 0; i<6; i++) {
-      myfile << setw(15)<<nu_names_simple[i]+" flux"
-	     <<setw(7)<<ratio_0to0point5[i]<<" "
-	     <<setw(7)<<ratio_0point5to2[i]<<" "
-	     <<setw(7)<<ratio_2to5[i]<<" "
-	     <<setw(7)<<ratio_5to20[i]<<" "
-	     <<setw(7)<<ratio_20to120[i]<<" "
-	     <<setw(7)<<ratio_0to20[i]<<" "
-	     <<setw(7)<<ratio_0to120[i]<<std::endl;
-    }
+  TCanvas *c2 = new TCanvas("cceventrate","cceventrate",2000,1200);
+  c2->Divide(3,2);
+  
+  TCanvas *c3 = new TCanvas("nceventrate","nceventrate",2000,1200);
+  c3->Divide(3,2);
+  
+  TCanvas *c4 = new TCanvas("flux_ratio","flux_ratio",2000,1200);
+  c4->Divide(3,2);
+  
+  TCanvas *c5 = new TCanvas("cceventrate_ratio","cceventrate_ratio",2000,1200);
+  c5->Divide(3,2);
+ 
+  TCanvas *c6 = new TCanvas("nceventrate_ratio","nceventrate_ratio",2000,1200);
+  c6->Divide(3,2);
+
+  for(int j = 0; j<3; j++) {
+ 
+   std::string loc_string = "near";
+   if(j==1) loc_string = "far";
+   if(j==2) loc_string = "noverf";
+
+   std::vector<std::string> nu_names;
+   nu_names.push_back("#nu_{#mu}");
+   nu_names.push_back("#bar{#nu}_{#mu}");
+   nu_names.push_back("#nu_{e}");
+   nu_names.push_back("#bar{#nu}_{e}");
+   nu_names.push_back("#nu_{#tau}");
+   nu_names.push_back("#bar{#nu}_{#tau}");
+   
+   std::vector<std::string> nu_names_simple;
+   nu_names_simple.push_back("numu");
+   nu_names_simple.push_back("numubar");
+   nu_names_simple.push_back("nue");
+   nu_names_simple.push_back("nuebar");
+   nu_names_simple.push_back("nutau");
+   nu_names_simple.push_back("nutaubar");
+ 
+   for(int var = 0; var<n_plots; var++)
+     for(int i = 0; i<18; i++) {
+       hists[j][var][i]->UseCurrentStyle();
+     }
+ 
+   int colors[10] = {1,2,4,6,8,3,5,7,9,30};
+
+   for(int i = 0; i<6; i++) {
+
+     for(int var = 0; var < n_plots; var++) {
+
+       c1->cd(i+1);
+
+       if(j==2) {
+	 std::string ytitle = short_osc+" "+nu_names[i]+" Near/Far Flux";
+	 hists[j][var][i]->GetYaxis()->SetTitle(ytitle.c_str());
+       }
+       if( hists[j][var][i]->GetSumw2N() == 0 )
+	 hists[j][var][i]->Sumw2();
+       hists[j][var][i]->SetLineWidth(3);
+       //hists[j][var][i]->SetMinimum(0);
+       hists[j][var][i]->SetLineColor(colors[var%10]);
+       if(var==0)
+	 hists[j][var][i]->Draw("histe");
+       else
+	 hists[j][var][i]->Draw("histsame");
+       
+       if ((current_polarity=="FHC" && i==0) || (current_polarity=="RHC" && i==1))
+	 leg->Draw();
+       
+       
+       c4->cd(i+1);
+       std::string ytitle = short_osc+" "+nu_names[i]+"s Ratio to "+descriptors[0];
+       if(j==2) 
+	 ytitle = short_osc+" "+nu_names[i]+" Flux N/F Ratio to Nominal";
+
+       if(var==1) {
+	 drawRatio( hists[j][1][i], hists[j][0][i],ytitle);
+       }
+       if(var>1) {
+	 drawRatio( hists[j][var][i], hists[j][0][i],ytitle,"same");
+       }
+       if ((current_polarity=="FHC" && i==0) || (current_polarity=="RHC" && i==1))
+	 rleg->Draw();
+     }
+   }
+  
+   double n_kton = 34;
+   if(loc_string=="nd") n_kton = 0.018;
+  
+   for(int i = 0; i<6; i++) {
+
+     std::string title = short_osc + " " + nu_names[i]+" CC Events / GeV";
+   
+     for(int var = 0; var<n_plots; var++) {
+       hists[j][var][i+6]->GetYaxis()->SetTitle(title.c_str());
+       hists[j][var][i+6]->Scale(3.25e21*n_kton);
     
-    /*
+       for(int k = 0; k<hists[j][var][i+6]->GetNbinsX(); k++) {
+	 hists[j][var][i+6]->SetBinError(k+1,TMath::Sqrt(hists[j][var][i+6]->GetBinContent(k+1)));
+       }
+       hists[j][var][i+6]->SetLineWidth(3);
+       hists[j][var][i+6]->SetLineColor(colors[var%10]);
+
+       c2->cd(i+1);
+       if(j==2) {
+	 std::string ytitle = short_osc+" "+nu_names[i]+" Near/Far CC Rate";
+	 hists[j][var][i+6]->GetYaxis()->SetTitle(ytitle.c_str());
+       }
+       if(var==0) {
+	 hists[j][var][i+6]->Draw("histe");
+       }
+       else {
+	 hists[j][var][i+6]->Draw("histesame");
+       }
+       if ((current_polarity=="FHC" && i==0) || (current_polarity=="RHC" && i==1))
+	 leg->Draw();
+    
+       if(loc==0)
+	 add_plot_label("18 Ton #bullet 3.25#times10^{21} POT",0.7,0.94,.05,38);          
+       else
+       	 add_plot_label("34 kTon #bullet 3.25#times10^{21} POT",0.7,0.94,.05,38);          
+       
+       c5->cd(i+1);
+       std::string ratio_ytitle = short_osc+" "+nu_names[i]+" CC Ratio to "+descriptors[0];
+       if(j==2)
+	 ratio_ytitle = short_osc+" "+nu_names[i]+" CC N/F Ratio to Nominal";
+       if(var==1)
+	 drawRatio( hists[j][var][i+6], hists[j][0][i+6],ratio_ytitle);
+       else if(var>1)
+	 drawRatio( hists[j][var][i+6], hists[j][0][i+6],ratio_ytitle,"same");
+       if ((current_polarity=="FHC" && i==0) || (current_polarity=="RHC" && i==1))
+	 rleg->Draw();
+     }
+   }
+
+
+   
+   for(int i = 0; i<6; i++) {
+
+     std::string title = short_osc + " " + nu_names[i]+" NC Events / GeV";
+     
+     for(int var = 0; var<n_plots; var++) {
+
+       hists[j][var][i+12]->GetYaxis()->SetTitle(title.c_str());
+       hists[j][var][i+12]->Scale(3.25e21*n_kton);
+
+       for(int k = 0; k< hists[j][var][i+12]->GetNbinsX(); k++) {
+	 hists[j][var][i+12]->SetBinError(k+1,TMath::Sqrt(hists[j][var][i+12]->GetBinContent(k+1)));
+       }
+       hists[j][var][i+12]->SetLineColor(colors[var%10]);
+       hists[j][var][i+12]->SetLineWidth(3);
+       c3->cd(i+1);
+       if(j==2) {
+	 std::string ytitle = short_osc+" "+nu_names[i]+" Near/Far NC Rate";
+	 hists[j][var][i+12]->GetYaxis()->SetTitle(ytitle.c_str());
+       }
+       if(var==0)
+	 hists[j][var][i+12]->Draw("histe");
+       else
+	 hists[j][var][i+12]->Draw("histesame");
+       if ((current_polarity=="FHC" && i==0) || (current_polarity=="RHC" && i==1))
+	 leg->Draw();
+       
+       if(loc==0)
+	 add_plot_label("18 Ton #bullet 3.25#times10^{21} POT",0.7,0.94,.05,38);          
+       else
+       	 add_plot_label("34 kTon #bullet 3.25#times10^{21} POT",0.7,0.94,.05,38);          
+
+       c6->cd(i+1);
+       std::string ratio_ytitle = short_osc+" "+nu_names[i]+" NC Ratio to "+descriptors[0];
+       if(j==2)
+	 ratio_ytitle = short_osc+" "+nu_names[i]+" CC N/F Ratio to Nominal";
+       if(var==1)
+	 drawRatio( hists[j][var][i+12], hists[j][0][i+12],ratio_ytitle);
+       else if(var>1)
+	 drawRatio( hists[j][var][i+12], hists[j][0][i+12],ratio_ytitle,"same");
+       if ((current_polarity=="FHC" && i==0) || (current_polarity=="RHC" && i==1))
+	 rleg->Draw();
+     
+   }
+   }
+
+   std::string filename = descriptors[0];
+   for(int i = 1; i<n_plots; i++) {
+     filename += "_"+descriptors[i];
+   }
+  
+   for(int var = 0; var<n_plots; var++) {
+     c1->Print((histo_directory[var]+"comp_flux_"+current_polarity+"_"+osc+"_"+filename+"_"+loc_string+".eps").c_str());
+     c1->Print((histo_directory[var]+"comp_flux_"+current_polarity+"_"+osc+"_"+filename+"_"+loc_string+".png").c_str());
+   
+     c2->Print((histo_directory[var]+"comp_cceventrate_"+current_polarity+"_"+osc+"_"+filename+"_"+loc_string+".eps").c_str());
+     c2->Print((histo_directory[var]+"comp_cceventrate_"+current_polarity+"_"+osc+"_"+filename+"_"+loc_string+".png").c_str());
+     
+     c3->Print((histo_directory[var]+"comp_nceventrate_"+current_polarity+"_"+osc+"_"+filename+"_"+loc_string+".eps").c_str());
+     c3->Print((histo_directory[var]+"comp_nceventrate_"+current_polarity+"_"+osc+"_"+filename+"_"+loc_string+".png").c_str());
+     
+     if(n_plots>1) {
+       c4->Print((histo_directory[var]+"comp_flux_ratios_"+current_polarity+"_"+osc+"_"+filename+"_"+loc_string+".eps").c_str());
+       c4->Print((histo_directory[var]+"comp_flux_ratios_"+current_polarity+"_"+osc+"_"+filename+"_"+loc_string+".png").c_str());
+       
+       c5->Print((histo_directory[var]+"comp_cceventrate_ratios_"+current_polarity+"_"+osc+"_"+filename+"_"+loc_string+".eps").c_str());
+       c5->Print((histo_directory[var]+"comp_cceventrate_ratios_"+current_polarity+"_"+osc+"_"+filename+"_"+loc_string+".png").c_str());
+       
+       c6->Print((histo_directory[var]+"comp_nceventrate_ratios_"+current_polarity+"_"+osc+"_"+filename+"_"+loc_string+".eps").c_str());
+       c6->Print((histo_directory[var]+"comp_nceventrate_ratios_"+current_polarity+"_"+osc+"_"+filename+"_"+loc_string+".png").c_str());
+     }   
+
+   
+     // integrate over several energy ranges and make a text file
+     if(i>0 && n_plots>1) {
+       int bin0 = -1;
+       int bin0point5 = -1;
+       int bin2 = -1;
+       int bin5 = -1;
+       int bin20 = -1;
+       int bin120 = -1; 
+
+       for(int bin = 0 ; bin < hists_fastmc[j][0][0]->GetNbinsX()+1; bin++) {
+	 if(hists_fastmc[j][0][0]->GetBinLowEdge(bin)==0)
+	   bin0=bin; 
+       if(hists_fastmc[j][0][0]->GetBinLowEdge(bin)==0.5)
+	 bin0point5=i; 
+       if(hists_fastmc[j][0][0]->GetBinLowEdge(bin)==2)
+	 bin2=bin; 
+       if(hists_fastmc[j][0][0]->GetBinLowEdge(bin)==5)
+	 bin5=bin; 
+       if(hists_fastmc[j][0][0]->GetBinLowEdge(bin)==20)
+	 bin20=bin;
+       if(hists_fastmc[j][0][0]->GetBinLowEdge(bin)==120)
+	 bin120=bin;
+     }
+
+     if(bin0==-1)
+       std::cout<<"ERROR: 0 is not a bin edge."<<std::endl;
+     if(bin0point5==-1)
+       std::cout<<"ERROR: 0.5 is not a bin edge."<<std::endl;
+     if(bin2==-1)
+       std::cout<<"ERROR: 2 is not a bin edge."<<std::endl;
+     if(bin5==-1)
+       std::cout<<"ERROR: 5 is not a bin edge."<<std::endl;
+     if(bin20==-1)
+       std::cout<<"ERROR: 20 is not a bin edge."<<std::endl;
+     if(bin120==-1)
+       std::cout<<"ERROR: 120 is not a bin edge."<<std::endl;
+
+     double ratio_0to0point5[18];
+     double ratio_0point5to2[18];
+     double ratio_2to5[18];
+     double ratio_5to20[18];
+     double ratio_20to120[18];
+     double ratio_0to20[18];
+     double ratio_0to120[18];
+     
+     
+     for(int i=0; i<18; i++) {
+	
+
+       if(hists_fastmc[j][0][i]->Integral(bin0,bin0point5-1)!=0)
+	 ratio_0to0point5[i] = hists_fastmc[j][var][i]->Integral(bin0,bin0point5-1)/
+	   hists_fastmc[j][0][i]->Integral(bin0,bin0point5-1);
+       else
+	 ratio_0to0point5[i] = 1;
       
-    for(int i = 6; i<12; i++) {
-    myfile << nu_names[i+6] <<" cc event rate "
-    <<ratio_0to0point5[i+6]<<" "
-    <<ratio_0point5to2[i+6]<<" "
-    <<ratio_2to5[i+6]<<" "
-    <<ratio_5to20[i+6]<<" "
-    <<ratio_20to120[i+6]<<" "
-    <<ratio_0to20[i+6]<<" "
-    <<ratio_0to120[i+6]<<std::endl;
-    }
-    for(int i = 12; i<18; i++) {
-    myfile << nu_names[i+12] <<" nc event rate "
-    <<ratio_0to0point5[i+12]<<" "
-    <<ratio_0point5to2[i+12]<<" "
-    <<ratio_2to5[i+12]<<" "
-    <<ratio_5to20[i+12]<<" "
-    <<ratio_20to120[i+12]<<" "
-    <<ratio_0to20[i+12]<<" "
-    <<ratio_0to120[i+12]<<std::endl;
-    }   
-    */
-    //myfile.close();  
+       if(hists_fastmc[j][0][i]->Integral(bin0point5,bin2-1)!=0)
+	 ratio_0point5to2[i] = hists_fastmc[j][var][i]->Integral(bin0point5,bin2-1)/
+	   hists_fastmc[j][0][i]->Integral(bin0point5,bin2-1);
+       else
+	 ratio_0point5to2[i] = 1;
+       
+       if(hists_fastmc[j][0][i]->Integral(bin2,bin5-1)!=0)
+	 ratio_2to5[i] = hists_fastmc[j][var][i]->Integral(bin2,bin5-1)/
+	   hists_fastmc[j][0][i]->Integral(bin2,bin5-1);
+       else
+	 ratio_2to5[i] = 1;
+       
+       if(hists_fastmc[j][0][i]->Integral(bin5,bin20-1)!=0)
+	 ratio_5to20[i] = hists_fastmc[j][var][i]->Integral(bin5,bin20-1)/
+	   hists_fastmc[j][0][i]->Integral(bin5,bin20-1);
+       else
+	 ratio_5to20[i] = 1;
+       
+       //if(hists_fastmc[j][0][i]->Integral(bin20,bin120-1)!=0)
+//	 ratio_20to120[i] = hists_fastmc[j][var][i]->Integral(bin20,bin120-1)/
+//	   hists_fastmc[j][0][i]->Integral(bin20,bin120-1);
+ //      else
+//	 ratio_20to120[i] = 1;
+       
+       if(hists_fastmc[j][0][i]->Integral(bin0,bin20-1)!=0)
+	 ratio_0to20[i] = hists_fastmc[j][var][i]->Integral(bin0,bin20-1)/
+	   hists_fastmc[j][0][i]->Integral(bin0,bin20-1);
+       else
+	 ratio_0to20[i] = 1;
+       
+       //if(hists_fastmc[j][0][i]->Integral(bin0,bin120-1)!=0)
+//	 ratio_0to120[i] = hists_fastmc[j][var][i]->Integral(bin0,bin120-1)/
+//	   hists_fastmc[j][0][i]->Integral(bin0,bin120-1);
+ //      else
+//	 ratio_0to120[i] = 1;
+     }
+
+     ofstream myfile;
+     myfile.open((histo_directory[var]+"comp_flux_summary_"+current_polarity+"_"+osc+"_"+filename+"_"+loc_string+".txt").c_str());
+     myfile << "                0-0.5   0.5-2  2-5      5-20    20-120  0-20     0-120"<<std::endl;
+     myfile<<std::setprecision(4)<<fixed;
+     for(int i = 0; i<6; i++) {
+       myfile << setw(15)<<nu_names_simple[i]+" flux"
+	      <<setw(7)<<ratio_0to0point5[i]<<" "
+	      <<setw(7)<<ratio_0point5to2[i]<<" "
+	      <<setw(7)<<ratio_2to5[i]<<" "
+	      <<setw(7)<<ratio_5to20[i]<<" "
+	      <<setw(7)<<ratio_20to120[i]<<" "
+	      <<setw(7)<<ratio_0to20[i]<<" "
+	      <<setw(7)<<ratio_0to120[i]<<std::endl;
+     }
+
+     myfile.close();
+     } 
+   }
   }
 }

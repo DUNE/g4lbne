@@ -209,7 +209,7 @@ for i in range(int(options.first_job),int(options.last_job)+1):
     if options.interactive:
         print "type "+script_filename+" to execute"
     else:
-        os.system("jobsub -g -L "+logfile+" "+script_filename);
+        os.system("jobsub --opportunistic --OS SL5 -g -L "+logfile+" "+script_filename);
 
     print "DONE"
     

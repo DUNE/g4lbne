@@ -333,6 +333,7 @@ void LBNEVolumePlacements::SegmentTarget() {
 			    // NUMI Drawing 8875.000-ME-363028 with 2 mm margin of error. 
   fTargetZ0Upstr = (-1.0* (fTargetSLength - fTargetLengthIntoHorn))/2. ;
   fTargetZ0Downstr = fTargetLengthIntoHorn/2. ;
+  fTargetAlignRingSpacing *= fTargetSLengthGraphite/953.8*mm; // must fit 5 rings within the prescribed space. 
 //  std::cerr << " Target after segmentation " <<  fTargetSLengthGraphite << std::endl;
   
 } 

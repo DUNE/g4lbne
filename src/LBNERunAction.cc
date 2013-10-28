@@ -1,6 +1,12 @@
 //
 // LBNERunAction.cc
 //
+#include <unistd.h>
+#include <stdlib.h>
+#include <ios>
+#include <iostream>
+#include <fstream>
+#include <string>
 
 #include "G4Run.hh"
 #include "G4UImanager.hh"
@@ -12,6 +18,7 @@
 #include "Randomize.hh"
 #include "LBNERunManager.hh"
 #include "LBNEPrimaryGeneratorAction.hh"
+#include "LBNESteppingAction.hh"
 #include "G4ProcessTable.hh"
 #include "G4ExceptionSeverity.hh"
 //------------------------------------------------------------------------------
@@ -66,7 +73,8 @@ void LBNERunAction::BeginOfRunAction(const G4Run* aRun)
    randomFile.append(runN);
    randomFile.append(".rndm");
    CLHEP::HepRandom::saveEngineStatus(randomFile);
-   std::cout << spaces << "Intializing Random Number generator... " << std::endl
+   std::cout << spaces << "Intializing Random Number generator named  " 
+            << CLHEP::HepRandom::getTheEngine()->name() << " ... " <<  std::endl
 	     << spaces << "   Seed = " << CLHEP::HepRandom::getTheSeed() << std::endl
 	     << spaces << "   Saving Random engine status in "<< randomFile << std::endl;
    //
@@ -159,7 +167,9 @@ void LBNERunAction::EndOfRunAction(const G4Run* aRun)
       std::cout << "LBNERunAction::EndOfRunAction() Called." << std::endl;
    }
 
-   LBNERunManager *pRunManager = (LBNERunManager*)LBNERunManager::GetRunManager();
+   const LBNESteppingAction *pStep = dynamic_cast<const LBNESteppingAction*>(theRunManager->GetUserSteppingAction());
+   std::cout << " End of Run.  Number of tracks killed because stuck " 
+           <<  pStep->GetNumTracksKilledAsStuck() << std::endl;
 
    G4String spaces = "   ";
    std::cout << std::endl;
@@ -178,6 +188,7 @@ void LBNERunAction::EndOfRunAction(const G4Run* aRun)
    std::cout << spaces << "Closing Random Number generator... " << std::endl
 	     << spaces << "   Seed = " << CLHEP::HepRandom::getTheSeed() << std::endl
 	     << spaces << "   Random engine status saved in "<< randomFile << std::endl;
+   	     
    //
    
    //
@@ -185,7 +196,7 @@ void LBNERunAction::EndOfRunAction(const G4Run* aRun)
    //
       
    std::cout << spaces << "Closing Input File... " << std::endl;
-   LBNEPrimaryGeneratorAction* primaryGeneratorAction = (pRunManager->GetLBNEPrimaryGeneratorAction());
+   LBNEPrimaryGeneratorAction* primaryGeneratorAction = (theRunManager->GetLBNEPrimaryGeneratorAction());
    
    if(primaryGeneratorAction)
    {
@@ -271,7 +282,51 @@ void LBNERunAction::CheckOKToRun()
    */
    //
 }
+void LBNERunAction::CheckMemoryUsage(double VMlimit) const { // in kb (I think..) 
 
+// http://stackoverflow.com/questions/669438/how-to-get-memory-usage-at-run-time-in-c
+   using std::ios_base;
+   using std::ifstream;
+   using std::string;
+
+   double vm_usage     = 0.0;
+//   double resident_set = 0.0;
+
+   // 'file' stat seems to give the most reliable results
+   //
+   ifstream stat_stream("/proc/self/stat",ios_base::in);
+
+   // dummy vars for leading entries in stat that we don't care about
+   //
+   string pid, comm, state, ppid, pgrp, session, tty_nr;
+   string tpgid, flags, minflt, cminflt, majflt, cmajflt;
+   string utime, stime, cutime, cstime, priority, nice;
+   string O, itrealvalue, starttime;
+
+   // the two fields we want
+   //
+   unsigned long vsize;
+   long rss;
+
+   stat_stream >> pid >> comm >> state >> ppid >> pgrp >> session >> tty_nr
+               >> tpgid >> flags >> minflt >> cminflt >> majflt >> cmajflt
+               >> utime >> stime >> cutime >> cstime >> priority >> nice
+               >> O >> itrealvalue >> starttime >> vsize >> rss; // don't care about the rest
+
+   stat_stream.close();
+
+//   long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024; // in case x86-64 is configured to use 2MB pages
+// Don't care about resident memory.. 
+//
+   vm_usage     = vsize / 1024.0;
+//   std::cerr << " Current memory usage " << vm_usage << std::endl;
+   if (vm_usage > VMlimit) {
+      std::cerr << " Current memory usage " << vm_usage << " Too much above limit " << VMlimit << std::endl;
+      sleep(10);
+     exit(2);
+   }
+
+}
 
 
 

@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNETrackingAction.cc
-// $Id: LBNETrackingAction.cc,v 1.1.1.1.2.1 2013/08/20 22:57:03 lebrun Exp $
+// $Id: LBNETrackingAction.cc,v 1.1.1.1.2.2 2013/10/28 12:06:50 lebrun Exp $
 //----------------------------------------------------------------------
 
 
@@ -38,6 +38,7 @@ LBNETrackingAction::~LBNETrackingAction()
 //--------------------------------------------------------------------------------------
 void LBNETrackingAction::PreUserTrackingAction(const G4Track* aTrack)
 {
+   G4int evtno = pRunManager->GetCurrentEvent()->GetEventID();
    if(fpTrackingManager->GetVerboseLevel() > 1)
    {
       G4int evtno = pRunManager->GetCurrentEvent()->GetEventID();
@@ -49,11 +50,16 @@ void LBNETrackingAction::PreUserTrackingAction(const G4Track* aTrack)
 	 delete trackinfo;
       }
    }
-      
-
-
-
-
+   // Debugging the infinite memory blowup.. 
+//   if (evtno == 32135) {
+//     std::cerr << " At track  " << aTrack->GetTrackID() << " At " << aTrack->GetPosition() 
+//               << " P " << aTrack->GetMomentumDirection() << " E " << aTrack->GetTotalEnergy() 
+//	       << " name " << aTrack->GetParticleDefinition()->GetParticleName() <<  std::endl;
+//   }
+   
+    const LBNESteppingAction *pStep = dynamic_cast<const LBNESteppingAction*>(pRunManager->GetUserSteppingAction());
+    pStep->ResetNumSteps();
+   
       LBNETrackingAction::SetPreLBNETrackInformation(aTrack);
       
       //Store tracks in trajectory container

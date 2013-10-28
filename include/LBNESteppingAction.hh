@@ -58,6 +58,10 @@ private:
    double waterAbsHorn2Entr; 
    double alumAbsHorn2Entr; // to check inner conductor horm geometry.
    
+   int fNConsecutivSmallSteps;
+   int fNumTracksKilledAsStuck;
+   mutable int fNumStepsCurrentTrack;
+   
    bool goneThroughHorn1Neck;
    bool goneThroughHorn2Entr;
    G4String fStudyGeantinoMode;
@@ -78,7 +82,8 @@ public:
    void SetStudyGeantinoMode(G4String v) {fStudyGeantinoMode = v; }
    void SetKeyVolumeForOutput(G4String v) {fKeyVolumeForOutput = v; }
    void SetKeyVolumeForOutputTo(G4String v) {fKeyVolumeForOutputTo = v; }
-
+   inline int GetNumTracksKilledAsStuck() const { return fNumTracksKilledAsStuck;}
+   inline void ResetNumSteps() const {fNumStepsCurrentTrack = 0;} // Not const on mutable. Screw you.. 
 };
 
 #endif

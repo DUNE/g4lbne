@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNESteppingAction.cc
-// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.13 2013/10/15 19:17:43 lebrun Exp $
+// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.14 2013/10/28 12:06:31 lebrun Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -44,6 +44,9 @@ LBNESteppingAction::LBNESteppingAction()
  fStudyGeantinoMode=G4String("none");
  fKeyVolumeForOutput=G4String("blank");
  fKeyVolumeForOutputTo=G4String("blank");
+ fNConsecutivSmallSteps=0;
+ fNumTracksKilledAsStuck=0;
+ fNumStepsCurrentTrack=0;
 }
 //----------------------------------------------------------------------
 LBNESteppingAction::~LBNESteppingAction()
@@ -57,6 +60,66 @@ LBNESteppingAction::~LBNESteppingAction()
 //----------------------------------------------------------------------
 void LBNESteppingAction::UserSteppingAction(const G4Step * theStep)
 {
+
+ // Killing tracks that are stuck on a boundary crossing 
+ // This should not happen if the geometry has no overlap and is strictly 
+ // correct.  For the nominal case, except for the hadron absorver, 
+ // no overlaps have been detected at construction stage. 
+ // However, the tests are "weak", i.e., do not explore all corners. 
+ // Let us protect our-self here again infinite loop 
+ //
+ if (theStep->GetStepLength() < 1.0e-13) {   
+   fNConsecutivSmallSteps++;
+   if (fNConsecutivSmallSteps > 6) {
+       G4StepPoint *prePtr = theStep->GetPreStepPoint();
+       G4LogicalVolume *volPre = prePtr->GetPhysicalVolume()->GetLogicalVolume();	
+        std::cerr << " LBNESteppingAction, too man consecutive small steps  " << std::endl
+	  << ".. from " << volPre->GetName() 
+	             << " detected at " <<  prePtr->GetPosition() <<
+		      " last step length " << theStep->GetStepLength() << std::endl;
+        G4Track* aTrack= theStep->GetTrack(); 		      
+        std::cerr << " ...  for track  " << aTrack->GetTrackID() << " At " << aTrack->GetPosition() 
+               << " P " << aTrack->GetMomentumDirection() << " E " << aTrack->GetTotalEnergy() 
+	       << " name " << aTrack->GetParticleDefinition()->GetParticleName() <<  std::endl;
+	aTrack->SetTrackStatus(fStopAndKill);      
+        std::cerr << " Track killed .... " << std::endl;
+	fNumTracksKilledAsStuck++;
+   }
+   
+ } else fNConsecutivSmallSteps=0;
+ // Last check on memory explosion: No more than 500 mgB usage. Check than our step counter (can't trust G4 anylonger) 
+ // gets too large.. 
+  fNumStepsCurrentTrack++;
+  if (fNumStepsCurrentTrack > 100000) { 
+    const LBNERunAction * runAct = dynamic_cast<const LBNERunAction*>(pRunManager->GetUserRunAction());
+    runAct->CheckMemoryUsage(500000);
+  }
+ 
+   // Debugging the bad neutrons in 4.9.6.p02 
+
+   G4int evtno = pRunManager->GetCurrentEvent()->GetEventID();
+
+//   if (evtno == 32135) {
+//     const G4Track* aTrack= theStep->GetTrack(); 
+//     if (aTrack->GetTrackID() == 79) {
+//        G4StepPoint *prePtr = theStep->GetPreStepPoint();
+//        G4LogicalVolume *volPre = prePtr->GetPhysicalVolume()->GetLogicalVolume();	
+//        std::cout << " LBNESteppingAction::StudyPropagation, bad track 79 " << std::endl
+//	  << ".. from " << volPre->GetName() 
+//	             << " detected at " <<  prePtr->GetPosition() <<
+//		      " length " << theStep->GetStepLength() << std::endl;
+// Found : 		      
+//      LBNESteppingAction::StudyPropagation, bad track 79 
+//.. from Horn1IOTransCont detected at (31.0918,-3.71985,109.441) length 1.77636e-15
+// LBNESteppingAction::StudyPropagation, bad track 79 
+//.. from Horn1IOTransInnerPart3 detected at (31.0918,-3.71985,109.441) length 0
+// LBNESteppingAction::StudyPropagation, bad track 79 
+//.. from Horn1IOTransCont detected at (31.0918,-3.71985,109.441) length 1.77636e-15
+// For ever... 
+//
+//     }
+//   }
+
    int verboseLevel = 
    G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager()->GetverboseLevel();
    if(verboseLevel > 3)

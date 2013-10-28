@@ -29,7 +29,6 @@ public:
    void BeginOfEventAction(const G4Event*);
    void EndOfEventAction(const G4Event*);
 
-
 private:
 
    typedef std::map<int, int> IIMap;

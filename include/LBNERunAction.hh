@@ -23,6 +23,8 @@ public:
 
    void CheckOKToRun();
   
+   void CheckMemoryUsage(double VMLimit) const;
+  
 private:
    int fVerboseLevel;
    LBNERunActionMessenger* runMessenger;

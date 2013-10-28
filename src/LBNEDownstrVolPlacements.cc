@@ -284,7 +284,7 @@ void LBNEVolumePlacements::DeclareHorn1Dims() {
   fHorn1UpstrZPositions[2] = fHorn1UpstrZPositions[1] + 0.025*mm + fHorn1UpstrLengths[1]/2 + fHorn1UpstrLengths[2]/2.;
   
   fHorn1UpstrInnerRadsUpstr[3] = fHorn1UpstrInnerRadsDownstr[2]; 
-  fHorn1UpstrInnerRadsOuterUpstr[2] = fHorn1UpstrInnerRadsUpstr[2] + 0.118*in; 
+  fHorn1UpstrInnerRadsOuterUpstr[3] = fHorn1UpstrInnerRadsUpstr[2] + 0.118*in; 
   fHorn1UpstrInnerRadsDownstr[3] =  fHorn1UpstrInnerRadsUpstr[3]; 
   fHorn1UpstrInnerRadsOuterDownstr[3] = fHorn1UpstrInnerRadsDownstr[3] + 0.20*in; 
   fHorn1UpstrLengths[3] = 0.40*in - 0.100*mm;
@@ -395,12 +395,16 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
      G4LogicalVolume *pCurrent = new G4LogicalVolume(aCons, G4Material::GetMaterial(fHorn1InnerCondMat), nameStr);
      G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] = 0.;  
      posTmp[2] = -1.0*(plTrUpst->fParams[2])/2. + fHorn1UpstrZPositions[k];			      
-     new G4PVPlacement(	(G4RotationMatrix *) 0,	posTmp, pCurrent, nameStr + std::string("_P"), 
+     const G4PVPlacement *plHorn1IO = new G4PVPlacement((G4RotationMatrix *) 0,	posTmp, pCurrent, nameStr + std::string("_P"), 
                         vTrUpst->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC);
-//     std::cerr << " Placing IOTrans Sub elem " << k << " at z = " << fHorn1UpstrZPositions[k] << " (abs), rel " << 
-//       posTmp[2] << " length " << fHorn1UpstrLengths[k] << std::endl;
-//     std::cerr << " RIUps " << fHorn1UpstrInnerRadsUpstr[k] << " ROUps " << fHorn1UpstrInnerRadsOuterUpstr[k];  			      
-//     std::cerr << " RIDwn " << fHorn1UpstrInnerRadsDownstr[k] << " RODwn " << fHorn1UpstrInnerRadsOuterDownstr[k] << std::endl;  			      
+// Debugging misshaped volume, Oct 28 2013. 
+//     if (k == 3) {
+//        this->CheckOverlaps(plHorn1IO, 10000, 1.0e-5, true); 	
+//        std::cerr << " Placing IOTrans Sub elem " << k << " at z = " << fHorn1UpstrZPositions[k] << " (abs), rel " << 
+//            posTmp[2] << " length " << fHorn1UpstrLengths[k] << std::endl;
+//        std::cerr << " RIUps " << fHorn1UpstrInnerRadsUpstr[k] << " ROUps " << fHorn1UpstrInnerRadsOuterUpstr[k];  			    
+//        std::cerr << " RIDwn " << fHorn1UpstrInnerRadsDownstr[k] << " RODwn " << fHorn1UpstrInnerRadsOuterDownstr[k] << std::endl; 
+//     }			    
    }
    
    for (size_t k=0; k!= fHorn1UpstrOuterIOTransInnerRads.size(); k++) {

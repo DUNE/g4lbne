@@ -178,3 +178,8 @@ will similarly compare oscillated fluxes and event rates.  The last two input st
   
 Each time you run eventRateComparison.C, a set of image and text files will be written out to a folder called eventRateComparisons in your working directory.
 
+Oct 28 2013
+
+ a. Fix a bug in setting the spacing of the alignment ring: if the target is shorter than nominal, one should re-adjust the specing between these rings such that all 5 of them fit in the Helium containment vessel. But unveiled by Laura, Oct. 26 
+
+ b. PLace a protection against anomalously small stept size (less then the Borh radius) in SteppinAction. Geant4 v4.9.6.p02 allows such step size, and goes into an infinite loop is some case (bug unveiled by John LoSecco, ~Oct 20 2013)  This is patch, not a clean resolution. It occurs only for neutron,  and very rarely for Kaon0L.  I suspect the cross-section for such neutron goes too large, triggering a reduction of the step length. Howeve,r a 2nd look into the geometr of the Horn1 Inner/outer transition is needed, as it happens always there. 

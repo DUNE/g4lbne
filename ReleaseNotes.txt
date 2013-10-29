@@ -125,6 +125,7 @@ it will also fix the memory problem. I propose to leave the patch in LBNESteppin
 
 </v3r0p6>
 
+<v3r0p7>
  Oct 29 2013: 
 
    Thanks to Seongtae, two new small deficiency in the geometry have been discovered via carefull visualization.  Both have been fixed: 
@@ -136,7 +137,7 @@ The pointer to the logical volume was not kept in memory, therefore deleted. The
 
    Checked with geantinos, need confirmation from visualization.. 
 
-
+<\v3r0p7>
  
    
  

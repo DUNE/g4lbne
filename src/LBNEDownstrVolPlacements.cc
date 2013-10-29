@@ -102,7 +102,7 @@ void LBNEVolumePlacements::PlaceFinalDownstrTarget(G4PVPlacement *mother) {
       LBNEVolumePlacementData * plCoolingTubeFirst = Create("Horn1TargetCoolingTubeFirst");
       Create("Horn1TargetCoolingTubeFirstWater");
       posTmp[0] = 0.; posTmp[1] = fTargetFinHeight/2.; posTmp[2] = 0.;			  
-      G4PVPlacement((G4RotationMatrix *) 0, 
+      G4PVPlacement *vTubeUp = new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, plCoolingTubeFirst->fCurrent, 
 				    G4String("Horn1TargetSegmentCoolingTubeFirst_PTop"), 
 				          vTargSegFirst->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
@@ -112,6 +112,7 @@ void LBNEVolumePlacements::PlaceFinalDownstrTarget(G4PVPlacement *mother) {
 				    G4String("Horn1TargetSegmentCoolingTubeFirst_PBottom"), 
 				          vTargSegFirst->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
       PlaceFinal("Horn1TargetCoolingTubeFirstWater", vTubeDown);					  
+      PlaceFinal("Horn1TargetCoolingTubeFirstWater", vTubeUp);					  
       PlaceFinal("Horn1TargetFinVertFirst", vTargSegFirst);
      }
     // Now place the previously defined standard target segment. Note: they already contain their cooling and 

@@ -79,7 +79,7 @@ g4lbne_example_010.root in the example directory
 
 once that is finished running, try another one...
 
-./g4lbne --input inputs/Nominal_FHC.input example/example_macro_011.mac
+./g4lbne example/example_macro_011.mac
 
 Once that is finished...in the g4lbne/example directory you have 2 flux files
 called 
@@ -116,25 +116,18 @@ More information on how the flux is calculated can be obtained by examining nuda
 
 
 *************************************************************
-Running and Plotting (a more complex example involving grid 
-                      running and oscillated event rates)
+Making standard flux plots
 *************************************************************
 Below is a description of the procedure for creating a set of plots
 that compare flux and oscillated and unoscillated event rates for two
 different geometry configurations using large statistics samples. You 
 will need to have Fermilab grid credentials to do this (see the wiki).
 
-1. Create a modified macro
+For this example, you'll want to make some sort of change to the nominal configuration.  For example, you could change the decay pipe fill material to Helium by opening macros/Nominal.mac, and adding the line
 
-For this example, you'll want to make some sort of change to the nominal configuration.  For example, you could change the decay pipe fill material to Helium by opening inputs/Nominal.input, and changing the line
+/LBNE/det/decayPipeGas Helium
 
-DecayPipeFillGEANTmat 15
-
-to
-
-DecayPipeFillGEANTmat 27
-
-Save the fill as DPHelium_FHC.input.  Similarly, create a file called DPHelium_RHC.input that is the same as Nominal_RHC.input with the DecayPipeFillGEANTmat again changed to 27.
+somewhere before the line "/LBNE/det/construct". Save the fill as DPHelium.mac.
 
 2. Generate nominal and varied flux ntuples
 
@@ -142,71 +135,40 @@ After obtaining credentials for running on the FermiGrid, you can use the script
 
 python submit_flux.py --help
 
-The following commands will submit 250 jobs each in neutrino and anti-neutrino mode using the nominal and varied input cards.  Each job will simulate 100,000 protons on target.  You can simulate more or less POT if you want, but it's important that you remember what POT/file you requested since it will be necessary later for normalizing plots.
+The following commands will submit 250 jobs each in neutrino and anti-neutrino mode using the nominal and varied macros.  Each job will simulate 100,000 protons on target.  You can simulate more or less POT if you want, but it's important that you remember what POT/file you requested since it will be necessary later for normalizing plots.
 
-python submit_flux.py -f 1 -l 250 -n 100000 --macro=Nominal  -c 200
-python submit_flux.py -f 1 -l 250 -n 100000 --macro=Nominal -c -200
+python example/submit_flux.py -f 1 -l 250 -n 100000 --macro=Nominal  -c 200
+python example/submit_flux.py -f 1 -l 250 -n 100000 --macro=Nominal -c -200
+python example/submit_flux.py -f 1 -l 250 -n 100000 --macro=DPHelium  -c 200
+python example/submit_flux.py -f 1 -l 250 -n 100000 --macro=DPHelium -c -200
 
 Each job will take approximately two hours once it starts running on a grid machine.  The whole set of four samples will typically complete within a few hours.  You can see the status of your jobs by executing condor_q | grep <your_userid>.  When the jobs have completed, output files and logfiles should appear in your /lbne/data/users/<your_userid>/fluxfiles/ directory.  If they don't, check the logfiles in your $CONDOR_TMP area, which will hopefully hold clues about what went wrong.
 
 2. Make flux and event rate histograms
 
-To make flux and event rate histograms, you can use the Root macro example/makeFluxHistograms.C.  It compiles and runs code in eventRates.C that loops over the flux ntuples and plots the flux and event rates at a specified detector location.  It assumes that files are in the directory structure created by submit_flux.py and has input options to specify the g4lbne version, input card, detector location and geant4 physics list.  You can also specify the number of files you generated and the number of POT per file.  For example, to process the ntuples created above you would do:
+To make flux and event rate histograms, you can use the Root macro example/makeFluxHistograms.C.  It compiles and runs code in eventRates.C that loops over the flux ntuples and plots the flux and event rates at a specified detector location.  It assumes that files are in the directory structure created by submit_flux.py and has input options to specify the g4lbne version, macro, detector location and geant4 physics list.  You can also specify the number of files you generated and the number of POT per file.  For example, to make near detector and far detector histograms for all of the samples you made above
 
-root -q -b makeFluxHistograms.C\(\"G4PBeam\",\"v2r4p1\",\"Nominal_FHC\",\"LBNEFD\", \"QGSP_BERT\",\"250\",\"100000\"\);
-root -q -b makeFluxHistograms.C\(\"G4PBeam\",\"v2r4p1\",\"Nominal_RHC\",\"LBNEFD\", \"QGSP_BERT\",\"250\",\"100000\"\);
-root -q -b makeFluxHistograms.C\(\"G4PBeam\",\"v2r4p1\",\"DPHelium_FHC\",\"LBNEFD\", \"QGSP_BERT\",\"250\",\"100000\"\);
-root -q -b makeFluxHistograms.C\(\"G4PBeam\",\"v2r4p1\",\"DPHelium_RHC\",\"LBNEFD\", \"QGSP_BERT\",\"250\",\"100000\"\);
+root -q -b makeFluxHistograms.C\(\"<your userid>\",\"v3r0p3\",\"Nominal\",\"200kA\",\"LBNEFD\",\"QGSP_BERT\",\"250\",\"100000\"\);
+root -q -b makeFluxHistograms.C\(\"<your userid>\",\"v3r0p3\",\"Nominal\",\"-200kA\",\"LBNEFD\",\"QGSP_BERT\",\"250\",\"100000\"\);
+root -q -b makeFluxHistograms.C\(\"<your userid>\",\"v3r0p3\",\"Nominal\",\"200kA\",\"LBNEND\",\"QGSP_BERT\",\"250\",\"100000\"\);
+root -q -b makeFluxHistograms.C\(\"<your userid>\",\"v3r0p3\",\"Nominal\",\"-200kA\",\"LBNEND\",\"QGSP_BERT\",\"250\",\"100000\"\);
 
-Each 25,000,000 POT job takes around 10 minutes.  You may find it useful to put the commands above in a bash script and to execute it with 'nohup' so that the jobs will continue running even if you close your terminal window.
+root -q -b makeFluxHistograms.C\(\"<your userid>\",\"v3r0p3\",\"DPHelium\",\"200kA\",\"LBNEFD\",\"QGSP_BERT\",\"250\",\"100000\"\);
+root -q -b makeFluxHistograms.C\(\"<your userid>\",\"v3r0p3\",\"DPHelium\",\"-200kA\",\"LBNEFD\",\"QGSP_BERT\",\"250\",\"100000\"\);
+root -q -b makeFluxHistograms.C\(\"<your userid>\",\"v3r0p3\",\"DPHelium\",\"200kA\",\"LBNEND\",\"QGSP_BERT\",\"250\",\"100000\"\);
+root -q -b makeFluxHistograms.C\(\"<your userid>\",\"v3r0p3\",\"DPHelium\",\"-200kA\",\"LBNEND\",\"QGSP_BERT\",\"250\",\"100000\"\);
 
-Each instance of makeFluxHistograms.C will create two histos_*.root files in the /lbne/data/users/<your_userid>/fluxfiles/ directory where your flux ntuples are stored -- one with flux/event rates histograms covering 0-20 GeV, intended for presentation plots, and one (with "_fastmc" in the file name) with fine binning meant serve as FastMC input.
+Each 25,000,000 POT job takes around 10 minutes.  You may find it useful to put the commands above in a bash script and to execute it with 'nohup' so that the jobs will continue running even if you close your terminal window.  You should replace <your userid> above with your userid (or with the id of the whose directory holds the ntules you want to make histograms from).  If you want to look at ntuples in the /lbne/data/beam/ directory, set the userid to "beam".
+
+Each instance of makeFluxHistograms.C will create two histos_*.root files in the same directory where the flux ntuples are stored -- one with flux/event rates histograms covering 0-20 GeV, intended for presentation plots, and one (with "_fastmc" in the file name) with fine binning meant serve as FastMC input.
 
 2. Make comparison plots and tables
 
-The root macro eventRateComparison.C can be used to make some simple plots comparing your two flux simulations.  You must specify whether you want to compare oscillated or unoscillated event rates, and the simulation, version, inputcard, location, physics list of the two simulations you want to compare.  For example:
+The root macro eventRateComparison.C can be used to make some simple plots comparing your two flux simulations.  You can run it by doing:
 
-root -q -b eventRateComparison.C\(\"unoscillated\",\"G4PBeam\",\"G4PBeam\",\"v2r4p1\",\"v2r4p1\",\"Nominal_FHC\",\"DecayPipeHelium_FHC\",\"LBNEFD\",\"LBNEFD\",\"QGSP_BERT\",\"QGSP_BERT\",\"Air\",\"Helium\"\)
-root -q -b eventRateComparison.C\(\"unoscillated\",\"G4PBeam\",\"G4PBeam\",\"v2r4p1\",\"v2r4p1\",\"Nominal_RHC\",\"DecayPipeHelium_RHC\",\"LBNEFD\",\"LBNEFD\",\"QGSP_BERT\",\"QGSP_BERT\",\"Air\",\"Helium\"\)
+source doComp.sh <userid>/<userid> v3r0p4/v3r0p4 Nominal/DPHelium 200kA/200kA QGSP_BERT/QGSP_BERT LBNEND/LBNEND LBNEFD/LBNEFD Nominal/DPHelium
+source doComp.sh <userid>/<userid> v3r0p4/v3r0p4 Nominal/DPHelium -200kA/-200kA QGSP_BERT/QGSP_BERT LBNEND/LBNEND LBNEFD/LBNEFD Nominal/DPHelium
 
-will make plots comparing unoscillated neutrino and anti-neutrino mode flux and event rates while:
-
-root -q -b eventRateComparison.C\(\"oscillated\",\"G4PBeam\",\"G4PBeam\",\"v2r4p1\",\"v2r4p1\",\"Nominal_FHC\",\"DecayPipeHelium_FHC\",\"LBNEFD\",\"LBNEFD\",\"QGSP_BERT\",\"QGSP_BERT\",\"Air\",\"Helium\"\)
-root -q -b eventRateComparison.C\(\"oscillated\",\"G4PBeam\",\"G4PBeam\",\"v2r4p1\",\"v2r4p1\",\"Nominal_RHC\",\"DecayPipeHelium_FHC\",\"LBNEFD\",\"LBNEFD\",\"QGSP_BERT\",\"QGSP_BERT\",\"Air\",\"Helium\"\)
-
-will similarly compare oscillated fluxes and event rates.  The last two input strings are meant to describe the two samples and will be used in the plot legends and file names to identify what is being compared.
+The last two input strings are meant to describe the two samples and will be used in the plot legends and file names to identify what is being compared.  This will run several instances of eventRateComparison.C (for oscillated/unoscillated plots and FHC/RHC).  Each instance will create a set of image and text files will be written out to a folder called eventRateComparisons in your working directory. If you wish to do comparisons of more than two configurations, you can add more
+strings delimited by "/" to the arguments of doComp.sh.  The last two input strings are meant to describe the two samples and will be used in the plot legends and file names to identify what is being compared.
   
-Each time you run eventRateComparison.C, a set of image and text files will be written out to a folder called eventRateComparisons in your working directory.
-
-Oct 28 2013
-
- a. Fix a bug in setting the spacing of the alignment ring: if the target is shorter than nominal, one should re-adjust the specing between these rings such that all 5 of them fit in the Helium containment vessel. But unveiled by Laura, Oct. 26 
-
- b. PLace a protection against anomalously small stept size (less then the Borh radius) in SteppinAction. Geant4 v4.9.6.p02 allows such step size, and goes into an infinite loop is some case (bug unveiled by John LoSecco, ~Oct 20 2013)  This is patch, not a clean resolution. It occurs only for neutron,  and very rarely for Kaon0L.  I suspect the cross-section for such neutron goes too large, triggering a reduction of the step length. Howeve,r a 2nd look into the geometr of the Horn1 Inner/outer transition is needed, as it happens always there. 
-
- c. Fix a critical typo in LBNEDownVolPlacements.cc :
-
-diff -r1.1.2.28 LBNEDownstrVolPlacements.cc
-287c287
-<   fHorn1UpstrInnerRadsOuterUpstr[2] = fHorn1UpstrInnerRadsUpstr[2] + 0.118*in; 
----
->   fHorn1UpstrInnerRadsOuterUpstr[3] = fHorn1UpstrInnerRadsUpstr[2] + 0.118*in; 
-
-  Note the index in the array holding the value of the outer radius at the upstream end of this conical section was mistyped. It should the inner radius plus the aluminum thickness. This volume was fairly short, only 1.06 cm long. In g4lbne v3r0p4, the outer radius was set to zero. Under Geant4  v4.9.4, this volume was skipped, apparently, as no transition from it's mother volume (Horn1IOTransCont) to Horn1IOTransInnerPart3 was actually detected with geantino. Since it is of relatively short length, a cursory look at the geantino intersection plots was not good enough. The faulty surface fits inside the mother volume just fine, and does not clash with any other surface. But the tracking could be problematic. it is very likely that a piece of the Horn1 inside conductor, located between z = 106 mm and 116 mm was just missing in g4lbne v3r0p4 (and v3r0p5). 
-Our visualization campaign also missed it, because it was too short. The piece in question can be seen on drawing number 8875.112-MD-363097, ending at z ~ 3.3157.  It features an extra thickness for welding.
-
-   Under Geant4 4.9.6.p02, while tracing particle that go in straight line, (neutron and kaon), Geant4 got confused, and failed catastrophically.. Fixing that index removed the naviagation errors, i.e., the detection of anomalously small step sizes. Over 100k PoT, not a single track has been lost due to this bug. I believe 
-it will also fix the memory problem. I propose to leave the patch in LBNESteppingAction as is, as we may still have problem in the geometry, and we do not want to have the G4 tracking failing that catastrophically. Also, we now have in place an algorithm to check on the memory size, at every step, should it becomes necessary. 
-
- Oct 29 2013: 
-
-   Thanks to Seongtae, two new small deficiency in the geometry have been discovered via carefull visualization.  Both have been fixed: 
-
-    a. A section, ~15 mm long, of the target cooling tube was missing in the first target segment of the downstream target section (located inside the horn, at Z > 0.)
-The pointer to the logical volume was not kept in memory, therefore deleted. The placement of the water was not done as well => no tube there. Kept the pointer, and let the water flow through that section. 
-
-   b. The 4 target corners, around the target cooling tubes, were not defined for the last and first partial target segments, located around Z = 0. As you recall, in order to keep the Horn1 and upstream section of the target in different logical volume trees, which ultimately simplifies the navigation, the target is split into part, upstream of Horn1 and the portion which is in Horn1 (part of the Horn1 logical volume tree). Thus, there is one 20 mm target fin which is split into 2 parts.  For sake of simplicity and avoiding too many volumes, I skipped the creation of the 4 corners for that split target fin segment.  < 0.2% of graphite.. Negligible, but then out visualization looked funny, incomplete.. So, I put them in. 
-
-   Checked with geantinos, need confirmation from visualization.. 
-
-

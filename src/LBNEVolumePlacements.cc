@@ -749,26 +749,39 @@ LBNEVolumePlacementData*
  // despite being a single copy, do the placement in a separate method. 	    
     }
     // Adding 4 new small volumes to include the bit of graphite locate on each of the 4 corner 
+    // Oct. 29 2013: 
+    // Adding them as well for the last target segment, of the upstream section which has a different length. 
+    // Perhaps an overzealous choice: there will also be 4 more such volumes for the first 
+    // target segments of the downstream part of the target. 
     if (name.find("TargetFinVertCorner") != std::string::npos) { // 
          info.fParams.resize(7);
          info.fParams[0] = fTargetFinWidth/2. - 0.025*mm; 
          info.fParams[1] = fTargetCTubeOuterRadius - 0.025*mm; 
          info.fParams[2] = fTargetFinLength ;
-         G4Box* aBox = new G4Box(volumeName+G4String("Box"), 
-	 			 info.fParams[0]/2, info.fParams[1]/2, info.fParams[2]/2.);
-	 info.fParams[3] = 0.;
+ 	 info.fParams[3] = 0.;
 	 info.fParams[4] = fTargetCTubeOuterRadius + 0.250*mm;
 	 info.fParams[5] = fTargetFinLength ;
+	 if (name.find("TargetFinVertCornerUpstrLast") != std::string::npos) {
+	   info.fParams[2] = fTargetFinLengthSplitUpstr  - 0.02*mm;
+	   info.fParams[5] = fTargetFinLengthSplitUpstr  - 0.02*mm;
+	 }
+	 if (name.find("TargetFinVertCornerDownstrFirst") != std::string::npos) {
+	   info.fParams[2] = fTargetFinLengthSplitDwnstr  - 0.02*mm;
+	   info.fParams[5] = fTargetFinLengthSplitDwnstr  - 0.02*mm;
+	 }
+         G4Box* aBox = new G4Box(volumeName+G4String("Box"), 
+	 			 info.fParams[0]/2, info.fParams[1]/2, info.fParams[2]/2.);
+	 
 	 G4Tubs* aTubs = new G4Tubs(volumeName+G4String("Tube"), 
 	                            info.fParams[3], info.fParams[4], info.fParams[5]/2., 0., 360.0*deg);
 	 G4ThreeVector trans(0., 0., 0.);
-        if (name == G4String("TargetFinVertCornerUpLeft")) { //
+        if (name.find("UpLeft") != std::string::npos) { //
 	    trans[0] = fTargetFinWidth/4.; trans[1] = fTargetCTubeOuterRadius/2.; 
-	} else if (name == G4String("TargetFinVertCornerUpRight")) { 
+	} else if (name.find("UpRight") != std::string::npos) { 
 	    trans[0] = -fTargetFinWidth/4.; trans[1] = fTargetCTubeOuterRadius/2.;
-	} else if (name == G4String("TargetFinVertCornerDwnLeft")) {
+	} else if (name.find("DwnLeft") != std::string::npos) {
 	    trans[0] = fTargetFinWidth/4.; trans[1] = -fTargetCTubeOuterRadius/2.;
-	} else if (name == G4String("TargetFinVertCornerDwnRight")){
+	} else if (name.find("DwnRight") != std::string::npos) {
 	    trans[0] = -fTargetFinWidth/4.; trans[1] = -fTargetCTubeOuterRadius/2.;
 	}    
 	G4RotationMatrix unitMatrix;			
@@ -777,6 +790,7 @@ LBNEVolumePlacementData*
         info.fCurrent = new G4LogicalVolume(aRoundCorner, G4Material::GetMaterial(std::string("Target")), volumeName); 
         info.fTypeName = G4String("G4SubtractionSolid");
     }
+      
     
     if (name == G4String("TargetAlignmentRingRight")) { // 
 	    info.fParams.resize(5);
@@ -1472,7 +1486,9 @@ void LBNEVolumePlacements::PlaceFinalUpstrTarget(G4PVPlacement *mother) {
 	                            posTmp, plTargetFin->fCurrent, nameTgtUpDownSeg+G4String("TargetFinVert_P"), 
 				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
 					  
-    // for the generic (neither first nor last, not the fin which is split, we add the corners 
+    // for the generic (neither first nor last, not the fin which is split, we add the corners
+    // Oct 29 2013.. For sake of being complete, add also these corners for the last segments 
+    // Overzealous, but makes the picture more pretty...  
     // Start with the one in the upper left corner
     posTmp[0] = -fTargetFinWidth/4.; posTmp[1] = fTargetFinHeight/2. -  fTargetCTubeOuterRadius/2. + 0.125*mm;
     posTmp[2] = 0.;    
@@ -1531,6 +1547,43 @@ void LBNEVolumePlacements::PlaceFinalUpstrTarget(G4PVPlacement *mother) {
       new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, plTargetFinLast->fCurrent, G4String("TargetFinVertLast_P"), 
 				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
+
+//
+// Oct. 29 2013 : add the 4 corners as well (overzealous, too much complexity already.. 
+// 
+      LBNEVolumePlacementData *plTargetFinCorULUpLeft = 
+        Create(G4String("TargetFinVertCornerUpstrLastUpLeft"));
+      LBNEVolumePlacementData *plTargetFinCorULUpRight = 
+        Create(G4String("TargetFinVertCornerUpstrLastUpRight"));
+      LBNEVolumePlacementData *plTargetFinCorULDwnLeft = 
+       Create(G4String("TargetFinVertCornerUpstrLastDwnLeft"));
+      LBNEVolumePlacementData *plTargetFinCorULDwnRight = 
+      Create(G4String("TargetFinVertCornerUpstrLastDwnRight"));
+   
+      posTmp[0] = -fTargetFinWidth/4.; 
+      posTmp[1] = fTargetFinHeight/2. -  fTargetCTubeOuterRadius/2. + 0.125*mm;
+      posTmp[2] = 0.;    
+      new G4PVPlacement((G4RotationMatrix *) 0, 
+	                            posTmp, plTargetFinCorULUpLeft->fCurrent, 
+				          nameTgtUpDownSeg+G4String("TargetFinVertCornerUpstrLastUpLeft_P"), 
+				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
+      posTmp[0] = fTargetFinWidth/4.; posTmp[1] = fTargetFinHeight/2. -  fTargetCTubeOuterRadius/2. + 0.125*mm;
+      new G4PVPlacement((G4RotationMatrix *) 0, 
+	                            posTmp, plTargetFinCorULUpRight->fCurrent, 
+				          nameTgtUpDownSeg+G4String("TargetFinVertCornerUpstrLastUpRight_P"), 
+				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
+					  
+      posTmp[0] = -fTargetFinWidth/4.; posTmp[1] = -1.0*(fTargetFinHeight/2. -  fTargetCTubeOuterRadius/2. + 0.125*mm);
+      new G4PVPlacement((G4RotationMatrix *) 0, 
+	                            posTmp, plTargetFinCorULDwnLeft->fCurrent, 
+				          nameTgtUpDownSeg+G4String("TargetFinVertCornerUpstrLastDwnLeft_P"), 
+				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
+      posTmp[0] = fTargetFinWidth/4.; posTmp[1] = -1.0*(fTargetFinHeight/2. -  fTargetCTubeOuterRadius/2. + 0.125*mm);
+      new G4PVPlacement((G4RotationMatrix *) 0, 
+	                            posTmp, plTargetFinCorULDwnRight->fCurrent, 
+				          nameTgtUpDownSeg+G4String("TargetFinVertCornerUpstrLastDwnRight_P"), 
+				          vSeg->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
+
    }					  				  
     // End for the segment of the target which is outside Horn1
     

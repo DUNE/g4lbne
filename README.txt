@@ -198,4 +198,15 @@ Our visualization campaign also missed it, because it was too short. The piece i
    Under Geant4 4.9.6.p02, while tracing particle that go in straight line, (neutron and kaon), Geant4 got confused, and failed catastrophically.. Fixing that index removed the naviagation errors, i.e., the detection of anomalously small step sizes. Over 100k PoT, not a single track has been lost due to this bug. I believe 
 it will also fix the memory problem. I propose to leave the patch in LBNESteppingAction as is, as we may still have problem in the geometry, and we do not want to have the G4 tracking failing that catastrophically. Also, we now have in place an algorithm to check on the memory size, at every step, should it becomes necessary. 
 
- 
+ Oct 29 2013: 
+
+   Thanks to Seongtae, two new small deficiency in the geometry have been discovered via carefull visualization.  Both have been fixed: 
+
+    a. A section, ~15 mm long, of the target cooling tube was missing in the first target segment of the downstream target section (located inside the horn, at Z > 0.)
+The pointer to the logical volume was not kept in memory, therefore deleted. The placement of the water was not done as well => no tube there. Kept the pointer, and let the water flow through that section. 
+
+   b. The 4 target corners, around the target cooling tubes, were not defined for the last and first partial target segments, located around Z = 0. As you recall, in order to keep the Horn1 and upstream section of the target in different logical volume trees, which ultimately simplifies the navigation, the target is split into part, upstream of Horn1 and the portion which is in Horn1 (part of the Horn1 logical volume tree). Thus, there is one 20 mm target fin which is split into 2 parts.  For sake of simplicity and avoiding too many volumes, I skipped the creation of the 4 corners for that split target fin segment.  < 0.2% of graphite.. Negligible, but then out visualization looked funny, incomplete.. So, I put them in. 
+
+   Checked with geantinos, need confirmation from visualization.. 
+
+

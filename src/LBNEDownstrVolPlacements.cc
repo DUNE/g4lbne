@@ -88,7 +88,7 @@ void LBNEVolumePlacements::PlaceFinalDownstrTarget(G4PVPlacement *mother) {
         new G4PVPlacement((G4RotationMatrix *) 0, 
 	                            posTmp, infoTmpRRight.fCurrent, G4String("TargetAlignmentRingRight")+ cNumStrStr.str(), 
 				          vMHe->GetLogicalVolume(), false, copyNumberHere, fCheckVolumeOverLapWC);
-       posTmp[2] += fTargetAlignRingSpacing;      
+        posTmp[2] += fTargetAlignRingSpacing;      
         copyNumber++; copyNumberHere++; 
         if ( copyNumber == fMaxNumAlignRings) break;
       }
@@ -114,6 +114,42 @@ void LBNEVolumePlacements::PlaceFinalDownstrTarget(G4PVPlacement *mother) {
       PlaceFinal("Horn1TargetCoolingTubeFirstWater", vTubeDown);					  
       PlaceFinal("Horn1TargetCoolingTubeFirstWater", vTubeUp);					  
       PlaceFinal("Horn1TargetFinVertFirst", vTargSegFirst);
+//
+// Oct. 29 2013 : add the 4 corners as well (overzealous, too much complexity already.. but makes vis. complete.. 
+// 
+      LBNEVolumePlacementData *plTargetFinCorDFUpLeft = 
+        Create(G4String("TargetFinVertCornerDownstrFirstUpLeft"));
+      LBNEVolumePlacementData *plTargetFinCorDFUpRight = 
+        Create(G4String("TargetFinVertCornerDownstrFirstUpRight"));
+      LBNEVolumePlacementData *plTargetFinCorDFDwnLeft = 
+       Create(G4String("TargetFinVertCornerDownstrFirstDwnLeft"));
+      LBNEVolumePlacementData *plTargetFinCorDFDwnRight = 
+      Create(G4String("TargetFinVertCornerDownstrFirstDwnRight"));
+   
+      posTmp[0] = -fTargetFinWidth/4.; 
+      posTmp[1] = fTargetFinHeight/2. -  fTargetCTubeOuterRadius/2. + 0.125*mm;
+      posTmp[2] = 0.;    
+      new G4PVPlacement((G4RotationMatrix *) 0, 
+	                            posTmp, plTargetFinCorDFUpLeft->fCurrent, 
+				          G4String("Horn1TargetFinVertCornerDownstrFirstUpLeft_P"), 
+				          vTargSegFirst->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
+      posTmp[0] = fTargetFinWidth/4.; posTmp[1] = fTargetFinHeight/2. -  fTargetCTubeOuterRadius/2. + 0.125*mm;
+      new G4PVPlacement((G4RotationMatrix *) 0, 
+	                            posTmp, plTargetFinCorDFUpRight->fCurrent, 
+				          G4String("Horn1TargetFinVertCornerDownstrFirstUpRight_P"), 
+				          vTargSegFirst->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
+					  
+      posTmp[0] = -fTargetFinWidth/4.; posTmp[1] = -1.0*(fTargetFinHeight/2. -  fTargetCTubeOuterRadius/2. + 0.125*mm);
+      new G4PVPlacement((G4RotationMatrix *) 0, 
+	                            posTmp, plTargetFinCorDFDwnLeft->fCurrent, 
+				          G4String("Horn1TargetFinVertCornerDownstrFirstDwnLeft_P"), 
+				          vTargSegFirst->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
+      posTmp[0] = fTargetFinWidth/4.; posTmp[1] = -1.0*(fTargetFinHeight/2. -  fTargetCTubeOuterRadius/2. + 0.125*mm);
+      new G4PVPlacement((G4RotationMatrix *) 0, 
+	                            posTmp, plTargetFinCorDFDwnRight->fCurrent, 
+				          G4String("Horn1TargetFinVertCornerDownstrFirstDwnRight_P"), 
+				          vTargSegFirst->GetLogicalVolume(), false, 0, fCheckVolumeOverLapWC);
+
      }
     // Now place the previously defined standard target segment. Note: they already contain their cooling and 
     // real target. 

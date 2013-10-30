@@ -79,6 +79,8 @@ fSkinDepth(4.1*mm)
      fEqnIndicesInner.push_back(4); fEqnIndicesOuter.push_back(7);
      fEffectiveLength = aPlacementHandler->GetHorn1EffectiveLength();
      fOuterRadius = aPlacementHandler->GetHorn1OuterTubeOuterRad();
+     fZShiftUpstrWorldToLocal = 0.; // by new definition (beginning of Oct. 2013 ) of the geometry. 
+     fZShiftDrawingCoordinate = 30.0*mm*aPlacementHandler->GetHorn1LongRescale(); // Drawing 8875.112-MD-363097
   } else {
      const LBNEVolumePlacementData *plDat = aPlacementHandler->Find("Bfield", 
                             "Horn2TopLevel", "LBNEMagneticFieldHorn::LBNEMagneticFieldHorn");
@@ -131,8 +133,16 @@ fSkinDepth(4.1*mm)
      fEqnIndicesInner.push_back(9);  fEqnIndicesOuter.push_back(5);
      
      fOuterRadius = aPlacementHandler->GetHorn2OuterTubeOuterRad();
+     fZShiftUpstrWorldToLocal = aPlacementHandler->GetHorn2LongPosition() + 
+        aPlacementHandler->GetHorn2LongRescale()*
+	aPlacementHandler->GetHorn2DeltaZEntranceToZOrigin(); // by new definition (beginning of Oct. 2013 ) of the geometry. 
+     fZShiftDrawingCoordinate = -1.0*aPlacementHandler->GetHorn2LongRescale()*
+         aPlacementHandler->GetHorn2DeltaZEntranceToZOrigin(); 
 
   }
+  std::cerr << " Magnetic field coordinate definition done.  fZShiftUpstrWorldToLocal " << 
+		    fZShiftUpstrWorldToLocal << " fZShiftDrawingCoordinate " << fZShiftDrawingCoordinate << std::endl;
+  fCoordinateSet = true;
   fOuterRadiusEff = fOuterRadius - 2.0*fSkinDepth; // skin depth at 0.43 kHz 
   // Z coordinate change not yet initialize, done at the first track.
 /*
@@ -197,10 +207,11 @@ void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) 
 
   
    G4double current = fHornCurrent/ampere/1000.;
-//   std::cerr << " LBNEMagneticFieldHorn::GetFieldValue current " << current << std::endl;
+//   std::cerr << " LBNEMagneticFieldHorn::GetFieldValue Z " << Point[2] << " current " << current << std::endl;
    for (size_t k=0; k!=3; ++k) Bfield[k] = 0.;
    // Intialization of the coordinate transform. 
    const LBNEVolumePlacements *aPlacementHandler = LBNEVolumePlacements::Instance();
+   /* Obsolete... 
    if (!fCoordinateSet) {
 
      G4Navigator* numinavigator=new G4Navigator(); //geometry navigator
@@ -227,11 +238,10 @@ void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) 
      fCoordinateSet = true;
       this->dumpField();
      std::cerr << " Coordinate transform, Z shifts at Z World  " << Point[2] << " in  " << vName << std::endl;
-     std::cerr << " fZShiftUpstrWorldToLocal " << 
-		    fZShiftUpstrWorldToLocal << " fZShiftDrawingCoordinate " << fZShiftDrawingCoordinate << std::endl;
 //      if (!amHorn1) { std::cerr << " And quit  !!!! " << std::endl; exit(2); }
    } // Initialization of Z coordinate transform 
    if (!fCoordinateSet) return;
+   */
    std::vector<double> ptTrans(2,0.);
    const double zLocal = Point[2] - fZShiftUpstrWorldToLocal; // from the start of the relevant volume 
    for (size_t k=0; k != 2; k++) 
@@ -248,7 +258,7 @@ void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) 
      magBField *= attLength;
    } else { 
      size_t kSelZ = fEqnIndicesInner.size();
-     const double zLocD = Point[2] - fZShiftDrawingCoordinate;
+     const double zLocD = zLocal - fZShiftDrawingCoordinate;
      for (size_t k=0; k != fEqnIndicesInner.size(); ++k) {
        if (zLocD < fZDCBegin[k]) break;
        if (zLocD > fZDCEnd[k]) continue; // They are Z ordered.. 
@@ -281,9 +291,9 @@ void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) 
      Bfield[1] = magBField*ptTrans[0]/r;
 //     this->fillTrajectories(Point, Bfield[0],  Bfield[1]);
 //     std::cerr << " Field region at Z " << Point[2] << " r = " << r 
-//	       << " radIC " << radIC << " radOC " 
-//	       << radOC << "zLocD " << zLocD << " magBField " 
-//	       <<  magBField/tesla << " Bx " << Bfield[0]/tesla << std::endl;
+//	     << " radIC " << radIC << " radOC " 
+//	     << radOC << "zLocD " << zLocD << " magBField " 
+//	     <<  magBField/tesla << " Bx " << Bfield[0]/tesla << std::endl;
    }
 }
 void LBNEMagneticFieldHorn::dumpField() const {

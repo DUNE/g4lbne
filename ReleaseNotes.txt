@@ -140,6 +140,14 @@ The pointer to the logical volume was not kept in memory, therefore deleted. The
 <\v3r0p7>
  
    
+  Oct 30 2013. 
+
+   Minor improvement to the calculation of the magnetic field map. John Losecco noticed that there was a small (~2 to 3 mm) shifts of the coordinate transform world -> Horn local in LBNEMagneticField, depending on the seed. This coordinate trasform was set based on the volume assignment and placement coordinates of the first track entering the Horn. While Geant4 guarantees that a sensitiv volume be crossed at it's exact boundary coordinates, the package simply guarantees that the integral over the field will computed with a specified accuracy. It does this by asking the field values at the entrance of the volume, but there is no warantee that it will do so within a specified accuracy.  So, run, to run, we could have fluctuation in the location of the Horn2 field, by up to a few mm. This coordinate transform for Horn1 was accurate to 20 microns (fixed shift). 
+
+   So, setting up these coordinate transform at "Beam On" time, based on real tracks, dating from the time when the world reference frame was *not* pinned to Horn1 (and thereby Horn2, the way the longitudinal position of Horn2 was defined).  The coordinate system was later sanitized, but not the way the World -> local (and drawings ) was computed in the LBNEMagneticField.  This has been now corrected, these coordinates transforms are now defined in LBNEMagneticField constructor, from volume placement data (and surveyor data, that part was o.k.) 
+
+ 
+
  
 
 

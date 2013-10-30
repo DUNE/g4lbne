@@ -236,10 +236,12 @@ void LBNEPrimaryMessenger::SetNewValue(G4UIcommand* cmd, G4String val)
   if(cmd == fBeamSigmaXCmd){
     fPrimaryAction->SetBeamSigmaX(fBeamSigmaXCmd->GetNewDoubleValue(val)); 
     fPrimaryAction->SetUseJustSigmaCoord(true); 
+    fPrimaryAction->SetUseCourantSniderParams(false);
   }
   if(cmd == fBeamSigmaYCmd){
     fPrimaryAction->SetBeamSigmaY(fBeamSigmaYCmd->GetNewDoubleValue(val));   
     fPrimaryAction->SetUseJustSigmaCoord(true); 
+    fPrimaryAction->SetUseCourantSniderParams(false);
   }
   if(cmd == fBeamMaxValXCmd){
     fPrimaryAction->SetBeamMaxValX(fBeamMaxValXCmd->GetNewDoubleValue(val));   

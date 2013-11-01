@@ -1246,71 +1246,73 @@ void eventRates::ReadXSecsFromFiles() {
 
 double eventRates::GetOscillatedNeutrinoType(double E) {
 
-      double osc_L = TMath::Sqrt(detx * detx + dety * dety + detz * detz);
-      int flavbefore = 0;
-      const int    nue     =  53;
-      const int    nuebar  =  52;
-      const int    numu    =  56;
-      const int    numubar =  55;
-      const int    nutau    =  58; 
-      const int    nutaubar =  59; 
-      if (Ntype == nuebar) flavbefore = -12;
-      else if (Ntype == numubar) flavbefore = -14;
-      else if (Ntype == nutaubar) flavbefore = -16;
-      else if (Ntype == nue) flavbefore = 12;
-      else if (Ntype == numu) flavbefore = 14;
-      else if (Ntype == nutau) flavbefore = 16;
-      else {
-	std::cout<<"WARNING: unrecognized neutrino type: "<<Ntype<<std::endl;
-      }
+  // detx, dety, detz are in cm; OscLib wants meters
+  double osc_L = TMath::Sqrt(detx * detx + dety * dety + detz * detz)/100;
+  
+  int flavbefore = 0;
+  const int    nue     =  53;
+  const int    nuebar  =  52;
+  const int    numu    =  56;
+  const int    numubar =  55;
+  const int    nutau    =  58; 
+  const int    nutaubar =  59; 
+  if (Ntype == nuebar) flavbefore = -12;
+  else if (Ntype == numubar) flavbefore = -14;
+  else if (Ntype == nutaubar) flavbefore = -16;
+  else if (Ntype == nue) flavbefore = 12;
+  else if (Ntype == numu) flavbefore = 14;
+  else if (Ntype == nutau) flavbefore = 16;
+  else {
+    std::cout<<"WARNING: unrecognized neutrino type: "<<Ntype<<std::endl;
+  }
 
-      osc::OscCalculator calculator;
-      calculator.SetRho(2.8); // from LBNE Snowmass Document
-      calculator.SetL(osc_L);
-      calculator.SetDmsq21(7.50e-5); // PDG 2013
-      calculator.SetDmsq32(0.00232); // PDG 2013
-      calculator.SetTh12(0.591); // PDG 2013
-      calculator.SetTh13(0.05); // PDG 2013
-      calculator.SetTh23(0.785); // Maximal
-      calculator.SetdCP(0);
+  osc::OscCalculator calculator;
+  calculator.SetRho(2.8); // from LBNE Snowmass Document
+  calculator.SetL(sqrt(detx*detx+dety*dety+detz*detz)/100/1000); // cm to km
+  calculator.SetDmsq21(7.50e-5); // PDG 2013
+  calculator.SetDmsq32(0.00232); // PDG 2013 
+  calculator.SetTh12(0.591); // PDG 2013
+  calculator.SetTh13(.16); // PDG 2013
+  calculator.SetTh23(0.785); // Maximal
+  calculator.SetdCP(0);
 
-      double P_e = 0;
-      double P_t = 0;
-      double P_m = 0;
-
-      if(flavbefore<0) {
-	P_e = calculator.P(flavbefore, -12, E);
-	P_m = calculator.P(flavbefore, -14, E);
-	P_t = calculator.P(flavbefore, -16, E);
-      }
-      else {
-	P_e = calculator.P(flavbefore, 12, E);
-	P_m = calculator.P(flavbefore, 14, E);
-	P_t = calculator.P(flavbefore, 16, E);
-      }
-
-      // throw a random number to determine which neutrino is produced     
-      double random_number = rand3->Rndm();
-
-      int ntype_oscillated;
-      if(flavbefore <0) {
-	if(random_number < P_e)
-	  ntype_oscillated = nuebar;
-	else if(random_number < P_e + P_t)
-	  ntype_oscillated = nutaubar;
-	else
-	  ntype_oscillated = numubar;
-      }
-      else {
-	if(random_number < P_e)
-	  ntype_oscillated = nue;
-	else if(random_number < P_e + P_t)
-	  ntype_oscillated = nutau;
-	else
-	  ntype_oscillated = numu;
-      }
-
-      return ntype_oscillated;
+  double P_e = 0;
+  double P_t = 0;
+  double P_m = 0;
+  
+  if(flavbefore<0) {
+    P_e = calculator.P(flavbefore, -12, E);
+    P_m = calculator.P(flavbefore, -14, E);
+    P_t = calculator.P(flavbefore, -16, E);
+  }
+  else {
+    P_e = calculator.P(flavbefore, 12, E);
+    P_m = calculator.P(flavbefore, 14, E);
+    P_t = calculator.P(flavbefore, 16, E);
+  }
+  
+  // throw a random number to determine which neutrino is produced     
+  double random_number = rand3->Rndm();
+  
+  int ntype_oscillated;
+  if(flavbefore <0) {
+    if(random_number < P_e)
+      ntype_oscillated = nuebar;
+    else if(random_number < P_e + P_t)
+      ntype_oscillated = nutaubar;
+    else
+      ntype_oscillated = numubar;
+  }
+  else {
+    if(random_number < P_e)
+      ntype_oscillated = nue;
+    else if(random_number < P_e + P_t)
+      ntype_oscillated = nutau;
+    else
+      ntype_oscillated = numu;
+  }
+  
+  return ntype_oscillated;
 
 }
 

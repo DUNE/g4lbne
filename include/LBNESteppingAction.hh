@@ -31,6 +31,7 @@ class LBNESteppingAction : public G4UserSteppingAction
    void CheckInTgtEndPlane(const G4Step * theStep);
    
    void OpenAscii(const char *fname); // for Geantino studies. (Absorption studies..) 
+                                      // Extended to Particle flux with PoT at exit of Horn1, entrance of Horn2, exit of Horn2 
 
 private:
    
@@ -64,6 +65,7 @@ private:
    
    bool goneThroughHorn1Neck;
    bool goneThroughHorn2Entr;
+   bool doStudyParticleThroughHorns;
    G4String fStudyGeantinoMode;
    G4String fKeyVolumeForOutput;
    G4String fKeyVolumeForOutputTo;
@@ -74,6 +76,7 @@ private:
    void StudyPropagation(const G4Step*); 
    void StudyCheckOverlap(const G4Step*); 
    void dumpStepCheckVolumeAndFields(const G4Step*);
+   void StudyParticleThroughHorns(const G4Step*);
    
 public:
    
@@ -82,6 +85,7 @@ public:
    void SetStudyGeantinoMode(G4String v) {fStudyGeantinoMode = v; }
    void SetKeyVolumeForOutput(G4String v) {fKeyVolumeForOutput = v; }
    void SetKeyVolumeForOutputTo(G4String v) {fKeyVolumeForOutputTo = v; }
+   void SetStudyParticleThroughHorns(bool t) {doStudyParticleThroughHorns = t;}
    inline int GetNumTracksKilledAsStuck() const { return fNumTracksKilledAsStuck;}
    inline void ResetNumSteps() const {fNumStepsCurrentTrack = 0;} // Not const on mutable. Screw you.. 
 };

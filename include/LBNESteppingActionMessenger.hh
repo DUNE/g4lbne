@@ -39,6 +39,7 @@ private:
 
    G4UIcmdWithAString*         KeyVolumeForOutput;
    G4UIcmdWithAString*         KeyVolumeForOutputTo;
+   G4UIcmdWithABool*            GenerateParticleOuputHorns;
 
 
    //

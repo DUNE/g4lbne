@@ -46,6 +46,15 @@ LBNESteppingActionMessenger::LBNESteppingActionMessenger(LBNESteppingAction* RA)
   KeyVolumeForOutputTo->SetParameterName("keyVolumeForOutputTo ",true);
   KeyVolumeForOutputTo->SetDefaultValue ("blank");
   KeyVolumeForOutputTo->AvailableForStates(G4State_Idle);
+  
+ GenerateParticleOuputHorns  = new G4UIcmdWithABool("/LBNE/stepping/generateParticlesFluxThroughHorns",this);
+ GenerateParticleOuputHorns->SetGuidance(
+  "Save bulky ASCII file with 6D phase info for high energy (> 1.GeV at Horn1 exit, Horn2 entrance and exits ");
+ GenerateParticleOuputHorns->SetParameterName("ParticleFluxInfo",true);
+ GenerateParticleOuputHorns->SetDefaultValue (false);
+ GenerateParticleOuputHorns->AvailableForStates(G4State_Idle);
+    
+  
 }
 LBNESteppingActionMessenger::~LBNESteppingActionMessenger() {
 
@@ -68,6 +77,8 @@ void LBNESteppingActionMessenger::SetNewValue(G4UIcommand* command,G4String newV
      SteppingAction->SetKeyVolumeForOutput(newValues);
    } else if(command == KeyVolumeForOutputTo) {
      SteppingAction->SetKeyVolumeForOutputTo(newValues);
+   } else if(command == GenerateParticleOuputHorns) {
+     SteppingAction->SetStudyParticleThroughHorns(newValues);
    }
 }
 

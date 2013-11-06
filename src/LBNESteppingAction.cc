@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNESteppingAction.cc
-// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.14 2013/10/28 12:06:31 lebrun Exp $
+// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.15 2013/11/06 20:57:48 lebrun Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -47,6 +47,7 @@ LBNESteppingAction::LBNESteppingAction()
  fNConsecutivSmallSteps=0;
  fNumTracksKilledAsStuck=0;
  fNumStepsCurrentTrack=0;
+ doStudyParticleThroughHorns=false;
 }
 //----------------------------------------------------------------------
 LBNESteppingAction::~LBNESteppingAction()
@@ -136,9 +137,15 @@ void LBNESteppingAction::UserSteppingAction(const G4Step * theStep)
       
    LBNESteppingAction::CheckDecay(theStep);
    if (fOutStudy.is_open()) {
-    if (fStudyGeantinoMode.find("Absorb") != std::string::npos) StudyAbsorption(theStep);
-    if (fStudyGeantinoMode.find("Propa") != std::string::npos) StudyPropagation(theStep);
-    if (fStudyGeantinoMode.find("PropCO") != std::string::npos) StudyCheckOverlap(theStep);
+    if(doStudyParticleThroughHorns) {
+//       std::cerr << " Stepping .... doStudyParticleThroughHorns.. And quit  " << std::endl; exit(2);
+      StudyParticleThroughHorns(theStep);
+    }
+    else {
+      if (fStudyGeantinoMode.find("Absorb") != std::string::npos) StudyAbsorption(theStep);
+      if (fStudyGeantinoMode.find("Propa") != std::string::npos) StudyPropagation(theStep);
+      if (fStudyGeantinoMode.find("PropCO") != std::string::npos) StudyCheckOverlap(theStep);
+    }
    }
 }
 
@@ -390,6 +397,8 @@ void LBNESteppingAction::OpenAscii(const char *fname) {
      fOutStudy << " id x y z xo yo zo zPost step matPre matPost " << std::endl;
    } else if (fStudyGeantinoMode.find("PropCO") != std::string::npos) {
      fOutStudy << " id x y z xo yo zo step matPre matPost " << std::endl;
+   } else if (doStudyParticleThroughHorns) {
+     fOutStudy << " evt id x y z px py pz " << std::endl;
    }
    fOutStudy.flush();
    std::cerr << " LBNESteppingAction::OpenAscii " << std::string(fname) << std::endl;
@@ -668,4 +677,43 @@ void LBNESteppingAction::dumpStepCheckVolumeAndFields(const G4Step * theStep) {
    fOutStepStudy << " " << std::sqrt(bf[0]*bf[0] + bf[1]*bf[1])/tesla;
   }
   fOutStepStudy << " " << postPtr->GetPhysicalVolume()->GetLogicalVolume()->GetName() << std::endl; 
+}
+
+void LBNESteppingAction::StudyParticleThroughHorns(const G4Step* theStep) {
+
+   G4Track * theTrack = theStep->GetTrack();
+   if (theTrack == 0) return;
+//   std::cerr << " Into LBNESteppingAction::StudyParticleThroughHorns, step length " 
+//             << theStep->GetStepLength() << std::endl;
+   G4StepPoint* prePtr = theStep->GetPreStepPoint();
+   if (prePtr == 0) return;
+   if (prePtr->GetPhysicalVolume() == 0) return;
+   G4StepPoint* postPtr = theStep->GetPostStepPoint();
+   if (postPtr == 0) return;
+   if (postPtr->GetPhysicalVolume() == 0) return;
+   G4LogicalVolume *volPost = postPtr->GetPhysicalVolume()->GetLogicalVolume();
+   G4LogicalVolume *volPre = prePtr->GetPhysicalVolume()->GetLogicalVolume();
+   std::string volNamePost(volPost->GetName());
+   std::string volNamePre(volPre->GetName());
+   bool ofInterest = false;
+   // Entering the corridor 
+   if ((volNamePre == std::string("Tunnel")) && 
+       (volNamePost == std::string("Horn1ToHorn2Corridor"))) ofInterest=true;
+   if ((volNamePost == std::string("Tunnel")) && 
+       (volNamePre == std::string("Horn1ToHorn2Corridor"))) ofInterest=true;
+   if ((volNamePre.find("Horn2") != std::string::npos) && 
+       (volNamePost == std::string("Tunnel"))) ofInterest=true;
+   if (!ofInterest) return;
+   const double eTot = theTrack->GetTotalEnergy();
+   const double mass= theTrack->GetParticleDefinition()->GetPDGMass();
+   const double pTot = std::sqrt(eTot*eTot - mass*mass);
+   if (pTot < 1.*GeV) return;
+   if (pTot > 50.*GeV) return;
+   fOutStudy << " " << pRunManager->GetCurrentEvent()->GetEventID(); 
+   fOutStudy << " " << theTrack->GetParticleDefinition()->GetPDGEncoding();
+   for (int k=0; k != 3; k++) fOutStudy << " " << postPtr->GetPosition()[k];
+   G4ThreeVector direction = theTrack->GetMomentumDirection();
+   for (int k=0; k != 3; k++) fOutStudy << " " << 0.001*pTot*direction[k];
+   fOutStudy << std::endl;
+
 }

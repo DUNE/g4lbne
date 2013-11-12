@@ -161,7 +161,17 @@ which must be inserted before the previously defined command
 
 /LBNE/stepping/filename  <fileName> 
 
+November 12 2013 
 
+ Fixed a serious mistake in defining the G4 volumes for the Horn2 Outer Conductor: the medium was "Air", it must "aluminum".  Once validated by studying the pion vertices yielding neutrinos (thanks to Seongtae Park!, and further comments by Jim H.), a new tag is probably required,as this should make some differences in the neutrino yield. Mea Culpa!  Paul Lebrun.
+ 
+ Note that the seemingly missing 3mm long of the inner conductor will require a bit more studies, difficult to do without access to the blue print.
+ The misplaced shielding blocks (or water tubes/vessels) will require some discussion, face to face with Jim or Alberto. 
+ 
+ P.L., Malargue, Argentina, Nov. 12 2013 
+ 
+ 
+ 
 
 
  

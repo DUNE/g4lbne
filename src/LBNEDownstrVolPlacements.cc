@@ -1656,7 +1656,7 @@ void LBNEVolumePlacements::PlaceFinalHorn2(G4PVPlacement *vH2Hall) {
       G4String nStr(nStrStr.str());
       G4Tubs* tubsPart = new G4Tubs(nStr, fHorn2OuterTubeInnerRad, fHorn2OuterTubeOuterRad,
          (fHorn2PartsLengths[kPart]/2 - 0.020*mm ), 0., 360.0*deg);
-      G4LogicalVolume *tubsL = new G4LogicalVolume(tubsPart, G4Material::GetMaterial("Air"), nStr);
+      G4LogicalVolume *tubsL = new G4LogicalVolume(tubsPart, G4Material::GetMaterial("Aluminum"), nStr);
       G4ThreeVector posTmp; posTmp[0] =0.; posTmp[1] =0.; posTmp[2] =0.; 
       new G4PVPlacement((G4RotationMatrix *) 0, posTmp, tubsL, nStr + std::string("_P"), 
   		     vPart->GetLogicalVolume(), false, 1, fCheckVolumeOverLapWC); 

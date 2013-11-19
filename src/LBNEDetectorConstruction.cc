@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.35 2013/10/15 19:17:43 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.36 2013/11/19 21:04:16 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -693,7 +693,9 @@ void LBNEDetectorConstruction::ConstructLBNEShieldingHorn2(G4PVPlacement *mother
          fPlacementHandler->Find(G4String("ShieldingHorn2"), nameM, 
 	                         G4String("LBNEDetectorConstruction::ConstructLBNEShieldingHorn2"));
 				 
-   const double horn2Height = 60.6*in;				 
+   const double horn2Height = (37. + 17.3)*in; // ???? Checked final position of the bottom slab 
+   // from drawing of page 30 of LBNE Doc 5339-v5 Vertical distance between the top of the bottom shielding 
+   // and the beam line, at the geometricla center of Horn2.  				 
 //
 // Bottom 
 //
@@ -708,10 +710,12 @@ void LBNEDetectorConstruction::ConstructLBNEShieldingHorn2(G4PVPlacement *mother
    // MCZERO is G4 coordinate 0.0, the center of tunnel, so the above number needs to be corrected for the 
    // shift in the center of the mother volume  
    const double zShift = -1.0*plTop->fPosition[2];
-   const double yCorr = -1.0*zShift*std::sin(fBeamlineAngle);
-   posTmp[1]  -= yCorr;
-//   std::cerr << "ConstructLBNEShieldingHorn2 .... "<< bName << " zShift bottom plate " << zShift 
-//	     << " thus, y position " << posTmp[1] << " coorection " << yCorr << std::endl;
+//   const double yCorr = -1.0*zShift*std::sin(fBeamlineAngle); v3r0p8
+   const double yCorr = 0; // directly measured of the drawing 
+   posTmp[1]  += yCorr;
+//  std::cerr << "ConstructLBNEShieldingHorn2 .... "<< bName << " zShift bottom plate " << zShift 
+//     	  << " thus, y position " << posTmp[1] << " coorection " << yCorr <<  " And quit " << std::endl;
+//	  exit(2);
 //	     
    new G4PVPlacement(&fRotBeamlineAngle, posTmp, bLVol, bName + std::string("_P"),
                        mother->GetLogicalVolume(), false, 1, true);

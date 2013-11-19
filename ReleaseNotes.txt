@@ -174,8 +174,14 @@ November 12 2013
  
  </v3r0p9>
  
+ 
+ November 19 2013 
+ 
+ After LBNE meeting on Nov 7, and a brief discussion with Jim H., re-visited the Horn2 shielding blocks, bottom and side locations.  Move them downwards by ~ 70 cm, after re-measuring on drawing found in LBNE Doc 5339, page 30. 
+ 
+ Also, re-adjusted the length of the most downstream part of Horn1 inner conductor transition, from Z=110 -> ~ 114 mm. There is no 2 more mm of Horn material. Since the thickness is a bit bigger due the to the shape of the weld.  This is compensated by a missing ~mm in length. 
 
-
+ 
  
 
 

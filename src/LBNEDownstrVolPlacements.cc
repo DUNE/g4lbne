@@ -324,7 +324,8 @@ void LBNEVolumePlacements::DeclareHorn1Dims() {
   fHorn1UpstrInnerRadsOuterUpstr[3] = fHorn1UpstrInnerRadsUpstr[2] + 0.118*in; 
   fHorn1UpstrInnerRadsDownstr[3] =  fHorn1UpstrInnerRadsUpstr[3]; 
   fHorn1UpstrInnerRadsOuterDownstr[3] = fHorn1UpstrInnerRadsDownstr[3] + 0.20*in; 
-  fHorn1UpstrLengths[3] = 0.40*in - 0.100*mm;
+  fHorn1UpstrLengths[3] = 0.479*in - 0.100*mm; // Nov 19 2013 : change from 0.40 inches to 0.479, per more 
+                                               // accurate reading of drawing 363097
   fHorn1UpstrZPositions[3] = fHorn1UpstrZPositions[2] + 0.025*mm + fHorn1UpstrLengths[2]/2 + fHorn1UpstrLengths[3]/2.;
  //
  // These are elements, approximated as tubes, of the Inner Outer transition piece of Horn1 

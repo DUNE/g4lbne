@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.36 2013/11/19 21:04:16 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.37 2013/12/02 20:25:47 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -259,6 +259,12 @@ void LBNEDetectorConstruction::InitializeMaterialsPostPreIdle() {
   } else if ((aNameT == G4String("Aluminium")) 
             || (aNameT == G4String("aluminium"))) {   
      new G4Material("Target", 13, 26.98*g/mole, 2.7*g/cm3);
+  } else if (aNameT == G4String("lightCarbon")) { 
+      G4Material *Target = new G4Material( "Target", 
+             fPlacementHandler->GetTargetDensity()/100., 3 );
+      Target->AddElement( elC,  0.99); 
+      Target->AddElement( elN,  0.007); 
+      Target->AddElement( elO,  0.003);
   } else {
     G4String mess(" Non-standard material for the target: "); 
     mess += aNameT + G4String (" .  \n");

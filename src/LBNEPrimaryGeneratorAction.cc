@@ -416,13 +416,18 @@ void LBNEPrimaryGeneratorAction::Geantino(G4Event* anEvent)
     
     const double dr = fPolarAngleGeantinoMin + 
                       (fPolarAngleGeantino - fPolarAngleGeantinoMin)*G4RandFlat::shoot();
+// Back door to study tile of Horn1 via magentic effect. Take a point source at = 0.
+//     double dPhi  = M_PI/2.;
+//     while (((dPhi >  M_PI/4.) && (dPhi <  3.0*M_PI/4.)) ||
+//            ((dPhi > (M_PI + M_PI/4.)) && (dPhi < (2.0*M_PI - M_PI/4.))))
+//        dPhi = 2.0*M_PI*G4RandFlat::shoot();
+	
     const double dPhi = 2.0*M_PI*G4RandFlat::shoot();
 //    const double dPhi = -M_PI/2.; // Shooting up, test Hadron Absorber. 
     const double dx = dr*std::cos(dPhi);
     const double dy = dr*std::sin(dPhi);
     const double dz = sqrt(1.0 - (dx*dx + dy*dy));
     G4ThreeVector direction(dx, dy, dz);
-
 //
 // Store it a proton internally to lbne d/s  ... Messy: 
     fProtonN = fCurrentPrimaryNo;
@@ -430,6 +435,9 @@ void LBNEPrimaryGeneratorAction::Geantino(G4Event* anEvent)
     fTgen=0;
     const double x =  G4RandGauss::shoot(0.0, 1.3);  
     const double y =  G4RandGauss::shoot(0.0, 1.3);  
+// Back door to study tile of Horn1 via magentic effect. Take a point source at = 0.
+//    const double x =  G4RandGauss::shoot(0.0, 1.3e-10);  
+//    const double y =  G4RandGauss::shoot(0.0, 1.3e-10);  
 // Back door to study effect of overlap
 //    const double dPhiPos = 2.0*M_PI*G4RandFlat::shoot();
 //    const double x =  G4RandGauss::shoot(0.0, 1.3) + 223.18 * std::sin(dPhiPos);  
@@ -437,6 +445,7 @@ void LBNEPrimaryGeneratorAction::Geantino(G4Event* anEvent)
     const double z =  fZOriginGeantino +  G4RandGauss::shoot(0.0, fSigmaZOriginGeantino);  
     fParticleGun->SetParticlePosition(G4ThreeVector(x, y, z));
     fParticleGun->SetParticleMomentumDirection(direction);
+//    std::cerr << " Muon Vertex " << G4ThreeVector(x, y, z) << " direction " << direction << std::endl;
     if (fUseMuonGeantino) fParticleGun->SetParticleEnergy(fProtonMomentumMag); // back door use of the proton momentum data card. 
     fParticleGun->GeneratePrimaryVertex(anEvent);
 }

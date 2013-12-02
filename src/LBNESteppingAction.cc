@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // LBNESteppingAction.cc
-// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.15 2013/11/06 20:57:48 lebrun Exp $
+// $Id: LBNESteppingAction.cc,v 1.1.1.1.2.16 2013/12/02 20:24:52 lebrun Exp $
 //----------------------------------------------------------------------
 
 //C++
@@ -145,6 +145,7 @@ void LBNESteppingAction::UserSteppingAction(const G4Step * theStep)
       if (fStudyGeantinoMode.find("Absorb") != std::string::npos) StudyAbsorption(theStep);
       if (fStudyGeantinoMode.find("Propa") != std::string::npos) StudyPropagation(theStep);
       if (fStudyGeantinoMode.find("PropCO") != std::string::npos) StudyCheckOverlap(theStep);
+      if (fStudyGeantinoMode.find("MagTilt") != std::string::npos) StudyCheckMagneticTilts(theStep);
     }
    }
 }
@@ -397,6 +398,8 @@ void LBNESteppingAction::OpenAscii(const char *fname) {
      fOutStudy << " id x y z xo yo zo zPost step matPre matPost " << std::endl;
    } else if (fStudyGeantinoMode.find("PropCO") != std::string::npos) {
      fOutStudy << " id x y z xo yo zo step matPre matPost " << std::endl;
+   } else if (fStudyGeantinoMode.find("MagTilt") != std::string::npos) {
+     fOutStudy << " id x y z xp yp zp  " << std::endl;
    } else if (doStudyParticleThroughHorns) {
      fOutStudy << " evt id x y z px py pz " << std::endl;
    }
@@ -568,7 +571,8 @@ void LBNESteppingAction::StudyCheckOverlap(const G4Step * theStep) {
 //make sure we are dealing with a geantino... 
 //
    G4Track * theTrack = theStep->GetTrack();
-   if ((theTrack->GetParticleDefinition()->GetParticleName()).find("geantino") == std::string::npos) return;
+   // Skip this cut for X-checking the muon-genatinos 
+//   if ((theTrack->GetParticleDefinition()->GetParticleName()).find("geantino") == std::string::npos) return;
    if( theTrack->GetNextVolume() == 0 ) {
         if (pRunManager->GetCurrentEvent()->GetEventID() < 3) 
 	   std::cout << " Out of world with track length  = " << theTrack->GetTrackLength()  << std::endl; 
@@ -617,6 +621,59 @@ void LBNESteppingAction::StudyCheckOverlap(const G4Step * theStep) {
      fOutStudy << " " << theStep->GetStepLength();
      fOutStudy << " " << volPre->GetMaterial()->GetName();
      fOutStudy << " " << volPost->GetMaterial()->GetName();
+     fOutStudy << std::endl;
+  }
+}
+void LBNESteppingAction::StudyCheckMagneticTilts(const G4Step * theStep) {
+//
+//make sure we are dealing with a geantino... 
+//
+   G4Track * theTrack = theStep->GetTrack();
+   if ((theTrack->GetParticleDefinition()->GetParticleName()).find("mu") == std::string::npos) return;
+   if( theTrack->GetNextVolume() == 0 ) {
+        if (pRunManager->GetCurrentEvent()->GetEventID() < 3) 
+	   std::cout << " Out of world with track length  = " << theTrack->GetTrackLength()  << std::endl; 
+       return;
+   }
+   G4StepPoint* prePtr = theStep->GetPreStepPoint();
+   if (prePtr == 0) return;
+   if (pRunManager->GetCurrentEvent()->GetEventID() < 3) 
+     std::cout << " at Z = " << prePtr->GetPosition()[2] << " r " << 
+           std::sqrt(prePtr->GetPosition()[0]*prePtr->GetPosition()[0] +
+	         prePtr->GetPosition()[1]*prePtr->GetPosition()[1]) << std::endl;
+   G4StepPoint* postPtr = theStep->GetPostStepPoint();
+   if (postPtr == 0) {
+        if (pRunManager->GetCurrentEvent()->GetEventID() < 3) 
+	   std::cout << " No Post Point, Last step at Z = " << prePtr->GetPosition()[2] << " r " <<            
+	      std::sqrt(prePtr->GetPosition()[0]*prePtr->GetPosition()[0] +
+	         prePtr->GetPosition()[1]*prePtr->GetPosition()[1]) << std::endl; 
+ 
+       return;
+   }
+   if (postPtr->GetPhysicalVolume() == 0) {
+        if (pRunManager->GetCurrentEvent()->GetEventID() < 3) 
+	   std::cout << " No Post Point Volume Last step at Z = " << prePtr->GetPosition()[2] << " r " <<            
+	      std::sqrt(prePtr->GetPosition()[0]*prePtr->GetPosition()[0] +
+	         prePtr->GetPosition()[1]*prePtr->GetPosition()[1]) << std::endl; 
+   
+    return;
+   }
+   if (prePtr->GetPhysicalVolume() == 0) return;
+   G4LogicalVolume *volPost = postPtr->GetPhysicalVolume()->GetLogicalVolume();
+   G4LogicalVolume *volPre = prePtr->GetPhysicalVolume()->GetLogicalVolume();
+   if (volPre == 0) return;
+   if (volPost == 0) return;
+  std::string volNamePost(volPost->GetName());
+   std::string volNamePre(volPre->GetName());
+//   if (((volNamePost.find(fKeyVolumeForOutput.c_str()) != std::string::npos) || 
+//      (volNamePre.find(fKeyVolumeForOutput.c_str()) != std::string::npos)) &&
+//      ( (volNamePost.find(fKeyVolumeForOutputTo.c_str()) != std::string::npos) || 
+//      (volNamePre.find(fKeyVolumeForOutputTo.c_str()) != std::string::npos))) {
+   if ( (volNamePre.find(fKeyVolumeForOutput.c_str()) != std::string::npos) &&
+        (volNamePost.find(fKeyVolumeForOutputTo.c_str()) != std::string::npos)) {
+     fOutStudy << " " << pRunManager->GetCurrentEvent()->GetEventID(); 
+     for (int k=0; k != 3; k++) fOutStudy << " " << postPtr->GetPosition()[k];
+     for (int k=0; k != 3; k++) fOutStudy << " " << theTrack->GetMomentumDirection()[k];
      fOutStudy << std::endl;
   }
 }

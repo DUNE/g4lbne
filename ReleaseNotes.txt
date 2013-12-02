@@ -184,7 +184,14 @@ November 12 2013
 
  </v3r0p10>
  
+Novmeber 27 - December 02 2013 
 
+ a. Added a new method in the LBNESteppingAction (StudyCheckMagneticTilts) that quantifies the astigmatism one gets by moving Horn1. It simply records the 6D position of muon-Geantinos at the end of Horn2. 
+ 
+ b. Made the self-test on the inner conductor radius run only if the length of the Horn is not rescaled. This was a fatal bug, for any rescaled value. But only
+ a bug is this option was chosen. 
+ 
+ 
 
 
  

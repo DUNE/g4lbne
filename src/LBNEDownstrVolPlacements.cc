@@ -415,7 +415,9 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
    const double in = 2.54*cm;
 //
 //   std::cerr << " Start testing PlaceFinalHorn1, mother Logical volume name " << mother->GetLogicalVolume()->GetName() << std::endl;
-   fHorn1Equations[0].test1(); // this supposed to work 
+   if (std::abs(fHorn1LongRescale - 1.0) < 1.0e-5) 
+                  fHorn1Equations[0].test1(); // this supposed to work.  But not if we rescale the Horn1, 
+		  // since we compare with hardtyped data extracted from a blue print 
 //   std::cerr << " Test 1 passed " << std::endl;
 //   fHorn1Equations[3].test1(); // This supposed to fail... 
    LBNEVolumePlacementData *plTrUpst = this->Create("Horn1IOTransCont");

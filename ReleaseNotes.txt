@@ -192,10 +192,10 @@ Novmeber 27 - December 02 2013
  a bug is this option was chosen. 
  
 December 3 2013
-
-  a. Fixed the ./gdml/abs_geomSept13.gdml: (1) Geant4 does not like "theoretical vacuum, i.e., density = 0, nothing. This MARS material is not used in Absorber geometry, so I removed these from the file;
+  a. Avoid running a self-consistency test on the inner conductor radius equations if the length of the horn gets rescaled, as this test no longer makes sense 
+  b. Fixed the ./gdml/abs_geomSept13.gdml: (1) Geant4 does not like "theoretical vacuum, i.e., density = 0, nothing. This MARS material is not used in Absorber geometry, so I removed these from the file;
      and (2) add a "setup clause" to avoid a parser error. 
-  b. Minor modification to the geometry of the Hadron absorber to avoid volume orverlap. It was "Air against air" from the from beam, so no change to physics results expected. This is simply to clean up and avoid confusing errors. 
+  c. Minor modification to the geometry of the Hadron absorber to avoid volume orverlap. It was "Air against air" from the from beam, so no change to physics results expected. This is simply to clean up and avoid confusing errors. 
   
   
 

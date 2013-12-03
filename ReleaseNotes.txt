@@ -191,7 +191,13 @@ Novmeber 27 - December 02 2013
  b. Made the self-test on the inner conductor radius run only if the length of the Horn is not rescaled. This was a fatal bug, for any rescaled value. But only
  a bug is this option was chosen. 
  
- 
+December 3 2013
+
+  a. Fixed the ./gdml/abs_geomSept13.gdml: (1) Geant4 does not like "theoretical vacuum, i.e., density = 0, nothing. This MARS material is not used in Absorber geometry, so I removed these from the file;
+     and (2) add a "setup clause" to avoid a parser error. 
+  b. Minor modification to the geometry of the Hadron absorber to avoid volume orverlap. It was "Air against air" from the from beam, so no change to physics results expected. This is simply to clean up and avoid confusing errors. 
+  
+  
 
 
  

@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 // LBNEAnalysis.cc
 //
-// $Id: LBNEAnalysis.cc,v 1.3.2.5 2013/10/15 19:17:43 lebrun Exp $
+// $Id: LBNEAnalysis.cc,v 1.3.2.6 2013/12/03 21:29:05 lebrun Exp $
 //----------------------------------------------------------------------
 
 #include <vector>
@@ -131,8 +131,8 @@ G4bool LBNEAnalysis::CreateOutput()
          LBNERunManager *pRunManager=
           dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
 
-	 sprintf(nuNtupleFileName,"%s_%03d%s.root",
-	   (pRunManager->GetOutputNtpFileName()).c_str(),pRunManager->GetCurrentRun()->GetRunID(), "v3xxx");
+	 sprintf(nuNtupleFileName,"%s_%03d.root",
+	   (pRunManager->GetOutputNtpFileName()).c_str(),pRunManager->GetCurrentRun()->GetRunID());
 	 fOutFile = new TFile(nuNtupleFileName,"RECREATE","root ntuple");
 	 std::cerr << "Creating neutrino ntuple: " << nuNtupleFileName << std::endl;
 	 //fOutTree = new TTree("nudata","g4numi Neutrino ntuple");
@@ -211,6 +211,8 @@ void LBNEAnalysis::FillNeutrinoNtuple(const G4Track& track)
 
   LBNERunManager *pRunManager=
     dynamic_cast<LBNERunManager*>(G4RunManager::GetRunManager());
+ 
+// return; // Testing memory leak to see is this not ROOT.    
 
  if (pRunManager->GetVerboseLevel() > 3) 
    { G4cout << "LBNEAnalysis::FillNeutrinoNtuple() called." << G4endl;}

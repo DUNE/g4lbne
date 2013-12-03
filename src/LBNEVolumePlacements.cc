@@ -381,7 +381,7 @@ LBNEVolumePlacementData*
   if (name == G4String("Tunnel")) {
     info.fParams[0] = std::max((18.5*m), 2.0*(fDecayPipeRadius)); 
        // Note: the total volume is 60 m. wide => plenty enough rocks. The last term is for the Hadron Absorber cavern  
-    info.fParams[1] = std::max((40*m), 2.0*(fDecayPipeRadius)); // Too tall... Set by the Hadron absorber requirement 
+    info.fParams[1] = std::max((50*m), 2.0*(fDecayPipeRadius)); // Too tall... Set by the Hadron absorber requirement 
     info.fParams[2] = fTotalLength - fLengthOfRockDownstr -2.0*cm;
     std::cerr << " Total half length of the tunnel " << info.fParams[2]/2. << std::endl;
     std::cerr << " Total half Height of the tunnel " << info.fParams[1]/2. << std::endl;

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.37 2013/12/02 20:25:47 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.38 2013/12/03 21:19:30 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -464,6 +464,7 @@ void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber(G4VPhysicalVolume *mo
     }
      G4GDMLParser parser;
      parser.Read( filename );
+//     std::cerr << " And stop after parsing the gdml file " << std::endl; exit(2);
      G4LogicalVolume *topAbs = parser.GetVolume( "TOP" );
      // We dump the volume hierarchy.  Hoopefully not too deep, 
 /*
@@ -554,10 +555,12 @@ void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber(G4VPhysicalVolume *mo
          fPlacementHandler->Find(G4String("HadronAbsorber"), G4String("DecayPipeHall"), 
 	                         G4String("LBNEDetectorConstruction::ConstructLBNEHadronAbsorber"));
      const double zzz = maxHalfLength + plDecayPipe->fParams[2]/2 + plDecayPipe->fPosition[2] + 
-         std::abs(maxHalfHeight*std::sin(fBeamlineAngle)) +  5.0*cm;	
-//     std::cerr << " half length Decay Pipe " << plDecayPipe->fParams[2]/2 
-//               << " Position in tunnel (center) " << plDecayPipe->fPosition[2] 
-//	       << " ZPosAbs " << zzz <<  std::endl;
+         std::abs(maxHalfHeight*std::sin(fBeamlineAngle)) +  5.0*cm;
+	 	
+     std::cerr << " half length Decay Pipe " << plDecayPipe->fParams[2]/2 
+               << " Position in tunnel (center) " << plDecayPipe->fPosition[2] 
+	       << " half width decay pipe " << plDecayPipe->fParams[0]/2 << " 1/2 height " << plDecayPipe->fParams[1]/2
+	       << " ZPosAbs " << zzz <<  std::endl;
 // One must adjust the height of the Absorber such the the beam line crosses the center of the 3 rth Core block in it's 
 // center.. 
 //
@@ -573,25 +576,31 @@ void LBNEDetectorConstruction::ConstructLBNEHadronAbsorber(G4VPhysicalVolume *mo
      for (int i=0; i != topAbs->GetNoDaughters(); ++i) {
        G4VPhysicalVolume *pVol = topAbs->GetDaughter(i);
        G4LogicalVolume *lVol = pVol->GetLogicalVolume();
-//       const G4Box *aBox = static_cast<const G4Box *>(lVol->GetSolid());
+       const G4Box *aBox = static_cast<const G4Box *>(lVol->GetSolid());
        G4ThreeVector loc = pVol->GetObjectTranslation();
 //       const double yyy = loc[0]  - marsTopHeight + maxHalfHeight;  
-       const double yyy = loc[0] ;  // Up to a sign!!! 
+       double yyy = loc[0] ;  // Up to a sign!!! 
        const double xxx = loc[1]; // Y G4LBNE = -X Mars. Was centered in MARS, set to 0., o.k.
          // X G4LBNE = Y Mars. !! Not centered in Mars! Perhaps, ned a shift due to the 
         // the different size of the mother volume  
 //       const double zzz = loc[2] - marsTopLength + maxHalfLength;
-       const double zzz = loc[2] - 27.9*m; // Setting up this last shift with Geantino .
-        //  Difference in lengths for mother volume.  
-//       const double zzz = -maxHalfLength + aBox->GetZHalfLength() + 0.5*cm;
+       double zzz = loc[2] - 27.9*m; // Setting up this last to avoid air to air volume overlap. 
+       if (lVol->GetName().find("AH_top") != std::string::npos) {
+          yyy += 0.1*mm; // To avoid clash.. Cosmetic 
+       // Note: for release v3r0px up to v3r0p10, this was set to 27.9 m 
+	  zzz = loc[2] - 27.0*m; // Also to avoid clash.  Note that this volume is not 
+	                         // in the pion beam, it is up ~ 8 m. above the beam line. 
+       }
        G4ThreeVector posTmp(xxx, yyy, zzz);
 //       std::cerr << " Placing volume " << lVol->GetName() << " at " << posTmp << " 1/2 sizes (G4 coord)  " 
-//          << aBox->GetYHalfLength() << " , " << aBox->GetXHalfLength() << " , " 
-//	  <<  aBox->GetZHalfLength() << std::endl;
+//	  << aBox->GetYHalfLength() << " , " << aBox->GetXHalfLength() << " , " 
+//	<<  aBox->GetZHalfLength() << std::endl;
+//       std::cerr << "  .... Extend in X " << posTmp[0] - aBox->GetYHalfLength() 
+//		 << " to " << posTmp[0] + aBox->GetYHalfLength() << std::endl;
 //       std::cerr << "  .... Extend in Y " << posTmp[1] - aBox->GetXHalfLength() 
-//                 << " to " << posTmp[1] + aBox->GetXHalfLength() << std::endl;
+//		 << " to " << posTmp[1] + aBox->GetXHalfLength() << std::endl;
 //       std::cerr << "  .... Extend in Z " << posTmp[2] - aBox->GetZHalfLength() 
-//                 << " to " << posTmp[2] + aBox->GetZHalfLength() << std::endl;
+//		 << " to " << posTmp[2] + aBox->GetZHalfLength() << std::endl;
        new G4PVPlacement(marsRot, posTmp, lVol, lVol->GetName() + std::string("_P"), aHATopL, false, 1, true);
      }
      //

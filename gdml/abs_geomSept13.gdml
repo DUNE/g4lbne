@@ -291,10 +291,6 @@
     <rotation name="TOP_1inMarstoprot" x="0.000000" y="0.000000" z="-180.000000" unit="deg"/>
   </define>
   <materials>
-    <material name="VAC" Z="1.000000">
-      <D unit="g/cm3" value="0.000000"/>
-      <atom unit="g/mole" value="0.000000"/>
-    </material>
     <element name="HYDROGEN_elm" formula="H" Z="1">
       <atom unit="g/mole" value="1.007940"/>
     </element>
@@ -526,10 +522,6 @@
       <fraction n="0.746000" ref="NITROGEN_elm"/>
       <fraction n="0.240000" ref="OXYGEN_elm"/>
     </material>
-    <material name="VAC0x1" Z="1.000000">
-      <D unit="g/cm3" value="0.000000"/>
-      <atom unit="g/mole" value="0.000000"/>
-    </material>
     <material name="CAST0x1">
       <D unit="g/cm3" value="7.840000"/>
       <fraction n="0.036500" ref="CARBON_elm"/>
@@ -693,7 +685,11 @@
   <solids>
     <tube name="Marstop" rmin="0.000000" rmax="4200.000000" z="50000.000000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
     <box name="TOP0x1" x="3280.000000" y="2200.000000" z="5816.600000" lunit="cm"/>
+<!--
     <box name="Airbox0x1" x="1219.040000" y="1023.924600" z="891.728650" lunit="cm"/>
+    We decrase the size of the airbox to avoid clash with AH_Top 
+!-->     
+    <box name="Airbox0x1" x="1219.04000" y="1023.924600" z="891.728650" lunit="cm"/>
     <box name="Soil-bottom0x1" x="201.086600" y="1023.924600" z="644.227000" lunit="cm"/>
     <box name="Pm3_sh200x1" x="141.086400" y="566.410400" z="19.909400" lunit="cm"/>
     <box name="Pm3_sh20x1" x="141.086400" y="566.410400" z="23.139400" lunit="cm"/>
@@ -2599,4 +2595,9 @@
   </setup>
 -->
   </structure>
+  
+  <setup version="1.0" name="Default">
+      <world ref="TOP"/>
+   </setup>
+
 </gdml>

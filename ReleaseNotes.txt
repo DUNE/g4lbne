@@ -184,7 +184,7 @@ November 12 2013
 
  </v3r0p10>
  
-Novmeber 27 - December 02 2013 
+November 27 - December 02 2013 
 
  a. Added a new method in the LBNESteppingAction (StudyCheckMagneticTilts) that quantifies the astigmatism one gets by moving Horn1. It simply records the 6D position of muon-Geantinos at the end of Horn2. 
  
@@ -197,8 +197,15 @@ December 3 2013
      and (2) add a "setup clause" to avoid a parser error. 
   c. Minor modification to the geometry of the Hadron absorber to avoid volume orverlap. It was "Air against air" from the from beam, so no change to physics results expected. This is simply to clean up and avoid confusing errors. 
   
-  
+ 
+December 6 2013
 
+  a. Define and test the new data card /LBNE/det/GraphiteTargetFinWidth. 
+  Works fine up t0 8.7 mm at which point the upper/lower corner of the fin bumps into the Helium containemnet vessel. 
+  
+  b. Start installing the simple target geometry.  Defined a new set of command cards, but no real installation yet. 
+  
+  
 
  
 

@@ -38,12 +38,22 @@ private:
   G4UIcmdWithADoubleAndUnit* fBaffleZPosition;
 //
   G4UIcmdWithADoubleAndUnit* fTargetSLengthGraphite; 
+  G4UIcmdWithADoubleAndUnit* fTargetFinWidth; 
   G4UIcmdWithADoubleAndUnit* fTargetLengthIntoHorn;
   G4UIcmdWithADoubleAndUnit* fTargetLengthOutsideHorn;
   G4UIcmdWithADoubleAndUnit* fTargetBerylCapThickness;
   G4UIcmdWithAString* fTargetMaterial;
   G4UIcmdWithADoubleAndUnit* fTargetDensity;
 //
+// December 2013: Simple target. 
+//
+  G4UIcmdWithABool* fUseSimpleTargetBox;
+  G4UIcmdWithABool* fUseSimpleTargetCylinder;
+  // The length will be set by the cmd fTargetSLengthGraphite
+  G4UIcmdWithADoubleAndUnit* fSimpleTargetRadius; // not used if box. 
+  G4UIcmdWithADoubleAndUnit* fSimpleTargetHeight; // not used if cylinder 
+  G4UIcmdWithADoubleAndUnit* fSimpleTargetWidth; // not used if cylinder 
+  
   G4UIcmdWithADouble* fHorn1RadialRescale;   
   G4UIcmdWithADouble* fHorn1LongRescale; 
   G4UIcmdWithAString* fHorn1InnerCondMat;

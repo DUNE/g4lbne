@@ -119,6 +119,15 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      SetMyUnitsAndConditions(fTargetSLengthGraphite, value);
    }
    {
+     fTargetFinWidth = new G4UIcmdWithADoubleAndUnit("/LBNE/det/GraphiteTargetFinWidth", this);
+     G4String guidance("Width of the Graphite Target Fins.\n  ");
+     guidance += std::string(" For details, see LBNE-Doc-6100  " ); 
+     fTargetFinWidth->SetGuidance(guidance);
+     fTargetFinWidth->SetParameterName("GraphiteTargetFinWidth",true);
+     double value = volP->GetTargetFinWidth(); //  
+     SetMyUnitsAndConditions(fTargetFinWidth, value);
+   }
+   {
      fTargetMaterial = new G4UIcmdWithAString("/LBNE/det/TargetMaterial", this);
      G4String guidance("Material for the target \n  ");
      guidance += std::string(" Note: Only Beryllium, Graphite and Aluminum accepted for now..   \n");
@@ -164,6 +173,59 @@ LBNEPlacementMessenger::LBNEPlacementMessenger()
      double valueL = volP->GetTargetSLengthGraphite(); //  
      SetMyUnitsAndConditions(fTargetLengthIntoHorn, valueL - value);
    }
+   {
+     fSimpleTargetRadius = new G4UIcmdWithADoubleAndUnit("/LBNE/det/SimpleTargetRadius", this);
+     G4String guidance("Radius of the simple target.\n  ");
+     guidance += std::string(" Should the option UseSimpleCylindicalTarget be selected,  \n ");
+     guidance += std::string(" this command sets the radius of the target. \n");
+     guidance += std::string(" No FNAL Drawing number referenced  " ); 
+     fSimpleTargetRadius->SetGuidance(guidance);
+     fSimpleTargetRadius->SetParameterName("SimpleTargetRadius",true);
+     double value = volP->GetSimpleTargetRadius(); //  
+     SetMyUnitsAndConditions(fSimpleTargetRadius, value);
+   }
+   {
+     fSimpleTargetHeight = new G4UIcmdWithADoubleAndUnit("/LBNE/det/SimpleTargetHeight", this);
+     G4String guidance("Height of the simple box-like target.\n  ");
+     guidance += std::string(" Should the option UseSimpleBoxTarget be selected,  \n ");
+     guidance += std::string(" this command sets the height of the target. \n");
+     guidance += std::string(" No FNAL Drawing number referenced  " ); 
+     fSimpleTargetHeight->SetGuidance(guidance);
+     fSimpleTargetHeight->SetParameterName("SimpleTargetHeight",true);
+     double value = volP->GetSimpleTargetHeight(); //  
+     SetMyUnitsAndConditions(fSimpleTargetHeight, value);
+   }
+   {
+     fSimpleTargetWidth = new G4UIcmdWithADoubleAndUnit("/LBNE/det/SimpleTargetWidth", this);
+     G4String guidance("Width of the simple box-like target.\n  ");
+     guidance += std::string(" Should the option UseSimpleBoxTarget be selected,  \n ");
+     guidance += std::string(" this command sets the height of the target. \n");
+     guidance += std::string(" No FNAL Drawing number referenced  " ); 
+     fSimpleTargetWidth->SetGuidance(guidance);
+     fSimpleTargetWidth->SetParameterName("SimpleTargetWidth",true);
+     double value = volP->GetSimpleTargetWidth(); //  
+     SetMyUnitsAndConditions(fSimpleTargetWidth, value);
+   }
+    { 
+     fUseSimpleTargetBox = new G4UIcmdWithABool("/LBNE/det/UseSimpleBoxTarget", this);
+     G4String guidance("If true, the NUMI-style target is replaced by a simple box.  \n  ");
+     guidance += std::string(" See SimpleTargetLengthWidth (Height) for setting it's dimensions,  \n ");
+     fUseSimpleTargetBox->SetGuidance(guidance);
+     fUseSimpleTargetBox->SetParameterName("UseSimpleBoxTarget",true);
+     bool value = volP->GetUseSimpleTargetBox(); //  
+     fUseSimpleTargetBox->SetDefaultValue(value);
+   }
+
+    { 
+     fUseSimpleTargetCylinder = new G4UIcmdWithABool("/LBNE/det/UseSimpleCylindricalTarget", this);
+     G4String guidance("If true, the NUMI-style target is replaced by a simple cylinder.  \n  ");
+     guidance += std::string(" See SimpleTargetLengthWidth (Height) for setting it's dimensions,  \n ");
+     fUseSimpleTargetCylinder->SetGuidance(guidance);
+     fUseSimpleTargetCylinder->SetParameterName("UseSimpleBoxTarget",true);
+     bool value = volP->GetUseSimpleTargetBox(); //  
+     fUseSimpleTargetCylinder->SetDefaultValue(value);
+   }
+   
     {
      fTargetBerylCapThickness = new G4UIcmdWithADoubleAndUnit("/LBNE/det/TargetBerylliumCapThickness", this);
      G4String guidance("Thickness of the Beryllium cap, downstream end of the target Helium containment vessel .\n  ");
@@ -321,6 +383,12 @@ void LBNEPlacementMessenger::SetNewValue(G4UIcommand* command,  G4String newValu
    if (command == fTargetSLengthGraphite) {
      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
      volP->SetTargetSLengthGraphite(cmdWD->GetNewDoubleValue(newValue));
+     volP->SetSimpleTargetLength(cmdWD->GetNewDoubleValue(newValue)); // Used only if Simple target used.
+     volP->SegmentTarget();
+   }
+   if (command == fTargetFinWidth) {
+     G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
+     volP->SetTargetFinWidth(cmdWD->GetNewDoubleValue(newValue));
      volP->SegmentTarget();
    }
    if (command == fTargetDensity) {
@@ -351,6 +419,40 @@ void LBNEPlacementMessenger::SetNewValue(G4UIcommand* command,  G4String newValu
      // to have the first fin target at coord 0.3mm, to follow the convention. 
      volP->SegmentTarget();
    }
+   if (command == fUseSimpleTargetBox) {
+     G4UIcmdWithABool* cmdB = dynamic_cast<G4UIcmdWithABool*> (command);
+     volP->SetUseSimpleTargetBox(cmdB->GetNewBoolValue(newValue.c_str()));
+   }
+   
+   if (command == fUseSimpleTargetCylinder) {
+     G4UIcmdWithABool* cmdB = dynamic_cast<G4UIcmdWithABool*> (command);
+     volP->SetUseSimpleTargetCylinder(cmdB->GetNewBoolValue(newValue.c_str()));
+   }
+   if (command == fSimpleTargetRadius) {
+     G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
+     if (!volP->GetUseSimpleTargetCylinder()) {
+       std::cout << " !!! You are channging the radius of the simple cylindrical target, \n, but the " <<  
+        " NUMI-style target is still installed. Consider using first the GUI command UseSimpleCylindricalTarget \n";
+     } 
+     volP->SetSimpleTargetRadius(cmdWD->GetNewDoubleValue(newValue)); 
+   }
+   if (command == fSimpleTargetWidth) {
+     G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
+     if (!volP->GetUseSimpleTargetBox()) {
+       std::cout << " !!! You are channging the width of the simple box-like target, \n, but the " <<  
+        " NUMI-style target is still installed. Consider using first the GUI command UseSimpleBoxTarget \n";
+     } 
+     volP->SetSimpleTargetWidth(cmdWD->GetNewDoubleValue(newValue)); 
+   }
+   if (command == fSimpleTargetHeight) {
+     G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
+     if (!volP->GetUseSimpleTargetBox()) {
+       std::cout << " !!! You are channging the height of the simple box-like target, \n, but the " <<  
+        " NUMI-style target is still installed. Consider using first the GUI command UseSimpleBoxTarget \n";
+     } 
+     volP->SetSimpleTargetHeight(cmdWD->GetNewDoubleValue(newValue)); 
+   }
+   
    if (command == fHorn1InnerCondMat) {
     std::cout << " You are now using non-standard material " << newValue 
               << " for the Horn1 Inner Conductor material " << std::endl;
@@ -404,6 +506,10 @@ void LBNEPlacementMessenger::SetNewValue(G4UIcommand* command,  G4String newValu
    if (command == fLengthOfRockDownstr) {
      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
      volP->SetLengthOfRockDownstreamAlcove(cmdWD->GetNewDoubleValue(newValue));
+   }
+   if (command == fInstallShield) {
+     G4UIcmdWithABool* cmdB = dynamic_cast<G4UIcmdWithABool*> (command);
+     volP->SetDoInstallShield(cmdB->GetNewBoolValue(newValue.c_str()));
    }
 
 }

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEVolumePlacements.hh,v 1.1.2.34 2013/10/15 19:17:52 lebrun Exp $
+// $Id: LBNEVolumePlacements.hh,v 1.1.2.35 2013/12/06 18:23:50 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEVolumePlacement_H
@@ -184,10 +184,27 @@ public:
   inline void SetBaffleInnerRadius(double r) { fBaffleInnerRadius = r;}
   inline void SetBaffleZPosition(double z) { fBaffleZPosition = z;}
 //
+// december 2013: Simple target 
+//
+  inline void SetUseSimpleTargetBox(bool t) { fUseSimpleTargetBox = t;}
+  inline void SetUseSimpleTargetCylinder(bool t) { fUseSimpleTargetCylinder = t;}
+  inline void SetSimpleTargetRadius(double r) { fSimpleTargetRadius = r;} 
+  inline void SetSimpleTargetWidth(double r) { fSimpleTargetWidth = r;} 
+  inline void SetSimpleTargetHeight(double r) { fSimpleTargetHeight = r;} 
+  inline void SetSimpleTargetLength(double r) { fSimpleTargetLength = r;} 
+//
+  inline bool GetUseSimpleTargetBox() const { return fUseSimpleTargetBox;}
+  inline bool GetUseSimpleTargetCylinder() const { return fUseSimpleTargetCylinder;}
+  inline double GetSimpleTargetRadius() const {return  fSimpleTargetRadius;} 
+  inline double GetSimpleTargetWidth() const { return fSimpleTargetWidth;} 
+  inline double GetSimpleTargetHeight() const {return  fSimpleTargetHeight;} 
+//
 // Interface to the Messenger, Target stuff. 
 
   inline double GetTargetSLengthGraphite() const { return fTargetSLengthGraphite; }
   inline void SetTargetSLengthGraphite(double l) { fTargetSLengthGraphite = l; }
+  inline double GetTargetFinWidth() const { return fTargetFinWidth; }
+  inline void SetTargetFinWidth(double l) { fTargetFinWidth = l; }
   inline double GetTargetDensity() const { return fTargetDensity; }
   inline void SetTargetDensity(double l) { fTargetDensity = l; }
   inline G4String GetTargetMaterialName() const { return fTargetMaterialName; }
@@ -390,6 +407,16 @@ private:
   std::vector<G4double> fTargetHorn1TransThick;
   std::vector<G4double> fTargetHorn1Lengths;
   std::vector<G4double> fTargetHorn1ZPositions;
+  //
+  // December 2013: Request to support 1.2 MW target option.  1rst step is to provide 
+  // a simple target, box and/or cylinder 
+  //
+  G4bool fUseSimpleTargetBox;  
+  G4bool fUseSimpleTargetCylinder;  
+  G4double fSimpleTargetLength;
+  G4double fSimpleTargetRadius; // not used if box. 
+  G4double fSimpleTargetHeight; // not used if cylinder 
+  G4double fSimpleTargetWidth; // not used if cylinder 
   //
   // Horn1, excluding the target elements in side the Horn1. 
   //

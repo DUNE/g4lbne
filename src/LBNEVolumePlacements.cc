@@ -190,6 +190,16 @@ LBNEVolumePlacements::LBNEVolumePlacements() {
   fTargetBerylDownstrWindowRadius = fTargetHeContTubeInnerRadius + fTargetHeContTubeThickness; 
   fTargetBerylUpstrWindowThick = 1.0*mm; // pure guess 
   fTargetBerylUpstrWindowRadius = 0.8425*in/2.; // ???? Again, guessing... 
+//  
+// Simple target code: 
+//
+  fUseSimpleTargetBox = false;  
+  fUseSimpleTargetCylinder = false;  
+  fSimpleTargetLength = fTargetSLengthGraphite; // default should be what NUMI used, respecting traditions. 
+  fSimpleTargetRadius = 7.4*mm; // not used if box. 
+  fSimpleTargetHeight = 19.0*mm; // not used if cylinder 
+  fSimpleTargetWidth = 7.4*mm; // not used if cylinder 
+  
   // Section of Horn1 which is the logical volume of the target Upstream Assembly.
   // Drawing NUMI HORN#1, TRANSITION INNER TO OUTER Drawing number 8875. 112-MD-363097
   fTargetHorn1InnerRadsUpstr.resize(5);
@@ -623,9 +633,47 @@ LBNEVolumePlacementData*
             info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Water")), volumeName); 
 	    // at (0.,0., 0.) 
 	 }
+	 
+	 
                  
        } // UpstreamTargetAssembly as mother volume. 
        
+// December 2013 : Reverting back to a much simple target. 
+       
+       if (name == G4String("TargetSimpleUpstrTube")) { // 
+          info.fParams[0] = 0.; 
+          info.fParams[1] = fSimpleTargetRadius; 
+          info.fParams[2] = fTargetLengthOutsideHorn ;
+          G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
+          info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Target")), volumeName); 
+          // at (0.,0., 0.) 
+       }
+       if (name == G4String("TargetSimpleUpstrBox")) { // 
+          info.fParams[0] = fSimpleTargetWidth; 
+          info.fParams[1] = fSimpleTargetHeight; 
+          info.fParams[2] = fTargetLengthOutsideHorn ;
+          G4Box* aBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2.);
+          info.fCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("Target")), volumeName); 
+          // at (0.,0., 0.) 
+       }
+
+       if (name == G4String("TargetSimpleDownstrTube")) { // 
+          info.fParams[0] = 0.; 
+          info.fParams[1] = fSimpleTargetRadius; 
+          info.fParams[2] = fTargetSLengthGraphite - fTargetLengthOutsideHorn ;
+          G4Tubs* aTube = new G4Tubs(volumeName, info.fParams[0], info.fParams[1], info.fParams[2]/2., 0., 360.*deg);
+          info.fCurrent = new G4LogicalVolume(aTube, G4Material::GetMaterial(std::string("Target")), volumeName); 
+          // at (0.,0., 0.) 
+       }
+       if (name == G4String("TargetSimpleDownstrBox")) { // 
+          info.fParams[0] = fSimpleTargetWidth; 
+          info.fParams[1] = fSimpleTargetHeight; 
+          info.fParams[2] = fTargetSLengthGraphite - fTargetLengthOutsideHorn ;
+          G4Box* aBox = new G4Box(volumeName, info.fParams[0]/2., info.fParams[1]/2., info.fParams[2]/2.);
+          info.fCurrent = new G4LogicalVolume(aBox, G4Material::GetMaterial(std::string("Target")), volumeName); 
+          // at (0.,0., 0.) 
+       }
+	 
        if (name == G4String("TargetUpstrM1")) { // Complete container volume in the upstream target hall 
                                                 // to contain whatever if dowstream of the above flange 
 						// and upstream of the Horn. 

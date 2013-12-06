@@ -75,6 +75,7 @@ private:
    void StudyAbsorption(const G4Step*); 
    void StudyPropagation(const G4Step*); 
    void StudyCheckOverlap(const G4Step*); 
+   void StudyCheckMagneticTilts(const G4Step*); 
    void dumpStepCheckVolumeAndFields(const G4Step*);
    void StudyParticleThroughHorns(const G4Step*);
    

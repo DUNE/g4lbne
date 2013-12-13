@@ -205,8 +205,19 @@ December 6 2013
   
   b. Start installing the simple target geometry.  Defined a new set of command cards, but no real installation yet. 
   
-  
+December 13 2013 
 
+   Fixed the inner conduction radial equation: If long. rescale only, the inner conductor does not change radius at all. Fixed a typo in rescale the radial part. 
+   
+   Add a few outer conductor recaling that were missing for Horn1. The following rescaling example now works: (in the sense the it produces no volume overlap and the volume geometry gets properly rescaled, based on Geantino example. )
+   
+  
+   /LBNE/det/Horn2LongRescale 1.50
+  /LBNE/det/Horn2RadialRescale 1.50
+  /LBNE/det/Horn1LongRescale 1.10
+  /LBNE/det/Horn1RadialRescale 1.10
+ 
+  
  
 
 

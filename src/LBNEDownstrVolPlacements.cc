@@ -243,6 +243,7 @@ void LBNEVolumePlacements::RescaleHorn1Lengthwise() {
 void LBNEVolumePlacements::RescaleHorn1Radially() { // Note: not all variables are rescale here, 
   // Some of this work will be done via the LBNEHornRadialEquation
   fHorn1IOTransInnerRad *= fHorn1RadialRescale;
+  fHorn1IOTransOuterRad *= fHorn1RadialRescale;
   
   for (size_t k=0; k != fHorn1UpstrOuterIOTransInnerRads.size(); ++k)
       fHorn1UpstrOuterIOTransInnerRads[k] *= fHorn1RadialRescale; 
@@ -251,10 +252,10 @@ void LBNEVolumePlacements::RescaleHorn1Radially() { // Note: not all variables a
       
   for (size_t k=0; k != fTargetHorn1InnerRadsUpstr.size(); ++k) 
       fTargetHorn1InnerRadsUpstr[k] *= fHorn1RadialRescale;
-  for (size_t k=0; k != fTargetHorn1InnerRadsUpstr.size(); ++k) 
-      fTargetHorn1InnerRadsUpstr[k] *= fHorn1RadialRescale;
   for (size_t k=0; k != fTargetHorn1InnerRadsDownstr.size(); ++k) 
       fTargetHorn1InnerRadsDownstr[k] *= fHorn1RadialRescale;
+  for (size_t k=0; k != fTargetHorn1TransThick.size(); ++k) 
+      fTargetHorn1TransThick[k] *= fHorn1RadialRescale;
 
   for (size_t k=0; k != fHorn1UpstrInnerRadsUpstr.size(); ++k) 
       fHorn1UpstrInnerRadsUpstr[k] *= fHorn1RadialRescale;
@@ -415,7 +416,7 @@ void LBNEVolumePlacements::PlaceFinalHorn1(G4PVPlacement *mother, G4PVPlacement 
    const double in = 2.54*cm;
 //
 //   std::cerr << " Start testing PlaceFinalHorn1, mother Logical volume name " << mother->GetLogicalVolume()->GetName() << std::endl;
-   if (std::abs(fHorn1LongRescale - 1.0) < 1.0e-5) 
+   if ((std::abs(fHorn1LongRescale - 1.0) < 1.0e-5) && (std::abs(fHorn1RadialRescale - 1.0) < 1.0e-5)) 
                   fHorn1Equations[0].test1(); // this supposed to work.  But not if we rescale the Horn1, 
 		  // since we compare with hardtyped data extracted from a blue print 
 //   std::cerr << " Test 1 passed " << std::endl;
@@ -1329,6 +1330,16 @@ void LBNEVolumePlacements::RescaleHorn2Lengthwise() {
       fHorn2UpstrOuterIOTransPositions[i] *= fHorn2LongRescale;
   fHorn2InnerIOTransLength *= fHorn2LongRescale;
   fHorn2LengthNominal *=  fHorn2LongRescale;      
+  // Now we deal with the inner conductor radial equations.
+  for (std::vector<LBNEHornRadialEquation>::iterator it=fHorn2Equations.begin();
+        it != fHorn2Equations.end(); it++) it->SetLongRescaleFactor(fHorn2LongRescale);
+	
+  fHorn1NeckLength *= fHorn1LongRescale;
+  fHorn1NeckZPosition *= fHorn1LongRescale;
+  // We also have to move the decay pipe snout, as Horn2 is longer.. 
+  fDecayPipeWindowZLocation = fHorn2LongPosition + (fHorn2LongRescale-1.0)*fHorn2Length + 201.484*25.4*mm; 
+
+  
 }
   
 void LBNEVolumePlacements::RescaleHorn2Radially() {
@@ -1341,6 +1352,9 @@ void LBNEVolumePlacements::RescaleHorn2Radially() {
       fHorn2UpstrOuterIOTransRadsOne[i] *= fHorn2RadialRescale;
     for (size_t i=0; i!= fHorn2UpstrOuterIOTransRadsTwo.size(); i++) 
       fHorn2UpstrOuterIOTransRadsTwo[i] *= fHorn2RadialRescale;
+  // Now we deal with the inner conductor radial equations.
+  for (std::vector<LBNEHornRadialEquation>::iterator it=fHorn2Equations.begin();
+        it != fHorn2Equations.end(); it++) it->SetRadialRescaleFactor(fHorn2RadialRescale);
       
 }
 
@@ -1880,14 +1894,16 @@ double LBNEHornRadialEquation::GetVal(double z) const {
 // By definition, drawing 8875.000-ME-363028 (Z=0 is ACTRNT)
  
  const double zR = z/inchDef; // back in inches. 
- const double argR = rCoeff + zR*zCoeff;
+ const double argR = rCoeff + zR*zCoeff/zResc;
  if (argR < 0.) {
-    std::ostringstream mStrStr; mStrStr << " Negative argument, z = " << z; 
+    std::ostringstream mStrStr; mStrStr << " Negative argument, z = " << z 
+                                        << " argR " << argR << " zResc " << zResc << std::endl; 
     G4String mStr(mStrStr.str());
     G4Exception("LBNEHornRadialEquation::GetVal", " ", FatalErrorInArgument, mStr.c_str());
   } 
  const double radius = parabolic ? (std::sqrt(argR) + rOff) : argR;
- return radius*zResc*inchDef;
+// return radius*zResc*inchDef; v3r0p10
+ return radius*rResc*inchDef;
 }
 
 void LBNEHornRadialEquation::test1() const {

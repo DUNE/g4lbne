@@ -217,9 +217,17 @@ December 13 2013
   /LBNE/det/Horn1LongRescale 1.10
   /LBNE/det/Horn1RadialRescale 1.10
  
-  
- 
+December 17 2013 
 
+   In preparation for the systematic uncertainty from the current distribution in the inner conductor, installed 
+   
+   /LBNE/det/SetSkinDepthCorrInnerRad x
+
+This quantity is a parameter whose validity range is between 0. and 1. It sets to the radial coordinate at which the magnetic field inside the inner conductor starts to rise. If set to 0., corresponding to the default configuration, the current is assumed to be distributed uniformly inside the conductor, and the field start rising at the inner radius of the conductor. If set to 1, the current is distributed on an infinitely narrow layer, whose radius is at the outer radius of the inner conduction. If 0.5, the magnetic field starts to rise between the inner and outer radii of the inner conductor. In all cases, the field rises linearly with the radial coordinate. 
+
+This is by no means exact, but it is a start, if the difference in the Far/Near ratio for x~1 not to different (<~ fraction of one percent for the 2 to 5 GeV bin), then we can leave at that.
+  
+   
 
 
 

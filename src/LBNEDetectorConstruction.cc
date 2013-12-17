@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.38 2013/12/03 21:19:30 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.39 2013/12/17 19:46:12 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -45,6 +45,7 @@
 #include "LBNEDetectorMessenger.hh"
 #include "LBNERunManager.hh"
 #include "G4GDMLParser.hh"
+#include "G4UIcmdWithADouble.hh"
 
 #include "G4RunManager.hh"
 
@@ -69,7 +70,7 @@ LBNEDetectorConstruction::LBNEDetectorConstruction()
   fHasBeenConstructed = false; 
 //  Construct(); Not yet!  Need to read the data card first... 
   fHornCurrent = 200.*ampere*1000; // in kA, defined via Detector GUImessenger if need be
-
+  fSkinDepthCorrInnerRad = 0.;
   
 }
 
@@ -388,6 +389,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   
   LBNEMagneticFieldHorn *fieldHorn1 = new LBNEMagneticFieldHorn(true);
   fieldHorn1->SetHornCurrent(fHornCurrent);
+  fieldHorn1->SetSkinDepthCorrInnerRad(fSkinDepthCorrInnerRad);
   G4FieldManager* aFieldMgr = new G4FieldManager(fieldHorn1); //create a local field		 
   aFieldMgr->SetDetectorField(fieldHorn1); //set the field 
   aFieldMgr->CreateChordFinder(fieldHorn1); //create the objects which calculate the trajectory
@@ -398,6 +400,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 
   LBNEMagneticFieldHorn *fieldHorn2 = new LBNEMagneticFieldHorn(false);
   fieldHorn2->SetHornCurrent(fHornCurrent);
+  fieldHorn2->SetSkinDepthCorrInnerRad(fSkinDepthCorrInnerRad);
   G4FieldManager* aFieldMgr2 = new G4FieldManager(fieldHorn2); //create a local field		 
   aFieldMgr2->SetDetectorField(fieldHorn2); //set the field 
   aFieldMgr2->CreateChordFinder(fieldHorn2); //create the objects which calculate the trajectory
@@ -910,6 +913,17 @@ LBNEDetectorMessenger::LBNEDetectorMessenger( LBNEDetectorConstruction* LBNEDet)
    SetHornCurrent->SetDefaultUnit("kA");
    SetHornCurrent->SetUnitCandidates("kA");
    SetHornCurrent->AvailableForStates(G4State_PreInit);
+   {
+   SetSkinDepthCorrInnerRad  = new G4UIcmdWithADouble("/LBNE/det/SetSkinDepthCorrInnerRad",this);
+   std::string aGuidance("A generic parameter that change the effective inner radius of the inner conductor. \n ");
+   aGuidance += std::string(" Valid value are between 0. and 1..  If 0. (default), than the current is distribute uniformly \n");
+   aGuidance += std::string(" over the entire thickess. If 0.99, over a 1 %  of the thickness, close to the outer radius \n");
+   aGuidance += std::string(" (as if the conductor is very thick, and/or, the current is constant in time) \n");
+   SetSkinDepthCorrInnerRad->SetGuidance(aGuidance.c_str());
+   SetSkinDepthCorrInnerRad->SetParameterName("SetSkinDepthCorrInnerRad",true);
+   SetSkinDepthCorrInnerRad->SetDefaultValue (0.);
+   SetSkinDepthCorrInnerRad->AvailableForStates(G4State_PreInit);
+   }
 	
 }
 
@@ -923,6 +937,7 @@ LBNEDetectorMessenger::~LBNEDetectorMessenger()
    delete UpdateCmd;
    delete ConstructCmd;
    delete SetHornCurrent;
+   delete SetSkinDepthCorrInnerRad;
 }
 
 
@@ -942,6 +957,10 @@ void LBNEDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
    if (command == SetHornCurrent) {
      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
      LBNEDetector->SetHornCurrent(cmdWD->GetNewDoubleValue(newValue));
+   }
+   if (command == SetSkinDepthCorrInnerRad) {
+     G4UIcmdWithADouble* cmdWD = dynamic_cast<G4UIcmdWithADouble*> (command);
+     LBNEDetector->SetSkinDepthCorrInnerRad(cmdWD->GetNewDoubleValue(newValue));
    }
 }
 	

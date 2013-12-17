@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.hh,v 1.5.2.20 2013/10/02 15:26:38 lebrun Exp $
+// $Id: LBNEDetectorConstruction.hh,v 1.5.2.21 2013/12/17 19:45:03 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #ifndef LBNEDetectorConstruction_H
@@ -78,7 +78,7 @@ private:
    
   // Horn current value
   G4double fHornCurrent;
-
+  G4double fSkinDepthCorrInnerRad; // For systematic uncertainties on the Horn1 current 
 
   // Dimensions of (world-volume) pertinent features
   G4double fRockRadius;
@@ -257,6 +257,7 @@ private:
  
   inline void SetHornCurrent(G4double val) { fHornCurrent = val; }
   inline double GetHornCurrent() const {return fHornCurrent; }
+  inline void SetSkinDepthCorrInnerRad(G4double val) { fSkinDepthCorrInnerRad = val; }
 
 };
 #endif

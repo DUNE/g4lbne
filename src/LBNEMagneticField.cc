@@ -28,7 +28,8 @@ fHornNeckOuterRadius(-1.0e13),
 fHornNeckInnerRadius(-1.0e13),
 fOuterRadius(1.0e9),
 fOuterRadiusEff(1.0e9),
-fSkinDepth(4.1*mm)
+fSkinDepth(4.1*mm),
+fSkinDepthCorrInnerRad(0.)
 {
  // 
  // We rely on the Volume Placement utility and the surveyor data to compute the coordinate transfers. 
@@ -142,7 +143,7 @@ fSkinDepth(4.1*mm)
   }
   std::cerr << " Magnetic field coordinate definition done.  fZShiftUpstrWorldToLocal " << 
 		    fZShiftUpstrWorldToLocal << " fZShiftDrawingCoordinate " << fZShiftDrawingCoordinate << std::endl;
-  fCoordinateSet = true;
+//  fCoordinateSet = true; obsolete. Except for use of dumping the field... 
   fOuterRadiusEff = fOuterRadius - 2.0*fSkinDepth; // skin depth at 0.43 kHz 
   // Z coordinate change not yet initialize, done at the first track.
 /*
@@ -281,14 +282,25 @@ void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) 
       G4Exception("LBNEMagneticFieldHorn::GetFieldValue", " ",  FatalErrorInArgument, mStr.c_str()); 
       return; 
      }
+     // Study of systematic effects. Define an effective radIC wich is large than the physics radIC.
+     // We assume here that the finite skin depth matter, and the current density is not 
+     // uniform. Simply increase the radIC
+     const double deltaRIC = radOC - radIC;
+     radIC += deltaRIC*std::min(0.99, fSkinDepthCorrInnerRad); 
      if (r < radIC) return; // zero field region (Amps law). 
-     // 
+     //
      if ((r > radIC) && (r < radOC)) {
       const double surfCyl = radOC*radOC - radIC*radIC;
-      magBField *= (r*r - radIC*radIC)/surfCyl; // Assume uniform current density and apply Amps law. 
+      const double deltaRSq = (r*r - radIC*radIC);
+      magBField *= deltaRSq/surfCyl; // Assume uniform current density and apply Amps law. 
      }
      Bfield[0] = -magBField*ptTrans[1]/r;
      Bfield[1] = magBField*ptTrans[0]/r;
+     // 
+//     if (!fCoordinateSet) { 
+//	fCoordinateSet = true; //done once and only once. 
+//        this->dumpField();
+//      }
 //     this->fillTrajectories(Point, Bfield[0],  Bfield[1]);
 //     std::cerr << " Field region at Z " << Point[2] << " r = " << r 
 //	     << " radIC " << radIC << " radOC " 
@@ -297,13 +309,15 @@ void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) 
    }
 }
 void LBNEMagneticFieldHorn::dumpField() const {
-   const LBNEVolumePlacements *aPlacementHandler = LBNEVolumePlacements::Instance();
+
   std::string fName = (amHorn1) ? std::string("./FieldMapHorn1.txt") : std::string("./FieldMapHorn2.txt");
   std::ofstream fOut(fName.c_str());
   fOut << " z zd r bphi " << std::endl;
   double zStart = -500.;
   double zEnd = 4000.;
-  double rMax = fOuterRadius + 50.0*mm;
+  double rMax = fOuterRadius + 5.0*mm;
+  if (amHorn1) std::cerr << " Horn1, Dumpfield, r Max = " << rMax << std::endl;
+  else std::cerr << " Horn2, Dumpfield, r Max = " << rMax << std::endl;
   if (!amHorn1) { zStart = 6000.; zEnd = 11000.; }
   const int numZStep = 1000;
   const int numRStep= 200;
@@ -315,18 +329,18 @@ void LBNEMagneticFieldHorn::dumpField() const {
     point[2] = z;
     const double zLocD = point[2] - fZShiftDrawingCoordinate;
     double radIC = fHornNeckInnerRadius;
-    size_t kSelZ = fEqnIndicesInner.size();
-    for (size_t k=0; k != fEqnIndicesInner.size(); ++k) {
-       if (zLocD < fZDCBegin[k]) break;
-       if (zLocD > fZDCEnd[k]) continue; // They are Z ordered.. 
-       kSelZ = k; 
-       break;
-    }
-    if (kSelZ ==  fEqnIndicesInner.size()) continue;
-    if (fEqnIndicesInner[kSelZ] != 99) {
-       radIC = (amHorn1) ? aPlacementHandler->GetConductorRadiusHorn1(zLocD,fEqnIndicesInner[kSelZ] ) : 
-                        aPlacementHandler->GetConductorRadiusHorn2(zLocD, fEqnIndicesInner[kSelZ]);
-    }
+//    size_t kSelZ = fEqnIndicesInner.size();
+//    for (size_t k=0; k != fEqnIndicesInner.size(); ++k) {
+//       if (zLocD < fZDCBegin[k]) break;
+//       if (zLocD > fZDCEnd[k]) continue; // They are Z ordered.. 
+//       kSelZ = k; 
+//       break;
+//    }
+//    if (kSelZ ==  fEqnIndicesInner.size()) continue;
+//    if (fEqnIndicesInner[kSelZ] != 99) {
+//       radIC = (amHorn1) ? aPlacementHandler->GetConductorRadiusHorn1(zLocD,fEqnIndicesInner[kSelZ] ) : 
+//                        aPlacementHandler->GetConductorRadiusHorn2(zLocD, fEqnIndicesInner[kSelZ]);
+//    }
     double r = radIC - 0.25*mm;
     // inside the conductor... 
     while (r < rMax)  {

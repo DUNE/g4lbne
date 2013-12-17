@@ -1,5 +1,5 @@
 
-// $Id: LBNEMagneticField.hh,v 1.2.2.6 2013/09/09 20:01:49 lebrun Exp $
+// $Id: LBNEMagneticField.hh,v 1.2.2.7 2013/12/17 19:45:16 lebrun Exp $
 // --------------------------------------------------------------
 // LBNEMagneticField.hh modified by Yuki 2004/7/16
 // modified by Yuki 8/2/04
@@ -49,6 +49,10 @@ class LBNEMagneticFieldHorn : public G4MagneticField
    std::vector<double> fZDCBegin;
    std::vector<double> fZDCEnd;
    G4double fNeckRadius;
+   // Parameter for the systematic uncertainty due to skin depth effect for the inner conductor. 
+   // varies between 0. (default, current density is uniform between inner IC radius and outer IC radius), 
+   // to 0.99, where all the current flows in only 1% of the outer radii..  
+   G4double fSkinDepthCorrInnerRad;
    mutable std::ofstream fOutTraj;
    
    
@@ -58,6 +62,7 @@ class LBNEMagneticFieldHorn : public G4MagneticField
     
    inline void SetHornCurrent(G4double ihorn) {fHornCurrent = ihorn;}
    inline G4double GetHornCurrent() const { return fHornCurrent;}
+   inline void SetSkinDepthCorrInnerRad(G4double f) {fSkinDepthCorrInnerRad = f;}
    
    void dumpField() const;
 

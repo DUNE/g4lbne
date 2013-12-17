@@ -136,6 +136,18 @@ print "Creating",log_dir
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 
+if not os.path.exists(macro_dir):
+    print "ERROR: could not create macro directory: "+macro_dir
+    sys.exit()
+
+if not os.path.exists(flux_dir):
+    print "ERROR: could not create flux directory: "+flux_dir
+    sys.exit()
+
+if not os.path.exists(log_dir):
+    print "ERROR: could not create log directory: "+log_dir
+    sys.exit()
+
 os.chmod(macro_dir,0777)
 os.chmod(flux_dir,0777)
 os.chmod(log_dir,0777)

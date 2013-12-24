@@ -227,6 +227,18 @@ This quantity is a parameter whose validity range is between 0. and 1. It sets t
 
 This is by no means exact, but it is a start, if the difference in the Far/Near ratio for x~1 not to different (<~ fraction of one percent for the 2 to 5 GeV bin), then we can leave at that.
   
+  December 23 2013
+  
+  Implemented Zarkos model (Zarko's thesis )  (MINOS Document 5694-v1), section 5.2.4, p150 - 156). 
+  Removed the  /LBNE/det/SetSkinDepthCorrInnerRad x command card and replace it with:
+  
+  /LBNE/det/SetSkinDepthInnerRad x mm 
+  
+  The actual skin depth used in the calculation. The default value is very large, i.e., no skin depth correction whatsoever. 
+  
+  More work might be done here: Zarko's model is based on a calculation for a cylindrical conductor, not a hollow tube. 
+  
+  
    
 
 

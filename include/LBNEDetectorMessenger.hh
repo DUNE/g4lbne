@@ -39,7 +39,7 @@ private:
       
    G4UIcmdWithADoubleAndUnit*    SetBeamlineAngle;
    G4UIcmdWithADoubleAndUnit*    SetHornCurrent;
-   G4UIcmdWithADouble*    SetSkinDepthCorrInnerRad;
+   G4UIcmdWithADoubleAndUnit*    SetSkinDepthInnerRad;
 
 
 };

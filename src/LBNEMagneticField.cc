@@ -29,7 +29,8 @@ fHornNeckInnerRadius(-1.0e13),
 fOuterRadius(1.0e9),
 fOuterRadiusEff(1.0e9),
 fSkinDepth(4.1*mm),
-fSkinDepthCorrInnerRad(0.)
+fSkinDepthInnerRad(1.0e10*mm) // Unrealistic high, because that was the default sometime ago. 
+
 {
  // 
  // We rely on the Volume Placement utility and the surveyor data to compute the coordinate transfers. 
@@ -285,27 +286,43 @@ void LBNEMagneticFieldHorn::GetFieldValue(const double Point[3],double *Bfield) 
      // Study of systematic effects. Define an effective radIC wich is large than the physics radIC.
      // We assume here that the finite skin depth matter, and the current density is not 
      // uniform. Simply increase the radIC
-     const double deltaRIC = radOC - radIC;
-     radIC += deltaRIC*std::min(0.99, fSkinDepthCorrInnerRad); 
      if (r < radIC) return; // zero field region (Amps law). 
+//     const double deltaRIC = radOC - radIC;
+// Version from Dec 18-19 2013.      
+//     radIC += deltaRIC*std::min(0.99, fSkinDepthCorrInnerRad); 
      //
+//     if ((r > radIC) && (r < radOC)) {
+//      const double surfCyl = radOC*radOC - radIC*radIC;
+//      const double deltaRSq = (r*r - radIC*radIC);
+//      magBField *= deltaRSq/surfCyl; // Assume uniform current density and apply Amps law. 
+//     }
+// Version from Zarko's thesis. ( (MINOS Document 5694-v1) ) 
+// 
      if ((r > radIC) && (r < radOC)) {
-      const double surfCyl = radOC*radOC - radIC*radIC;
-      const double deltaRSq = (r*r - radIC*radIC);
-      magBField *= deltaRSq/surfCyl; // Assume uniform current density and apply Amps law. 
+        const double surfCyl = radOC*radOC - radIC*radIC;
+        const double deltaRSq = (r*r - radIC*radIC);
+	const double factR = deltaRSq/surfCyl;
+       if (fSkinDepthInnerRad > 10.*mm) { // default assume very large skin depth, assume constant current 
+                                      // current density .
+         magBField *= factR; // Assume uniform current density and apply Amps law. 
+       } else { // Realistic skin depth. 
+         magBField *= factR*getNormCurrDensityInnerC((r-radIC), (radOC-radIC))
+	                    /getNormCurrDensityInnerC((radOC-radIC), (radOC-radIC));
+       }
      }
+// Sin and cos factor bphi -> bx, by 
      Bfield[0] = -magBField*ptTrans[1]/r;
      Bfield[1] = magBField*ptTrans[0]/r;
      // 
-//     if (!fCoordinateSet) { 
-//	fCoordinateSet = true; //done once and only once. 
-//        this->dumpField();
-//      }
+     if (!fCoordinateSet) { 
+      fCoordinateSet = true; //done once and only once. 
+	this->dumpField();
+      }
 //     this->fillTrajectories(Point, Bfield[0],  Bfield[1]);
 //     std::cerr << " Field region at Z " << Point[2] << " r = " << r 
-//	     << " radIC " << radIC << " radOC " 
-//	     << radOC << "zLocD " << zLocD << " magBField " 
-//	     <<  magBField/tesla << " Bx " << Bfield[0]/tesla << std::endl;
+//	   << " radIC " << radIC << " radOC " 
+//	   << radOC << "zLocD " << zLocD << " magBField " 
+//	   <<  magBField/tesla << " Bx " << Bfield[0]/tesla << std::endl;
    }
 }
 void LBNEMagneticFieldHorn::dumpField() const {

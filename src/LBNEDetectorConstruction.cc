@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------// 
-// $Id: LBNEDetectorConstruction.cc,v 1.3.2.39 2013/12/17 19:46:12 lebrun Exp $
+// $Id: LBNEDetectorConstruction.cc,v 1.3.2.40 2013/12/24 20:31:46 lebrun Exp $
 //---------------------------------------------------------------------------// 
 
 #include <fstream>
@@ -70,8 +70,7 @@ LBNEDetectorConstruction::LBNEDetectorConstruction()
   fHasBeenConstructed = false; 
 //  Construct(); Not yet!  Need to read the data card first... 
   fHornCurrent = 200.*ampere*1000; // in kA, defined via Detector GUImessenger if need be
-  fSkinDepthCorrInnerRad = 0.;
-  
+  fSkinDepthInnerRad = 1.0e10*mm; // infinitly long skin depth. (assume in default ) 
 }
 
 
@@ -389,7 +388,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
   
   LBNEMagneticFieldHorn *fieldHorn1 = new LBNEMagneticFieldHorn(true);
   fieldHorn1->SetHornCurrent(fHornCurrent);
-  fieldHorn1->SetSkinDepthCorrInnerRad(fSkinDepthCorrInnerRad);
+  fieldHorn1->SetSkinDepthInnerRad(fSkinDepthInnerRad);
   G4FieldManager* aFieldMgr = new G4FieldManager(fieldHorn1); //create a local field		 
   aFieldMgr->SetDetectorField(fieldHorn1); //set the field 
   aFieldMgr->CreateChordFinder(fieldHorn1); //create the objects which calculate the trajectory
@@ -400,7 +399,7 @@ G4VPhysicalVolume* LBNEDetectorConstruction::Construct() {
 
   LBNEMagneticFieldHorn *fieldHorn2 = new LBNEMagneticFieldHorn(false);
   fieldHorn2->SetHornCurrent(fHornCurrent);
-  fieldHorn2->SetSkinDepthCorrInnerRad(fSkinDepthCorrInnerRad);
+  fieldHorn2->SetSkinDepthInnerRad(fSkinDepthInnerRad);
   G4FieldManager* aFieldMgr2 = new G4FieldManager(fieldHorn2); //create a local field		 
   aFieldMgr2->SetDetectorField(fieldHorn2); //set the field 
   aFieldMgr2->CreateChordFinder(fieldHorn2); //create the objects which calculate the trajectory
@@ -914,15 +913,14 @@ LBNEDetectorMessenger::LBNEDetectorMessenger( LBNEDetectorConstruction* LBNEDet)
    SetHornCurrent->SetUnitCandidates("kA");
    SetHornCurrent->AvailableForStates(G4State_PreInit);
    {
-   SetSkinDepthCorrInnerRad  = new G4UIcmdWithADouble("/LBNE/det/SetSkinDepthCorrInnerRad",this);
-   std::string aGuidance("A generic parameter that change the effective inner radius of the inner conductor. \n ");
-   aGuidance += std::string(" Valid value are between 0. and 1..  If 0. (default), than the current is distribute uniformly \n");
-   aGuidance += std::string(" over the entire thickess. If 0.99, over a 1 %  of the thickness, close to the outer radius \n");
-   aGuidance += std::string(" (as if the conductor is very thick, and/or, the current is constant in time) \n");
-   SetSkinDepthCorrInnerRad->SetGuidance(aGuidance.c_str());
-   SetSkinDepthCorrInnerRad->SetParameterName("SetSkinDepthCorrInnerRad",true);
-   SetSkinDepthCorrInnerRad->SetDefaultValue (0.);
-   SetSkinDepthCorrInnerRad->AvailableForStates(G4State_PreInit);
+   SetSkinDepthInnerRad  = new G4UIcmdWithADoubleAndUnit("/LBNE/det/SetSkinDepthInnerRad",this);
+   std::string aGuidance("The skin depth for the inner conductor. \n ");
+   aGuidance += std::string(" The default assumes infinite.  Using Zarko' thesis model, \n"); 
+   aGuidance += std::string("  MINOS Document 5694-v1, section 5.2.4, p150 - 156 \n");
+   SetSkinDepthInnerRad->SetGuidance(aGuidance.c_str());
+   SetSkinDepthInnerRad->SetParameterName("SetSkinDepthInnerRad",true);
+   SetSkinDepthInnerRad->SetDefaultValue (1.0e10*mm);
+   SetSkinDepthInnerRad->AvailableForStates(G4State_PreInit);
    }
 	
 }
@@ -937,7 +935,7 @@ LBNEDetectorMessenger::~LBNEDetectorMessenger()
    delete UpdateCmd;
    delete ConstructCmd;
    delete SetHornCurrent;
-   delete SetSkinDepthCorrInnerRad;
+   delete SetSkinDepthInnerRad;
 }
 
 
@@ -958,9 +956,9 @@ void LBNEDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
      G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
      LBNEDetector->SetHornCurrent(cmdWD->GetNewDoubleValue(newValue));
    }
-   if (command == SetSkinDepthCorrInnerRad) {
-     G4UIcmdWithADouble* cmdWD = dynamic_cast<G4UIcmdWithADouble*> (command);
-     LBNEDetector->SetSkinDepthCorrInnerRad(cmdWD->GetNewDoubleValue(newValue));
+   if (command == SetSkinDepthInnerRad) {
+     G4UIcmdWithADoubleAndUnit* cmdWD = dynamic_cast<G4UIcmdWithADoubleAndUnit*> (command);
+     LBNEDetector->SetSkinDepthInnerRad(cmdWD->GetNewDoubleValue(newValue));
    }
 }
 	

@@ -1,0 +1,214 @@
+#include <string>
+#include "AlignmentVariation.h"
+
+class AlignmentVariations {
+
+ public:
+  
+  AlignmentVariation *HornCurrent;
+  AlignmentVariation *Horn1XTilt;
+  AlignmentVariation *Horn1YTilt;
+  AlignmentVariation *Horn2XTilt;
+  AlignmentVariation *Horn2YTilt;
+  AlignmentVariation *Horn1XOffset;
+  AlignmentVariation *Horn1YOffset;
+  AlignmentVariation *Horn2XOffset;
+  AlignmentVariation *Horn2YOffset;
+  AlignmentVariation *TargetXOffset;
+  AlignmentVariation *TargetYOffset;
+  AlignmentVariation *TargetXTilt;
+  AlignmentVariation *TargetYTilt;
+  AlignmentVariation *BeamSigmaX;
+  AlignmentVariation *BeamSigmaY;
+  AlignmentVariation *DecayPipeRadius;
+  AlignmentVariation *FarDetX;
+  AlignmentVariation *FarDetY;
+  AlignmentVariation *WaterLayerThickness;
+
+    
+  AlignmentVariations() {
+    
+    HornCurrent = new AlignmentVariation("HornCurrent","current","v3r0p10");
+    HornCurrent->SetUnits("kA");
+    HornCurrent->AddVariation("212");
+    HornCurrent->AddVariation("208");
+    HornCurrent->AddVariation("204");
+    HornCurrent->AddVariation("202");
+    HornCurrent->AddVariation("198");
+    HornCurrent->AddVariation("196");
+    HornCurrent->AddVariation("192");
+    HornCurrent->AddVariation("188");
+    HornCurrent->SetTolerance("2");
+    HornCurrent->SetCV("200");
+
+    Horn1XOffset = new AlignmentVariation("Horn1XOffset","macro","v3r0p10");
+    Horn1XOffset->SetUnits("mm");
+    Horn1XOffset->AddVariation("0.5");
+    Horn1XOffset->AddVariation("1");
+    Horn1XOffset->AddVariation("2");
+    Horn1XOffset->AddVariation("2.5");
+    Horn1XOffset->SetTolerance("0.5");
+
+    Horn1YOffset = new AlignmentVariation("Horn1YOffset","macro","v3r0p10");
+    Horn1YOffset->SetUnits("mm");
+    Horn1YOffset->AddVariation("0.5");
+    Horn1YOffset->AddVariation("1");
+    Horn1YOffset->AddVariation("2");
+    Horn1YOffset->AddVariation("2.5");
+    Horn1YOffset->SetTolerance("0.5");
+
+    Horn2XOffset = new AlignmentVariation("Horn2XOffset","macro","v3r0p10");
+    Horn2XOffset->SetUnits("mm");
+    Horn2XOffset->AddVariation("0.5");
+    Horn2XOffset->AddVariation("1");
+    Horn2XOffset->AddVariation("2");
+    Horn2XOffset->AddVariation("2.5");
+    Horn2XOffset->SetTolerance("0.5");
+
+    Horn2YOffset = new AlignmentVariation("Horn2YOffset","macro","v3r0p10");
+    Horn2YOffset->SetUnits("mm");
+    Horn2YOffset->AddVariation("0.5");
+    Horn2YOffset->AddVariation("1");
+    Horn2YOffset->AddVariation("2");
+    Horn2YOffset->AddVariation("2.5");
+    Horn2YOffset->SetTolerance("0.5");
+
+    TargetYOffset = new AlignmentVariation("TargetYOffset","macro","v3r0p10");
+    TargetYOffset->SetUnits("mm");
+    TargetYOffset->AddVariation("0.5");
+    TargetYOffset->AddVariation("1");
+    TargetYOffset->AddVariation("2");
+    TargetYOffset->AddVariation("3");
+    TargetYOffset->SetTolerance("0.5");
+
+    TargetXOffset = new AlignmentVariation("TargetXOffset","macro","v3r0p10");
+    TargetXOffset->SetUnits("mm");
+    TargetXOffset->AddVariation("0.5");
+    TargetXOffset->AddVariation("1");
+    TargetXOffset->AddVariation("2");
+    TargetXOffset->AddVariation("3");
+    TargetXOffset->SetTolerance("0.5");
+
+    TargetYTilt = new AlignmentVariation("TargetYTilt","macro","v3r0p10");
+    TargetYTilt->SetUnits("mm");
+    TargetYTilt->AddVariation("0.5");
+    TargetYTilt->AddVariation("1");
+    TargetYTilt->AddVariation("2");
+    TargetYTilt->AddVariation("3");
+    TargetYTilt->SetTolerance("0.5");
+
+    TargetXTilt = new AlignmentVariation("TargetXTilt","macro","v3r0p10");
+    TargetXTilt->SetUnits("mm");
+    TargetXTilt->AddVariation("0.5");
+    TargetXTilt->AddVariation("1");
+    TargetXTilt->AddVariation("2");
+    TargetXTilt->AddVariation("3");
+    TargetXTilt->SetTolerance("0.5");
+
+    Horn1XTilt = new AlignmentVariation("Horn1XTilt","macro","v3r0p10");
+    Horn1XTilt->SetUnits("mm");
+    Horn1XTilt->AddVariation("0.25");
+    Horn1XTilt->AddVariation("0.5");
+    Horn1XTilt->AddVariation("1");
+    Horn1XTilt->AddVariation("1.5");
+    Horn1XTilt->AddVariation("2");
+    Horn1XTilt->AddVariation("2.5");
+    Horn1XTilt->SetTolerance("0.5");
+
+    Horn1YTilt = new AlignmentVariation("Horn1YTilt","macro","v3r0p10");
+    Horn1YTilt->SetUnits("mm");
+    Horn1YTilt->AddVariation("0.25");
+    Horn1YTilt->AddVariation("0.5");
+    Horn1YTilt->AddVariation("1");
+    //Horn1YTilt->AddVariation("1.5");
+    Horn1YTilt->AddVariation("2");
+    //Horn1YTilt->AddVariation("2.5");
+    Horn1YTilt->SetTolerance("0.5");
+
+    Horn2XTilt = new AlignmentVariation("Horn2XTilt","macro","v3r0p10");
+    Horn2XTilt->SetUnits("mm");
+    Horn2XTilt->AddVariation("0.5");
+    Horn2XTilt->AddVariation("1");
+    Horn2XTilt->AddVariation("2");
+    Horn2XTilt->AddVariation("2.5");
+    Horn2XTilt->SetTolerance("0.5");
+
+    Horn2YTilt = new AlignmentVariation("Horn2YTilt","macro","v3r0p10");
+    Horn2YTilt->SetUnits("mm");
+    Horn2YTilt->AddVariation("0.5");
+    Horn2YTilt->AddVariation("1");
+    Horn2YTilt->AddVariation("2");
+    //Horn2YTilt->AddVariation("2.5");
+    Horn2YTilt->SetTolerance("0.5");
+
+    BeamSigmaX = new AlignmentVariation("BeamSigmaX","macro","v3r0p10");
+    BeamSigmaX->SetUnits("mm");
+    BeamSigmaX->SetCV("1.3");
+    BeamSigmaX->AddVariation("0.7");
+    BeamSigmaX->AddVariation("0.9");
+    BeamSigmaX->AddVariation("1.1");
+    BeamSigmaX->AddVariation("1.2");
+    BeamSigmaX->AddVariation("1.4");
+    BeamSigmaX->AddVariation("1.5");
+    BeamSigmaX->AddVariation("1.7");
+    BeamSigmaX->AddVariation("1.9");
+    BeamSigmaX->SetTolerance("0.1");
+
+    BeamSigmaY = new AlignmentVariation("BeamSigmaY","macro","v3r0p10");
+    BeamSigmaY->SetUnits("mm");
+    BeamSigmaY->SetCV("1.3");
+    BeamSigmaY->AddVariation("0.7");
+    BeamSigmaY->AddVariation("0.9");
+    BeamSigmaY->AddVariation("1.1");
+    BeamSigmaY->AddVariation("1.2");
+    BeamSigmaY->AddVariation("1.4");
+    BeamSigmaY->AddVariation("1.5");
+    BeamSigmaY->AddVariation("1.7");
+    BeamSigmaY->AddVariation("1.9");
+    BeamSigmaY->SetTolerance("0.1");
+
+    DecayPipeRadius = new AlignmentVariation("DecayPipeRadius","macro","v3r0p10");
+    DecayPipeRadius->SetUnits("m");
+    DecayPipeRadius->SetCV("2.0");
+    DecayPipeRadius->AddVariation("1.4");
+    DecayPipeRadius->AddVariation("1.6");
+    DecayPipeRadius->AddVariation("1.8");
+    DecayPipeRadius->AddVariation("1.9");
+    DecayPipeRadius->AddVariation("2.1");
+    DecayPipeRadius->AddVariation("2.2");
+    DecayPipeRadius->AddVariation("2.4");
+    DecayPipeRadius->AddVariation("2.6");
+    DecayPipeRadius->SetTolerance("0.1");
+
+    FarDetX = new AlignmentVariation("LBNEFDX","location","v3r0p10");
+    FarDetX->SetCV("0");
+    FarDetX->SetTolerance("21");
+    FarDetX->SetUnits("m");
+    FarDetX->AddVariation("21");
+    FarDetX->AddVariation("42");
+    FarDetX->AddVariation("84");
+    FarDetX->AddVariation("500");
+    FarDetX->AddVariation("2000");
+
+    FarDetY = new AlignmentVariation("LBNEFDY","location","v3r0p10");
+    FarDetY->SetCV("0");
+    FarDetY->SetTolerance("21");
+    FarDetY->SetUnits("m");
+    FarDetY->AddVariation("21");
+    FarDetY->AddVariation("42");
+    FarDetY->AddVariation("84");
+    FarDetY->AddVariation("500");
+    FarDetY->AddVariation("2000");
+    
+    WaterLayerThickness = new AlignmentVariation("NominalWaterLayer_","macro","v3r0p10");
+    WaterLayerThickness->SetCV("0");
+    WaterLayerThickness->SetTolerance("0.5");
+    WaterLayerThickness->SetUnits("mm");
+    WaterLayerThickness->AddVariation("0.5");
+    WaterLayerThickness->AddVariation("1");
+    WaterLayerThickness->AddVariation("1.5");
+
+  }
+
+};
+

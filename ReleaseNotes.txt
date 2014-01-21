@@ -184,6 +184,7 @@ November 12 2013
 
  </v3r0p10>
  
+<v3r0p11>
 November 27 - December 02 2013 
 
  a. Added a new method in the LBNESteppingAction (StudyCheckMagneticTilts) that quantifies the astigmatism one gets by moving Horn1. It simply records the 6D position of muon-Geantinos at the end of Horn2. 
@@ -238,7 +239,7 @@ This is by no means exact, but it is a start, if the difference in the Far/Near 
   
   More work might be done here: Zarko's model is based on a calculation for a cylindrical conductor, not a hollow tube. 
   
-  
+<\v3r0p11>  
    
 
 

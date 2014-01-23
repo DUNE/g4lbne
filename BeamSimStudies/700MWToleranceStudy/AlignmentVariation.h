@@ -23,6 +23,11 @@
     std::string m_tolerance;
 
     std::string m_cv;
+
+    std::string m_disk;
+    
+    double m_scale_factor;
+
   public:
     AlignmentVariation(std::string quantity,
 		       std::string type, 
@@ -43,7 +48,16 @@
       m_tolerance = "";
 
       m_cv = "0";
+      
+      m_scale_factor = 1.0;
+
+      m_disk = "/lbne/data/";
     }
+   
+    void SetDisk(std::string disk) {
+     m_disk = disk;
+    }
+
 
     void SetUnits(std::string units) {
       m_units=units;
@@ -69,12 +83,20 @@
       m_cv = cv;
     }
 
+    void SetScaleFactor(double scale_factor = 1) {
+      m_scale_factor = scale_factor;
+    }
+
     void AddVariation(std::string variation) {
       m_variation_names.push_back(variation);
     }
 
     std::string GetVariedQuantity() {
       return m_quantity_varied;
+    }
+
+    std::string GetVariationType() {
+      return m_variation_type;
     }
 
     std::vector<std::string> GetVariationNames() {
@@ -97,7 +119,7 @@
       std::string fmc = "";
       if(fastmc) fmc="_fastmc";
 
-      std::string the_file = "/lbne/data/users/"+m_nominal_user+"/fluxfiles/g4lbne/"+m_nominal_version;
+      std::string the_file = m_disk+"/users/"+m_nominal_user+"/fluxfiles/g4lbne/"+m_nominal_version;
 
       the_file += "/"+m_nominal_plist+"/Nominal/"+temp_current+"/flux/";
       the_file += "histos_g4lbne_"+m_nominal_version+"_"+m_nominal_plist+"_Nominal_"+temp_current+"_"+loc+fmc+".root";
@@ -112,21 +134,35 @@
       if(fastmc) fmc="_fastmc";
       
       std::vector<std::string> the_files;
-      
-      for(unsigned int i = 0; i<m_variation_names.size(); i++) {
+
+      std::cout<<"Looking up flux histograms for variation "<<m_quantity_varied<<" which has type "<<m_variation_type<<std::endl;
+
+      if(m_variation_type=="shift") {
+
+	// "shift" type variations don't have multiple variations.  Example: baffle scraping involves shifting the nominal flux by a fraction of the flux from the baffle
+
+	std::string temp_current = m_nominal_current;
+	if(beam_mode=="antinu") temp_current = "-"+m_nominal_current;
 	
-	std::string variation = m_quantity_varied+m_variation_names[i]+m_units;
+	std::string the_file = m_disk+"/users/"+m_user+"/fluxfiles/g4lbne/"+m_version;
+	the_file += "/"+m_nominal_plist+"/"+m_quantity_varied+m_units+"/"+temp_current+"/flux/";
+	the_file += "histos_g4lbne_"+m_version+"_"+m_nominal_plist+"_"+m_quantity_varied+m_units+"_"+temp_current+"_"+loc+fmc+".root";
+	the_files.push_back(the_file);
+      }
+      else
+	for(unsigned int i = 0; i<m_variation_names.size(); i++) {
+	  std::string variation = m_quantity_varied+m_variation_names[i]+m_units;
 	if(m_variation_type=="current")
 	  variation = m_variation_names[i]+m_units;
 
-	std::string the_file = "/lbne/data/users/"+m_nominal_user+"/fluxfiles/g4lbne/"+m_nominal_version;
+	std::string the_file = m_disk+"/users/"+m_user+"/fluxfiles/g4lbne/"+m_version;
 	
 	if(m_variation_type=="macro") {
 	  std::string temp_current = m_nominal_current;
 	  if(beam_mode=="antinu") temp_current = "-"+m_nominal_current;
 
 	  the_file += "/"+m_nominal_plist+"/"+variation+"/"+temp_current+"/flux/";
-	  the_file += "histos_g4lbne_"+m_nominal_version+"_"+m_nominal_plist+"_"+variation+"_"+temp_current+"_"+loc+fmc+".root";
+	  the_file += "histos_g4lbne_"+m_version+"_"+m_nominal_plist+"_"+variation+"_"+temp_current+"_"+loc+fmc+".root";
 	}
 	else if(m_variation_type=="current") {
 	  std::string current_sign = "";
@@ -155,6 +191,8 @@
     }
 
     std::string GetCV() { return m_cv; }
+
+    double GetScaleFactor() { return m_scale_factor; }
 
     std::string GetUser() { return m_user; }
 

@@ -25,6 +25,8 @@
     std::string m_cv;
 
     std::string m_disk;
+
+    std::string m_macro_suffix;
     
     double m_scale_factor;
 
@@ -52,6 +54,8 @@
       m_scale_factor = 1.0;
 
       m_disk = "/lbne/data/";
+
+      m_macro_suffix = "";
     }
    
     void SetDisk(std::string disk) {
@@ -83,8 +87,12 @@
       m_cv = cv;
     }
 
-    void SetScaleFactor(double scale_factor = 1) {
+    void SetScaleFactor(double scale_factor) {
       m_scale_factor = scale_factor;
+    }
+
+    void SetMacroSuffix(std::string macro_suffix) {
+      m_macro_suffix = macro_suffix;
     }
 
     void AddVariation(std::string variation) {
@@ -145,15 +153,15 @@
 	if(beam_mode=="antinu") temp_current = "-"+m_nominal_current;
 	
 	std::string the_file = m_disk+"/users/"+m_user+"/fluxfiles/g4lbne/"+m_version;
-	the_file += "/"+m_nominal_plist+"/"+m_quantity_varied+m_units+"/"+temp_current+"/flux/";
-	the_file += "histos_g4lbne_"+m_version+"_"+m_nominal_plist+"_"+m_quantity_varied+m_units+"_"+temp_current+"_"+loc+fmc+".root";
+	the_file += "/"+m_nominal_plist+"/"+m_quantity_varied+m_units+m_macro_suffix+"/"+temp_current+"/flux/";
+	the_file += "histos_g4lbne_"+m_version+"_"+m_nominal_plist+"_"+m_quantity_varied+m_units+m_macro_suffix+"_"+temp_current+"_"+loc+fmc+".root";
 	the_files.push_back(the_file);
       }
       else
 	for(unsigned int i = 0; i<m_variation_names.size(); i++) {
-	  std::string variation = m_quantity_varied+m_variation_names[i]+m_units;
+	  std::string variation = m_quantity_varied+m_variation_names[i]+m_units+m_macro_suffix;
 	if(m_variation_type=="current")
-	  variation = m_variation_names[i]+m_units;
+	  variation = m_variation_names[i]+m_units+m_macro_suffix;
 
 	std::string the_file = m_disk+"/users/"+m_user+"/fluxfiles/g4lbne/"+m_version;
 	

@@ -1,4 +1,4 @@
-
+#include "AlignmentVariation.h"
 #include "AlignmentVariations.h"
 #include "TFile.h"
 #include "TH1D.h"
@@ -114,7 +114,7 @@ void ToleranceFits(std::string loc = "nof") {
     // Create an object of type AlignmentVariations, which
     // sets the names, characteristics of each 
     AlignmentVariations h;
-
+    
     // This is the list of alignment quantities you want to consider
     std::vector<AlignmentVariation*> theVariations;
     theVariations.push_back(h.FarDetX);
@@ -139,7 +139,8 @@ void ToleranceFits(std::string loc = "nof") {
     theVariations.push_back(h.BaffleScraping);
     //theVariations.push_back(h.NoShielding);
     theVariations.push_back(h.DecayPipeOffsetX);
-    //theVariations.push_back(h.SkinDepth);
+    theVariations.push_back(h.SkinDepthIC);
+    theVariations.push_back(h.BeamTiltX);
 
 
     // create a legend

@@ -27,7 +27,8 @@ class AlignmentVariations {
   AlignmentVariation *BaffleScraping;
   AlignmentVariation *NoShielding;
   AlignmentVariation *DecayPipeOffsetX;
-  AlignmentVariation *SkinDepth;
+  AlignmentVariation *SkinDepthIC;
+  AlignmentVariation *BeamTiltX;
 
     
   AlignmentVariations() {
@@ -250,6 +251,29 @@ class AlignmentVariations {
     DecayPipeOffsetX->AddVariation("700");
     DecayPipeOffsetX->AddVariation("900");
     DecayPipeOffsetX->SetUser("seongtae");
+
+    SkinDepthIC = new AlignmentVariation("SkinDepthIC_","macro","v3r0p10");
+    SkinDepthIC->SetCV("1000");
+    SkinDepthIC->SetTolerance("993.4");
+    SkinDepthIC->SetUnits("mm");
+    SkinDepthIC->AddVariation("2.5");
+    SkinDepthIC->AddVariation("6.6");
+    SkinDepthIC->AddVariation("7.7");
+    
+    BeamTiltX = new AlignmentVariation("Tilt_t","macro","v3r0p10");
+    BeamTiltX->SetCV("0");
+    BeamTiltX->SetTolerance("70");
+    BeamTiltX->SetUnits("");
+    BeamTiltX->AddVariation("700");
+    BeamTiltX->AddVariation("933");
+    BeamTiltX->AddVariation("1166");
+    BeamTiltX->AddVariation("1400");
+    //BeamTiltX->AddVariation("1633");
+    //BeamTiltX->AddVariation("1866");
+    //BeamTiltX->AddVariation("2100");
+    BeamTiltX->SetMacroSuffix("_p0");
+    BeamTiltX->SetUser("tbw6971");
+
 
   }
 

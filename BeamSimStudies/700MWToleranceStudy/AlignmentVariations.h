@@ -21,6 +21,7 @@ class AlignmentVariations {
   AlignmentVariation *BeamSigmaX;
   AlignmentVariation *BeamSigmaY;
   AlignmentVariation *DecayPipeRadius;
+  AlignmentVariation *NearDetX;
   AlignmentVariation *FarDetX;
   AlignmentVariation *FarDetY;
   AlignmentVariation *WaterLayerThickness;
@@ -201,6 +202,21 @@ class AlignmentVariations {
     DecayPipeRadius->AddVariation("2.6");
     DecayPipeRadius->SetTolerance("0.1");
 
+    NearDetX = new AlignmentVariation("NominalX","macro","v3r0p10");
+    NearDetX->SetCV("0");
+    NearDetX->SetTolerance(".025");
+    NearDetX->SetUnits("mm");
+    NearDetX->SetUser("bashyal8");
+    NearDetX->AddVariation("1");
+    NearDetX->AddVariation("2");
+    NearDetX->AddVariation("3");
+    //NearDetX->AddVariation("4");
+    //NearDetX->AddVariation("5");
+    //NearDetX->AddVariation("6");
+    //NearDetX->AddVariation("7");
+    //NearDetX->AddVariation("8");
+    //NearDetX->AddVariation("9");
+
     FarDetX = new AlignmentVariation("LBNEFDX","location","v3r0p10");
     FarDetX->SetCV("0");
     FarDetX->SetDisk("/lbne/data2");
@@ -273,7 +289,6 @@ class AlignmentVariations {
     //BeamTiltX->AddVariation("2100");
     BeamTiltX->SetMacroSuffix("_p0");
     BeamTiltX->SetUser("tbw6971");
-
 
   }
 

@@ -117,6 +117,8 @@ void ToleranceFits(std::string loc = "nof") {
     
     // This is the list of alignment quantities you want to consider
     std::vector<AlignmentVariation*> theVariations;
+    theVariations.push_back(h.NearDetX);
+    /*
     theVariations.push_back(h.FarDetX);
     theVariations.push_back(h.FarDetY);
     theVariations.push_back(h.HornCurrent);
@@ -141,6 +143,7 @@ void ToleranceFits(std::string loc = "nof") {
     theVariations.push_back(h.DecayPipeOffsetX);
     theVariations.push_back(h.SkinDepthIC);
     theVariations.push_back(h.BeamTiltX);
+    */
 
 
     // create a legend

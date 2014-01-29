@@ -22,11 +22,10 @@ Blake Watson \\
 %\begin{abstract} 	
 
 %\end{abstract}
-\section{Introduction}
 
-This note describes a study of LBNE beamline alignment tolerances and systematic uncertainties that was conducted in the winter of 2013-2014.  For each beam alignment parameter listed in Table~\ref{tab:syslist}, we evaluate the systematic uncertainty on the unoscillated muon neutrino flux assuming the nominal tolerances listed in Table~\ref{tab:syslist}.  In addition to providing a preliminary estimate of uncertainties that can be input to physics studies, this work also provides valuable input to the beamline group that will inform the design of hadron monitors and other beam alignment tools.  The note is organized as follows: Section~\ref{sec:beamsim} describes the simulation used to execute the study; the procedure for extracting systematic uncertainties is summarized in Section~\ref{sec:procedure}, and the results are summarized in Section~\ref{sec:results}.  Plots showing the neutrino flux in various beam configuraitons and the fits used to extract systematic uncertainties are available in Appendices~\ref{app:nof_plots}-~\ref{app:far_plots}
+This note describes a study of beam alignment tolerances and systematic uncertainties that was conducted in the winter of 2013-2014.  For each beam alignment parameter listed in Table~\ref{tab:syslist}, we evaluate the systematic uncertainty on the unoscillated muon neutrino flux assuming the nominal tolerances listed in Table~\ref{tab:syslist}.  In addition to providing a preliminary estimate of uncertainties that can be input to physics studies, this work also provides valuable input to the beamline group that will inform the design of hadron monitors and other beam alignment tools.  The note is organized as follows: Section~\ref{sec:beamsim} describes the simulation used to execute the study, the procedure for extracting systematic uncertainties is reviewed in Section~\ref{sec:procedure}, the results are summarized in Section~\ref{sec:results}.  Plots showing the neutrino flux in various beam configurations and the fits used to extract systematic uncertainties are available in Appendices~\ref{app:nof_plots}-~\ref{app:far_plots}
 
-\begin{table}[ht]
+\begin{table}
 \centering
 \begin{tabular}{ | c | c | }
 \hline
@@ -65,7 +64,27 @@ This section describes the motivation, goals and scope of the Geant4~\cite{Geant
 
 \subsection{Further details}   Top level elements (target, horns, decay pipe...) are located along a nominal beam line, with the origin, traditionally labeled ``MCZERO", close - but not   exactly - at the entrance of Horn1. The integration drawing {\em 8875.0000-ME-363028} and references therein was used to set this up. Since the entire   beamline is left-right symmetric - ignoring misalignments, right-handedness is of no concern.      Hard coded physical size or positions ``hard-coded" in the C++ constructors do refer to various drawings of LBNE Docdb notes, in the form of C++ comments. The   electronic repository of engineering drawings from  the Accelerator Div. Mechanical Dept~\cite{IFIND}, {\em I-Find} has been extensively used throughout the   coding period, tediously entering details such as the thin spider web supporting the inner conductor from the outer one.        The entrance of Horn1 and the target is the most intricate part of the setup. In addition, the longitudinal position of the target with respect to Horn1 can be   altered via either an ``optimization" data card, or new transverse positions from the {\em LBNESurveyor}.  Because this target is inserted into the upstream section of   Horn1, the upstream and downstream sections do have different G4 mother volumes.  Such a complex volume hierarchy could have been avoided, however, we concerned   about G4 tracking performance when designing the G4 geometry.       Prior to placing the G4 volumes, the {\em LBNEVolmuePlacements} has utilities to detect volumes overlaps, or mechanical tolerances on gaps are not satisfied.    This can easily occur when the target or the horn are misaligned. For instance, the code will not run if the target is inserted to far into Horn1.      Finally, a preliminary set of options to optimize the design of the horns system have been implemented, and partly commissioned. One can rescale the transverse   or longitudinal dimension of each horn.       So far, our focus has been on setting up the geometry. Other aspects of the g4lbne-v2 application have been preserved, such as the generation of the neutrino   N-Tuple, and the Horn's magnetic field calculations, including effects due to the skin depth for the horn's inner conductors.      
 
-\subsection{Inline Documentation}     As stated above, run time specific options are implemented based on the G4UI package. Since the G4lbne-v3 executable can run either in a batch (for instance,    on the FermiGrid), or interactively. The G4UI (both native to G4, or defined in the g4lbne-v3 package) data cards are organised into hierarchical directories.     and can be browsed from the command line. Some guidance on how to change a parameter can then be decipher.  For instance, a interactive session transcript    could be:    \begin{verbatim} <lbnegpvm02> ./g4lbne************************************************************* Geant4 version Name: geant4-09-04-patch-03    (9-December-2011)  ....  PreInit> cd /LBNE/detPreInit> lsCommand directory path : /LBNE/det/Guidance :detector control Sub-directories :  Commands :    decayPipeLength * Length of the decay Pipe   ...    \end{verbatim}   Example of sets of data cards are provided along with the source code, allowing the users to insert a  set of changes. Informal training via e-mail was found to  be adequate, with specific consulting sessions and user-input on setting up these data cards.        
+\subsection{Inline Documentation}     As stated above, run time specific options are implemented based on the G4UI package. Since the G4lbne-v3 executable can run either in a batch (for instance,    on the FermiGrid), or interactively. The G4UI (both native to G4, or defined in the g4lbne-v3 package) data cards are organised into hierarchical directories.     and can be browsed from the command line. Some guidance on how to change a parameter can then be decipher.  For instance, a interactive session transcript    could be:    \begin{verbatim} 
+
+<lbnegpvm02> ./g4lbne
+
+************************************************************* 
+Geant4 version Name: geant4-09-04-patch-03    (9-December-2011)
+  ....  
+
+PreInit> cd /LBNE/det
+PreInit> ls
+Command directory path : /LBNE/det/
+
+Guidance :
+detector control
+
+ Sub-directories :
+ Commands :  
+   decayPipeLength * Length of the decay Pipe
+   ...    
+
+\end{verbatim}   Example of sets of data cards are provided along with the source code, allowing the users to insert a  set of changes. Informal training via e-mail was found to  be adequate, with specific consulting sessions and user-input on setting up these data cards.        
 
 \subsection{Commissioning and validation}      In addition to checks done in {\em LBNEVolmuePlacements}, all volumes are uploaded into the G4 geometry are checked for volume overlaps (i.e. using the method {\em   G4PVPlacement::checkOverlaps}.  However, this check might still miss overlaps in few corners, justifying the checks done prior to the placements.      Two distinct ways of checking the geometry have been extensively used.  The first one is based on the G4 visualization tools. An example is shown on   figure~\ref{FromSeongtae}, showing details of the target.  Surfaces, lines or corners that could be understood were investigated by collaborators that did not   wrote the g4lbne-v3 code, discussed in the group, and issues were resolved, one by one. The second method is based on the G4 ``tracking/stepping" debugging   tools. So called ``Geantino"\footnote{A type of G4 particles that have no electric charge, and perfectly sterile regarding interaction with the material} were   send through the geometry, and specific track/volume intersections were recorded and compared to what's expected, based on the engineering drawings.  
 
@@ -108,15 +127,7 @@ This procedure, which closely follows a similar study performed for the NuMI bea
 \caption{ Systematic uncertainty on the near/far flux ratio due to a target offset along the $x$ axis. }
 \end{figure}
 
-To study the effect of shielding block alignment, we have simlated the flux with and without shielding blocks present.  The ratio of these is shown for the near detector in Figure~\ref{fig:shielding_near} and for the far detector in Figure~\ref{fig:shielding_far}. We find find no difference from the nominal configuration beyond statistical fluctuations.  We therefore assume that alignment block shifts of order 1 cm would lead to negligible systematic uncertainties and do not include this source in our total estimat of alignment uncertainties.
-
-\begin{figure}[ht]
-\label{fig:shielding_near}
-  \begin{center}
-    {\includegraphics[width=6.0in]{figures/comp_flux_ratios_FHC_unoscillated_Nominal_NoShielding_near.eps}}
-  \end{center}
-\caption{ The ratio of flux in the near neutrino detector without shielding blocks to the nominal flux produced with shielding blocks included in the geometry simulation. }
-\end{figure}
+To study the effect of shielding block alignment, we have simlated the flux with and without shielding blocks present.  The ratio of these is shown in Figure~\ref{fig:shielding_far}. We find find no difference from the nominal configuration beyond statistical fluctuations.  We therefore assume that alignment block shifts of order 1 cm would lead to negligible systematic uncertainties and do not include this source in our total estimat of alignment uncertainties.
 
 \begin{figure}[ht]
 \label{fig:shielding_far}
@@ -147,6 +158,8 @@ For the baffle scraping uncertainty, we estimate the flux from the baffle by sim
 
 \section{Results}
 \label{sec:results}
+
+\input{error_table}
 
 \begin{figure}[ht]
   \begin{center}
@@ -593,13 +606,799 @@ For the baffle scraping uncertainty, we estimate the flux from the baffle by sim
 \section{Near Detector Flux Ratios and Fits}
 \label{app:near_plots}
 
-\section{Near Detector Flux Ratios and Fits}
+\subsection{Target Position}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/TargetXOffset_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Target Offset in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/TargetXOffset_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Target Offset in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/TargetYOffset_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Target Offset in $y$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/TargetYOffset_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Target Offset in $y$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/TargetXTilt_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Target Tilt in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/TargetXTilt_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Target Tilt in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Horn 1 Position}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn1XOffset_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Horn 1 Offset in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn1XOffset_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Horn 1 Offset in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn1YOffset_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Horn 1 Offset in $y$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn1YOffset_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Horn 1 Offset in $y$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn1XTilt_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Horn 1 Tilt in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn1XTilt_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Horn 1 Tilt in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn1YTilt_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Horn 1 Tilt in $y$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn1YTilt_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Horn 1 Tilt in $y$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Horn 2 Position}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn2XOffset_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Horn 2 Offset in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn2XOffset_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Horn 2 Offset in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn2YOffset_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Horn 2 Offset in $y$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn2YOffset_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Horn 2 Offset in $y$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn2XTilt_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Horn 2 Tilt in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn2XTilt_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Horn 2 Tilt in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn2YTilt_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Horn 2 Tilt in $y$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn2YTilt_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Horn 2 Tilt in $y$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/TargetYTilt_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Target Tilt in $y$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/TargetYTilt_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Target Tilt in $y$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Far Detector Position}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/LBNEFDX_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Far detector offset in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/LBNEFDX_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Far detector offset in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/LBNEFDY_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Far detector offset in $y$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/LBNEFDY_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Far detector offset in $y$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Decay Pipe Position}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/DecayPipeOffsetX_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Decay Pipe Offset in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/DecayPipeOffsetX_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Decay Pipe Offset in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Decay Pipe Radius}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/DecayPipeRadius_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Decay Pipe Radius} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/DecayPipeRadius_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Decay Pipe Radius}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Horn Current}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/HornCurrent_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Horn Current} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/HornCurrent_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf HornCurrent}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Horn Water Layer Thickness}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/NominalWaterLayer__near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf horn cooling water layer thickness} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/NominalWaterLayer__near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf horn cooling water layer thickness}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Beam size at target}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/BeamSigmaX_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Beam size in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/BeamSigmaY_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Beam size in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\subsection{Beam Position at Target}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/NominalX_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Beam $x$ offset at target} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/NominalX_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Beam $x$ offset at target}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/NominalY_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Beam $y$ offset at target} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/NominalY_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Beam $y$ offset at target}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Beam Angle at Target}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Tilt_t_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf beam tilt in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Tilt_t_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf beam tilt in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Near Detector Position}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/LBNENDX_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Near detector offset in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/LBNENDX_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Near detector offset in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/LBNENDY_near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf Near detector offset in $y$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/LBNENDY_near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf Near detector offset in $y$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+
+\clearpage
+\subsection{Horn Conductor Skin Depth}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/SkinDepthIC__near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf skin depth in the horn conductors} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/SkinDepthIC__near_fits.eps}}
+  \end{center}
+\caption{ Fits to the near flux ratio for several values of {\bf skin depth in the horn conductors}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\section{Gar Detector Flux Ratios and Fits}
 \label{app:far_plots}
+
+\subsection{Target Position}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/TargetXOffset_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Target Offset in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/TargetXOffset_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Target Offset in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/TargetYOffset_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Target Offset in $y$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/TargetYOffset_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Target Offset in $y$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/TargetXTilt_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Target Tilt in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/TargetXTilt_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Target Tilt in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Horn 1 Position}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn1XOffset_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Horn 1 Offset in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn1XOffset_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Horn 1 Offset in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn1YOffset_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Horn 1 Offset in $y$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn1YOffset_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Horn 1 Offset in $y$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn1XTilt_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Horn 1 Tilt in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn1XTilt_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Horn 1 Tilt in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn1YTilt_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Horn 1 Tilt in $y$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn1YTilt_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Horn 1 Tilt in $y$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Horn 2 Position}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn2XOffset_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Horn 2 Offset in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn2XOffset_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Horn 2 Offset in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn2YOffset_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Horn 2 Offset in $y$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn2YOffset_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Horn 2 Offset in $y$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn2XTilt_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Horn 2 Tilt in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn2XTilt_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Horn 2 Tilt in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn2YTilt_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Horn 2 Tilt in $y$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Horn2YTilt_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Horn 2 Tilt in $y$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/TargetYTilt_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Target Tilt in $y$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/TargetYTilt_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Target Tilt in $y$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Far Detector Position}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/LBNEFDX_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Far detector offset in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/LBNEFDX_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Far detector offset in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/LBNEFDY_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Far detector offset in $y$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/LBNEFDY_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Far detector offset in $y$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Decay Pipe Position}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/DecayPipeOffsetX_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Decay Pipe Offset in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/DecayPipeOffsetX_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Decay Pipe Offset in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Decay Pipe Radius}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/DecayPipeRadius_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Decay Pipe Radius} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/DecayPipeRadius_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Decay Pipe Radius}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Horn Current}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/HornCurrent_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Horn Current} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/HornCurrent_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf HornCurrent}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Horn Water Layer Thickness}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/NominalWaterLayer__far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf horn cooling water layer thickness} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/NominalWaterLayer__far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf horn cooling water layer thickness}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Beam size at target}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/BeamSigmaX_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Beam size in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/BeamSigmaY_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Beam size in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\subsection{Beam Position at Target}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/NominalX_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Beam $x$ offset at target} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/NominalX_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Beam $x$ offset at target}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/NominalY_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Beam $y$ offset at target} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/NominalY_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Beam $y$ offset at target}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Beam Angle at Target}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Tilt_t_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf beam tilt in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Tilt_t_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf beam tilt in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Far Detector Position}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/LBNENDX_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Far detector offset in $x$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/LBNENDX_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Far detector offset in $x$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/LBNENDY_far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf Far detector offset in $y$} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/LBNENDY_far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf Far detector offset in $y$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+
+\clearpage
+\subsection{Horn Conductor Skin Depth}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/SkinDepthIC__far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf skin depth in the horn conductors} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/SkinDepthIC__far_fits.eps}}
+  \end{center}
+\caption{ Fits to the far flux ratio for several values of {\bf skin depth in the horn conductors}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
 
 \begin{thebibliography}{1}
 
 \bibitem{lbnecdr} 
-LBNE Conceptual Design Report Volume 2: Beamline at the Near Site.  LBNE DocDB 4317.
+LBNE Conceptual Design Report Volume 2: Beamline at the Far Site.  LBNE DocDB 4317.
 
 \bibitem{numitdh}
 NuMI Technical Design Handbook, http://www-numi.fnal.gov/numwork/tdh/tdh\_index.html.

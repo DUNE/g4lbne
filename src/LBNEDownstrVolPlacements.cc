@@ -1804,7 +1804,11 @@ void LBNEVolumePlacements::Horn2InstallSpiderHanger(const G4String &nameStrH, G4
   const int eqnNum = 3;
   const double zLocDrawing = fHorn2LongRescale*60.4681*in;
   const double rTmp1 = fHorn2Equations[eqnNum].GetVal(zLocDrawing) + 0.015*mm + fWaterLayerThickInHorns;
-  const double rTmp2 = fHorn2RadialRescale*11.625*in + fWaterLayerThickInHorns + 0.015*mm; // 
+//  const double rTmp2 = fHorn2RadialRescale*11.625*in + fWaterLayerThickInHorns + 0.015*mm; // 
+// 11.625 inches is the outer diameter of this ring.  Not it's radius. Arghh! Feb 4 2014, P. Lebrun
+  const double rTmp2 = fHorn2RadialRescale*11.625*in/2.0 + fWaterLayerThickInHorns + 0.015*mm; // 
+//  std::cerr <<  " LBNEVolumePlacements::Horn2InstallSpiderHanger, radii of the rings.. " << rTmp1 << "  " << rTmp2 << std::endl;
+//  std::cerr <<  " .... Volume name ...  " << nameStr << std::endl;
   G4Tubs *aTubs = new G4Tubs(nameStr, rTmp1, rTmp2, length/2.   , 0., 360.0*deg);
   G4LogicalVolume *pCurrent = new G4LogicalVolume(aTubs, G4Material::GetMaterial(std::string("Aluminum")), nameStr);
   G4ThreeVector posTmp; posTmp[0] = 0.; posTmp[1] = 0.;

@@ -13,6 +13,7 @@
 #include "TMath.h"
 #include "TStyle.h"
 #include "TPad.h"
+#include <iomanip>
 
 // To run:
 // root -q -b ToleranceFits.C+\(\"nof\"\)
@@ -26,7 +27,7 @@
 // and totals
 
 
-// a helpful function
+//  some helper functions
 void add_plot_label( const char* label, double x, double y, double size = 0.05, int color = 1, int font = 62, int align = 22, double rotate = 0 ){
 
   TLatex *latex = new TLatex( x, y, label );
@@ -38,6 +39,24 @@ void add_plot_label( const char* label, double x, double y, double size = 0.05, 
   latex->SetTextAngle(rotate);
   latex->Draw();
 }
+
+// gets max value of histogram within a range bin bins (inclusive)
+double getHistMaximum( TH1D* hist, int lowbin, int highbin) {
+  
+  // make sure bounds are within limits of histogram
+  if(lowbin < 0) lowbin = 0;
+  if(highbin > hist->GetNbinsX()+1) highbin = hist->GetNbinsX()+1;
+
+  double max = hist->GetBinContent(lowbin);
+
+  for(int i = lowbin+1; i<=highbin; i++) {
+    if(hist->GetBinContent(i)>max)
+      max = hist->GetBinContent(i);
+  }
+  return max;
+}
+
+
 
 
 void ToleranceFits(std::string loc = "nof") {
@@ -80,6 +99,17 @@ void ToleranceFits(std::string loc = "nof") {
     TH1D *h_tot_err = new TH1D("h_tot_err","h_tot_err",xbins.size()-1,&xbins[0]);
     TH1D *h_sing_err = new TH1D("h_sing_err","h_sing_err",xbins.size()-1,&xbins[0]);
 
+    // open a latex file to hold a table of errors
+    ofstream error_table;
+    error_table.open(("error_table_"+loc+".tex").c_str());
+    error_table<<"\\begin{sidewaystable}[ht]"<<std::endl; 
+    error_table<<"\\centering"<<std::endl;
+    error_table<<"\\tiny"<<std::endl;
+    error_table<<"\\begin{tabular}{|c | c c c c c c c c c c c c c c c c c c c c | }"<<std::endl;
+    error_table<<"\\hline"<<std::endl; 
+    error_table<<"Energy( GeV) & 0-0.5 & 0.5-1 & 1-1.5 & 1.5-2 & 2-2.5 & 2.5-3 & 3-3.5 & 3.5-4 & 4-4.5 & 4.5-5 & 5-5.5 & 5.5-6 & 6-6.5 & 6.5-7 & 7-7.5 & 7.5-8 & 8-8.5 & 8.5-9 & 9-9.5 & 9.5-10 \\\\"<<std::endl; 
+    error_table<<"\\hline"<<std::endl;
+
     // these come from the fast mc -- approximate statistics for 5 years
     TH1D *h_app = new TH1D("h_app","h_app",20,0,10);  
     TH1D *h_dis = new TH1D("h_dis","h_dis",20,0,10);
@@ -117,11 +147,13 @@ void ToleranceFits(std::string loc = "nof") {
     
     // This is the list of alignment quantities you want to consider
     std::vector<AlignmentVariation*> theVariations;
-    theVariations.push_back(h.NearDetX);
-    /*
+
     theVariations.push_back(h.FarDetX);
     theVariations.push_back(h.FarDetY);
+    theVariations.push_back(h.NearDetX);
+    theVariations.push_back(h.NearDetY);
     theVariations.push_back(h.HornCurrent);
+    
     theVariations.push_back(h.Horn1XTilt);
     theVariations.push_back(h.Horn1YTilt);
     theVariations.push_back(h.Horn1XOffset);
@@ -143,16 +175,18 @@ void ToleranceFits(std::string loc = "nof") {
     theVariations.push_back(h.DecayPipeOffsetX);
     theVariations.push_back(h.SkinDepthIC);
     theVariations.push_back(h.BeamTiltX);
-    */
-
+    theVariations.push_back(h.BeamTiltY);
+    theVariations.push_back(h.BeamOffsetX);
+    theVariations.push_back(h.BeamOffsetY);
+    theVariations.push_back(h.TargetDensity);
 
     // create a legend
-    TLegend *leg4 = new TLegend(.6,0.4,.85,0.85);
+    TLegend *leg4 = new TLegend(.715,0.25,1,0.75);
     leg4->SetFillStyle(0);
     leg4->SetBorderSize(0);
 
     // loop over uncertainties
-    bool error_summary_started = 0;
+    int n_errors_on_summary_plot = 0;
     for(unsigned int i = 0; i<theVariations.size(); i++) {
 
       std::cout<<"Doing tolerance fit for "<<theVariations[i]->GetVariedQuantity()<<std::endl;
@@ -193,7 +227,7 @@ void ToleranceFits(std::string loc = "nof") {
       
       int n_variations = theVariations[i]->GetVariationNames().size();
 
-
+    
       // if this is a standard type of uncertainty,
       // loop over the different variations, do fits and extract
       // the uncertainty using the alignment tolerance
@@ -239,8 +273,7 @@ void ToleranceFits(std::string loc = "nof") {
 	  h_nof_fits[j]= (TH1D*)h_nof[j]->Clone(("h_nof_fits"+variation).c_str());
     
 	}
-  
-  
+      
 	// Do the fits
 	c1->Clear();
 	c1->Divide(5,4);
@@ -256,6 +289,10 @@ void ToleranceFits(std::string loc = "nof") {
 	  for(int j = 0; j<n_variations; j++) {
 	    x[j] = atof(theVariations[i]->GetVariationNames()[j].c_str())-
 	      atof(theVariations[i]->GetCV().c_str());
+	    //if(theVariations[i]->GetVariedQuantity()=="SkinDepthIC_") {
+	    //  x[j] = 1/x[j];
+	    //  std::cout<<"BLAH "<<std::endl;
+	    // }
 	    if(x[j]<xmin) xmin = x[j];
 	    if(x[j]>xmax) xmax = x[j];
 	    y[j] = h_nof[j]->GetBinContent(k+1)-1;
@@ -266,11 +303,14 @@ void ToleranceFits(std::string loc = "nof") {
 	  // widen range for nicer looking plots
 	  xmin = xmin - (xmax-xmin)*.1;
 	  xmax = xmax + (xmax-xmin)*.1;
+	  if(xmin > 0 ) xmin = 0;
+	  if(xmax < 0 ) xmax = 0;
 
 	  TGraph *gr = new TGraphErrors(n_variations,x,y,ex,ey);
 	  gr->SetMarkerStyle(21);
 	  gr->SetMarkerSize(1);
 	  gr->GetXaxis()->SetLimits(xmin,xmax);
+	  gr->GetXaxis()->SetNdivisions(4);
 	  double newmax = gr->GetMinimum()+(gr->GetMaximum()-gr->GetMinimum())*1.4;
 	  gr->SetMaximum(newmax);
 	  gr->Draw("AP");
@@ -310,11 +350,14 @@ void ToleranceFits(std::string loc = "nof") {
 	  }
 	  h_sing_err->SetBinContent(k+1,TMath::Power(bestfunc->Eval(atof(theVariations[i]->GetTolerance().c_str())),2));
 	  h_tot_err->SetBinContent(k+1,h_tot_err->GetBinContent(k+1)+TMath::Power(bestfunc->Eval(atof(theVariations[i]->GetTolerance().c_str())),2));   
-    
+	  //if(theVariations[i]->GetVariedQuantity()=="SkinDepthIC_") {
+	  //  h_sing_err->SetBinContent(k+1,TMath::Power(bestfunc->Eval(1/atof(theVariations[i]->GetTolerance().c_str())),2));
+	  //  h_tot_err->SetBinContent(k+1,h_tot_err->GetBinContent(k+1)+TMath::Power(bestfunc->Eval(1/atof(theVariations[i]->GetTolerance().c_str())),2));   
+	  //}
 	}
-	c1->Print((theVariations[i]->GetVariedQuantity()+"_"+loc+"_fits.eps").c_str());
-	c1->Print((theVariations[i]->GetVariedQuantity()+"_"+loc+"_fits.png").c_str());
-
+	c1->Print((theVariations[i]->GetVariedQuantity()+theVariations[i]->GetMacroSuffix()+"_"+loc+"_fits.eps").c_str());
+	c1->Print((theVariations[i]->GetVariedQuantity()+theVariations[i]->GetMacroSuffix()+"_"+loc+"_fits.png").c_str());
+      
       c2->cd();
       for(int j = 0; j< n_variations; j++) {
 	
@@ -358,8 +401,8 @@ void ToleranceFits(std::string loc = "nof") {
 	    
       }
     
-      c2->Print((theVariations[i]->GetVariedQuantity()+"_"+loc+"_summary.eps").c_str());
-      c2->Print((theVariations[i]->GetVariedQuantity()+"_"+loc+"_summary.png").c_str());
+      c2->Print((theVariations[i]->GetVariedQuantity()+theVariations[i]->GetMacroSuffix()+"_"+loc+"_summary.eps").c_str());
+      c2->Print((theVariations[i]->GetVariedQuantity()+theVariations[i]->GetMacroSuffix()+"_"+loc+"_summary.png").c_str());
 
       add_plot_label(theVariations[i]->GetVariedQuantity().c_str(),0.95,0.5,0.05,1,62,22,90);
 
@@ -367,6 +410,7 @@ void ToleranceFits(std::string loc = "nof") {
       }
       // for uncertainties that don't have multiple variations,
       // calculate the uncertainty from a single shifted flux
+      // this is only baffle scraping at the moment
       else {
 
 	TFile *f_near = new TFile((theVariations[i]->GetVariedHistoFiles("nu","LBNEND")[0]).c_str());
@@ -377,7 +421,7 @@ void ToleranceFits(std::string loc = "nof") {
 	  
 	h_near->SetDirectory(0);
 	h_far->SetDirectory(0);
-
+      
 	std::string variation = theVariations[i]->GetVariedQuantity();
 	
 	h_near = (TH1D*)h_near->Rebin(20,("h_nom_near_"+variation).c_str(),&xbins[0]);
@@ -414,7 +458,7 @@ void ToleranceFits(std::string loc = "nof") {
 	  h_tot_err->SetBinContent(k+1,h_tot_err->GetBinContent(k+1)+(h_sing_err->GetBinContent(k+1)));   
 	}
       }
-    
+      
       // Plot the results
       c2->cd();
       for(unsigned int kk = 0; kk<xbins.size()-1; kk++)
@@ -442,10 +486,12 @@ void ToleranceFits(std::string loc = "nof") {
       leg->AddEntry(h_dis,"Stat, #nu_{#mu} Dis","p");
       leg->AddEntry(h_sing_err,theVariations[i]->GetVariedQuantity().c_str(),"p");
       leg->Draw();
-    
+      
+      add_plot_label("Stat from Fast MC, 5 years #times 700 kW x 35 kTon",0.65,0.925,0.04,38,62,22);
+
   
-      c2->Print((theVariations[i]->GetVariedQuantity()+"_"+loc+"_statcomp.eps").c_str());
-      c2->Print((theVariations[i]->GetVariedQuantity()+"_"+loc+"_statcomp.png").c_str());
+      c2->Print((theVariations[i]->GetVariedQuantity()+theVariations[i]->GetMacroSuffix()+"_"+loc+"_statcomp.eps").c_str());
+      c2->Print((theVariations[i]->GetVariedQuantity()+theVariations[i]->GetMacroSuffix()+"_"+loc+"_statcomp.png").c_str());
       
       h_sing_err->GetYaxis()->SetTitleOffset(1.2);
       h_sing_err->SetMaximum(0.04);
@@ -456,28 +502,50 @@ void ToleranceFits(std::string loc = "nof") {
       leg2->SetBorderSize(0);
       //leg2->AddEntry(h_app,"Stat, #nu_{e} App","p");
       //leg2->AddEntry(h_dis,"Stat, #nu_{#mu} Dis","p");
-      leg2->AddEntry(h_sing_err,(theVariations[i]->GetVariedQuantity()+" Error").c_str(),"p");
+      leg2->AddEntry(h_sing_err,(theVariations[i]->GetLabel()+" Error").c_str(),"p");
       leg2->Draw();
-      
-      c2->Print((theVariations[i]->GetVariedQuantity()+"_"+loc+"_error.eps").c_str());
-      c2->Print((theVariations[i]->GetVariedQuantity()+"_"+loc+"_error.png").c_str());
+    
+      c2->Print((theVariations[i]->GetVariedQuantity()+theVariations[i]->GetMacroSuffix()+"_"+loc+"_error.eps").c_str());
+      c2->Print((theVariations[i]->GetVariedQuantity()+theVariations[i]->GetMacroSuffix()+"_"+loc+"_error.png").c_str());
     
       c4->cd(); 
     
       // exclude really tiny errors from the error summary
       // to make the plot readable
-      if(h_sing_err->GetBinContent(h_sing_err->GetMaximumBin())>.003) {
-	   h_sing_err->SetLineColor(colors[i%13]);
-	   if(!error_summary_started) {
-	     h_sing_err->DrawCopy("c");
-	     error_summary_started = 1;
-	   }
-	   else
-	     h_sing_err->DrawCopy("csame");
-	   leg4->AddEntry(h_sing_err->Clone(),theVariations[i]->GetVariedQuantity().c_str(),"l");
-	   std::cout<<"BLAH"<<std::endl;
-	 }
+    
+      if(getHistMaximum(h_sing_err,0,16) >.006) {
+	h_sing_err->SetLineColor(colors[n_errors_on_summary_plot%13]);
+	h_sing_err->SetMarkerColor(colors[n_errors_on_summary_plot%13]);
+	h_sing_err->SetMarkerStyle(20+n_errors_on_summary_plot%4);
+	h_sing_err->SetMarkerSize(1);
+	if(n_errors_on_summary_plot==0) {
+	  TH2D *frame = new TH2D("frame","frame",10,0,8,10,0,0.035);
+	  frame->GetXaxis()->SetTitle("#nu_{#mu} Energy (GeV)");
+	  frame->GetYaxis()->SetTitle("Fractional Error");
+	  frame->GetYaxis()->SetTitleOffset(1.2);
+	  frame->DrawCopy();
+	  gPad->SetRightMargin(0.3);   // Set Margin Right
+	  h_sing_err->DrawCopy("PLsame");
+	}
+	else
+	  h_sing_err->DrawCopy("PLsame");
+	n_errors_on_summary_plot++;  
+	leg4->AddEntry(h_sing_err->Clone(),theVariations[i]->GetLabel().c_str(),"pl");
+      }
+      error_table<<std::fixed<<std::setprecision(2);
+      error_table<<theVariations[i]->GetLabel();
+      for(int k = 0; k<h_sing_err->GetNbinsX(); k++)
+	error_table <<" & "<<h_sing_err->GetBinContent(k+1)*100<<std::endl;
+      error_table<<"\\\\"<<std::endl;
+      
     }
+
+    error_table <<std::endl<<"\\hline"<<std::endl;
+    error_table <<"\\end{tabular}"<<std::endl; 
+    error_table <<"\\label{tab:errorsummary}"<<std::endl;
+    error_table<<"\\caption{Systematic errors on the near/far ratio (in percent) in each energy bin for each source of alignment uncertainty.}"<<std::endl;  
+    error_table <<"\\end{sidewaystable}"<<std::endl; 
+    error_table.close();
 
   c4->cd();
   leg4->Draw();
@@ -502,18 +570,26 @@ void ToleranceFits(std::string loc = "nof") {
   h_dis->SetMarkerSize(1);
   h_app->SetMarkerStyle(21);
   h_app->SetMarkerSize(1);
-  h_dis->Draw("psame");
-  h_app->Draw("psame");
+  if(loc != "near") {
+    h_dis->Draw("psame");
+    h_app->Draw("psame");
+  }
 
   TLegend *leg = new TLegend(.25,0.65,.45,0.85);
   leg->SetFillStyle(0);
   leg->SetBorderSize(0);
-  leg->AddEntry(h_app,"Stat, #nu_{e} App","p");
-  leg->AddEntry(h_dis,"Stat, #nu_{#mu} Dis","p");
+  if(loc != "near") {
+    leg->AddEntry(h_app,"Stat, #nu_{e} App","p");
+    leg->AddEntry(h_dis,"Stat, #nu_{#mu} Dis","p");
+  }
   leg->AddEntry(h_tot_err,"Alignment","p");
   leg->Draw();
-
+  
+  if(loc != "near")
+    add_plot_label("Stat from Fast MC, 5 years #times 700 kW x 35 kTon",0.65,0.925,0.04,38,62,22);
   c3->Print(("tot_error_"+loc+".eps").c_str());
   c3->Print(("tot_error_"+loc+".png").c_str());
+  TFile f(("tot_error_"+loc+".root").c_str(),"RECREATE");
+  h_tot_err->Write();
 
 }

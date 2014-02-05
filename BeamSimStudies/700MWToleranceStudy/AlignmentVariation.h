@@ -8,6 +8,7 @@
     std::string m_variation_type; // macro, location, or current
     
     std::string m_quantity_varied;
+    std::string m_label;
     std::vector<std::string> m_variation_names;
     std::string m_units;
     
@@ -37,6 +38,7 @@
       
       m_variation_type = type;
       m_quantity_varied = quantity;
+      m_label = "";
 
       m_version = version;
       m_nominal_version = version;
@@ -75,6 +77,10 @@
       m_nominal_version = v;
     }
 
+    void SetLabel(std::string label) {
+      m_label = label;
+    }
+
     void SetUser(std::string u) {
       m_user = u;
     }
@@ -101,6 +107,10 @@
 
     std::string GetVariedQuantity() {
       return m_quantity_varied;
+    }
+
+    std::string GetLabel() {
+      return m_label;
     }
 
     std::string GetVariationType() {
@@ -182,11 +192,16 @@
 	else if(m_variation_type=="location") {
 	  std::string temp_current = m_nominal_current;
 	  if(beam_mode=="antinu") temp_current = "-"+m_nominal_current;
-	  
-	  if(m_quantity_varied.find(loc)==0)
-	    loc = m_quantity_varied+m_variation_names[i];
+	
+	  std::cout<<" i "<<i<<" m_variation_names[i] "<<m_variation_names[i]<<std::endl;
+	  std::cout<<"m_quantity_varied "<<m_quantity_varied<<" loc "<<loc<<std::endl;
+	  std::string temploc = loc;
+	  if(m_quantity_varied.find(loc)==0) {
+	    temploc = m_quantity_varied+m_variation_names[i];
+	    std::cout<<"temploc "<<temploc<<std::endl;
+	  }
 	  the_file += "/"+m_nominal_plist+"/Nominal/"+temp_current+"/flux/";
-	  the_file += "histos_g4lbne_"+m_nominal_version+"_"+m_nominal_plist+"_Nominal_"+temp_current+"_"+loc+fmc+".root";
+	  the_file += "histos_g4lbne_"+m_nominal_version+"_"+m_nominal_plist+"_Nominal_"+temp_current+"_"+temploc+fmc+".root";
 	}
 	else {
 	  std::cout<<"Variation type"<<m_variation_type<<" not yet supported"<<std::endl;
@@ -203,6 +218,8 @@
     double GetScaleFactor() { return m_scale_factor; }
 
     std::string GetUser() { return m_user; }
+
+    std::string GetMacroSuffix() { return m_macro_suffix; }
 
   };
     

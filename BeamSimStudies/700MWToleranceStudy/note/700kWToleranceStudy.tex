@@ -23,7 +23,7 @@ Blake Watson \\
 
 %\end{abstract}
 
-This note describes a study of beam alignment tolerances and systematic uncertainties that was conducted in the winter of 2013-2014.  For each beam alignment parameter listed in Table~\ref{tab:syslist}, we evaluate the systematic uncertainty on the unoscillated muon neutrino flux assuming the nominal tolerances listed in Table~\ref{tab:syslist}.  In addition to providing a preliminary estimate of uncertainties that can be input to physics studies, this work also provides valuable input to the beamline group that will inform the design of hadron monitors and other beam alignment tools.  The note is organized as follows: Section~\ref{sec:beamsim} describes the simulation used to execute the study, the procedure for extracting systematic uncertainties is reviewed in Section~\ref{sec:procedure}, the results are summarized in Section~\ref{sec:results}.  Plots showing the neutrino flux in various beam configurations and the fits used to extract systematic uncertainties are available in Appendices~\ref{app:nof_plots}-~\ref{app:far_plots}
+This note describes a study of beam alignment tolerances and systematic uncertainties that was conducted in the winter of 2013-2014.  For each beam alignment parameter listed in Table~\ref{tab:syslist}, we evaluate the systematic uncertainty on the unoscillated muon neutrino flux assuming the nominal tolerances listed in Table~\ref{tab:syslist}.  In addition to providing a preliminary estimate of uncertainties that can be input to physics studies, this work also provides valuable input to the beamline group that will inform the design of hadron monitors and other beam alignment tools.  The note is organized as follows: Section~\ref{sec:beamsim} describes the simulation used to execute the study, the procedure for extracting systematic uncertainties is reviewed in Section~\ref{sec:procedure}, the results are summarized in Section~\ref{sec:results}, and conclusions potential future improvements are discussed in Section~\ref{sec:conclusion}.  Plots showing the neutrino flux in various beam configurations and the fits used to extract systematic uncertainties are available in Appendices~\ref{app:nof_plots}-~\ref{app:far_plots}
 
 \begin{table}
 \centering
@@ -159,16 +159,14 @@ For the baffle scraping uncertainty, we estimate the flux from the baffle by sim
 \section{Results}
 \label{sec:results}
 
-\input{error_table}
+The muon neutrino flux uncertainty due to each source of beamline uncertainty is shown in Figures~\ref{tab:errorsummary_near},~\ref{tab:errorsummary_far}, and ~\ref{tab:errorsummary_nof} for the near detector flux, far detector flux, and near/far flux ratio respectively.  Total uncertainties due to all sources combined are shown Figures~\ref{fig:tot_error_near}-~\ref{fig:tot_error_nof} and a summary of the largest individual uncertainties is shown in Figures~\ref{fig:error_summary_near}-~\ref{fig:error_summary_nof}.
+
+\input{error_table_near}
+\input{error_table_far}
+\input{error_table_nof}
 
 \begin{figure}[ht]
-  \begin{center}
-    {\includegraphics[width=6.0in]{figures/tot_error_nof.eps}}
-  \end{center}
-\caption{ Total fractional alignment systematic uncertainty as a function of energy on the near/far flux ratio. }
-\end{figure}
-
-\begin{figure}[ht]
+  \label{fig:tot_error_near}
   \begin{center}
     {\includegraphics[width=6.0in]{figures/tot_error_near.eps}}
   \end{center}
@@ -176,6 +174,7 @@ For the baffle scraping uncertainty, we estimate the flux from the baffle by sim
 \end{figure}
 
 \begin{figure}[ht]
+  \label{fig:tot_error_far}
   \begin{center}
     {\includegraphics[width=6.0in]{figures/tot_error_far.eps}}
   \end{center}
@@ -183,13 +182,17 @@ For the baffle scraping uncertainty, we estimate the flux from the baffle by sim
 \end{figure}
 
 \begin{figure}[ht]
+  \label{fig:tot_error_nof}
   \begin{center}
-    {\includegraphics[width=6.0in]{figures/error_summary_nof.eps}}
+    {\includegraphics[width=6.0in]{figures/tot_error_nof.eps}}
   \end{center}
-\caption{ Summary of alignment systematic uncertainties on the near/far flux ratio.}
+\caption{ Total fractional alignment systematic uncertainty as a function of energy on the near/far flux ratio. }
 \end{figure}
 
+
 \begin{figure}[ht]
+  \label{fig:error_summary_near}
+
   \begin{center}
     {\includegraphics[width=6.0in]{figures/error_summary_near.eps}}
   \end{center}
@@ -197,15 +200,35 @@ For the baffle scraping uncertainty, we estimate the flux from the baffle by sim
 \end{figure}
 
 \begin{figure}[ht]
+  \label{fig:error_summary_far}
   \begin{center}
     {\includegraphics[width=6.0in]{figures/error_summary_far.eps}}
   \end{center}
 \caption{ Summary of alignment systematic uncertainties on the flux at the far detector.}
 \end{figure}
 
+\begin{figure}[ht]
+  \label{fig:error_summary_nof}
+  \begin{center}
+    {\includegraphics[width=6.0in]{figures/error_summary_nof.eps}}
+  \end{center}
+\caption{ Summary of alignment systematic uncertainties on the near/far flux ratio.}
+\end{figure}
 
-\section{Conclusion}
 
+
+\section{Conclusion and Future Improvements}
+\label{sec:conclusion}
+We have evaluated the systematic uncertainties on the far detector muon neutrino flux due to uncertainties in beamline elements.  We find beamline uncertainty on the far detector flux to be smaller than five-year statistical uncertainties on a muon neutrino disappearance spectrum, assuming 6e20 POT / year and a 35 kTon detector.  However, beamline uncertainties do become comparable in size to the statistical uncertainties near the falling edge of the focusing peak, where sensitivity to the horn current is maximal. The uncertainty on the near / far flux ratio is uniformly small compared to statistical uncertainties, approximately 1\% or less below neutrino energies of 8 GeV.  The near detector flux uncertainties are slightly larger than the far detector uncertainties and would have a significant impact on the precision of cross section measurements at a near detector.
+
+The dominant source of aligmment uncertainty varies depending on neutrino energy.  At low energies, the thickness of the cooling water layer on the horn and the width of the decay pipe are the largest sources of uncertainty. At higher energies, the magnitude and spatial distribution of the horn currents dominate.     
+
+This study was done with a preliminary version of the LBNE beam simulation and will have to be repeated for the final beam design.  We suggest a number of improvements that should be made to the study at that point:
+\begin{itemize}
+\item The procedure described here is sensitive to statistical fluctuations of the Monte Carlo samples.  This is particularly true in cases where geometrical constraints limit the size of variations that can be studied (such as Horn 1 offsets and beam spot offsets).  The most straightforward improvement would be to generate larger samples.  In this case, we have generated at least 2.5e7 POT for each varied configuration and 2.5e8 POT for the nominal configuration.
+\item The horn current skin depth study uses a simple implementation of skin depth and a more precise magnetic field map should be considered in future studies.\item Uncertainties on the target fin target thickness should also be considered in the future
+\end{itemize}
+   
 \appendix
 \section{Near/Far Flux Ratios and Fits}
 \label{app:nof_plots}
@@ -603,6 +626,23 @@ For the baffle scraping uncertainty, we estimate the flux from the baffle by sim
 \caption{ Fits to the near/far ratios for several values of {\bf skin depth in the horn conductors}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
 \end{figure}
 
+\clearpage
+\subsection{Target Density}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Density__nof_summary.eps}}
+  \end{center}
+\caption{ Near/Far double ratios to nominal for several values of {\bf target density} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Density__nof_fits.eps}}
+  \end{center}
+\caption{ Fits to the near/far ratios for several values of {\bf target density}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
 \section{Near Detector Flux Ratios and Fits}
 \label{app:near_plots}
 
@@ -785,6 +825,23 @@ For the baffle scraping uncertainty, we estimate the flux from the baffle by sim
     {\includegraphics[width=4.0in]{figures/TargetYTilt_near_fits.eps}}
   \end{center}
 \caption{ Fits to the near flux ratio for several values of {\bf Target Tilt in $y$}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Target Density}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Density__near_summary.eps}}
+  \end{center}
+\caption{ Near detector flux ratio to nominal for several values of {\bf target density} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Density__near_fits.eps}}
+  \end{center}
+\caption{ Near detector flux ratio for several values of {\bf target density}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
 \end{figure}
 
 \clearpage
@@ -1393,6 +1450,23 @@ For the baffle scraping uncertainty, we estimate the flux from the baffle by sim
     {\includegraphics[width=4.0in]{figures/SkinDepthIC__far_fits.eps}}
   \end{center}
 \caption{ Fits to the far flux ratio for several values of {\bf skin depth in the horn conductors}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
+\end{figure}
+
+\clearpage
+\subsection{Target Density}
+
+\begin{figure}[ht]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Density__far_summary.eps}}
+  \end{center}
+\caption{ Far detector flux ratio to nominal for several values of {\bf target density} (points) and the results of the fits to each energy bin (lines).}
+\end{figure}
+
+\begin{figure}[hb]
+  \begin{center}
+    {\includegraphics[width=4.0in]{figures/Density__far_fits.eps}}
+  \end{center}
+\caption{ Far detector flux ratio for several values of {\bf target density}. Black(Red) fit lines indicate that a linear(parabolic) fit provided the best $\chi^2$. }
 \end{figure}
 
 \begin{thebibliography}{1}

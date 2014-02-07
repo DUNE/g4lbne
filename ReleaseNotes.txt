@@ -241,6 +241,11 @@ This is by no means exact, but it is a start, if the difference in the Far/Near 
   
 <\v3r0p11>  
    
+<v3r0p12>
+
+Paul fixed bug which made a horn support ring way too big.
+
+<\v3r0p12>
 
 
 

@@ -8,7 +8,6 @@
 #include <fstream>
 #include <iomanip>
 #include <stdlib.h>
-#include <map>
 
 //Root 
 #include <TSystem.h>        // ROOT head file for a generic interface to the OS

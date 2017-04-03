@@ -99,7 +99,7 @@ LBNEDataInput::LBNEDataInput()
 */
 {
   
-  if(fLBNEDataInput) G4Exception("LBNEDataInput constructed twice.");
+  if(fLBNEDataInput) G4Exception("LBNEDataInput constructed twice.","",FatalException,"");
   
   G4cout << G4endl;
   G4cout << G4endl;
@@ -320,7 +320,7 @@ void LBNEDataInput::initTarget()
   fConstructTarget = true;
 
   getConstructFlag(TargetNtarget, "TargetNtarget");
-  if(TargetNtarget <= 0) G4Exception("TargetNtarget must be at least one");
+  if(TargetNtarget <= 0) G4Exception("TargetNtarget must be at least one","",FatalException,"");
 
   get(TargetShape, "TargetShape");
 
@@ -332,7 +332,7 @@ void LBNEDataInput::initTarget()
   {
      if (TargetNtarget != 1)
      {
-	G4Exception("TargetNtarget must be 1 for the Numi target");
+	G4Exception("TargetNtarget must be 1 for the Numi target","",FatalException,"");
      }
      LBNEDataInput::initNUMITarget();
   }
@@ -356,7 +356,7 @@ void LBNEDataInput::initTarget()
      }
      else 
      {
-	G4Exception("TargetShape must be either 'BOX', 'TUBE', or 'NUMI'");
+	G4Exception("TargetShape must be either 'BOX', 'TUBE', or 'NUMI'","",FatalException,"");
      }
 
      get(TargetA,        "TargetA",         TargetNtarget, g/mole);
@@ -523,11 +523,11 @@ void LBNEDataInput::initHadrBox() {
 void LBNEDataInput::initHorns() 
 {
    get(NPhorns,     "NPhorns");
-   if(NPhorns <= 0) G4Exception("NPhorns must be greater than zero");
+   if(NPhorns <= 0) G4Exception("NPhorns must be greater than zero","",FatalException,"");
    get(PhornNParts, "PhornNParts", NPhorns);
 
    get(PhornNphorn, "PhornNphorn");
-   if(PhornNphorn <= 0) G4Exception("PhornNphorn must be greater than zero");
+   if(PhornNphorn <= 0) G4Exception("PhornNphorn must be greater than zero","",FatalException,"");
 
    get(PhornZ1,       "PhornZ1",         PhornNphorn, m);
    get(PhornZ2,       "PhornZ2",         PhornNphorn, m);
@@ -621,7 +621,7 @@ void LBNEDataInput::getFirst(T& buffer, const G4String& name) {
   if(myVector.size() == 0) {
     G4String message = "expected non-empty array: ";
     message.append(name);
-    G4Exception(message);
+    G4Exception(message,"",FatalException,"");
   }
   else {
     buffer = myVector[0];

@@ -37,7 +37,7 @@ void LBNEDetectorConstruction::ConstructLBNETarget()
   bool isBox = false;
   if(LBNEData->TargetShape == "BOX") isBox = true;
   else if(LBNEData->TargetShape == "TUBE") isBox = false;
-  else G4Exception("TargetShape must be either 'BOX' or 'TUBE'");
+  else G4Exception("TargetShape must be either 'BOX' or 'TUBE'","",FatalException,"");
 
   for(G4int i = 0; i < LBNEData->TargetNtarget; i++) 
   {  
@@ -49,7 +49,7 @@ void LBNEDetectorConstruction::ConstructLBNETarget()
     
     if(isBox) 
     {
-       if( LBNEData->TargetNtarget > 1) G4Exception("layered box-shaped target not yet supported");
+       if( LBNEData->TargetNtarget > 1) G4Exception("layered box-shaped target not yet supported","",FatalException,"");
        //if(i > 0) G4Exception("layered box-shaped target not yet supported");
        TGT_solid = new G4Box(solidName.str(), LBNEData->TargetWidth[i]/2.0,
 			     LBNEData->TargetHeight[i]/2.0, TGT_l);

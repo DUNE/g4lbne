@@ -71,7 +71,7 @@ private:
    //
    //need this or get a seg fault don't know why
    //
-   map<int, int> code;
+    std::map<int, int> code;
    //
    
    LBNEDataInput* LBNEData;

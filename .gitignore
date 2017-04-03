@@ -1,0 +1,7 @@
+*~
+*.rej
+*.orig
+build
+*.o
+*.so
+*.a

@@ -51,7 +51,9 @@ LBNENumiDataInput::LBNENumiDataInput()
 {
 
    G4cout << "LBNENumiDataInput Constructor Called" << G4endl;
-   if(fLBNENumiDataInput) G4Exception("LBNENumiDataInput constructed twice.");
+   if(fLBNENumiDataInput) {
+       G4Exception("LBNENumiDataInput constructed twice.","",FatalException,"");
+   }
     
    // 
    // Target

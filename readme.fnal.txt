@@ -1,6 +1,3 @@
-
-G4LBNE Documentation
-
 The Beam Simulation Group Wiki is here
 https://cdcvs.fnal.gov/redmine/projects/lbne-beamsim/wiki
 This contains much information about Fermilab accounts,

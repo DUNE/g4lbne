@@ -1,0 +1,34 @@
+#+TITLE: G4LBNE
+
+* Caveat
+
+This repository is a fork/mirror of g4lbne from its CVS repository here:
+
+#+BEGIN_EXAMPLE
+  :pserver:anonymous@cdcvs.fnal.gov:/cvs/projects/lbne-beamsim
+#+END_EXAMPLE
+
+The =master= branch holds the older v2.  A newer [[https://github.com/dune/g4lbne/tree/v3_branch][v3]] is on its own branch.
+
+* Installation
+
+Main prerequisites:
+
+- CMake 2.6
+- Geant4 9.5.p01
+- ROOT 5.34/36
+
+Newer versions may work but are not tested.
+
+Use CMake to build the package in the usual CMake way.  
+
+#+BEGIN_EXAMPLE
+  $ cmake -DCMAKE_INSTALL_PREFIX=/path/to/install /path/to/g4lbne
+#+END_EXAMPLE
+
+Some build automation is available in [[https://github.com/brettviren/grinst][grinst]]
+
+* Etc
+
+See [[./readme-fnal.txt]] for original readme file which includes FNAL-specific setup, some usage and troubleshooting.
+

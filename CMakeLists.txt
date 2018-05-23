@@ -8,7 +8,7 @@ include(${Geant4_USE_FILE})
 
 # Hook into ROOT
 find_package(ROOT REQUIRED)
-include(${ROOT_USE_FILE})
+#include(${ROOT_USE_FILE})
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
